@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres
+    platform: linux/x86_64
+    container_name: database_compagnonnage
+    restart: always
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db_compagnonnage
+    ports:
+      - "5432:5432"
+    networks:
+      - adminer_network
+
+  adminer:
+    image: adminer
+    container_name: adminer_compagnonnage
+    restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: postgreSQL
+      # ADMINER_DESIGN: pepa-linha | rmsoft | konya
+      ADMINER_DESIGN: rmsoft
+      ADMINER_PLUGINS: tables-filter
+    depends_on:
+      - postgres
+    ports:
+      - "8085:8080"
+    networks:
+      - adminer_network
+
+volumes:
+  database_data:
+
+networks:
+  adminer_network:
