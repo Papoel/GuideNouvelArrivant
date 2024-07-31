@@ -1,27 +1,32 @@
 # LivretCompagnonnage
 
-Bienvenue dans le repository **LivretCompagnonnage** ! Ce projet a pour but de créer un livret de compagnonnage pour les nouveaux arrivants de notre société. Ce livret permet aux nouveaux employés de suivre un parcours d'intégration structuré avec des actions à réaliser, telles que de la recherche documentaire et des tâches rédactionnelles. Les tuteurs peuvent valider les actions réalisées et ajouter des commentaires pour fournir des précisions.
+## Description
+L'application LivretCompagnonnage vise à faciliter l'intégration des nouveaux arrivants dans la société en leur fournissant un livret de compagnonnage. Ce livret contient des actions à réaliser, que les tuteurs peuvent valider ou commenter.
 
-## Fonctionnalités
+## Table des Matières
+- [Vision du Projet](#vision-du-projet)
+- [Objectifs](#objectifs)
+- [Documentation](#documentation)
+- [Contributeurs](#contributeurs)
+- [Ressources](#ressources)
 
-- **Création de livret personnalisé** : Chaque nouvel arrivant a un livret individuel avec des actions spécifiques à réaliser.
-- **Suivi des actions** : Les actions peuvent inclure des tâches de recherche documentaire, des rédactions, etc.
-- **Validation par les tuteurs** : Les tuteurs peuvent signer pour valider les actions complétées ou ajouter des commentaires pour donner des précisions.
-- **Interface conviviale** : Une interface utilisateur simple et intuitive pour faciliter l'utilisation par les nouveaux arrivants et les tuteurs.
+## Vision du Projet
+Créer une application de livret de compagnonnage pour les nouveaux arrivants de la société.
 
-## Installation
+## Objectifs
+1. Fournir un livret structuré avec des actions pour les nouveaux arrivants.
+2. Permettre aux tuteurs de valider et commenter les actions.
+3. Offrir une interface utilisateur conviviale.
 
-### Prérequis
+## Documentation
 
-- Docker
-- Docker Compose
-- PHP
-- Composer
+- [Tableau de Bord du Projet](docs/BOARD.md)
+- [Documentation de la Base de Données](docs/DATABASE.md)
 
-### Étapes d'installation
+## Contributeurs
+- Papoel - Développeur principal
 
-1. Clonez le repository :
-
-   ```sh
-   git clone https://github.com/votre-utilisateur/LivretCompagnonnage.git
-   cd LivretCompagnonnage
+## Ressources
+- [Documentation Symfony](https://symfony.com/doc/current/index.html)
+- [Docker Documentation](https://docs.docker.com/)
+- [PHPStan Documentation](https://phpstan.org/)
