@@ -45,12 +45,12 @@ Cette table représente un carnet de compagnonnage pour un service spécifique, 
 
 ### Structure de la Table
 
-| Colonne    | Type               | Description                                    | Contraintes               |
-|------------|--------------------|------------------------------------------------|---------------------------|
-| id         | SERIAL             | Identifiant unique du carnet de compagnonnage  | PRIMARY KEY               |
-| service_id | INTEGER            | Identifiant du service associé                 | FOREIGN KEY (service)     |
-| newcomer_id | INTEGER            | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        |
-| mentor_id  | INTEGER            | Identifiant du tuteur                          | FOREIGN KEY (user)        |
+| Colonne      | Type    | Description                                    | Contraintes               | Relation  |
+|--------------|---------|------------------------------------------------|---------------------------|-----------|
+| id           | SERIAL  | Identifiant unique du carnet de compagnonnage  | PRIMARY KEY               |           |
+| service_id   | INTEGER | Identifiant du service associé                 | FOREIGN KEY (service)     | ManyToOne |
+| newcomer_id  | INTEGER | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        | OneToOne  |
+| mentor_id    | INTEGER | Identifiant du tuteur                          | FOREIGN KEY (user)        | OneToOne  |
 
 ## Table: [THEME](database/THEME.md)
 
@@ -58,14 +58,14 @@ Cette table représente un thème ou une tâche à compléter dans le carnet de 
 
 ### Structure de la Table
 
-| Colonne    | Type               | Description                                    | Contraintes               |
-|------------|--------------------|------------------------------------------------|---------------------------|
-| id         | SERIAL             | Identifiant unique du thème                    | PRIMARY KEY               |
-| logbook_id | INTEGER            | Identifiant du carnet de compagnonnage         | FOREIGN KEY (logbook)     |
-| title      | VARCHAR(255)       | Titre du thème                                 | NOT NULL                  |
-| description | TEXT               | Description détaillée du thème                 | NOT NULL                  |
-| validated  | BOOLEAN            | Indique si le thème a été validé               | NULLABLE                  |
-| remark     | TEXT               | Remarques du tuteur                            | NULLABLE                  |
+| Colonne     | Type         | Description                            | Contraintes           | Relation   |
+|-------------|--------------|----------------------------------------|-----------------------|------------|
+| id          | SERIAL       | Identifiant unique du thème            | PRIMARY KEY           |            |
+| title       | VARCHAR(255) | Titre du thème                         | NOT NULL              |            |
+| description | TEXT         | Description détaillée du thème         | NOT NULL              |            |
+| validated   | BOOLEAN      | Indique si le thème a été validé       | NULLABLE              |            |
+| remark      | TEXT         | Remarques du tuteur                    | NULLABLE              |            |
+| logbook_id  | INTEGER      | Identifiant du carnet de compagnonnage | FOREIGN KEY (logbook) | ManyToMany |
 
 ## Table: [ANSWER](database/ANSWER.md)
 
@@ -73,10 +73,10 @@ Cette table représente une réponse d'un nouvel arrivant à un thème spécifiq
 
 ### Structure de la Table
 
-| Colonne    | Type               | Description                                    | Contraintes               |
-|------------|--------------------|------------------------------------------------|---------------------------|
-| id         | SERIAL             | Identifiant unique de la réponse               | PRIMARY KEY               |
-| content    | TEXT               | Contenu de la réponse                          | NOT NULL                  |
-| created_at | DATETIME           | Date de création de la réponse                 | DEFAULT CURRENT_TIMESTAMP |
-| theme_id   | INTEGER            | Identifiant du thème associé                   | FOREIGN KEY (theme)       |
-| newcomer_id | INTEGER            | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        |
+| Colonne      | Type     | Description                                    | Contraintes               | Relation   |
+|--------------|----------|------------------------------------------------|---------------------------|------------|
+| id           | SERIAL   | Identifiant unique de la réponse               | PRIMARY KEY               |            |
+| content      | TEXT     | Contenu de la réponse                          | NULLABLE                  |            |
+| created_at   | DATETIME | Date de création de la réponse                 | DEFAULT CURRENT_TIMESTAMP |            |
+| theme_id     | INTEGER  | Identifiant du thème associé                   | FOREIGN KEY (theme)       | ManyToOne  |
+| newcomer_id  | INTEGER  | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        | ManyToOne  |

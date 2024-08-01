@@ -19,7 +19,7 @@ class UserFixtures extends Fixture
     {
         $faker = Faker::create(locale: 'fr_FR');
 
-        $users = [];
+        // Création de l'utilisateur administrateur
         $admin = new User();
         $admin->setFirstname(firstname: 'pascal');
         $admin->setLastname(lastname: 'briffard');
@@ -27,10 +27,10 @@ class UserFixtures extends Fixture
         $admin->setRoles(roles: ['ROLE_ADMIN']);
         $plainPassword = 'admin';
         $admin->setPassword($this->passwordHasher->hashPassword($admin, $plainPassword));
-
         $manager->persist($admin);
+        $this->addReference('user_admin', $admin);
 
-        // 5 users
+        // Création de plusieurs utilisateurs
         for ($i = 1; $i <= 5; ++$i) {
             $user = new User();
             $user->setFirstname(firstname: strtolower($faker->firstName()));
@@ -41,7 +41,7 @@ class UserFixtures extends Fixture
             $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
             $manager->persist($user);
-            $users[] = $user;
+            $this->addReference('user_'.$i, $user);
         }
 
         $manager->flush();
