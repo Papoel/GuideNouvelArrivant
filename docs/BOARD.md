@@ -10,41 +10,43 @@ Créer une application de livret de compagnonnage pour faciliter l'intégration 
 
 ## Étapes du Projet
 
-### Étape 1: Initialisation du Projet
-- [ ] Créer un repository GitHub
-- [ ] Initialiser le projet Symfony
-- [ ] Configurer Docker et Docker Compose
-- [ ] Mettre en place la structure de base de l'application
+### Étape 1 : Initialisation du Projet
+- [X] Créer un repository GitHub
+- [X] Initialiser le projet Symfony
+- [X] Configurer Docker et Docker Compose
+- [X] Mettre en place la structure de base de l'application
+- [X] Créer les entités de la base de données
 
-### Étape 2: Authentification et Gestion des Utilisateurs
-- [ ] Mettre en place le système d'authentification
+### Étape 2 : Authentification et Gestion des Utilisateurs
+- [X] Mettre en place le système d'authentification
 - [ ] Créer les rôles utilisateur (nouvel arrivant, tuteur)
 - [ ] Mettre en place la gestion des utilisateurs
 
-### Étape 3: Création du Livret de Compagnonnage
+### Étape 3 : Création du Livret de Compagnonnage
 - [ ] Créer la structure du livret
 - [ ] Ajouter les actions à réaliser pour les nouveaux arrivants
 - [ ] Mettre en place la validation des actions par les tuteurs
 
-### Étape 4: Interface Utilisateur
+### Étape 4 : Interface Utilisateur
 - [ ] Concevoir le tableau de bord pour les nouveaux arrivants
 - [ ] Concevoir le tableau de bord pour les tuteurs
 - [ ] Ajouter des fonctionnalités pour les commentaires des tuteurs
 
-### Étape 5: Tests et Déploiement
+### Étape 5 : Tests et Déploiement
 - [ ] Écrire des tests unitaires et fonctionnels
 - [ ] Configurer l'intégration continue
 - [ ] Préparer le déploiement en production
 
 ## Avancement
 
-| Étape                                        | Statut   | Branche            | Date de début | Date de fin prévue | Commentaires              |
-|----------------------------------------------|----------|--------------------|---------------|--------------------|---------------------------|
-| Initialisation du Projet                     | Terminé  | init-project       | 27/07/2024    | 27/07/2024         | Configuration de base     |
-| Authentification et Gestion des Utilisateurs | En cours | auth               | 28/07/2024    | 02/08/2024         | Création de la table User |
-| Création du Livret de Compagnonnage          | À venir  | create-livret      | 11/08/2024    | 17/08/2024         |                           |
-| Interface Utilisateur                        | À venir  | ui-design          | 18/08/2024    | 24/08/2024         |                           |
-| Tests et Déploiement                         | À venir  | testing-deployment | 25/08/2024    | 31/08/2024         |                           |
+| Étape                                        | Statut  | Branche              | Date de début | Date de fin prévue | Commentaires                                        |
+|----------------------------------------------|---------|----------------------|---------------|--------------------|-----------------------------------------------------|
+| Initialisation du Projet                     | Terminé | `init-project`       | 27/07/2024    | 27/07/2024         | Configuration de base                               |
+| Authentification et Gestion des Utilisateurs | Terminé | `auth`               | 28/07/2024    | 02/08/2024         | Création de la table User                           |
+| Création du Livret de Compagnonnage          | Terminé | `database`           | 30/07/2024    | 31/07/2024         | Création des tables Answer, Logbook, Service, Theme |
+| Création du Livret de Compagnonnage          | À venir | `create-livret`      | 01/08/2024    | 17/08/2024         |                                                     |
+| Interface Utilisateur                        | À venir | `ui-design`          | 18/08/2024    | 24/08/2024         |                                                     |
+| Tests et Déploiement                         | À venir | `testing-deployment` | 25/08/2024    | 31/08/2024         |                                                     |
 
 ## Historique des Versions
 
@@ -66,29 +68,49 @@ Créer une application de livret de compagnonnage pour faciliter l'intégration 
 
 ---
 
-## Étape 1: Initialisation du Projet
+## Détails des Étapes
 
-### Tâches
-- [ ] Créer un repository GitHub
-- [ ] Initialiser un projet Symfony avec `symfony new LivretCompagnonnage --full`
-- [ ] Configurer Docker et Docker Compose
-- [ ] Créer un fichier `docker-compose.yaml`
-- [ ] Configurer la base de données PostgreSQL
-- [ ] Mettre en place la structure de base de l'application
+### Étape 1 : Initialisation du Projet
 
-### Branche
-`init-project`
+#### Tâches
+- [X] Créer un repository GitHub
+- [X] Initialiser un projet Symfony avec `symfony new GuideNouvelArrivant --webapp`
+- [X] Configurer Docker et Docker Compose
+- [X] Créer un fichier `docker-compose.yaml`
+- [X] Configurer la base de données PostgreSQL
+- [X] Mettre en place la structure de base de l'application
+
+### Étape 2 : Authentification et Gestion des Utilisateurs
+
+#### Tâches
+- [X] Mettre en place le système d'authentification
+- [ ] Créer les rôles utilisateur (nouvel arrivant, tuteur)
+- [ ] Mettre en place la gestion des utilisateurs
+
+### Étape 3 : Création du Livret de Compagnonnage
+
+#### Tâches
+- [ ] Créer la structure du livret
+- [ ] Ajouter les actions à réaliser pour les nouveaux arrivants
+- [ ] Mettre en place la validation des actions par les tuteurs
+- [ ] Créer les fixtures nécessaires pour le développement
+
+### Étape 4 : Interface Utilisateur
+
+#### Tâches
+- [ ] Concevoir le tableau de bord pour les nouveaux arrivants
+- [ ] Concevoir le tableau de bord pour les tuteurs
+- [ ] Ajouter des fonctionnalités pour les commentaires des tuteurs
+
+### Étape 5 : Tests et Déploiement
+
+#### Tâches
+- [ ] Écrire des tests unitaires et fonctionnels
+- [ ] Configurer l'intégration continue
+- [ ] Préparer le déploiement en production
 
 ---
 
+## Instructions pour chaque étape
+
 Pour chaque étape, nous créerons une nouvelle branche et nous fusionnerons les changements dans la branche principale (`main`) une fois l'étape terminée.
-
-## Étape 1: Initialisation du Projet
-
-### Créer un repository GitHub
-1. Allez sur [GitHub](https://github.com/) et créez un nouveau repository nommé `LivretCompagnonnage`.
-2. Clonez le repository localement :
-
-   ```sh
-   git clone https://github.com/votre-utilisateur/LivretCompagnonnage.git
-   cd LivretCompagnonnage
