@@ -16,12 +16,12 @@ class ThemeFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 1; $i <= 10; ++$i) {
             $theme = new Theme();
-            $theme->setTitle($faker->sentence(3));
-            $theme->setDescription($faker->paragraph(4));
-            $theme->addLogbook($this->getReference('logbook_'.($i % 5 + 1)));
+            $theme->setTitle($faker->sentence(nbWords: 3));
+            $theme->setDescription($faker->paragraph(nbSentences: 4));
+            $theme->addLogbook(logbook: $this->getReference(name: 'logbook_'.(($i % 5) + 1)));
 
-            $manager->persist($theme);
-            $this->addReference('theme_'.$i, $theme);
+            $manager->persist(object: $theme);
+            $this->addReference(name: 'theme_'.$i, object: $theme);
         }
 
         $manager->flush();

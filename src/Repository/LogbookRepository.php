@@ -16,28 +16,36 @@ class LogbookRepository extends ServiceEntityRepository
         parent::__construct($registry, Logbook::class);
     }
 
-    //    /**
-    //     * @return Logbook[] Returns an array of Logbook objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return array<array<string, mixed>> $result
+     */
+    public function findLogbookDetails(Logbook $logbook): array
+    {
+        // Utiliser QueryBuilder pour obtenir les détails du carnet de compagnonnage
+        $qb = $this->createQueryBuilder(alias: 'l')
+            ->select(
+                'm.id AS moduleId',
+                'm.title AS moduleTitle',
+                'm.description AS moduleDescription',
+                't.id AS themeId',
+                't.title AS themeTitle',
+                't.description AS themeDescription',
+                't.isValidated AS themeIsValidated',
+                't.remark AS themeRemark',
+                'a.id AS actionId',
+                'a.description AS actionDescription',
+                'a.agent_validated_at AS agentValidatedAt',
+                'a.mentor_validated_at AS mentorValidatedAt'
+            )
+            ->join(join: 'l.themes', alias: 't')
+            ->join(join: 't.modules', alias: 'm')
+            ->leftJoin(join: 'm.actions', alias: 'a')
+            ->where('l.id = :logbookId')
+            ->setParameter(key: 'logbookId', value: $logbook->getId());
 
-    //    public function findOneBySomeField($value): ?Logbook
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $result = $qb->getQuery()->getArrayResult();
+        assert(is_array($result));
+
+        return $result;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,7 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
-    public const HOME_ROUTE = 'home_index';
+    public const HOME_ROUTE = 'dashboard_index';
 
     public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
@@ -35,9 +36,9 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
 
         return new Passport(
             new UserBadge(userIdentifier: $email),
-            credentials: new PasswordCredentials($request->getPayload()->getString('password')),
+            credentials: new PasswordCredentials(password: $request->getPayload()->getString(key: 'password')),
             badges: [
-                new CsrfTokenBadge(csrfTokenId: 'authenticate', csrfToken: $request->getPayload()->getString('_csrf_token')),
+                new CsrfTokenBadge(csrfTokenId: 'authenticate', csrfToken: $request->getPayload()->getString(key: '_csrf_token')),
                 new RememberMeBadge(),
             ]
         );
@@ -45,12 +46,20 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = $token->getUser();
+
+        if ($user instanceof User) { // Remplace App\Entity\User par la classe réelle de ton utilisateur
+            $userNni = $user->getNni();
+        } else {
+            // Gérer le cas où l'utilisateur est null ou n'est pas de la classe attendue
+            throw new \LogicException(message: 'L\'utilisateur doit être une instance de '.User::class);
+        }
+
         if ($targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName)) {
             return new RedirectResponse(url: $targetPath);
         }
 
-        // For example:
-        return new RedirectResponse(url: $this->urlGenerator->generate(name: self::HOME_ROUTE));
+        return new RedirectResponse(url: $this->urlGenerator->generate(name: self::HOME_ROUTE, parameters: ['nni' => $userNni]));
     }
 
     protected function getLoginUrl(Request $request): string

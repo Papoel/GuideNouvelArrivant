@@ -16,20 +16,11 @@ class Logbook
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'logbooks')]
-    private ?Service $service = null;
-
-    #[ORM\OneToOne(inversedBy: 'logbook', cascade: ['persist', 'remove'])]
-    private ?User $newcomer = null;
-
     /**
      * @var Collection<int, Theme>
      */
     #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbook')]
     private Collection $themes;
-
-    #[ORM\ManyToOne(inversedBy: 'logbooks')]
-    private ?User $mentor = null;
 
     public function __construct()
     {
@@ -39,30 +30,6 @@ class Logbook
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getService(): ?Service
-    {
-        return $this->service;
-    }
-
-    public function setService(?Service $service): static
-    {
-        $this->service = $service;
-
-        return $this;
-    }
-
-    public function getNewcomer(): ?User
-    {
-        return $this->newcomer;
-    }
-
-    public function setNewcomer(?User $newcomer): static
-    {
-        $this->newcomer = $newcomer;
-
-        return $this;
     }
 
     /**
@@ -88,18 +55,6 @@ class Logbook
         if ($this->themes->removeElement($theme)) {
             $theme->removeLogbook($this);
         }
-
-        return $this;
-    }
-
-    public function getMentor(): ?User
-    {
-        return $this->mentor;
-    }
-
-    public function setMentor(?User $mentor): static
-    {
-        $this->mentor = $mentor;
 
         return $this;
     }

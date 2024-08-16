@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Entity\Traits\TimestampTrait;
+use App\Enum\JobEnum;
+use App\Enum\SpecialityEnum;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -48,25 +48,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastLoginAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'newcomer', cascade: ['persist', 'remove'])]
+    #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: JobEnum::class)]
+    private ?JobEnum $job = null;
+
+    #[ORM\Column(type: Types::STRING, length: 6, nullable: true)]
+    private ?string $nni = null;
+
+    #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: SpecialityEnum::class)]
+    private ?SpecialityEnum $speciality = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Logbook $logbook = null;
 
-    /**
-     * @var Collection<int, Answer>
-     */
-    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'newcomer')]
-    private Collection $answers;
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    private ?self $mentor = null;
 
-    /**
-     * @var Collection<int, Logbook>
-     */
-    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'mentor')]
-    private Collection $logbooks;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $hiringAt = null;
 
-    public function __construct()
+    public function __toString(): string
     {
-        $this->answers = new ArrayCollection();
-        $this->logbooks = new ArrayCollection();
+        return $this->getFullname();
     }
 
     public function getId(): ?int
@@ -188,6 +190,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $firstname.' '.$lastname;
     }
 
+    public function getJob(): ?JobEnum
+    {
+        return $this->job;
+    }
+
+    public function setJob(JobEnum $job): static
+    {
+        $this->job = $job;
+
+        return $this;
+    }
+
+    public function getJobLabel(): ?string
+    {
+        return $this->job?->value;
+    }
+
+    public function getNni(): ?string
+    {
+        return $this->nni;
+    }
+
+    public function setNni(string $nni): static
+    {
+        $this->nni = $nni;
+
+        return $this;
+    }
+
+    public function getSpeciality(): ?SpecialityEnum
+    {
+        return $this->speciality;
+    }
+
+    public function setSpeciality(SpecialityEnum $speciality): static
+    {
+        $this->speciality = $speciality;
+
+        return $this;
+    }
+
+    public function getSpecialityLabel(): ?string
+    {
+        return $this->speciality?->getAbbreviation();
+    }
+
     public function getLogbook(): ?Logbook
     {
         return $this->logbook;
@@ -195,77 +243,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setLogbook(?Logbook $logbook): static
     {
-        // unset the owning side of the relation if necessary
-        if (null === $logbook && null !== $this->logbook) {
-            $this->logbook->setNewcomer(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if (null !== $logbook && $logbook->getNewcomer() !== $this) {
-            $logbook->setNewcomer($this);
-        }
-
         $this->logbook = $logbook;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Answer>
-     */
-    public function getAnswers(): Collection
+    public function getMentor(): ?self
     {
-        return $this->answers;
+        return $this->mentor;
     }
 
-    public function addAnswer(Answer $answer): static
+    public function setMentor(?self $mentor): static
     {
-        if (!$this->answers->contains($answer)) {
-            $this->answers->add($answer);
-            $answer->setNewcomer($this);
-        }
+        $this->mentor = $mentor;
 
         return $this;
     }
 
-    public function removeAnswer(Answer $answer): static
+    public function getHiringAt(): ?\DateTimeImmutable
     {
-        if ($this->answers->removeElement($answer)) {
-            // set the owning side to null (unless already changed)
-            if ($answer->getNewcomer() === $this) {
-                $answer->setNewcomer(null);
-            }
-        }
-
-        return $this;
+        return $this->hiringAt;
     }
 
-    /**
-     * @return Collection<int, Logbook>
-     */
-    public function getLogbooks(): Collection
+    public function setHiringAt(?\DateTimeImmutable $hiringAt): static
     {
-        return $this->logbooks;
-    }
-
-    public function addLogbook(Logbook $logbook): static
-    {
-        if (!$this->logbooks->contains($logbook)) {
-            $this->logbooks->add($logbook);
-            $logbook->setMentor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLogbook(Logbook $logbook): static
-    {
-        if ($this->logbooks->removeElement($logbook)) {
-            // set the owning side to null (unless already changed)
-            if ($logbook->getMentor() === $this) {
-                $logbook->setMentor(null);
-            }
-        }
+        $this->hiringAt = $hiringAt;
 
         return $this;
     }
