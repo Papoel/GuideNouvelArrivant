@@ -20,9 +20,6 @@ class Answer
     #[ORM\ManyToOne(inversedBy: 'answers')]
     private ?Theme $theme = null;
 
-    #[ORM\ManyToOne(inversedBy: 'answers')]
-    private ?User $newcomer = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -48,18 +45,6 @@ class Answer
     public function setTheme(?Theme $theme): static
     {
         $this->theme = $theme;
-
-        return $this;
-    }
-
-    public function getNewcomer(): ?User
-    {
-        return $this->newcomer;
-    }
-
-    public function setNewcomer(?User $newcomer): static
-    {
-        $this->newcomer = $newcomer;
 
         return $this;
     }

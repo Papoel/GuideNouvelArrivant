@@ -16,11 +16,10 @@ class AnswerFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 1; $i <= 20; ++$i) {
             $answer = new Answer();
-            $answer->setContent($faker->paragraph(4));
-            $answer->setTheme($this->getReference('theme_'.($i % 10 + 1)));
-            $answer->setNewcomer($this->getReference('user_'.($i % 5 + 1)));
+            $answer->setContent(content: $faker->paragraph(nbSentences: 4));
+            $answer->setTheme(theme: $this->getReference(name: 'theme_'.(($i % 10) + 1)));
 
-            $manager->persist($answer);
+            $manager->persist(object: $answer);
         }
 
         $manager->flush();

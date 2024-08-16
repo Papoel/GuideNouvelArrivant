@@ -40,10 +40,17 @@ class Theme
     #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'theme')]
     private Collection $answers;
 
+    /**
+     * @var Collection<int, Module>
+     */
+    #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'theme')]
+    private Collection $modules;
+
     public function __construct()
     {
         $this->logbook = new ArrayCollection();
         $this->answers = new ArrayCollection();
+        $this->modules = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,6 +154,36 @@ class Theme
             // set the owning side to null (unless already changed)
             if ($answer->getTheme() === $this) {
                 $answer->setTheme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Module>
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Module $module): static
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules->add($module);
+            $module->setTheme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModule(Module $module): static
+    {
+        if ($this->modules->removeElement($module)) {
+            // set the owning side to null (unless already changed)
+            if ($module->getTheme() === $this) {
+                $module->setTheme(null);
             }
         }
 
