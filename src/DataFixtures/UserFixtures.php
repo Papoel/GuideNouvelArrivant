@@ -89,7 +89,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 2; $i <= 10; ++$i) {
             $user = $this->getReference(name: 'user_'.$i);
 
-            // User 10 n'aura pas de mentor
             if ($i < 10) {
                 $probableMentor = $this->getReference(name: 'user_'.($i + 1));
                 $user->setMentor(mentor: $probableMentor);

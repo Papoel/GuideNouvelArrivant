@@ -10,7 +10,7 @@ enum JobEnum: string
     case INGENIEUR = 'Ingénieur';
     case CHARGE_AFFAIRES = "Chargé d'affaires";
     case CHARGE_AFFAIRES_PROJET = "Chargé d'affaires projet";
-    case CHARGE_SURVEILLANCE = 'CSI';
+    case CHARGE_SURVEILLANCE = 'Chargé de surveillance';
 
     public function getAbbreviation(): string
     {

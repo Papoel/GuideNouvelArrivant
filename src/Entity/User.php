@@ -58,13 +58,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?SpecialityEnum $speciality = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Logbook $logbook = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?self $mentor = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $hiringAt = null;
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
+    }
 
     public function __toString(): string
     {
