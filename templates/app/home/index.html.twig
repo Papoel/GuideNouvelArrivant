@@ -12,6 +12,12 @@
                 </a>
 
                 <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto align-items-center">
+                    {# if admin connect to pannel #}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="me-3 text-dark text-decoration-none" href="{{ path('admin') }}">
+                            Administration
+                        </a>
+                    {% endif %}
                     {% if app.user %}
                         <a class="me-3 text-dark text-decoration-none" href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
                             Tableau de bord
