@@ -2,25 +2,33 @@
 
 namespace App\Controller\Admin\User;
 
+use App\Entity\Logbook;
 use App\Entity\User;
 use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {
+    public const REMOVE_LOGBOOK_ACTION = 'removeLogbook';
+
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher
     ) {
@@ -103,6 +111,11 @@ class UserCrudController extends AbstractCrudController
             ->setFormType(formTypeFqcn: DateType::class)
         ;
 
+        yield AssociationField::new(propertyName: 'logbooks', label: 'Carnets')
+            ->setRequired(isRequired: true)
+            ->setColumns(cols: 'col-md-6 col-sm-12')
+        ;
+
         yield DateTimeField::new(propertyName: 'lastLoginAt', label: 'Dernière connexion')->hideOnIndex()->hideOnForm();
     }
 
@@ -141,6 +154,62 @@ class UserCrudController extends AbstractCrudController
                 dateFormatOrPattern: DateTimeField::FORMAT_LONG,
                 timeFormat: DateTimeField::FORMAT_SHORT
             );
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $removeLogbookAction = Action::new(name: self::REMOVE_LOGBOOK_ACTION)
+            ->linkToCrudAction(crudActionName: 'removeLogbook')
+            ->setCssClass(cssClass: 'btn btn-sm btn-danger')
+            ->setIcon(icon: 'fa fa-trash')
+            ->setLabel(label: 'Supprimer les carnets');
+
+        return $actions
+            ->add(Crud::PAGE_EDIT, $removeLogbookAction)
+            ->reorder(Crud::PAGE_EDIT, [
+                Action::SAVE_AND_CONTINUE,
+                Action::SAVE_AND_RETURN,
+                self::REMOVE_LOGBOOK_ACTION,
+            ])
+        ;
+    }
+
+    public function removeLogbook(
+        AdminContext $context,
+        EntityManagerInterface $entityManager,
+        AdminUrlGenerator $adminUrlGenerator
+    ): Response {
+        $user = $context->getEntity()->getInstance();
+
+        /* @var $logbooks Logbook */
+        $logbooks = $user->getLogbooks();
+
+        $deletedLogbooks = 0;
+        foreach ($logbooks as $logbook) {
+            $user->removeLogbook($logbook);
+            ++$deletedLogbooks;
+        }
+
+        parent::persistEntity($entityManager, $user);
+
+        $this->addFlash(
+            type: 'danger',
+            message: sprintf(
+                'Le%s carnet%s de %s %s supprimé%s.',
+                $deletedLogbooks > 1 ? 's' : '',
+                $deletedLogbooks > 1 ? 's' : '',
+                $user->getFullName(),
+                $deletedLogbooks > 1 ? 'ont étaient' : 'a été',
+                $deletedLogbooks > 1 ? 's' : ''
+            )
+        );
+
+        $url = $adminUrlGenerator->setController(crudControllerFqcn: self::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl()
+        ;
+
+        return $this->redirect(url: $url);
     }
 
     /**

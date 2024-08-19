@@ -17,29 +17,21 @@ readonly class DashboardService
 
     /**
      * @return array{
-     * user: User,
-     * logbook: Logbook|null,
-     * userSeniority: string,
-     * mentorSeniority: string,
-     * logbookDetails: array{
-     * logbook: Logbook|null,
-     * modules: array<int, array{
-     *     actions?: array<int, array{
-     *         agentValidatedAt?: mixed,
-     *         mentorValidatedAt?: mixed
-     *     }>
-     * }>,
-     * progress: float,
-     * unvalidated_sections: int,
-     * progress_class: string
-     * } | null,
-     * modules: array<int, array{
-     *     actions?: array<int, array{
-     *         agentValidatedAt?: mixed,
-     *         mentorValidatedAt?: mixed
-     *     }>
-     * }>
-     * }
+     *     user: User,
+     *     logbooks: array<int, array{
+     *         logbook: Logbook|null,
+     *         modules: array<int, array{
+     *             actions?: array<int, array{
+     *                 agentValidatedAt?: mixed,
+     *                 mentorValidatedAt?: mixed
+     *             }>
+     *         }>,
+     *         progress: float,
+     *         unvalidated_sections: int,
+     *         progress_class: string
+     *     }>,
+     *     userSeniority: string,
+     *     mentorSeniority: string
      * }
      *
      * @throws \Exception
@@ -49,19 +41,30 @@ readonly class DashboardService
         // 1. Vérifier si l'utilisateur est connecté
         $this->userValidationService->validateUser(currentUser: $currentUser, nni: $nni);
 
-        assert(assertion: $currentUser instanceof User);
+        assert($currentUser instanceof User);
 
-        // Vérifier si le carnet de compagnonnage existe
-        $logbook = $currentUser->getLogbook();
+        // Récupérer tous les carnets de log de l'utilisateur
+        $logbooks = $currentUser->getLogbooks();
 
-        if (null === $logbook) {
-            throw new \RuntimeException(message: 'Le carnet de compagnonnage est introuvable pour cet utilisateur.');
+        if ($logbooks->isEmpty()) {
+            throw new \RuntimeException(message: 'Aucun carnet de compagnonnage trouvé pour cet utilisateur.');
         }
 
-        // 2. Utiliser le carnet de log après vérification
-        $logbookDetails = $this->findLogbookDetails(logbook: $logbook);
+        // Tableau pour stocker les détails de chaque carnet
+        $logbooksDetails = [];
 
-        return ['user' => $currentUser, 'logbook' => $currentUser->getLogbook(), 'userSeniority' => $this->calculateSeniority($currentUser->getHiringAt()), 'mentorSeniority' => $this->calculateSeniority($currentUser->getMentor()?->getHiringAt()), 'logbookDetails' => $logbookDetails, 'modules' => $logbookDetails['modules']];
+        // Parcourir chaque carnet de log
+        foreach ($logbooks as $logbook) {
+            $logbookDetails = $this->findLogbookDetails(logbook: $logbook);
+            $logbooksDetails[] = $logbookDetails;
+        }
+
+        return [
+            'user' => $currentUser,
+            'logbooks' => $logbooksDetails,
+            'userSeniority' => $this->calculateSeniority($currentUser->getHiringAt()),
+            'mentorSeniority' => $this->calculateSeniority($currentUser->getMentor()?->getHiringAt()),
+        ];
     }
 
     /**

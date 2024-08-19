@@ -19,7 +19,7 @@ class Module
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'modules')]
@@ -29,12 +29,24 @@ class Module
     /**
      * @var Collection<int, Action>
      */
-    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'module')]
+    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'module', cascade: ['remove'], orphanRemoval: true)]
     private Collection $actions;
 
     public function __construct()
     {
         $this->actions = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        // Vérifier si le thème est défini et s'il a un titre
+        $theme = $this->getTheme();
+        $themeTitle = $theme ? $theme->getTitle() : '';
+
+        // Si le titre est null, fournir une chaîne vide pour éviter les erreurs avec substr
+        $firstCharactersOfTheme = substr(string: $themeTitle ?: '', offset: 0, length: 3);
+
+        return $firstCharactersOfTheme . ' | ' . ($this->title ?: '');
     }
 
     public function getId(): ?int

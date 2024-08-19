@@ -6,6 +6,8 @@ use App\Entity\Traits\TimestampTrait;
 use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -57,20 +59,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: SpecialityEnum::class)]
     private ?SpecialityEnum $speciality = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private ?Logbook $logbook = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $hiringAt = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?self $mentor = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $hiringAt = null;
+    /**
+     * @var Collection<int, Logbook>
+     */
+    #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'users')]
+    private Collection $logbooks;
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
+        $this->logbooks = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -243,18 +248,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->speciality?->getAbbreviation();
     }
 
-    public function getLogbook(): ?Logbook
-    {
-        return $this->logbook;
-    }
-
-    public function setLogbook(?Logbook $logbook): static
-    {
-        $this->logbook = $logbook;
-
-        return $this;
-    }
-
     public function getMentor(): ?self
     {
         return $this->mentor;
@@ -275,6 +268,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHiringAt(?\DateTimeImmutable $hiringAt): static
     {
         $this->hiringAt = $hiringAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Logbook>
+     */
+    public function getLogbooks(): Collection
+    {
+        return $this->logbooks;
+    }
+
+    public function addLogbook(Logbook $logbook): static
+    {
+        if (!$this->logbooks->contains($logbook)) {
+            $this->logbooks->add($logbook);
+        }
+
+        return $this;
+    }
+
+    public function removeLogbook(Logbook $logbook): static
+    {
+        $this->logbooks->removeElement($logbook);
 
         return $this;
     }

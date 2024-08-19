@@ -12,6 +12,7 @@ class LogbookFixtures extends Fixture
     {
         for ($i = 1; $i <= 10; ++$i) {
             $logbook = new Logbook();
+            $logbook->setName(name: 'Logbook '.$i);
             $manager->persist(object: $logbook);
             $this->addReference(name: 'logbook_'.$i, object: $logbook);
         }

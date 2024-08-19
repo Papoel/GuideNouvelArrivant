@@ -16,20 +16,45 @@ class Logbook
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     /**
      * @var Collection<int, Theme>
      */
-    #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbook')]
+    #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbooks')]
     private Collection $themes;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'logbooks')]
+    private Collection $users;
 
     public function __construct()
     {
         $this->themes = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
     }
 
     /**
@@ -54,6 +79,33 @@ class Logbook
     {
         if ($this->themes->removeElement($theme)) {
             $theme->removeLogbook($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addLogbook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeLogbook($this);
         }
 
         return $this;

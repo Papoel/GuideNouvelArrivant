@@ -4,6 +4,7 @@ namespace App\Controller\Admin\Action;
 
 use App\Entity\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -22,6 +23,8 @@ class ActionCrudController extends AbstractCrudController
         yield IdField::new(propertyName: 'id')->hideOnForm();
         yield TextareaField::new(propertyName: 'description');
         yield DateTimeField::new(propertyName: 'agentValidatedAt')->hideOnIndex();
+
+        yield AssociationField::new(propertyName: 'module');
 
         // TODO: Créer une fonction pour obtenir un BooleanField sur la page index
         yield TextField::new(propertyName: 'agentVisa');

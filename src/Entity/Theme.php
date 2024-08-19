@@ -19,38 +19,30 @@ class Theme
     #[ORM\Column(type: Types::STRING, length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
-
-    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-    private ?bool $isValidated = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $remark = null;
+    private ?string $description = null;
 
     /**
      * @var Collection<int, Logbook>
      */
     #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'themes')]
-    private Collection $logbook;
-
-    /**
-     * @var Collection<int, Answer>
-     */
-    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'theme')]
-    private Collection $answers;
+    private Collection $logbooks;
 
     /**
      * @var Collection<int, Module>
      */
-    #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'theme')]
+    #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'theme', cascade: ['remove'])]
     private Collection $modules;
 
     public function __construct()
     {
-        $this->logbook = new ArrayCollection();
-        $this->answers = new ArrayCollection();
+        $this->logbooks = new ArrayCollection();
         $this->modules = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->title ?: '';
     }
 
     public function getId(): ?int
@@ -82,79 +74,28 @@ class Theme
         return $this;
     }
 
-    public function isValidated(): ?bool
-    {
-        return $this->isValidated;
-    }
-
-    public function setValidated(?bool $isValidated): static
-    {
-        $this->isValidated = $isValidated;
-
-        return $this;
-    }
-
-    public function getRemark(): ?string
-    {
-        return $this->remark;
-    }
-
-    public function setRemark(?string $remark): static
-    {
-        $this->remark = $remark;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Logbook>
      */
-    public function getLogbook(): Collection
+    public function getLogbooks(): Collection
     {
-        return $this->logbook;
+        return $this->logbooks;
     }
 
-    public function addLogbook(Logbook $logbook): static
+    public function addLogbook(Logbook $logbook): self
     {
-        if (!$this->logbook->contains($logbook)) {
-            $this->logbook->add($logbook);
+        if (!$this->logbooks->contains($logbook)) {
+            $this->logbooks[] = $logbook;
+            $logbook->addTheme($this); // Associe également le thème au logbook
         }
 
         return $this;
     }
 
-    public function removeLogbook(Logbook $logbook): static
+    public function removeLogbook(Logbook $logbook): self
     {
-        $this->logbook->removeElement($logbook);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Answer>
-     */
-    public function getAnswers(): Collection
-    {
-        return $this->answers;
-    }
-
-    public function addAnswer(Answer $answer): static
-    {
-        if (!$this->answers->contains($answer)) {
-            $this->answers->add($answer);
-            $answer->setTheme($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAnswer(Answer $answer): static
-    {
-        if ($this->answers->removeElement($answer)) {
-            // set the owning side to null (unless already changed)
-            if ($answer->getTheme() === $this) {
-                $answer->setTheme(null);
-            }
+        if ($this->logbooks->removeElement($logbook)) {
+            $logbook->removeTheme($this); // Retire l'association du thème au logbook
         }
 
         return $this;
@@ -180,11 +121,9 @@ class Theme
 
     public function removeModule(Module $module): static
     {
-        if ($this->modules->removeElement($module)) {
-            // set the owning side to null (unless already changed)
-            if ($module->getTheme() === $this) {
-                $module->setTheme(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->modules->removeElement($module) && $module->getTheme() === $this) {
+            $module->setTheme(null);
         }
 
         return $this;

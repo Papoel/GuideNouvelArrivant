@@ -14,23 +14,23 @@ class Action
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $agent_validated_at = null;
+    private ?\DateTimeImmutable $agentValidatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $agent_visa = null;
+    private ?string $agentVisa = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $mentor_comment = null;
+    private ?string $mentorComment = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $mentor_validated_at = null;
+    private ?\DateTimeImmutable $mentorValidatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $mentor_visa = null;
+    private ?string $mentorVisa = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
     private ?Module $module = null;
@@ -54,60 +54,60 @@ class Action
 
     public function getAgentValidatedAt(): ?\DateTimeImmutable
     {
-        return $this->agent_validated_at;
+        return $this->agentValidatedAt;
     }
 
-    public function setAgentValidatedAt(?\DateTimeImmutable $agent_validated_at): static
+    public function setAgentValidatedAt(?\DateTimeImmutable $agentValidatedAt): static
     {
-        $this->agent_validated_at = $agent_validated_at;
+        $this->agentValidatedAt = $agentValidatedAt;
 
         return $this;
     }
 
     public function getAgentVisa(): ?string
     {
-        return $this->agent_visa;
+        return $this->agentVisa;
     }
 
-    public function setAgentVisa(?string $agent_visa): static
+    public function setAgentVisa(?string $agentVisa): static
     {
-        $this->agent_visa = $agent_visa;
+        $this->agentVisa = $agentVisa;
 
         return $this;
     }
 
     public function getMentorComment(): ?string
     {
-        return $this->mentor_comment;
+        return $this->mentorComment;
     }
 
-    public function setMentorComment(?string $mentor_comment): static
+    public function setMentorComment(?string $mentorComment): static
     {
-        $this->mentor_comment = $mentor_comment;
+        $this->mentorComment = $mentorComment;
 
         return $this;
     }
 
     public function getMentorValidatedAt(): ?\DateTimeImmutable
     {
-        return $this->mentor_validated_at;
+        return $this->mentorValidatedAt;
     }
 
-    public function setMentorValidatedAt(?\DateTimeImmutable $mentor_validated_at): static
+    public function setMentorValidatedAt(?\DateTimeImmutable $mentorValidatedAt): static
     {
-        $this->mentor_validated_at = $mentor_validated_at;
+        $this->mentorValidatedAt = $mentorValidatedAt;
 
         return $this;
     }
 
     public function getMentorVisa(): ?string
     {
-        return $this->mentor_visa;
+        return $this->mentorVisa;
     }
 
-    public function setMentorVisa(?string $mentor_visa): static
+    public function setMentorVisa(?string $mentorVisa): static
     {
-        $this->mentor_visa = $mentor_visa;
+        $this->mentorVisa = $mentorVisa;
 
         return $this;
     }

@@ -15,14 +15,12 @@ class ThemeCrudController extends AbstractCrudController
         return Theme::class;
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
+            IdField::new(propertyName: 'id')->onlyOnIndex(),
+            TextField::new(propertyName: 'title'),
+            TextEditorField::new(propertyName: 'description'),
         ];
     }
-    */
 }

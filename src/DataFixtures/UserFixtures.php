@@ -15,11 +15,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
-    private UserPasswordHasherInterface $passwordHasher;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
-        $this->passwordHasher = $passwordHasher;
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
     }
 
     public function getDependencies(): array
@@ -55,7 +53,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             );
 
             // Associer un nouveau Logbook pour chaque utilisateur
-            $user->setLogbook(logbook: $this->getReference(name: 'logbook_'.$i));
+            $user->addLogbook(logbook: $this->getReference(name: 'logbook_'.$i));
 
             // Ajouter la référence de l'utilisateur pour les mentors
             $this->addReference(name: 'user_'.$i, object: $user);
@@ -77,7 +75,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $admin->setPassword(password: $this->passwordHasher->hashPassword($admin, $plainPassword));
 
         // Association avec un nouveau Logbook
-        $admin->setLogbook(logbook: $this->getReference(name: 'logbook_1'));
+        $admin->addLogbook(logbook: $this->getReference(name: 'logbook_1'));
 
         $this->addReference(name: 'user_1', object: $admin);
         $manager->persist(object: $admin);

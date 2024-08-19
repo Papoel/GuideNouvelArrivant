@@ -11,12 +11,12 @@ class LogbookThemeFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 5; ++$i) {
+        for ($i = 1; $i <= 3; ++$i) {
             /** @var Logbook $logbook */
             $logbook = $this->getReference(name: 'logbook_'.$i);
 
-            for ($j = 1; $j <= 2; ++$j) {
-                $logbook->addTheme(theme: $this->getReference(name: 'theme_'.($i + $j)));
+            for ($j = 1; $j <= 3; ++$j) {
+                $logbook->addTheme(theme: $this->getReference(name: 'theme_'.$i));
             }
 
             $manager->persist(object: $logbook);
