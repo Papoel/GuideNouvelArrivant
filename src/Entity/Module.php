@@ -46,7 +46,7 @@ class Module
         // Si le titre est null, fournir une chaîne vide pour éviter les erreurs avec substr
         $firstCharactersOfTheme = substr(string: $themeTitle ?: '', offset: 0, length: 3);
 
-        return $firstCharactersOfTheme . ' | ' . ($this->title ?: '');
+        return $firstCharactersOfTheme.' | '.($this->title ?: '');
     }
 
     public function getId(): ?int
