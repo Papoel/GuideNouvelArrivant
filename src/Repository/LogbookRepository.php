@@ -30,12 +30,8 @@ class LogbookRepository extends ServiceEntityRepository
                 't.id AS themeId',
                 't.title AS themeTitle',
                 't.description AS themeDescription',
-                't.isValidated AS themeIsValidated',
-                't.remark AS themeRemark',
                 'a.id AS actionId',
                 'a.description AS actionDescription',
-                'a.agent_validated_at AS agentValidatedAt',
-                'a.mentor_validated_at AS mentorValidatedAt'
             )
             ->join(join: 'l.themes', alias: 't')
             ->join(join: 't.modules', alias: 'm')
