@@ -17,6 +17,9 @@ class Action
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $agentComment = null;
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $agentValidatedAt = null;
 
@@ -48,6 +51,18 @@ class Action
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAgentComment(): ?string
+    {
+        return $this->agentComment;
+    }
+
+    public function setAgentComment(?string $agentComment): static
+    {
+        $this->agentComment = $agentComment;
 
         return $this;
     }
