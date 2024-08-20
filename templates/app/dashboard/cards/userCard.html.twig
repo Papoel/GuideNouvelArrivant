@@ -1,0 +1,42 @@
+<div class="col-6">
+    <div class="card info-card user-card h-100">
+        <!-- Bandeau de spécialité -->
+        <div class="ribbon-box mt-2">
+            <div class="ribbon
+                {% if user.specialityLabel == 'CHA' %}ribbon-cha
+                {% elseif user.specialityLabel == 'LEV' %}ribbon-lev
+                {% elseif user.specialityLabel == 'MEC' %}ribbon-mec
+                {% elseif user.specialityLabel == 'ROB' %}ribbon-rob
+                {% endif %}
+            ">
+                {{ user.specialityLabel }}
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ user.fullname }}
+                {% if userSeniority is not same as "Non défini" %}
+                    | <span class="text-muted">{{ userSeniority }}</span>
+                {% endif %}
+            </h5>
+
+            <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div class="ps-3">
+                        <h5 class="card-title">{{ user.getFullname() }}</h5>
+                        <h6>{{ user.jobLabel }}</h6>
+                    <!-- Date d'embauche -->
+                    <span class="text-success small pt-1 fw-bold">Embauche:</span>
+                    {% if user.hiringAt is not null %}
+                        <span class="text-muted small pt-2 ps-1">{{ user.hiringAt|date('d/m/Y') }}</span>
+                    {% else %}
+                        <span class="text-muted small pt-2 ps-1">Non renseignée</span>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

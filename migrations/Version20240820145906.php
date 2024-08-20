@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240819174048 extends AbstractMigration
+final class Version20240820145906 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,7 +25,7 @@ final class Version20240819174048 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE module_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE theme_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "users_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE action (id INT NOT NULL, module_id INT DEFAULT NULL, description VARCHAR(255) DEFAULT NULL, agent_validated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, agent_visa VARCHAR(255) DEFAULT NULL, mentor_comment TEXT DEFAULT NULL, mentor_validated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, mentor_visa VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE action (id INT NOT NULL, module_id INT DEFAULT NULL, description VARCHAR(255) DEFAULT NULL, agent_comment TEXT DEFAULT NULL, agent_validated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, agent_visa VARCHAR(255) DEFAULT NULL, mentor_comment TEXT DEFAULT NULL, mentor_validated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, mentor_visa VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_47CC8C92AFC2B591 ON action (module_id)');
         $this->addSql('COMMENT ON COLUMN action.agent_validated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN action.mentor_validated_at IS \'(DC2Type:datetime_immutable)\'');

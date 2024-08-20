@@ -53,6 +53,9 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        /* Go to home page */
+        yield MenuItem::linkToRoute(label: 'Accéder au site', icon: 'fas fa-home', routeName: 'home_index');
+
         yield MenuItem::section(label: 'Utilisateurs');
         yield MenuItem::subMenu(label: 'Utilisateurs', icon: 'fas fa-users')->setSubItems(subItems: [
             MenuItem::linkToCrud(label: 'Liste des utilisateurs', icon: 'fas fa-list', entityFqcn: User::class)->setAction(actionName: Crud::PAGE_INDEX),

@@ -11,37 +11,20 @@ use App\Services\SeniorityService;
 
 readonly class DashboardService
 {
-    public function __construct(private SeniorityService $seniorityService, private LogbookRepository $logbookRepository, private UserValidationService $userValidationService, private LogbookProgressService $logbookProgressService)
-    {
+    public function __construct(
+        private SeniorityService $seniorityService,
+        private LogbookRepository $logbookRepository,
+        private UserValidationService $userValidationService,
+        private LogbookProgressService $logbookProgressService
+    ) {
     }
 
-    /**
-     * @return array{
-     *     user: User,
-     *     logbooks: array<int, array{
-     *         logbook: Logbook|null,
-     *         modules: array<int, array{
-     *             actions?: array<int, array{
-     *                 agentValidatedAt?: mixed,
-     *                 mentorValidatedAt?: mixed
-     *             }>
-     *         }>,
-     *         progress: float,
-     *         unvalidated_sections: int,
-     *         progress_class: string
-     *     }>,
-     *     userSeniority: string,
-     *     mentorSeniority: string
-     * }
-     *
-     * @throws \Exception
-     */
     public function getDashboardData(string $nni, ?User $currentUser): array
     {
         // 1. Vérifier si l'utilisateur est connecté
         $this->userValidationService->validateUser(currentUser: $currentUser, nni: $nni);
 
-        assert($currentUser instanceof User);
+        assert(assertion: $currentUser instanceof User);
 
         // Récupérer tous les carnets de log de l'utilisateur
         $logbooks = $currentUser->getLogbooks();
@@ -50,14 +33,11 @@ readonly class DashboardService
             throw new \RuntimeException(message: 'Aucun carnet de compagnonnage trouvé pour cet utilisateur.');
         }
 
-        // Tableau pour stocker les détails de chaque carnet
-        $logbooksDetails = [];
-
-        // Parcourir chaque carnet de log
-        foreach ($logbooks as $logbook) {
-            $logbookDetails = $this->findLogbookDetails(logbook: $logbook);
-            $logbooksDetails[] = $logbookDetails;
-        }
+        // Récupération et transformation des détails du logbook
+        $logbooksDetails = array_map(
+            fn (Logbook $logbook) => $this->transformLogbookDetails($logbook),
+            $logbooks->toArray()
+        );
 
         return [
             'user' => $currentUser,
@@ -67,38 +47,60 @@ readonly class DashboardService
         ];
     }
 
-    /**
-     * @return array{
-     *     logbook: Logbook|null,
-     *     modules: array<int, array{
-     *         actions?: array<int, array{
-     *             agentValidatedAt?: mixed,
-     *             mentorValidatedAt?: mixed
-     *         }>
-     *     }>,
-     *     progress: float,
-     *     unvalidated_sections: int,
-     *     progress_class: string
-     * }
-     */
-    private function findLogbookDetails(Logbook $logbook): array
+    private function transformLogbookDetails(Logbook $logbook): array
     {
-        // Utilise le repository pour obtenir les détails du carnet de compagnonnage
-        $result = $this->logbookRepository->findLogbookDetails($logbook);
+        // Récupérer les détails bruts depuis le repository
+        $rawDetails = $this->logbookRepository->findLogbookDetails($logbook);
 
-        // Transformation du format des modules pour correspondre à l'attendu
-        $modules = array_map(function (array $module): array {
-            // On s'assure que la clé 'actions' existe et est un tableau
-            $module['actions'] = isset($module['actions']) && is_array($module['actions']) ? $module['actions'] : [];
+        // Transformation des détails en une structure hiérarchique
+        $themes = [];
+        foreach ($rawDetails as $item) {
+            $themeId = $item['themeId'];
+            $moduleId = $item['moduleId'];
 
-            // On retourne le module avec la structure correcte
-            return $module;
-        }, $result);
+            // Initialiser le thème si non existant
+            if (!isset($themes[$themeId])) {
+                $themes[$themeId] = [
+                    'title' => $item['themeTitle'],
+                    'description' => $item['themeDescription'],
+                    'modules' => [],
+                ];
+            }
 
-        // Calculer la progression
-        $progress = $this->logbookProgressService->calculateLogbookProgress($modules);
+            // Initialiser le module si non existant
+            if (!isset($themes[$themeId]['modules'][$moduleId])) {
+                $themes[$themeId]['modules'][$moduleId] = [
+                    'title' => $item['moduleTitle'],
+                    'description' => $item['moduleDescription'],
+                    'actions' => [],
+                ];
+            }
 
-        return ['logbook' => $logbook, 'modules' => $modules, 'progress' => $progress['overall'], 'unvalidated_sections' => $progress['unvalidated_sections'], 'progress_class' => $progress['progress_class']];
+            // Ajouter l'action si présente
+            if (!empty($item['actionId'])) {
+                $themes[$themeId]['modules'][$moduleId]['actions'][] = [
+                    'id' => $item['actionId'],
+                    'description' => $item['actionDescription'],
+                    'agentComment' => $item['agentComment'],
+                    'agentValidatedAt' => $item['agentValidatedAt'],
+                    'agentVisa' => $item['agentVisa'],
+                    'mentorComment' => $item['mentorComment'],
+                    'mentorValidatedAt' => $item['mentorValidatedAt'],
+                    'mentorVisa' => $item['mentorVisa'],
+                ];
+            }
+        }
+
+        // Calcul de la progression
+        $progress = $this->logbookProgressService->calculateLogbookProgress($themes);
+
+        return [
+            'logbook' => $logbook,
+            'themes' => $themes,
+            'progress' => $progress['overall'],
+            'unvalidated_sections' => $progress['unvalidated_sections'],
+            'progress_class' => $progress['progress_class'],
+        ];
     }
 
     private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
