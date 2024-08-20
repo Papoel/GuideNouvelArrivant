@@ -41,15 +41,17 @@ class UserCrudController extends AbstractCrudController
         ;
 
         yield TextField::new(propertyName: 'firstname', label: 'Prénom')
-            ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setColumns(cols: 'col-md-3 col-sm-12')
+            ->addCssClass(cssClass: 'text-capitalize')
         ;
 
         yield TextField::new(propertyName: 'lastname', label: 'Nom')
-            ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setColumns(cols: 'col-md-3 col-sm-12')
+            ->addCssClass(cssClass: 'text-capitalize')
         ;
 
         yield TextField::new(propertyName: 'email', label: 'Email')->hideOnIndex()
-            ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setColumns(cols: 'col-md-3 col-sm-12')
         ;
 
         yield TextField::new(propertyName: 'password', label: 'Mot de passe')
@@ -60,6 +62,7 @@ class UserCrudController extends AbstractCrudController
 
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
             ->setChoices(choiceGenerator: [
+                'Utilisateur' => 'ROLE_USER',
                 'Administrateur' => 'ROLE_ADMIN',
                 'Tuteur' => 'ROLE_MENTOR',
                 'Nouvel arrivant' => 'ROLE_NEWCOMER',
@@ -71,7 +74,7 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_MENTOR' => 'success',
                 'ROLE_NEWCOMER' => 'warning',
             ])
-            ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setColumns(cols: 'col-md-3 col-sm-12')
         ;
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
@@ -85,6 +88,7 @@ class UserCrudController extends AbstractCrudController
             ])
             ->onlyWhenCreating()
             ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->onlyOnForms()
         ;
 
         yield TextField::new(propertyName: 'specialityLabel', label: 'Spécialité')->hideOnForm();
@@ -105,15 +109,15 @@ class UserCrudController extends AbstractCrudController
             ->setColumns(cols: 'col-md-6 col-sm-12')
         ;
 
+        yield AssociationField::new(propertyName: 'logbooks', label: 'Carnet de compagnonnage')
+            ->setRequired(isRequired: true)
+            ->setColumns(cols: 'col-md-6 col-sm-12')
+        ;
+
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
             ->hideOnIndex()
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->setFormType(formTypeFqcn: DateType::class)
-        ;
-
-        yield AssociationField::new(propertyName: 'logbooks', label: 'Carnets')
-            ->setRequired(isRequired: true)
-            ->setColumns(cols: 'col-md-6 col-sm-12')
         ;
 
         yield DateTimeField::new(propertyName: 'lastLoginAt', label: 'Dernière connexion')->hideOnIndex()->hideOnForm();

@@ -14,7 +14,8 @@
             <h1>Tableau de bord</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a
+                                href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
                     <li class="breadcrumb-item active">Tableau de bord</li>
                 </ol>
             </nav>
@@ -23,151 +24,169 @@
 
         <section class="section dashboard">
             <div class="row">
-
                 <!-- Left side columns 12: Une colonne sinon 8 et 4-->
                 <div class="col-lg-12">
                     <div class="row">
-
                         <!-- User Card -->
-                        <div class="col-6">
-                            <div class="card info-card user-card h-100">
-                                {#<div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                        <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                        </li>
-
-                                        <li><a class="dropdown-item" href="#">Today</a></li>
-                                        <li><a class="dropdown-item" href="#">This Month</a></li>
-                                        <li><a class="dropdown-item" href="#">This Year</a></li>
-                                    </ul>
-                                </div>#}
-                                <!-- Bandeau de spécialité -->
-                                <div class="ribbon-box mt-2">
-                                    <div class="ribbon
-                                        {% if user.specialityLabel == 'CHA' %}ribbon-cha
-                                        {% elseif user.specialityLabel == 'LEV' %}ribbon-lev
-                                        {% elseif user.specialityLabel == 'MEC' %}ribbon-mec
-                                        {% elseif user.specialityLabel == 'ROB' %}ribbon-rob
-                                        {% endif %}
-                                    ">
-                                        {{ user.specialityLabel }}
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        {{ user.fullname }}
-                                        | <span class="text-muted"> {{ userSeniority }}</span>
-                                    </h5>
-                                    <div class="d-flex align-items-start mb-3">
-                                        <!-- Icone de l'utilisateur -->
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center me-3">
-                                            <i class="bi bi-person"></i>
-                                        </div>
-
-                                        <div>
-                                            <!-- Poste de l'utilisateur -->
-                                            <h6 class="mb-1">{{ user.jobLabel }}</h6>
-                                            <!-- Date d'embauche -->
-                                            <span class="text-success small pt-1 fw-bold">Embauche:</span>
-                                            <span class="text-muted small pt-2 ps-1">{{ user.hiringAt|date('d/m/Y') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{ include('app/dashboard/cards/userCard.html.twig') }}
                         <!-- End User Card -->
 
                         <!-- Mentor Card -->
-                        <div class="col-6">
-                            <div class="card info-card mentor-card h-100">
-                                <div class="ribbon-box mt-2">
-                                    <div class="ribbon ribbon-mentor">
-                                        mentor
-                                    </div>
-                                </div>
-                                {#<div class="filter">
-                                    <a class="icon" href="#" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots"></i>
-                                    </a>
-                                </div>#}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ user.mentor }}
-                                        {% if mentorSeniority is not same as "Non défini" %}
-                                            | <span class="text-muted">{{ mentorSeniority }}</span>
-                                        {% endif %}
-                                    </h5>
-
-                                    <div class="d-flex align-items-center">
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-person-heart"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            <h6>{{ user.mentor.jobLabel }}</h6>
-                                            <!-- Date d'embauche -->
-                                            <span class="text-success small pt-1 fw-bold">Embauche:</span>
-                                            {% if user.mentor.hiringAt is not null %}
-                                                <span class="text-muted small pt-2 ps-1">{{ user.mentor.hiringAt|date('d/m/Y') }}</span>
-                                            {% else %}
-                                                <span class="text-muted small pt-2 ps-1">Non renseignée</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
+                        {{ include('app/dashboard/cards/mentorCard.html.twig') }}
                         <!-- End Mentor Card -->
-
                     </div>
 
                     <div class="row mt-4">
-
                         <!-- Logbook Card -->
-
-                        <div class="col-12">
-
-                            <div class="card info-card customers-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Carnet de Compagnonnage</h5>
-                                    <div class="d-flex align-items-center">
-                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-journal"></i>
-                                        </div>
-                                        <div class="ps-3">
-                                            {% set progress = 100 %}
-                                            <h6>Progression: {{ progress}}%</h6>
-                                            <div class="progress">
-                                                {% set progress_class = progress < 50 ? 'bg-danger' : progress < 75 ? 'bg-warning' : 'bg-success' %}
-                                                <div class="progress-bar {{ progress_class }}" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        {% for logbookData in logbooks %}
+                            <div class="col-12">
+                                <div class="card info-card customers-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Carnet de Compagnonnage</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-journal"></i>
                                             </div>
-                                            <span class="text-muted small pt-2 d-block">Sections non validées : 6</span>
+                                            <div class="ps-3">
+                                                {% set progress = logbookData.progress * 100 %}
+                                                <h6>Progression: {{ progress }}%</h6>
+                                                <div class="progress">
+                                                    {% set progress_class = logbookData.progress_class %}
+                                                    <div class="progress-bar {{ progress_class }}" role="progressbar"
+                                                         style="width: {{ progress }}%" aria-valuenow="{{ progress }}"
+                                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="text-muted small pt-2 d-block">Sections non validées : {{ logbookData.unvalidated_sections }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
+                        {% else %}
+                            <p>Aucun carnet de compagnonnage trouvé.</p>
+                        {% endfor %}
                         <!-- End Logbook Card -->
-
-
                     </div>
-
-
                 </div>
                 <!-- End Left side columns -->
-
             </div>
 
             <div class="row">
-                {% if modules is defined and modules|length > 0 %}
+                <div class="col-12">
+                    <div class="card info-card customers-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Modules</h5>
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-wrench-adjustable-circle"></i>
+                                </div>
+
+                                <section class="section dashboard">
+                                    {% for logbook in logbooks %}
+                                        <div class="card mb-4 ms-2 bg-success-subtle">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-dark">{{ logbook.logbook.name }}</h5>
+
+                                                <div class="progress mb-3">
+                                                    <div class="progress-bar {{ logbook.progress_class }}"
+                                                         role="progressbar" style="width: {{ logbook.progress }}%;"
+                                                         aria-valuenow="{{ logbook.progress }}" aria-valuemin="0"
+                                                         aria-valuemax="100">
+                                                        {{ logbook.progress }}%
+                                                    </div>
+                                                </div>
+
+                                                <div class="accordion" id="accordion{{ logbook.logbook.id }}">
+                                                    {% for themeId, theme in logbook.themes %}
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="heading{{ themeId }}">
+                                                                <button class="accordion-button pe-2 me-2" type="button"
+                                                                        data-bs-toggle="collapse"
+                                                                        data-bs-target="#collapse{{ themeId }}"
+                                                                        aria-expanded="true"
+                                                                        aria-controls="collapse{{ themeId }}">
+                                                                    {{ theme.title }}
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapse{{ themeId }}"
+                                                                 class="accordion-collapse collapse show ms-2"
+                                                                 aria-labelledby="heading{{ themeId }}"
+                                                                 data-bs-parent="#accordion{{ logbook.logbook.id }}">
+                                                                <div class="accordion-body">
+                                                                    {% if theme.description %}
+                                                                        <p>{{ theme.description }}</p>
+                                                                    {% endif %}
+
+                                                                    {% for moduleId, module in theme.modules %}
+                                                                        <div class="card mb-3">
+                                                                            <div class="card-body py-2">
+                                                                                <h6 class="card-title pt-2">
+                                                                                    {{ loop.index }} - {{ module.title }}
+                                                                                </h6>
+                                                                                {% if module.description %}
+                                                                                    <p class="card-text lead ms-3 text-primary">
+                                                                                        {{ module.description|raw }}
+                                                                                    </p>
+                                                                                {% endif %}
+
+                                                                                {% if module.actions is not empty %}
+                                                                                    <table class="table table-bordered mt-3">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Commentaire Agent</th>
+                                                                                            <th>Validation Agent</th>
+                                                                                            <th>Commentaire Mentor</th>
+                                                                                            <th>Validation Mentor</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        {% for action in module.actions %}
+                                                                                            <tr>
+                                                                                                <td>{{ action.agentComment }}</td>
+                                                                                                <td>
+                                                                                                    {% if action.agentValidatedAt %}
+                                                                                                        {{ action.agentValidatedAt|date('d/m/Y H:i') }} - {{ action.agentVisa }}
+                                                                                                    {% else %}
+                                                                                                        Non validé
+                                                                                                    {% endif %}
+                                                                                                </td>
+                                                                                                <td>{{ action.mentorComment }}</td>
+                                                                                                <td>
+                                                                                                    {% if action.mentorValidatedAt %}
+                                                                                                        {{ action.mentorValidatedAt|date('d/m/Y H:i') }} - {{ action.mentorVisa }}
+                                                                                                    {% else %}
+                                                                                                        Non validé
+                                                                                                    {% endif %}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        {% endfor %}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </section>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {# {% if modules is defined and modules|length > 0 %}
                     {% for module in modules %}
                         <div class="module">
                             <details>
                                 <summary>{{ module.moduleTitle }}</summary>
                                 <p class="container">
-                                    {# TODO: Voir comment afficher les modules du carnet et faire la mise en page #}
+                                    TODO: Voir comment afficher les modules du carnet et faire la mise en page #
                                 </p>
                             </details>
                             <!-- autres éléments de module -->
@@ -175,27 +194,31 @@
                     {% endfor %}
                 {% else %}
                     <p>Aucun module trouvé.</p>
-                {% endif %}
+                {% endif %} #}
             </div>
 
         </section>
 
-    </main><!-- End #main -->
+    </main>
+    <!-- End #main -->
 
     <!-- ======= Footer ======= -->
     <footer id="footer" class="footer">
         <div class="copyright">
-            &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+            &copy; Copyright <strong><span>Pascal Briffard</span></strong>. Tous droits réservés.
         </div>
         <div class="credits">
             <!-- All the links in the footer should remain intact. -->
             <!-- You can delete the links only if you purchased the pro version. -->
             <!-- Licensing information: https://bootstrapmade.com/license/ -->
             <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            Application conçue par <a target="_blank" href="https://www.github.com/Papoel">Papoel</a>, propulsée par <a
+                    t target="_blank" href="https://www.symfony.com/">Symfonyy 7</a> et <a target="_blank"
+                                                                                           href="https://getbootstrap.com/">Bootstrap</a>.
         </div>
     </footer><!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+                class="bi bi-arrow-up-short"></i></a>
 
 {% endblock %}

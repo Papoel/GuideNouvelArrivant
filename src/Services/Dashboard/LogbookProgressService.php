@@ -48,7 +48,7 @@ class LogbookProgressService
         }
 
         return [
-            'overall' => round($progress, 2),
+            'overall' => round(num: $progress, precision: 2),
             'unvalidated_sections' => $totalActions - $validatedActions,
             'progress_class' => $progressClass,
         ];

@@ -21,17 +21,23 @@ class LogbookRepository extends ServiceEntityRepository
      */
     public function findLogbookDetails(Logbook $logbook): array
     {
-        // Utiliser QueryBuilder pour obtenir les détails du carnet de compagnonnage
+        // Utilisation de QueryBuilder pour obtenir les détails du carnet de compagnonnage avec actions associées
         $qb = $this->createQueryBuilder(alias: 'l')
             ->select(
-                'm.id AS moduleId',
-                'm.title AS moduleTitle',
-                'm.description AS moduleDescription',
                 't.id AS themeId',
                 't.title AS themeTitle',
                 't.description AS themeDescription',
+                'm.id AS moduleId',
+                'm.title AS moduleTitle',
+                'm.description AS moduleDescription',
                 'a.id AS actionId',
                 'a.description AS actionDescription',
+                'a.agentComment AS agentComment',
+                'a.agentValidatedAt AS agentValidatedAt',
+                'a.agentVisa AS agentVisa',
+                'a.mentorComment AS mentorComment',
+                'a.mentorValidatedAt AS mentorValidatedAt',
+                'a.mentorVisa AS mentorVisa'
             )
             ->join(join: 'l.themes', alias: 't')
             ->join(join: 't.modules', alias: 'm')
@@ -44,4 +50,30 @@ class LogbookRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /*    public function findLogbookDetails(Logbook $logbook): array
+        {
+            // Utiliser QueryBuilder pour obtenir les détails du carnet de compagnonnage
+            $qb = $this->createQueryBuilder(alias: 'l')
+                ->select(
+                    'm.id AS moduleId',
+                    'm.title AS moduleTitle',
+                    'm.description AS moduleDescription',
+                    't.id AS themeId',
+                    't.title AS themeTitle',
+                    't.description AS themeDescription',
+                    'a.id AS actionId',
+                    'a.description AS actionDescription',
+                )
+                ->join(join: 'l.themes', alias: 't')
+                ->join(join: 't.modules', alias: 'm')
+                ->leftJoin(join: 'm.actions', alias: 'a')
+                ->where('l.id = :logbookId')
+                ->setParameter(key: 'logbookId', value: $logbook->getId());
+
+            $result = $qb->getQuery()->getArrayResult();
+            assert(is_array($result));
+
+            return $result;
+        }*/
 }
