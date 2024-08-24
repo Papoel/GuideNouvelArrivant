@@ -29,9 +29,9 @@ readonly class DashboardService
         // Récupérer tous les carnets de log de l'utilisateur
         $logbooks = $currentUser->getLogbooks();
 
-        if ($logbooks->isEmpty()) {
+        /*if ($logbooks->isEmpty()) {
             throw new \RuntimeException(message: 'Aucun carnet de compagnonnage trouvé pour cet utilisateur.');
-        }
+        }*/
 
         // Récupération et transformation des détails du logbook
         $logbooksDetails = array_map(
