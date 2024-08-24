@@ -45,7 +45,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle(title: 'GuideNouvelArrivant')
+            ->setTitle(title: 'EDF - Compagnonnage')
             ->renderContentMaximized()
             ->setLocales(locales: ['fr' => '🇫🇷 Français'])
         ;
@@ -90,7 +90,5 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud(label: 'Créer themes', icon: 'fas fa-plus-circle', entityFqcn: Theme::class)->setAction(actionName: Crud::PAGE_NEW),
             MenuItem::linkToCrud(label: 'Voir themes', icon: 'fas fa-eye', entityFqcn: Theme::class)->setAction(actionName: Crud::PAGE_DETAIL),
         ]);
-
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 }

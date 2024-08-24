@@ -17,12 +17,17 @@ class LogbookCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new(propertyName: 'id')->onlyOnIndex(),
-            TextField::new(propertyName: 'name'),
-
-            // TODO: Vérifier pourquoi les thèmes ne s'enregistrent pas
-            AssociationField::new(propertyName: 'themes'),
-        ];
+        yield IdField::new(propertyName: 'id')->onlyOnIndex();
+        yield TextField::new(propertyName: 'name');
+        yield AssociationField::new(propertyName: 'themes')
+            ->setFormTypeOptions([
+                'by_reference' => false,
+            ])
+        ;
+        yield AssociationField::new(propertyName: 'users')
+            ->setFormTypeOptions([
+                'by_reference' => false,
+            ])
+        ;
     }
 }

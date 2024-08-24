@@ -22,7 +22,10 @@ class ActionCrudController extends AbstractCrudController
     {
         yield IdField::new(propertyName: 'id')->hideOnForm();
         yield TextareaField::new(propertyName: 'description');
-        yield DateTimeField::new(propertyName: 'agentValidatedAt')->hideOnIndex();
+        // yield DateTimeField::new(propertyName: 'agentValidatedAt')->hideOnIndex();
+        yield BooleanField::new(propertyName: 'AgentValidated')
+            ->setLabel(label: 'Validation Agent')
+            ->onlyOnIndex();
 
         yield AssociationField::new(propertyName: 'module');
 
