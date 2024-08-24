@@ -19,8 +19,9 @@ class UserValidationService
             throw new \RuntimeException(message: 'Utilisateur non connecté');
         }
 
-        if ($currentUser->getNni() !== $nni) {
-            throw new \RuntimeException(message: 'Le NNI ne correspond pas.');
+        // Vérification du NNI, autoriser si l'utilisateur est un administrateur
+        if ($currentUser->getNni() !== $nni && !$currentUser->isAdmin()) {
+            throw new \RuntimeException(message: 'Vous n\'avez pas les droits pour accéder à cette page');
         }
     }
 }

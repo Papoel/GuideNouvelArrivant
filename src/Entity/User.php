@@ -295,4 +295,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isAdmin(): bool
+    {
+        return \in_array(needle: 'ROLE_ADMIN', haystack: $this->roles, strict: true);
+    }
 }

@@ -38,6 +38,7 @@ class UserCrudController extends AbstractCrudController
     {
         yield IdField::new(propertyName: 'id')
             ->hideOnForm()
+            ->hideOnIndex()
         ;
 
         yield TextField::new(propertyName: 'firstname', label: 'Prénom')
@@ -48,6 +49,10 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new(propertyName: 'lastname', label: 'Nom')
             ->setColumns(cols: 'col-md-3 col-sm-12')
             ->addCssClass(cssClass: 'text-capitalize')
+        ;
+
+        yield TextField::new(propertyName: 'nni', label: 'NNI')
+            ->setColumns(cols: 'col-md-3 col-sm-12')
         ;
 
         yield TextField::new(propertyName: 'email', label: 'Email')->hideOnIndex()
@@ -110,8 +115,10 @@ class UserCrudController extends AbstractCrudController
         ;
 
         yield AssociationField::new(propertyName: 'logbooks', label: 'Carnet de compagnonnage')
-            ->setRequired(isRequired: true)
             ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setFormTypeOptions([
+                'by_reference' => false,
+            ])
         ;
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
@@ -169,8 +176,9 @@ class UserCrudController extends AbstractCrudController
             ->setLabel(label: 'Supprimer les carnets');
 
         return $actions
-            ->add(Crud::PAGE_EDIT, $removeLogbookAction)
-            ->reorder(Crud::PAGE_EDIT, [
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: 'detail')
+            ->add(pageName: Crud::PAGE_EDIT, actionNameOrObject: $removeLogbookAction)
+            ->reorder(pageName: Crud::PAGE_EDIT, orderedActionNames: [
                 Action::SAVE_AND_CONTINUE,
                 Action::SAVE_AND_RETURN,
                 self::REMOVE_LOGBOOK_ACTION,
