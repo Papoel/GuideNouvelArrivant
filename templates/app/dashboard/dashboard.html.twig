@@ -63,7 +63,23 @@
                                 </div>
                             </div>
                         {% else %}
-                            <p>Aucun carnet de compagnonnage trouvé.</p>
+                            <div class="col-12">
+                                <div class="card info-card no-mentor-card h-100">
+                                    <div class="card-body text-center">
+                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </div>
+                                        <h5 class="card-title">Pas de carnet de compagnonnage</h5>
+                                        <p class="text-muted">{{ user.fullname }} n'a actuellement été affecté.</p>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('admin', {
+                                                crudAction: 'index',
+                                                crudControllerFqcn: 'App\\Controller\\Admin\\Logbook\\LogbookCrudController',
+                                            }) }}" class="btn btn-sm" id="btn-assign--mentor">Affecter un carnet</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         {% endfor %}
                         <!-- End Logbook Card -->
                     </div>
@@ -71,131 +87,134 @@
                 <!-- End Left side columns -->
             </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card info-card customers-card">
-                        <div class="card-body">
-                            <h5 class="card-title">Modules</h5>
-                            <div class="d-flex align-items-center">
-                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-wrench-adjustable-circle"></i>
-                                </div>
+            {% if logbooks %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card info-card customers-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Modules</h5>
+                                <div class="d-flex align-items-center">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-wrench-adjustable-circle"></i>
+                                    </div>
 
-                                <section class="section dashboard">
-                                    {% for logbook in logbooks %}
-                                        <div class="card mb-4 ms-2 bg-success-subtle">
-                                            <div class="card-body">
-                                                <h5 class="card-title text-dark">{{ logbook.logbook.name }}</h5>
+                                    <section class="section dashboard">
+                                        {% for logbook in logbooks %}
+                                            <div class="card mb-4 ms-2 bg-success-subtle">
+                                                <div class="card-body">
+                                                    <h5 class="card-title text-dark">{{ logbook.logbook.name }}</h5>
 
-                                                <div class="progress mb-3">
-                                                    <div class="progress-bar {{ logbook.progress_class }}"
-                                                         role="progressbar" style="width: {{ logbook.progress }}%;"
-                                                         aria-valuenow="{{ logbook.progress }}" aria-valuemin="0"
-                                                         aria-valuemax="100">
-                                                        {{ logbook.progress }}%
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar {{ logbook.progress_class }}"
+                                                             role="progressbar" style="width: {{ logbook.progress }}%;"
+                                                             aria-valuenow="{{ logbook.progress }}" aria-valuemin="0"
+                                                             aria-valuemax="100">
+                                                            {{ logbook.progress }}%
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <div class="accordion" id="accordion{{ logbook.logbook.id }}">
-                                                    {% for themeId, theme in logbook.themes %}
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="heading{{ themeId }}">
-                                                                <button class="accordion-button pe-2 me-2" type="button"
-                                                                        data-bs-toggle="collapse"
-                                                                        data-bs-target="#collapse{{ themeId }}"
-                                                                        aria-expanded="true"
-                                                                        aria-controls="collapse{{ themeId }}">
-                                                                    {{ theme.title }}
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapse{{ themeId }}"
-                                                                 class="accordion-collapse collapse show ms-2"
-                                                                 aria-labelledby="heading{{ themeId }}"
-                                                                 data-bs-parent="#accordion{{ logbook.logbook.id }}">
-                                                                <div class="accordion-body">
-                                                                    {% if theme.description %}
-                                                                        <p>{{ theme.description }}</p>
-                                                                    {% endif %}
+                                                    <div class="accordion" id="accordion{{ logbook.logbook.id }}">
+                                                        {% for themeId, theme in logbook.themes %}
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="heading{{ themeId }}">
+                                                                    <button class="accordion-button pe-2 me-2" type="button"
+                                                                            data-bs-toggle="collapse"
+                                                                            data-bs-target="#collapse{{ themeId }}"
+                                                                            aria-expanded="true"
+                                                                            aria-controls="collapse{{ themeId }}">
+                                                                        {{ theme.title }}
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapse{{ themeId }}"
+                                                                     class="accordion-collapse collapse show ms-2"
+                                                                     aria-labelledby="heading{{ themeId }}"
+                                                                     data-bs-parent="#accordion{{ logbook.logbook.id }}">
+                                                                    <div class="accordion-body">
+                                                                        {% if theme.description %}
+                                                                            <p>{{ theme.description }}</p>
+                                                                        {% endif %}
 
-                                                                    {% for moduleId, module in theme.modules %}
-                                                                        <div class="card mb-3">
-                                                                            <div class="card-body py-2">
-                                                                                <h6 class="card-title pt-2">
-                                                                                    {{ loop.index }} - {{ module.title }}
-                                                                                </h6>
-                                                                                {% if module.description %}
-                                                                                    <p class="card-text lead ms-3 text-primary">
-                                                                                        {{ module.description|raw }}
-                                                                                    </p>
-                                                                                {% endif %}
+                                                                        {% for moduleId, module in theme.modules %}
+                                                                            <div class="card mb-3">
+                                                                                <div class="card-body py-2">
+                                                                                    <h6 class="card-title pt-2">
+                                                                                        {{ loop.index }} - {{ module.title }}
+                                                                                    </h6>
+                                                                                    {% if module.description %}
+                                                                                        <p class="card-text lead ms-3 text-primary">
+                                                                                            {{ module.description|raw }}
+                                                                                        </p>
+                                                                                    {% endif %}
 
-                                                                                {% if module.actions is not empty %}
-                                                                                    <table class="table table-bordered mt-3">
-                                                                                        <thead>
-                                                                                        <tr>
-                                                                                            <th>Commentaire Agent</th>
-                                                                                            <th>Validation Agent</th>
-                                                                                            <th>Commentaire Mentor</th>
-                                                                                            <th>Validation Mentor</th>
-                                                                                        </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                        {% for action in module.actions %}
+                                                                                    {% if module.actions is not empty %}
+                                                                                        <table class="table table-bordered mt-3">
+                                                                                            <thead>
                                                                                             <tr>
-                                                                                                <td>{{ action.agentComment }}</td>
-                                                                                                <td>
-                                                                                                    {% if action.agentValidatedAt %}
-                                                                                                        {{ action.agentValidatedAt|date('d/m/Y H:i') }} - {{ action.agentVisa }}
-                                                                                                    {% else %}
-                                                                                                        Non validé
-                                                                                                    {% endif %}
-                                                                                                </td>
-                                                                                                <td>{{ action.mentorComment }}</td>
-                                                                                                <td>
-                                                                                                    {% if action.mentorValidatedAt %}
-                                                                                                        {{ action.mentorValidatedAt|date('d/m/Y H:i') }} - {{ action.mentorVisa }}
-                                                                                                    {% else %}
-                                                                                                        Non validé
-                                                                                                    {% endif %}
-                                                                                                </td>
+                                                                                                <th>Commentaire Agent</th>
+                                                                                                <th>Validation Agent</th>
+                                                                                                <th>Commentaire Mentor</th>
+                                                                                                <th>Validation Mentor</th>
                                                                                             </tr>
-                                                                                        {% endfor %}
-                                                                                        </tbody>
-                                                                                    </table>
-                                                                                {% endif %}
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                            {% for action in module.actions %}
+                                                                                                <tr>
+                                                                                                    <td>{{ action.agentComment }}</td>
+                                                                                                    <td>
+                                                                                                        {% if action.agentValidatedAt %}
+                                                                                                            {{ action.agentValidatedAt|date('d/m/Y H:i') }} - {{ action.agentVisa }}
+                                                                                                        {% else %}
+                                                                                                            Non validé
+                                                                                                        {% endif %}
+                                                                                                    </td>
+                                                                                                    <td>{{ action.mentorComment }}</td>
+                                                                                                    <td>
+                                                                                                        {% if action.mentorValidatedAt %}
+                                                                                                            {{ action.mentorValidatedAt|date('d/m/Y H:i') }} - {{ action.mentorVisa }}
+                                                                                                        {% else %}
+                                                                                                            Non validé
+                                                                                                        {% endif %}
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            {% endfor %}
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    {% endif %}
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    {% endfor %}
+                                                                        {% endfor %}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    {% endfor %}
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    {% endfor %}
-                                </section>
+                                        {% endfor %}
+                                    </section>
 
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {# {% if modules is defined and modules|length > 0 %}
+                        {% for module in modules %}
+                            <div class="module">
+                                <details>
+                                    <summary>{{ module.moduleTitle }}</summary>
+                                    <p class="container">
+                                        TODO: Voir comment afficher les modules du carnet et faire la mise en page #
+                                    </p>
+                                </details>
+                                <!-- autres éléments de module -->
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Aucun module trouvé.</p>
+                    {% endif %} #}
                 </div>
-                {# {% if modules is defined and modules|length > 0 %}
-                    {% for module in modules %}
-                        <div class="module">
-                            <details>
-                                <summary>{{ module.moduleTitle }}</summary>
-                                <p class="container">
-                                    TODO: Voir comment afficher les modules du carnet et faire la mise en page #
-                                </p>
-                            </details>
-                            <!-- autres éléments de module -->
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Aucun module trouvé.</p>
-                {% endif %} #}
-            </div>
+
+            {% endif %}
 
         </section>
 
@@ -203,22 +222,11 @@
     <!-- End #main -->
 
     <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>Pascal Briffard</span></strong>. Tous droits réservés.
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Application conçue par <a target="_blank" href="https://www.github.com/Papoel">Papoel</a>, propulsée par <a
-                    t target="_blank" href="https://www.symfony.com/">Symfonyy 7</a> et <a target="_blank"
-                                                                                           href="https://getbootstrap.com/">Bootstrap</a>.
-        </div>
-    </footer><!-- End Footer -->
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
+    <!-- End Footer -->
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-                class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+        <i class="bi bi-arrow-up-short"></i>
+    </a>
 
 {% endblock %}
