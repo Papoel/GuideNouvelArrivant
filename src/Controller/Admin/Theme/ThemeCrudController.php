@@ -4,6 +4,7 @@ namespace App\Controller\Admin\Theme;
 
 use App\Entity\Theme;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -17,10 +18,15 @@ class ThemeCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new(propertyName: 'id')->onlyOnIndex(),
-            TextField::new(propertyName: 'title'),
-            TextEditorField::new(propertyName: 'description'),
-        ];
+        yield IdField::new(propertyName: 'id')
+                ->hideOnForm()
+                ->hideOnIndex()
+        ;
+
+        yield TextField::new(propertyName: 'title', label: 'Titre');
+
+        yield TextEditorField::new(propertyName: 'description');
+
+        yield AssociationField::new(propertyName: 'modules', label: 'Nb de Modules')->onlyOnIndex();
     }
 }

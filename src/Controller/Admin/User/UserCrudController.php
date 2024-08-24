@@ -115,8 +115,10 @@ class UserCrudController extends AbstractCrudController
         ;
 
         yield AssociationField::new(propertyName: 'logbooks', label: 'Carnet de compagnonnage')
-            ->setRequired(isRequired: true)
             ->setColumns(cols: 'col-md-6 col-sm-12')
+            ->setFormTypeOptions([
+                'by_reference' => false,
+            ])
         ;
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
