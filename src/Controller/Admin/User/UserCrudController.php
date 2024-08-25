@@ -110,7 +110,7 @@ class UserCrudController extends AbstractCrudController
         ;
 
         yield AssociationField::new(propertyName: 'mentor', label: 'Tuteur')
-            ->setRequired(isRequired: true)
+            ->setRequired(isRequired: false)
             ->setColumns(cols: 'col-md-6 col-sm-12')
         ;
 
