@@ -7,12 +7,14 @@ namespace App\Services\Dashboard;
 use App\Entity\Logbook;
 use App\Entity\User;
 use App\Repository\LogbookRepository;
-use App\Services\SeniorityService;
+use App\Services\Logbook\LogbookProgressService;
+use App\Services\User\UserSeniorityService;
+use App\Services\User\UserValidationService;
 
 readonly class DashboardService
 {
     public function __construct(
-        private SeniorityService $seniorityService,
+        private UserSeniorityService $seniorityService,
         private LogbookRepository $logbookRepository,
         private UserValidationService $userValidationService,
         private LogbookProgressService $logbookProgressService
