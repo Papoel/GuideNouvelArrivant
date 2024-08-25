@@ -114,11 +114,13 @@ class UserCrudController extends AbstractCrudController
             ->setColumns(cols: 'col-md-6 col-sm-12')
         ;
 
-        yield AssociationField::new(propertyName: 'logbooks', label: 'Carnet de compagnonnage')
+        yield AssociationField::new(propertyName: 'logbooks', label: 'Carnets')
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->setFormTypeOptions([
                 'by_reference' => false,
             ])
+            // Afficher le nom du carnet dans la liste
+            ->formatValue(fn ($value, $entity) => $entity->getLogbooks()->count().' carnet'.($entity->getLogbooks()->count() > 1 ? 's' : ''))
         ;
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
