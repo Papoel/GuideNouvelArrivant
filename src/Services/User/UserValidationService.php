@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Dashboard;
+namespace App\Services\User;
 
 use App\Entity\User;
 

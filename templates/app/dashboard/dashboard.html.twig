@@ -9,13 +9,28 @@
 
 
     <main id="main" class="main">
+        <!-- Message Flash -->
+            <section id="flash_messages" class="container-fluid mt-4">
+                {# Display messages Flash #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+            </section>
 
         <div class="pageTitle">
             <h1>Tableau de bord</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a
-                                href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
+                            Accueil
+                        </a>
+                    </li>
                     <li class="breadcrumb-item active">Tableau de bord</li>
                 </ol>
             </nav>
@@ -24,19 +39,18 @@
 
         <section class="section dashboard">
             <div class="row">
-                <!-- Left side columns 12: Une colonne sinon 8 et 4-->
                 <div class="col-lg-12">
                     <div class="row">
-                        <!-- User Card -->
+                        <!-- Agent Card -->
                         {{ include('app/dashboard/cards/userCard.html.twig') }}
-                        <!-- End User Card -->
+                        <!-- End Agent Card -->
 
                         <!-- Mentor Card -->
                         {{ include('app/dashboard/cards/mentorCard.html.twig') }}
                         <!-- End Mentor Card -->
                     </div>
 
-                    <div class="row mt-4">
+                    {#<div class="row mt-4">
                         <!-- Logbook Card -->
                         {% for logbookData in logbooks %}
                             <div class="col-12">
@@ -82,139 +96,59 @@
                             </div>
                         {% endfor %}
                         <!-- End Logbook Card -->
-                    </div>
+                    </div>#}
                 </div>
                 <!-- End Left side columns -->
             </div>
 
-            {% if logbooks %}
-                <div class="row">
+            <div class="container-fluid">
+                <pre>
+{#                    {{ dump(actions) }}#}
+                </pre>
+            </div>
+
+            <section id="card-logbook">
+                <div class="row mt-4">
                     <div class="col-12">
-                        <div class="card info-card customers-card">
-                            <div class="card-body">
-                                <h5 class="card-title">Modules</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-wrench-adjustable-circle"></i>
-                                    </div>
-
-                                    <section class="section dashboard">
-                                        {% for logbook in logbooks %}
-                                            <div class="card mb-4 ms-2 bg-success-subtle">
-                                                <div class="card-body">
-                                                    <h5 class="card-title text-dark">{{ logbook.logbook.name }}</h5>
-
-                                                    <div class="progress mb-3">
-                                                        <div class="progress-bar {{ logbook.progress_class }}"
-                                                             role="progressbar" style="width: {{ logbook.progress }}%;"
-                                                             aria-valuenow="{{ logbook.progress }}" aria-valuemin="0"
-                                                             aria-valuemax="100">
-                                                            {{ logbook.progress }}%
+                        {% for logbook in logbooks %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="">{{ logbook.name }}</h5>
+                                </div>
+                                <div class="card-body">
+                                        {% for theme in logbook.themes %}
+                                            <div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="moduleAndTheme">
+                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-theme-{{ theme.id }}" aria-expanded="false" aria-controls="collapse-theme-{{ theme.id }}">
+                                                            {{ theme.title }}
+                                                        <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapse-theme-{{ theme.id }}" class="accordion-collapse collapse" aria-labelledby="moduleAndTheme" data-bs-parent="#theme-{{ theme.id }}">
+                                                        <div class="accordion-body">
+                                                            {% for module in theme.modules %}
+                                                                <ul class="list-group mt-2">
+                                                                    <li id="module-{{ module.id }}" class="list-group-item" data-bs-mainTheme="{{ module.theme.id }}">
+                                                                        {{ loop.index }} - {{ module.title }}
+                                                                        <a href="{{ path('dashboard_module', {'nni': app.user.nni, 'module': module.id}) }}" class="btn btn-sm btn-primary float-end">
+                                                                            <i class="bi bi-eye float-end"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            {% endfor %}
                                                         </div>
-                                                    </div>
-
-                                                    <div class="accordion" id="accordion{{ logbook.logbook.id }}">
-                                                        {% for themeId, theme in logbook.themes %}
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="heading{{ themeId }}">
-                                                                    <button class="accordion-button pe-2 me-2" type="button"
-                                                                            data-bs-toggle="collapse"
-                                                                            data-bs-target="#collapse{{ themeId }}"
-                                                                            aria-expanded="true"
-                                                                            aria-controls="collapse{{ themeId }}">
-                                                                        {{ theme.title }}
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapse{{ themeId }}"
-                                                                     class="accordion-collapse collapse show ms-2"
-                                                                     aria-labelledby="heading{{ themeId }}"
-                                                                     data-bs-parent="#accordion{{ logbook.logbook.id }}">
-                                                                    <div class="accordion-body">
-                                                                        {% if theme.description %}
-                                                                            <p>{{ theme.description }}</p>
-                                                                        {% endif %}
-
-                                                                        {% for moduleId, module in theme.modules %}
-                                                                            <div class="card mb-3">
-                                                                                <div class="card-body py-2">
-                                                                                    <h6 class="card-title pt-2">
-                                                                                        {{ loop.index }} - {{ module.title }}
-                                                                                    </h6>
-                                                                                    {% if module.description %}
-                                                                                        <p class="card-text lead ms-3 text-primary">
-                                                                                            {{ module.description|raw }}
-                                                                                        </p>
-                                                                                    {% endif %}
-
-                                                                                    {% if module.actions is not empty %}
-                                                                                        <table class="table table-bordered mt-3">
-                                                                                            <thead>
-                                                                                            <tr>
-                                                                                                <th>Commentaire Agent</th>
-                                                                                                <th>Validation Agent</th>
-                                                                                                <th>Commentaire Mentor</th>
-                                                                                                <th>Validation Mentor</th>
-                                                                                            </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                            {% for action in module.actions %}
-                                                                                                <tr>
-                                                                                                    <td>{{ action.agentComment }}</td>
-                                                                                                    <td>
-                                                                                                        {% if action.agentValidatedAt %}
-                                                                                                            {{ action.agentValidatedAt|date('d/m/Y H:i') }} - {{ action.agentVisa }}
-                                                                                                        {% else %}
-                                                                                                            Non validé
-                                                                                                        {% endif %}
-                                                                                                    </td>
-                                                                                                    <td>{{ action.mentorComment }}</td>
-                                                                                                    <td>
-                                                                                                        {% if action.mentorValidatedAt %}
-                                                                                                            {{ action.mentorValidatedAt|date('d/m/Y H:i') }} - {{ action.mentorVisa }}
-                                                                                                        {% else %}
-                                                                                                            Non validé
-                                                                                                        {% endif %}
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            {% endfor %}
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    {% endif %}
-                                                                                </div>
-                                                                            </div>
-                                                                        {% endfor %}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endfor %}
                                                     </div>
                                                 </div>
                                             </div>
                                         {% endfor %}
-                                    </section>
-
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    {# {% if modules is defined and modules|length > 0 %}
-                        {% for module in modules %}
-                            <div class="module">
-                                <details>
-                                    <summary>{{ module.moduleTitle }}</summary>
-                                    <p class="container">
-                                        TODO: Voir comment afficher les modules du carnet et faire la mise en page #
-                                    </p>
-                                </details>
-                                <!-- autres éléments de module -->
-                            </div>
                         {% endfor %}
-                    {% else %}
-                        <p>Aucun module trouvé.</p>
-                    {% endif %} #}
+                    </div>
                 </div>
+            </section>
 
-            {% endif %}
 
         </section>
 

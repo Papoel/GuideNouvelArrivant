@@ -282,8 +282,11 @@ h6 {
 }
 
 .accordion-button:not(.collapsed) {
-    color: #012970;
-    background-color: #f6f9ff;
+    /* color: #012970; background-color: #f6f9ff; */
+    background-color: #205493;
+    color: #f6f5f5;
+    font-weight: lighter;
+    letter-spacing: 2px;
 }
 
 .accordion-flush .accordion-button {
