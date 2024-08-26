@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Dashboard;
 
-use App\Entity\Logbook;
 use App\Entity\User;
-use App\Repository\LogbookRepository;
-use App\Services\Logbook\LogbookProgressService;
 use App\Services\User\UserSeniorityService;
 use App\Services\User\UserValidationService;
 
 readonly class DashboardService
 {
     public function __construct(
-        private UserSeniorityService $seniorityService,
-        private LogbookRepository $logbookRepository,
         private UserValidationService $userValidationService,
-        private LogbookProgressService $logbookProgressService
+        private UserSeniorityService $seniorityService,
     ) {
     }
 
@@ -28,81 +23,61 @@ readonly class DashboardService
 
         assert(assertion: $currentUser instanceof User);
 
-        // Récupérer tous les carnets de log de l'utilisateur
-        $logbooks = $currentUser->getLogbooks();
-
-        /*if ($logbooks->isEmpty()) {
-            throw new \RuntimeException(message: 'Aucun carnet de compagnonnage trouvé pour cet utilisateur.');
-        }*/
-
-        // Récupération et transformation des détails du logbook
-        $logbooksDetails = array_map(
-            fn (Logbook $logbook) => $this->transformLogbookDetails($logbook),
-            $logbooks->toArray()
-        );
+        $logbooks = $this->getLogbooksByUser($currentUser);
+        $themes = $this->getThemesByLogbooks($logbooks);
+        $modules = $this->getModulesByThemes($themes);
+        $actions = $this->getActionsByModules($modules);
 
         return [
             'user' => $currentUser,
-            'logbooks' => $logbooksDetails,
-            'userSeniority' => $this->calculateSeniority($currentUser->getHiringAt()),
-            'mentorSeniority' => $this->calculateSeniority($currentUser->getMentor()?->getHiringAt()),
+            'logbooks' => $logbooks,
+            'themes' => $themes,
+            'modules' => $modules,
+            'actions' => $actions,
+            'userSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getHiringAt()),
+            'mentorSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getMentor()?->getHiringAt()),
         ];
     }
 
-    private function transformLogbookDetails(Logbook $logbook): array
+    private function getLogbooksByUser(User $user): array
     {
-        // Récupérer les détails bruts depuis le repository
-        $rawDetails = $this->logbookRepository->findLogbookDetails($logbook);
+        return $user->getLogbooks()->toArray();
+    }
 
-        // Transformation des détails en une structure hiérarchique
+    private function getThemesByLogbooks(array $logbooks): array
+    {
         $themes = [];
-        foreach ($rawDetails as $item) {
-            $themeId = $item['themeId'];
-            $moduleId = $item['moduleId'];
-
-            // Initialiser le thème si non existant
-            if (!isset($themes[$themeId])) {
-                $themes[$themeId] = [
-                    'title' => $item['themeTitle'],
-                    'description' => $item['themeDescription'],
-                    'modules' => [],
-                ];
-            }
-
-            // Initialiser le module si non existant
-            if (!isset($themes[$themeId]['modules'][$moduleId])) {
-                $themes[$themeId]['modules'][$moduleId] = [
-                    'title' => $item['moduleTitle'],
-                    'description' => $item['moduleDescription'],
-                    'actions' => [],
-                ];
-            }
-
-            // Ajouter l'action si présente
-            if (!empty($item['actionId'])) {
-                $themes[$themeId]['modules'][$moduleId]['actions'][] = [
-                    'id' => $item['actionId'],
-                    'description' => $item['actionDescription'],
-                    'agentComment' => $item['agentComment'],
-                    'agentValidatedAt' => $item['agentValidatedAt'],
-                    'agentVisa' => $item['agentVisa'],
-                    'mentorComment' => $item['mentorComment'],
-                    'mentorValidatedAt' => $item['mentorValidatedAt'],
-                    'mentorVisa' => $item['mentorVisa'],
-                ];
+        foreach ($logbooks as $logbook) {
+            foreach ($logbook->getThemes() as $theme) {
+                $themes[] = $theme;
             }
         }
 
-        // Calcul de la progression
-        $progress = $this->logbookProgressService->calculateLogbookProgress($themes);
+        return $themes;
+    }
 
-        return [
-            'logbook' => $logbook,
-            'themes' => $themes,
-            'progress' => $progress['overall'],
-            'unvalidated_sections' => $progress['unvalidated_sections'],
-            'progress_class' => $progress['progress_class'],
-        ];
+    private function getModulesByThemes(array $themes): array
+    {
+        $modules = [];
+        foreach ($themes as $theme) {
+            foreach ($theme->getModules() as $module) {
+                $modules[] = $module;
+            }
+        }
+
+        return $modules;
+    }
+
+    private function getActionsByModules(array $modules): array
+    {
+        $actions = [];
+        foreach ($modules as $module) {
+            foreach ($module->getActions() as $action) {
+                $actions[] = $action;
+            }
+        }
+
+        return $actions;
     }
 
     private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
