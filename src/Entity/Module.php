@@ -23,7 +23,7 @@ class Module
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'modules')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'theme_id', referencedColumnName: 'id', nullable: false)]
     private ?Theme $theme = null;
 
     /**

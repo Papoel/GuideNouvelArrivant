@@ -36,6 +36,7 @@ class Action
     private ?string $mentorVisa = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
+    #[ORM\JoinColumn(name: 'module_id', referencedColumnName: 'id')]
     private ?Module $module = null;
 
     public function getId(): ?int
