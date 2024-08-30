@@ -24,7 +24,7 @@ class DashboardController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'index', methods: [Request::METHOD_GET])]
+    #[Route('/', name: 'index', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function index(string $nni, DashboardService $dashboardService): Response
     {
         // 1. Récupérer les données du tableau de bord via le service
@@ -34,7 +34,7 @@ class DashboardController extends AbstractController
         return $this->render(view: 'app/dashboard/dashboard.html.twig', parameters: $dashboardData);
     }
 
-    #[Route('/action/{module}', name: 'module', requirements: ['module' => '\d+'], methods: [Request::METHOD_GET])]
+    #[Route('/action/{module}', name: 'action', requirements: ['module' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function module(ActionService $actionService, string $nni, ?int $module = null): Response
     {
         $moduleEntity = $this->entityManager->getRepository(Module::class)->find($module);
