@@ -3,10 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Action;
-use App\Entity\Module;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,28 +19,34 @@ class ActionFormType extends AbstractType
                 'attr' => [
                     'rows' => 5,
                 ],
+                'required' => false,
             ])
             ->add(child: 'agentComment', type: TextareaType::class, options: [
                 'attr' => [
                     'rows' => 5,
                 ],
+                'required' => false,
             ])
             ->add(child: 'agentValidatedAt', type: DateType::class, options: [
                 'widget' => 'single_text',
+                'required' => false,
             ])
-            ->add(child: 'agentVisa')
             ->add(child: 'mentorComment', type: TextareaType::class, options: [
                 'attr' => [
                     'rows' => 5,
                 ],
+                'required' => false,
             ])
             ->add(child: 'mentorValidatedAt', type: DateType::class, options: [
                 'widget' => 'single_text',
+                'required' => false,
             ])
-            ->add(child: 'mentorVisa')
-            ->add(child: 'module', type: EntityType::class, options: [
-                'class' => Module::class,
-                'choice_label' => 'title',
+
+            ->add(child: 'submit', type: SubmitType::class, options: [
+                'label' => 'Enregistrer',
+                'row_attr' => [
+                    'class' => 'd-grid gap-2 btn btn-sm btn-primary',
+                ],
             ])
         ;
     }

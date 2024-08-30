@@ -1,0 +1,43 @@
+<div {{ attributes }}>
+    {{ form_start(form, {
+        attr: {
+            'novalidate': false,
+            'data-action': 'live#action:prevent',
+            'data-live-action-param': 'save',
+            'data-live-action-param-module-id': module.id,
+            'data-live-action-param-action-id': actionId,
+        }
+    }) }}
+    <div class="modal-body">
+        <div class="col">
+            <div class="row">
+                <div class="col-12">{{ form_row(form.description) }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.agentComment) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.agentValidatedAt) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.mentorComment) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.mentorValidatedAt) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer mb-5">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        {{ form_widget(form.submit, { 'attr': { 'class': 'btn btn-sm btn-primary' } }) }}
+    </div>
+
+    {{ form_end(form) }}
+</div>

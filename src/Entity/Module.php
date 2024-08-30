@@ -119,4 +119,18 @@ class Module
 
         return $this;
     }
+
+    /**
+     * Get an action by ID.
+     */
+    public function getActionByModuleId(int $moduleId): ?Action
+    {
+        foreach ($this->actions as $action) {
+            if ($action->getId() === $moduleId) {
+                return $action;
+            }
+        }
+
+        return null;
+    }
 }

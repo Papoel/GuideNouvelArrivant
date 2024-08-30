@@ -116,32 +116,41 @@
                                     <h5 class="">{{ logbook.name }}</h5>
                                 </div>
                                 <div class="card-body">
-                                        {% for theme in logbook.themes %}
-                                            <div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
-                                                <div class="accordion-item">
-                                                    <h2 class="accordion-header" id="moduleAndTheme">
-                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-theme-{{ theme.id }}" aria-expanded="false" aria-controls="collapse-theme-{{ theme.id }}">
-                                                            {{ theme.title }}
-                                                        <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
-                                                        </button>
-                                                    </h2>
-                                                    <div id="collapse-theme-{{ theme.id }}" class="accordion-collapse collapse" aria-labelledby="moduleAndTheme" data-bs-parent="#theme-{{ theme.id }}">
-                                                        <div class="accordion-body">
-                                                            {% for module in theme.modules %}
-                                                                <ul class="list-group mt-2">
-                                                                    <li id="module-{{ module.id }}" class="list-group-item" data-bs-mainTheme="{{ module.theme.id }}">
-                                                                        {{ loop.index }} - {{ module.title }}
-                                                                        <a href="{{ path('dashboard_module', {'nni': app.user.nni, 'module': module.id}) }}" class="btn btn-sm btn-primary float-end">
-                                                                            <i class="bi bi-eye float-end"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            {% endfor %}
-                                                        </div>
+                                    {% for theme in logbook.themes %}
+                                        <div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="moduleAndTheme">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-theme-{{ theme.id }}" aria-expanded="false" aria-controls="collapse-theme-{{ theme.id }}">
+                                                        {{ theme.title }}
+                                                    <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                                    </button>
+                                                </h2>
+
+                                                <div id="collapse-theme-{{ theme.id }}" class="accordion-collapse collapse" aria-labelledby="moduleAndTheme" data-bs-parent="#theme-{{ theme.id }}">
+                                                    <div class="accordion-body">
+                                                        {% for module in theme.modules %}
+                                                            <ul class="list-group mt-2">
+                                                                <li id="module-{{ module.id }}" class="list-group-item" data-bs-mainTheme="{{ module.theme.id }}">
+                                                                    {{ loop.index }} - {{ module.title }}
+
+                                                                    <a class="btn btn-sm btn-primary float-end"
+                                                                       data-bs-target="#modalCreateAction{{module.id}}"
+                                                                       data-bs-toggle="modal"
+                                                                    >
+                                                                        <i class="bi bi-eye float-end"> {{ module.id }}</i>
+                                                                    </a>
+
+                                                                    {# Modal #}
+                                                                    {{ include('modals/_create_action.html.twig', {module, 'actionId': module.actions.first ? module.actions.first.id : null}) }}
+                                                                </li>
+                                                            </ul>
+                                                        {% endfor %}
                                                     </div>
                                                 </div>
+
                                             </div>
-                                        {% endfor %}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         {% endfor %}
@@ -162,5 +171,6 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
         <i class="bi bi-arrow-up-short"></i>
     </a>
+
 
 {% endblock %}

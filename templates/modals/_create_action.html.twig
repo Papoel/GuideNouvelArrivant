@@ -1,0 +1,16 @@
+{#{% set actionId = module.actions.first ? module.actions.first.id : null %}#}
+
+
+<div class="modal fade" id="modalCreateAction{{module.id}}" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 id="modal-title" class="modal-title">Action pour validation du Module</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ component('ActionForm', { module: module, actionId: actionId }) }}
+            </div>
+        </div>
+    </div>
+</div>
