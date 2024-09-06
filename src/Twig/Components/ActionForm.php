@@ -42,23 +42,49 @@ class ActionForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
+        $action = new Action();
+
+        $this->initialFormData = $action;
+
         $action = null !== $this->actionId
             ? $this->entityManager->getRepository(Action::class)->find($this->actionId)
             : new Action();
 
-        return $this->createForm(type: ActionFormType::class, data: $action);
+        // Vérifier si l'action est null avant d'appeler setModule()
+        if (null !== $action && null !== $this->module) {
+            $action->setModule($this->module);
+        }
+
+        return $this->createForm(
+            type: ActionFormType::class,
+            data: $action
+        );
     }
 
     #[LiveAction]
     public function save(): Response
     {
+        // Valide les données du formulaire après soumission
         $this->validate();
+
+        // Soumet le formulaire et met à jour les propriétés du composant
         $this->submitForm();
 
+        // TODO: Retirer après avoir corrigé le bug
+        if (!$this->getForm()->isSubmitted() || !$this->getForm()->isValid()) {
+            throw new \RuntimeException(message: 'Le formulaire n\'est pas valide.');
+        }
+
+        /** @var Action $action */
         $action = $this->getForm()->getData();
 
         if (!$action instanceof Action) {
             throw new \LogicException(message: 'Une erreur est survenue lors de la sauvegarde de l\'action.');
+        }
+
+        // Définir le module sur l'action si $this->module est défini
+        if (null !== $this->module) {
+            $action->setModule($this->module);
         }
 
         $this->entityManager->persist(object: $action);
@@ -71,12 +97,5 @@ class ActionForm extends AbstractController
         return $this->redirectToRoute(route: 'dashboard_index', parameters: [
             'nni' => $nni,
         ]);
-    }
-
-    #[LiveAction]
-    public function edit(int $actionId): void
-    {
-        $this->actionId = $actionId;
-        $this->initialFormData = $this->entityManager->getRepository(Action::class)->find($actionId);
     }
 }

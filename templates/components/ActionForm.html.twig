@@ -4,39 +4,59 @@
             'novalidate': false,
             'data-action': 'live#action:prevent',
             'data-live-action-param': 'save',
-            'data-live-action-param-module-id': module.id,
-            'data-live-action-param-action-id': actionId,
         }
     }) }}
     <div class="modal-body">
-        <div class="col">
-            <div class="row">
-                <div class="col-12">{{ form_row(form.description) }}</div>
-            </div>
+        <div class="container-fluid">
 
-            <div class="row">
-                <div class="col-6">
-                    {{ form_row(form.agentComment) }}
-                </div>
-                <div class="col-6">
-                    {{ form_row(form.agentValidatedAt) }}
-                </div>
-            </div>
+            <!-- Section Agents -->
+            <section class="border border-1 border-success-subtle rounded-2 p-3 mb-3">
+                <fieldset id="agentAction">
+                    <legend class="bg-success-subtle text-success py-2 px-3 rounded-1 text-uppercase fw-bold">Agents</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.agentComment, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.agentValidatedAt, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+            </section>
 
-            <div class="row">
-                <div class="col-6">
-                    {{ form_row(form.mentorComment) }}
-                </div>
-                <div class="col-6">
-                    {{ form_row(form.mentorValidatedAt) }}
-                </div>
-            </div>
+            <!-- Section Tutor -->
+            <section class="border border-1 border-primary-subtle rounded-2 p-3">
+                <fieldset id="mentorAction">
+                    <legend class="bg-primary-subtle text-primary py-2 px-3 rounded-1 text-uppercase fw-bold">Tuteur</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.mentorComment, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.mentorValidatedAt, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+            </section>
+
         </div>
     </div>
 
-    <div class="modal-footer mb-5">
+    <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Fermer</button>
-        {{ form_widget(form.submit, { 'attr': { 'class': 'btn btn-sm btn-primary' } }) }}
+        {{ form_widget(form.submit) }}
     </div>
 
     {{ form_end(form) }}

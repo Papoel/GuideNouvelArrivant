@@ -1,3 +1,537 @@
-body {
-    background-color: skyblue;
+/*--------------------------------------------------------------
+# Speciality User
+--------------------------------------------------------------*/
+.ribbon{
+    line-height:30px;
+    height:30px;
+    background: #363636;
+    position:relative;
+    display:inline-block;
+    left: -20px;
+    margin-right: -1.2em;
+    padding-left: calc( 1rem + 1.2em);
+    padding-right: 1.2em;
+    vertical-align:baseline;
+    border-radius:0 4px 4px 0;
+    color:white;
+}
+
+div.ribbon:after{
+    position:absolute;
+    width:0;
+    height:0;
+    top:100%;
+    left:0;
+    content:'';
+    border-style:solid;
+    border-color:transparent;
+    border-width:0 20px 20px 0;
+    border-right-color: #004433;
+}
+
+/* Classes spécifiques pour chaque spécialité */
+.ribbon-cha {
+    background: #3d9d85; /* Couleur pour Chaudronnerie */
+}
+
+div.ribbon-cha:after{
+    border-right-color: #2e7a66;
+}
+
+.ribbon-mec {
+    background: #d9534f; /* Couleur pour Levage */
+}
+
+div.ribbon-mec:after{
+    border-right-color: #a94442;
+}
+
+.ribbon-lev {
+    background: #f0ad4e; /* Couleur pour Mécanique */
+}
+
+div.ribbon-lev:after{
+    border-right-color: #eea236;
+}
+
+.ribbon-rob {
+    background: #5bc0de; /* Couleur pour Robotique */
+}
+
+div.ribbon-rob:after{
+    border-right-color: #46b8da;
+}
+
+.ribbon-mentor {
+    background: linear-gradient(70deg, #FFD700, #FFEC8B, #FFD700, #FFEC8B, #FFD700);
+    background-size: 200%;
+    animation: gradient 3s ease infinite;
+    text-align: center;
+    color: #262626;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+div.ribbon-mentor:after{
+    border-right-color: #FFD700;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+.no-mentor-card {
+    background-color: #f8d7da; /* Light red/pink background */
+    border-color: #f5c6cb;
+}
+
+.ribbon-no-mentor {
+    background-color: #d9534f; /* Bootstrap danger color */
+    color: white;
+}
+
+div.ribbon-no-mentor:after{
+    border-right-color: #8f2421;
+}
+
+
+.card-icon i {
+    font-size: 2rem;
+    color: #d9534f; /* Match the ribbon color */
+}
+
+#btn-assign--mentor {
+    background-color: #d9534f;
+    border-color: #d9534f;
+    color: #E8F1F8;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#btn-assign--mentor:hover {
+    background-color: #8f2421;
+    border-color: #8f2421;
+    color: #E8F1F8;
+    transform: scale(1.05);
+}
+
+#btn-assign--mentor:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(217, 83, 79, 0.5);
+}
+
+
+/*--------------------------------------------------------------
+# Callouts
+--------------------------------------------------------------*/
+.callout {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: .375rem; /* Rounded corners */
+    border: 1px solid transparent;
+    width: 100%;
+}
+
+/* Callout variations */
+.callout-primary {
+    background-color: #d1ecf1; /* Light blue background */
+    border-color: #bee5eb; /* Light blue border */
+    color: #0c5460; /* Darker blue text */
+}
+
+.callout-secondary {
+    background-color: #e2e3e5; /* Light grey background */
+    border-color: #ced4da; /* Light grey border */
+    color: #383d41; /* Darker grey text */
+}
+
+.callout-success {
+    background-color: #d4edda; /* Light green background */
+    border-color: #c3e6cb; /* Light green border */
+    color: #155724; /* Dark green text */
+}
+
+.callout-danger {
+    background-color: #f8d7da; /* Light red background */
+    border-color: #f5c6cb; /* Light red border */
+    color: #721c24; /* Dark red text */
+}
+
+.callout-warning {
+    background-color: #fff3cd; /* Light yellow background */
+    border-color: #ffeeba; /* Light yellow border */
+    color: #856404; /* Dark yellow text */
+}
+
+.callout-info {
+    background-color: #d1ecf1; /* Light blue background */
+    border-color: #bee5eb; /* Light blue border */
+    color: #0c5460; /* Dark blue text */
+}
+
+/* Optional: Add icons for callouts (if desired) */
+.callout .icon {
+    font-size: 1.5rem;
+    margin-right: .75rem;
+}
+
+/*--------------------------------------------------------------
+# Sidebar Custom
+--------------------------------------------------------------*/
+/* Styles pour le contenu du menu */
+.custom-collapse-content {
+    display: none;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    max-height: 0;
+}
+
+/*.custom-collapsed.active .custom-collapse-content {
+    display: block;
+    opacity: 1;
+    max-height: 1000px; !* Ajuste si nécessaire *!
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}*/
+
+/* Styles pour le contenu affiché */
+.nav-link.active + .custom-collapse-content {
+    opacity: 1;
+    max-height: 1000px;
+}
+
+/*--------------------------------------------------------------
+# Sidebar
+--------------------------------------------------------------*/
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0 0 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+}
+
+@media (max-width: 1199px) {
+    .sidebar {
+        left: -300px;
+    }
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #fff;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #aab7cf;
+}
+
+@media (min-width: 1200px) {
+
+    #main,
+    #footer {
+        margin-left: 300px;
+    }
+}
+
+@media (max-width: 1199px) {
+    .toggle-sidebar .sidebar {
+        left: 0;
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .toggle-sidebar #main,
+    .toggle-sidebar #footer {
+        margin-left: 0;
+    }
+
+    .toggle-sidebar .sidebar {
+        left: -300px;
+    }
+}
+
+.sidebar-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 5px;
+}
+
+.sidebar-nav .nav-heading {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #899bbd;
+    font-weight: 600;
+    margin: 10px 0 5px 15px;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4154f1;
+    transition: 0.3s;
+    background: #f6f9ff;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.sidebar-nav .nav-link i {
+    font-size: 16px;
+    margin-right: 10px;
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-link.custom-collapsed {
+    color: #012970;
+    background: #fff;
+}
+
+.sidebar-nav .nav-link.custom-collapsed i {
+    color: #899bbd;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #4154f1;
+    background: #f6f9ff;
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-link .bi-chevron-down {
+    margin-right: 0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.sidebar-nav .nav-link:not(.custom-collapsed) .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.sidebar-nav .nav-content {
+    padding: 5px 0 0 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar-nav .nav-content a {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #012970;
+    transition: 0.3s;
+    padding: 10px 0 10px 40px;
+}
+
+.sidebar-nav .nav-content a i {
+    font-size: 6px;
+    margin-right: 8px;
+    line-height: 0;
+    border-radius: 50%;
+}
+
+.sidebar-nav .nav-content a:hover,
+.sidebar-nav .nav-content a.active {
+    color: #4154f1;
+}
+
+.sidebar-nav .nav-content a.active i {
+    background-color: #4154f1;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4154f1;
+    transition: 0.3s;
+    background: #f6f9ff;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.sidebar-nav .nav-link i.bi-chevron-down {
+    margin-left: auto; /* Pour aligner le chevron à droite */
+    transition: transform 0.2s ease-in-out;
+}
+
+.sidebar-nav .nav-link:not(.custom-collapsed) i.bi-chevron-down {
+    transform: rotate(180deg); /* Pour tourner le chevron */
+}
+
+.sidebar-nav .nav-link.custom-collapsed i {
+    color: #899bbd;
+}
+
+.sidebar-nav .nav-content {
+    padding: 5px 0 0 0;
+    margin: 0;
+    list-style: none;
+    /* Si tu veux un effet de transition lors du collapse/expand */
+    transition: max-height 0.3s ease;
+    overflow: hidden; /* Pour masquer le contenu lorsqu'il est fermé */
+}
+
+.sidebar-nav .nav-content.show {
+    max-height: 1000px; /* Ajuste cette valeur selon le contenu */
+}
+
+/*----------------------------------------------
+# Custom Aside
+----------------------------------------------*/
+aside.sidebar div {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Ajuste la valeur selon l'espacement désiré */
+}
+
+/* Style pour le titre */
+.custom-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #03346E;
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+    transition: color 0.3s ease;
+}
+
+/* Soulignement progressif sous le titre */
+.custom-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background-color: #03346E;
+    transition: width 0.4s ease;
+}
+
+/* Effet au survol du titre */
+.custom-title:hover {
+    color: #084298;
+}
+
+.custom-title:hover::after {
+    width: 100%;
+}
+
+/* Lien principal personnalisé */
+.custom-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #0d6efd;
+    text-decoration: none;
+    padding: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.custom-link:hover {
+    color: #084298;
+}
+
+.custom-link:hover::after {
+    width: 100%;
+}
+
+/* Style des liens dans la liste déroulante avec un effet de survol animé */
+.sidebar-nav .nav-link {
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #0d6efd;
+}
+
+/* Effet de soulignement progressif au survol des liens */
+.sidebar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #0d6efd;
+    transition: width 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover::after {
+    width: 90%;
+}
+
+.custom-link .chevron-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.custom-link[aria-expanded="true"] .chevron-icon {
+    transform: rotate(180deg);
+}
+
+/* Animation de l'icône "caret" à droite du lien */
+.sidebar-nav .nav-link i {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+/* Survol de l'icône, elle se déplace légèrement vers la droite */
+.sidebar-nav .nav-link:hover i {
+    transform: translateX(.25em);
+}
+
+.without-link {
+    margin-left: 5px;
 }
