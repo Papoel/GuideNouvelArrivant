@@ -15,37 +15,35 @@ class ActionFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(child: 'description', type: TextareaType::class, options: [
-                'attr' => [
-                    'rows' => 5,
-                ],
-                'required' => false,
-            ])
             ->add(child: 'agentComment', type: TextareaType::class, options: [
+                'label' => 'Commentaires',
                 'attr' => [
                     'rows' => 5,
                 ],
                 'required' => false,
             ])
             ->add(child: 'agentValidatedAt', type: DateType::class, options: [
+                'label' => 'Date de validation',
                 'widget' => 'single_text',
                 'required' => false,
             ])
             ->add(child: 'mentorComment', type: TextareaType::class, options: [
+                'label' => 'Commentaires',
                 'attr' => [
                     'rows' => 5,
                 ],
                 'required' => false,
             ])
             ->add(child: 'mentorValidatedAt', type: DateType::class, options: [
+                'label' => 'Date de validation',
                 'widget' => 'single_text',
                 'required' => false,
             ])
 
             ->add(child: 'submit', type: SubmitType::class, options: [
-                'label' => 'Enregistrer',
-                'row_attr' => [
-                    'class' => 'd-grid gap-2 btn btn-sm btn-primary',
+                'label' => 'Sauvegarder',
+                'attr' => [
+                    'class' => 'btn btn-sm btn-primary',
                 ],
             ])
         ;
@@ -55,6 +53,7 @@ class ActionFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Action::class,
+            'attr' => ['novalidate' => 'novalidate'],
         ]);
     }
 }

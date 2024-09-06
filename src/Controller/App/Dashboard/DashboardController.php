@@ -19,11 +19,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/dashboard/{nni}', name: 'dashboard_')]
 class DashboardController extends AbstractController
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager
-    ) {
-    }
-
     #[Route('/', name: 'index', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function index(string $nni, DashboardService $dashboardService): Response
     {
@@ -34,10 +29,10 @@ class DashboardController extends AbstractController
         return $this->render(view: 'app/dashboard/dashboard.html.twig', parameters: $dashboardData);
     }
 
-    #[Route('/action/{module}', name: 'action', requirements: ['module' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function module(ActionService $actionService, string $nni, ?int $module = null): Response
+    #[Route('/action/{module}', name: 'action', requirements: ['module' => '\d+'], methods: [Request::METHOD_GET])]
+    public function module(ActionService $actionService, string $nni, ?int $module, EntityManagerInterface $entityManager): Response
     {
-        $moduleEntity = $this->entityManager->getRepository(Module::class)->find($module);
+        $moduleEntity = $entityManager->getRepository(Module::class)->find($module);
 
         if (!$moduleEntity) {
             // Gérer le cas où le module n'existe pas

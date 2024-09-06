@@ -1,112 +1,134 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
+    <div>
+        <section id="section-compagnonnage">
+            <p class="d-inline-flex gap-1">
+                <a class="custom-link" data-bs-toggle="collapse" href="#aside-compagnonnage" role="button" aria-expanded="false" aria-controls="compagnonnage">
+                    <span class="custom-title">1. Le Compagnonnage</span>
+                    <i class="bi bi-chevron-down chevron-icon ms-2"></i>
+                </a>
+            </p>
+            <div class="collapse" id="aside-compagnonnage">
+                <ul class="sidebar-nav" id="sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            1.1 Définition
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            1.2 Objectifs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            1.3 Champ d'application
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            1.4 Choix du tuteur
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+        <section id="section-fonctionnement">
+            <p class="d-inline-flex gap-1">
+                <a class="custom-link" data-bs-toggle="collapse" href="#aside-fonctionnement" role="button" aria-expanded="false" aria-controls="fonctionnement">
+                    <span class="custom-title">2. Fonctionnement</span>
+                    <i class="bi bi-chevron-down chevron-icon ms-2"></i>
+                </a>
+            </p>
+            <div class="collapse" id="aside-fonctionnement">
+                <ul class="sidebar-nav" id="sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            2.1 Avant la prise en charge
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            2.2 Début de compagnonnage
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
 
+        <section id="section-suivi">
+            <p class="d-inline-flex gap-1">
+                <a class="without-link" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="suivi">
+                    <a class="custom-title" href="#">3. Suivi</a>
+                </a>
+            </p>
+        </section>
+
+        <section id="section-duree">
+            <p class="d-inline-flex gap-1">
+                <a class="without-link" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="duree">
+                    <a class="custom-title" href="#" style="padding: 10px 0;">4. Durée</a>
+                </a>
+            </p>
+        </section>
+
+        <section id="section-formalisation">
+            <p class="d-inline-flex gap-1">
+                <a class="custom-link" data-bs-toggle="collapse" href="#aside-formalisation" role="button" aria-expanded="false" aria-controls="formalisation">
+                    <span class="custom-title">5. Formalisation</span>
+                    <i class="bi bi-chevron-down chevron-icon ms-2"></i>
+                </a>
+            </p>
+            <div class="collapse" id="aside-formalisation">
+                <ul class="sidebar-nav" id="sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            5.1 Utilisation du livret
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-caret-right"></i>
+                            5.2 Contrôles
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</aside>
+
+
+{#
         <li class="nav-item">
-            <a class="nav-link " href="#">
-                <i class="bi bi-grid"></i>
-                <span>Tableau de bord</span>
-            </a>
-        </li>
-        <!-- End Dashboard Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i>
-                <span>Mon carnet</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-journal"></i>
-                        Voir tous les thèmes
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <!-- End Components Nav -->
-
-        <li class="nav-heading">Pages</li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-compagnonnage" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-person-raised-hand"></i>
-                <span class="text-uppercase">1. Le Compagnonnage</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-compagnonnage" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        1.1 Définitions
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        1.2 Objectifs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        1.3 Champ d'application
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        1.4 Choix du tuteur
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-Fonctionnement" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-person-workspace"></i>
-                <span class="text-uppercase">2. Fonctionnement</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-Fonctionnement" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        2.1 Avant la prise en charge
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        2.2 Début de compagnonnage
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-suivi" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed" data-target="#components-suivi" data-toggle="collapse" href="#">
                 <i class="bi bi-bookmark-check"></i>
                 <span class="text-uppercase">3. Suivi</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-duree" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed" data-target="#components-duree" data-toggle="collapse" href="#">
                 <i class="bi bi-hourglass-split"></i>
                 <span class="text-uppercase">4. Durée</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-formalisation" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed" data-toggle="collapse" data-target="#components-formalisation" href="#">
                 <i class="bi bi-file-ruled"></i>
                 <span class="text-uppercase">5. Formalisation</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
+                <i class="bi bi-chevron-down ms-auto chevron-icon"></i>
             </a>
-            <ul id="components-formalisation" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <ul id="components-formalisation" class="nav-content collapse-content"> #}{#data-bs-parent="#sidebar-nav"#}{#
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-caret-right"></i>
@@ -123,8 +145,7 @@
         </li>
 
         <!-- End Profile Page Nav -->
+    </ul>#}
 
-    </ul>
-
-</aside>
+{#</aside>#}
 <!-- End Sidebar-->
