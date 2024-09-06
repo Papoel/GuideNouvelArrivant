@@ -7,7 +7,7 @@
                 <img src="{{ asset('images/logos/edf.png') }}" alt="">
                 <span class="d-none d-lg-block" style="font-size: 14px;">Carnet de Compagnonnage</span>
             </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
+            <i id="sidebar-toggle" class="bi bi-list toggle-sidebar-btn"></i>
         </div>
         <!-- End Logo -->
 
@@ -17,12 +17,10 @@
                 <!-- Profile Nav -->
                 <li class="nav-item dropdown pe-3">
                     <!-- Profile Image Icon -->
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <span class="dropdown-toggle nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle"></i>
-                        <span class="d-none d-md-block dropdown-toggle ps-2">
-                            {{ user.fullname }}
-                        </span>
-                    </a>
+                        <span class="d-none d-md-block ps-2">{{ user.fullname }}</span>
+                    </span>
                     <!-- End Profile Image Icon -->
 
                     <!-- Profile Dropdown Items -->

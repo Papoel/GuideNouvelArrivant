@@ -53,7 +53,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             );
 
             // Associer un nouveau Logbook pour chaque utilisateur
-            $user->addLogbook(logbook: $this->getReference(name: 'logbook_'.$i));
+            $user->addLogbook(logbook: $this->getReference(name: 'logbook_'.random_int(1, 3)));
 
             // Ajouter la référence de l'utilisateur pour les mentors
             $this->addReference(name: 'user_'.$i, object: $user);

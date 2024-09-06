@@ -14,17 +14,12 @@ class ActionFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $modules = $manager->getRepository(className: Module::class)->findAll();
+        $module = $manager->getRepository(className: Module::class)->find(id: 1);
 
-        foreach ($modules as $module) {
-            for ($i = 1; $i <= 3; ++$i) {
-                $action = new Action();
-                $action->setDescription(description: 'Action '.$i.' pour '.$module->getTitle());
-                $action->setModule(module: $module);
+        $action = new Action();
+        $action->setModule(module: $module);
 
-                $manager->persist(object: $action);
-            }
-        }
+        $manager->persist(object: $action);
 
         $manager->flush();
     }

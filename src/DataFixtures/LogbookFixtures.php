@@ -10,11 +10,13 @@ class LogbookFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 10; ++$i) {
+        $logbookName = ['Carnet MRC', 'Carnet SPL', 'Carnet SAE'];
+
+        foreach ($logbookName as $i => $name) {
             $logbook = new Logbook();
-            $logbook->setName(name: 'Logbook '.$i);
+            $logbook->setName(name: $name);
             $manager->persist(object: $logbook);
-            $this->addReference(name: 'logbook_'.$i, object: $logbook);
+            $this->addReference(name: 'logbook_'.$i + 1, object: $logbook);
         }
 
         $manager->flush();

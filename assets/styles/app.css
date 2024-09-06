@@ -304,7 +304,7 @@ div.ribbon-no-mentor:after{
     display: flex;
     align-items: center;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 400;
     color: #4154f1;
     transition: 0.3s;
     background: #f6f9ff;
@@ -424,9 +424,47 @@ aside.sidebar div {
     gap: 20px; /* Ajuste la valeur selon l'espacement désiré */
 }
 
+/*----------------------------------------------
+# Header Section
+----------------------------------------------*/
+
+/* Style pour le header */
+#section-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa; /* Couleur de fond légère */
+    border-bottom: 1px solid #dee2e6; /* Bordure subtile en bas */
+    /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/ /* Ombre légère */
+    font-size: 16px;
+    font-weight: bold;
+    color: #333; /* Couleur du texte */
+}
+
+#section-header i {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #007bff; /* Couleur de l'icône (bleu primaire) */
+    transition: color 0.3s ease;
+}
+
+#section-header span {
+    font-size: 18px;
+    color: #333;
+}
+
+/* Effet de survol sur l'icône */
+#section-header i:hover {
+    color: #0056b3; /* Couleur plus foncée au survol */
+}
+
+/*----------------------------------------------
+# Custom Sidebar
+----------------------------------------------*/
+
 /* Style pour le titre */
 .custom-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     text-transform: uppercase;
     color: #03346E;
@@ -505,20 +543,16 @@ aside.sidebar div {
     width: 0;
     height: 2px;
     background-color: #0d6efd;
-    transition: width 0.3s ease;
+    transition: width 0.5s ease-in-out;
 }
 
 .sidebar-nav .nav-link:hover::after {
     width: 90%;
 }
 
-.custom-link .chevron-icon {
-    margin-left: auto;
-    transition: transform 0.3s ease;
-}
-
 .custom-link[aria-expanded="true"] .chevron-icon {
-    transform: rotate(180deg);
+    transform: rotate(180deg); /* Rotation de 180 degrés */
+    transition: transform 0.3s ease; /* Transition fluide */
 }
 
 /* Animation de l'icône "caret" à droite du lien */
@@ -534,4 +568,116 @@ aside.sidebar div {
 
 .without-link {
     margin-left: 5px;
+}
+
+/*----------------------------------------------
+# Collapse Sidebar
+----------------------------------------------*/
+/* Style initial pour la collapsible */
+.collapse {
+    max-height: 0; /* Hauteur maximale initiale à 0 */
+    opacity: 0; /* L'élément est invisible */
+    overflow: hidden; /* Masquer le contenu qui dépasse */
+    transition: max-height 0.5s ease, opacity 0.5s ease; /* Transition fluide pour la hauteur et l'opacité */
+    visibility: hidden; /* Assurer que l'élément est caché */
+}
+
+/* Afficher le menu lorsqu'il a la classe 'show' */
+.collapse.show {
+    max-height: 500px; /* Ajustez cette valeur selon la hauteur maximale du contenu ou utilisez une valeur plus grande */
+    opacity: 1; /* Rendre l'élément visible */
+    visibility: visible; /* Assurer que l'élément est visible */
+}
+
+
+/*----------------------------------------------
+# Dropdown
+----------------------------------------------*/
+.dropdown {
+    position: relative; /* Pour que le menu soit positionné par rapport à ce conteneur */
+}
+
+.dropdown-menu {
+    display: none; /* Cacher le menu par défaut */
+    position: absolute;
+    top: 100%; /* Positionner en dessous du bouton */
+    right: 0; /* Aligner à droite */
+    z-index: 1000; /* S'assurer qu'il soit au-dessus des autres éléments */
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2rem 10px 0 0; /* Marge du menu */
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+/* Affiche le menu lorsqu'il a la classe 'show' */
+.dropdown-menu.show {
+    display: block;
+}
+
+/*----------------------------------------------
+# Accordion (Theme Logbook
+----------------------------------------------*/
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card-toggle {
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: lighter;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.card-toggle:hover {
+    color: #007bff;
+}
+
+.badge {
+    margin-left: 10px;
+    padding: 0.5em 0.75em;
+}
+
+.chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+.chevron-icon.rotate {
+    transform: rotate(180deg);
+}
+
+.collapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.collapse.show {
+    max-height: 1000px; /* Ajustez en fonction du contenu */
+    opacity: 1;
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #fff;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 15px;
+    border-bottom: 1px solid #e0e0e0;
 }

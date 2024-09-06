@@ -1,15 +1,25 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
+
+    <section id="section-header">
+        <i class="bi bi-grid"></i>
+        <span>Tableau de bord</span>
+    </section>
+        <ul class="sidebar-nav">
+            <li class="nav-heading py-3">Pages</li>
+        </ul>
+        <!-- End Dashboard Nav -->
     <div>
         <section id="section-compagnonnage">
             <p class="d-inline-flex gap-1">
                 <a class="custom-link" data-bs-toggle="collapse" href="#aside-compagnonnage" role="button" aria-expanded="false" aria-controls="compagnonnage">
-                    <span class="custom-title">1. Le Compagnonnage</span>
+                    <i class="bi bi-person-raised-hand me-2"></i>
+                    <span class="custom-title">1. Compagnonnage</span>
                     <i class="bi bi-chevron-down chevron-icon ms-2"></i>
                 </a>
             </p>
             <div class="collapse" id="aside-compagnonnage">
-                <ul class="sidebar-nav" id="sidebar-nav">
+                <ul class="sidebar-nav" id="sidebar-nav-compagnonnage">
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="bi bi-caret-right"></i>
@@ -41,12 +51,13 @@
         <section id="section-fonctionnement">
             <p class="d-inline-flex gap-1">
                 <a class="custom-link" data-bs-toggle="collapse" href="#aside-fonctionnement" role="button" aria-expanded="false" aria-controls="fonctionnement">
+                    <i class="bi bi-person-workspace me-2"></i>
                     <span class="custom-title">2. Fonctionnement</span>
                     <i class="bi bi-chevron-down chevron-icon ms-2"></i>
                 </a>
             </p>
             <div class="collapse" id="aside-fonctionnement">
-                <ul class="sidebar-nav" id="sidebar-nav">
+                <ul class="sidebar-nav" id="sidebar-nav-fonctionnement">
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="bi bi-caret-right"></i>
@@ -63,18 +74,20 @@
             </div>
         </section>
 
-        <section id="section-suivi">
+        <section id="section-suivi" class="ms-1">
             <p class="d-inline-flex gap-1">
                 <a class="without-link" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="suivi">
-                    <a class="custom-title" href="#">3. Suivi</a>
+                    <i class="bi bi-bookmark-check me-2"></i>
+                    <span class="custom-title" href="#">3. Suivi</span>
                 </a>
             </p>
         </section>
 
-        <section id="section-duree">
+        <section id="section-duree" class="ms-1">
             <p class="d-inline-flex gap-1">
                 <a class="without-link" data-bs-toggle="collapse" href="#" role="button" aria-expanded="false" aria-controls="duree">
-                    <a class="custom-title" href="#" style="padding: 10px 0;">4. Durée</a>
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    <span class="custom-title" href="#">4. Durée</span>
                 </a>
             </p>
         </section>
@@ -82,12 +95,13 @@
         <section id="section-formalisation">
             <p class="d-inline-flex gap-1">
                 <a class="custom-link" data-bs-toggle="collapse" href="#aside-formalisation" role="button" aria-expanded="false" aria-controls="formalisation">
+                    <i class="bi bi-file-ruled me-2"></i>
                     <span class="custom-title">5. Formalisation</span>
                     <i class="bi bi-chevron-down chevron-icon ms-2"></i>
                 </a>
             </p>
             <div class="collapse" id="aside-formalisation">
-                <ul class="sidebar-nav" id="sidebar-nav">
+                <ul class="sidebar-nav" id="sidebar-nav-formalisation">
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="bi bi-caret-right"></i>
@@ -105,47 +119,4 @@
         </section>
     </div>
 </aside>
-
-
-{#
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-target="#components-suivi" data-toggle="collapse" href="#">
-                <i class="bi bi-bookmark-check"></i>
-                <span class="text-uppercase">3. Suivi</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-target="#components-duree" data-toggle="collapse" href="#">
-                <i class="bi bi-hourglass-split"></i>
-                <span class="text-uppercase">4. Durée</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-toggle="collapse" data-target="#components-formalisation" href="#">
-                <i class="bi bi-file-ruled"></i>
-                <span class="text-uppercase">5. Formalisation</span>
-                <i class="bi bi-chevron-down ms-auto chevron-icon"></i>
-            </a>
-            <ul id="components-formalisation" class="nav-content collapse-content"> #}{#data-bs-parent="#sidebar-nav"#}{#
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        5.1 Utilisation du livret
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-caret-right"></i>
-                        5.2 Contrôles
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <!-- End Profile Page Nav -->
-    </ul>#}
-
-{#</aside>#}
 <!-- End Sidebar-->

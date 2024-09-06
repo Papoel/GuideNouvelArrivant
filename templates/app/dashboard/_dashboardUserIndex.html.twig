@@ -1,0 +1,161 @@
+<div class="pageTitle">
+    <h1>Tableau de bord</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
+                    Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Tableau de bord</li>
+        </ol>
+    </nav>
+</div>
+<!-- End Page Title -->
+<div class="col-lg-12">
+    <div class="row">
+        <!-- Agent Card -->
+        {{ include('app/dashboard/cards/userCard.html.twig') }}
+        <!-- End Agent Card -->
+
+        <!-- Mentor Card -->
+        {{ include('app/dashboard/cards/mentorCard.html.twig') }}
+        <!-- End Mentor Card -->
+    </div>
+
+    {#<div class="row mt-4">
+                            <!-- Logbook Card -->
+                            {% for logbookData in logbooks %}
+                                <div class="col-12">
+                                    <div class="card info-card customers-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Carnet de Compagnonnage</h5>
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-journal"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    {% set progress = logbookData.progress * 100 %}
+                                                    <h6>Progression: {{ progress }}%</h6>
+                                                    <div class="progress">
+                                                        {% set progress_class = logbookData.progress_class %}
+                                                        <div class="progress-bar {{ progress_class }}" role="progressbar"
+                                                             style="width: {{ progress }}%" aria-valuenow="{{ progress }}"
+                                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                    <span class="text-muted small pt-2 d-block">Sections non validées : {{ logbookData.unvalidated_sections }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="col-12">
+                                    <div class="card info-card no-mentor-card h-100">
+                                        <div class="card-body text-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                            </div>
+                                            <h5 class="card-title">Pas de carnet de compagnonnage</h5>
+                                            <p class="text-muted">{{ user.fullname }} n'a actuellement été affecté.</p>
+                                            {% if is_granted('ROLE_ADMIN') %}
+                                                <a href="{{ path('admin', {
+                                                    crudAction: 'index',
+                                                    crudControllerFqcn: 'App\\Controller\\Admin\\Logbook\\LogbookCrudController',
+                                                }) }}" class="btn btn-sm" id="btn-assign--mentor">Affecter un carnet</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <!-- End Logbook Card -->
+                        </div>#}
+</div>
+<!-- End Left side columns -->
+<section id="card-logbook">
+    <div class="row mt-4">
+        <div class="col-12">
+            {% for logbook in logbooks %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="text-uppercase fw-bolder">{{ logbook.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for theme in logbook.themes %}
+                            {#<div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="moduleAndTheme">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-theme-{{ theme.id }}" aria-expanded="false" aria-controls="collapse-theme-{{ theme.id }}">
+                                            {{ theme.title }}
+                                            <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                        </button>
+                                    </h2>
+
+                                    <div id="collapse-theme-{{ theme.id }}" class="accordion-collapse collapse" aria-labelledby="moduleAndTheme" data-bs-parent="#theme-{{ theme.id }}">
+                                        <div class="accordion-body">
+                                            {% for module in theme.modules %}
+                                                <ul class="list-group mt-2">
+                                                    <li id="module-{{ module.id }}" class="list-group-item" data-bs-mainTheme="{{ module.theme.id }}">
+                                                        {{ loop.index }} - {{ module.title }}
+
+                                                        <a class="btn btn-sm btn-primary float-end"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#modalCreateAction{{module.id}}"
+                                                           href="#"
+                                                        >
+                                                            <i class="bi bi-eye float-end"> {{ module.id }}</i>
+                                                        </a>
+
+                                                        {{ include('modals/_create_action.html.twig', {module, 'actionId': module.actions.first ? module.actions.first.id : null}) }}
+                                                    </li>
+                                                </ul>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>#}
+                            <div class="{{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
+                                <div class="card card-theme mb-1">
+                                    <div class="card-header d-flex justify-content-between align-items-center" id="header-theme-{{ theme.id }}">
+                                            <h2 class="mb-0">
+                                                <span class="card-toggle d-flex justify-content-between align-items-center w-100" type="button" data-target="#collapse-theme-{{ theme.id }}">
+                                                    <span>{{ theme.title }}</span>
+                                                    <span class="badge bg-primary ms-2">{{ theme.modules|length }}</span>
+                                                </span>
+                                            </h2>
+                                        <i class="bi bi-chevron-down chevron-icon ms-auto"></i>
+                                    </div>
+
+                                    <div id="collapse-theme-{{ theme.id }}" class="collapse">
+                                        <div class="card-body">
+                                            {% for module in theme.modules %}
+                                                <ul class="list-group mt-2">
+                                                    <li class="list-group-item list-group-item-action list-group-item-light">
+                                                        {{ loop.index }} - {{ module.title }}
+                                                        <a class="btn btn-sm btn-primary float-end"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#modalCreateAction{{module.id}}"
+                                                           href="#"
+                                                        >
+                                                            <i class="bi bi-eye float-end"> {{ module.id }}</i>
+                                                        </a>
+
+                                                        {{ include('modals/_create_action.html.twig', {
+                                                            module,
+                                                            'actionId': module.actions.first
+                                                            ? module.actions.first.id : null
+                                                        }) }}
+                                                    </li>
+                                                </ul>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
