@@ -18,6 +18,7 @@ class ActionFixtures extends Fixture implements DependentFixtureInterface
 
         $action = new Action();
         $action->setModule(module: $module);
+        $action->setAgentComment(agentComment: 'Documentation consultée');
 
         $manager->persist(object: $action);
 
