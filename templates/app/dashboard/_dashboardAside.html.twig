@@ -5,9 +5,10 @@
         <i class="bi bi-grid"></i>
         <span>Tableau de bord</span>
     </section>
-        <ul class="sidebar-nav">
-            <li class="nav-heading py-3">Pages</li>
-        </ul>
+
+    <ul class="sidebar-nav">
+        <li class="nav-heading py-3">Pages</li>
+    </ul>
         <!-- End Dashboard Nav -->
     <div>
         <section id="section-compagnonnage">
@@ -112,6 +113,32 @@
                         <a class="nav-link" href="#">
                             <i class="bi bi-caret-right"></i>
                             5.2 Contrôles
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <ul class="sidebar-nav">
+        <li class="nav-heading py-3">CRUD Action (test)</li>
+    </ul>
+
+    <div>
+        <section id="section-crud">
+            <p class="d-inline-flex gap-1">
+                <a class="custom-link" data-bs-toggle="collapse" href="#aside-crud" role="button" aria-expanded="false" aria-controls="crud">
+                    <i class="bi bi-file-ruled me-2"></i>
+                    <span class="custom-title">CRUD ACTION</span>
+                    <i class="bi bi-chevron-down chevron-icon ms-2"></i>
+                </a>
+            </p>
+            <div class="collapse" id="aside-crud">
+                <ul class="sidebar-nav" id="sidebar-nav-formalisation">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('action_index', {'nni': app.user.nni}) }}">
+                            <i class="bi bi-caret-right"></i>
+                            Index
                         </a>
                     </li>
                 </ul>

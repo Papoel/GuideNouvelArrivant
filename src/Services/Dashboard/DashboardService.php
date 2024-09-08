@@ -84,4 +84,18 @@ readonly class DashboardService
     {
         return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
     }
+
+    public function getNniByUser(?User $user): string
+    {
+        if (null === $user) {
+            return null; // ou un comportement par défaut
+        }
+
+        return $user->getNni();
+    }
+
+    public function getMentorByUser(User $user): ?User
+    {
+        return $user->getMentor();
+    }
 }

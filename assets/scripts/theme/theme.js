@@ -13,7 +13,7 @@ if (sidebarToggle) {
 /*----------------------------------------------
 # 2. Menu dans Aside
 ----------------------------------------------*/
-document.addEventListener('DOMContentLoaded', function() {
+/*document.addEventListener('DOMContentLoaded', function() {
     const collapsibleLinks = document.querySelectorAll('.custom-link');
 
     collapsibleLinks.forEach(function(link) {
@@ -40,17 +40,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+});*/
 
 /*----------------------------------------------
 # 3. Dropdown
 ----------------------------------------------*/
 
 // Sélectionne tous les boutons de dropdown
-const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+/*const dropdownToggles = document.querySelectorAll('.dropdown-toggle');*/
 
 // Ajoute un écouteur d'événement à chaque bouton de dropdown
-dropdownToggles.forEach(function(toggle) {
+/*dropdownToggles.forEach(function(toggle) {
     toggle.addEventListener('click', function(e) {
         // Empêche la propagation de l'événement de clic
         e.stopPropagation();
@@ -62,31 +62,31 @@ dropdownToggles.forEach(function(toggle) {
         const dropdownMenu = toggle.nextElementSibling;
         dropdownMenu.classList.toggle('show');
     });
-});
+});*/
 
 // Ferme les dropdowns lorsqu'on clique en dehors d'eux
-document.addEventListener('click', function() {
+/*document.addEventListener('click', function() {
     closeAllDropdowns();
-});
+});*/
 
 // Fonction pour fermer tous les dropdowns
-function closeAllDropdowns() {
+/*function closeAllDropdowns() {
     const dropdowns = document.querySelectorAll('.dropdown-menu');
     dropdowns.forEach(function(menu) {
         menu.classList.remove('show');
     });
-}
+}*/
 
-function adjustDropdownPosition(menu) {
+/*function adjustDropdownPosition(menu) {
     const rect = menu.getBoundingClientRect();
     if (rect.right > window.innerWidth) {
         menu.style.left = 'auto';
         menu.style.right = '0'; // Réajuste à droite
     }
-}
+}*/
 
 // Ajouter dans ton listener
-dropdownToggles.forEach(function(toggle) {
+/*dropdownToggles.forEach(function(toggle) {
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
         closeAllDropdowns();
@@ -94,7 +94,7 @@ dropdownToggles.forEach(function(toggle) {
         dropdownMenu.classList.toggle('show');
         adjustDropdownPosition(dropdownMenu); // Ajuste la position après l'affichage
     });
-});
+});*/
 
 /*----------------------------------------------
 # 4. Accordion
@@ -135,7 +135,7 @@ dropdownToggles.forEach(function(toggle) {
 /*----------------------------------------------
 # 5. Modal
 ----------------------------------------------*/
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
     // Fonction pour ouvrir un modal
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
@@ -224,15 +224,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-});
+});*/
 
 
-let saveBtn = document.querySelector('#action_form_submit');
+/*let saveBtn = document.querySelector('#action_form_submit');*/
 
 // Si le bouton de sauvegarde est cliqué
-if (saveBtn) {
+/*if (saveBtn) {
     saveBtn.addEventListener('click', function() {
         // Récupère le formulaire
         alert('Formulaire soumis');
     });
-}
+}*/

@@ -75,83 +75,100 @@
     <div class="row mt-4">
         <div class="col-12">
             {% for logbook in logbooks %}
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="text-uppercase fw-bolder">{{ logbook.name }}</h5>
+                <div class="card info-card mentor-card h-100">
+                    <div class="card-header card-title ps-3 border-bottom border-secondary border-opacity-25">
+                        <h5 class="text-uppercase fw-bold mb-0">{{ logbook.name }}</h5>
                     </div>
                     <div class="card-body">
                         {% for theme in logbook.themes %}
-                            {#<div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
+                            <div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
                                 <div class="accordion-item">
-                                    <h2 class="accordion-header" id="moduleAndTheme">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-theme-{{ theme.id }}" aria-expanded="false" aria-controls="collapse-theme-{{ theme.id }}">
+                                    <h2 class="accordion-header" id="heading-{{ theme.id }}">
+                                        <button class="accordion-button collapsed"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#collapse-theme-{{ theme.id }}"
+                                                aria-expanded="false"
+                                                aria-controls="collapse-theme-{{ theme.id }}">
                                             {{ theme.title }}
                                             <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
                                         </button>
                                     </h2>
 
-                                    <div id="collapse-theme-{{ theme.id }}" class="accordion-collapse collapse" aria-labelledby="moduleAndTheme" data-bs-parent="#theme-{{ theme.id }}">
+                                    <div id="collapse-theme-{{ theme.id }}"
+                                         class="accordion-collapse collapse"
+                                         aria-labelledby="heading-{{ theme.id }}"
+                                         data-bs-parent="#theme-{{ theme.id }}">
                                         <div class="accordion-body">
-                                            {% for module in theme.modules %}
-                                                <ul class="list-group mt-2">
-                                                    <li id="module-{{ module.id }}" class="list-group-item" data-bs-mainTheme="{{ module.theme.id }}">
+                                            <ul class="list-group list-group-flush">
+                                                {% for module in theme.modules %}
+                                                    <li id="module-{{ module.id }}" class="list-group-item d-flex justify-content-between align-items-center py-2">
                                                         {{ loop.index }} - {{ module.title }}
 
-                                                        <a class="btn btn-sm btn-primary float-end"
-                                                           data-bs-toggle="modal"
-                                                           data-bs-target="#modalCreateAction{{module.id}}"
-                                                           href="#"
-                                                        >
-                                                            <i class="bi bi-eye float-end"> {{ module.id }}</i>
-                                                        </a>
+                                                        <!-- Conteneur pour les boutons -->
+                                                        <div class="d-flex gap-2">
+                                                            <!-- Bouton conditionnel basé sur action.agentComment -->
+                                                            {% if module.actions|filter(action => action.agentComment is not null)|length > 0 %}
+                                                                <a class="btn btn-sm btn-outline-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id }) }}">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                    Modifier
+                                                                </a>
+                                                            {% else %}
+                                                                <a class="btn btn-sm btn-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id }) }}">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                    Remplir
+                                                                </a>
+                                                            {% endif %}
 
-                                                        {{ include('modals/_create_action.html.twig', {module, 'actionId': module.actions.first ? module.actions.first.id : null}) }}
+                                                            {% for action in module.actions %}
+                                                                {% if action.agentComment %}
+                                                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#agentCommentModal{{ module.id }}">
+                                                                        Commentaire Agent
+                                                                    </button>
+                                                                    <!-- Modal pour le commentaire de l'agent -->
+                                                                    <div class="modal fade" id="agentCommentModal{{ module.id }}" tabindex="-1" aria-labelledby="agentCommentModalLabel{{ module.id }}" aria-hidden="true">
+                                                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="agentCommentModalLabel{{ module.id }}">Commentaire Agent</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    {{ action.agentComment }}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+
+                                                                {% if action.mentorComment %}
+                                                                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#mentorCommentModal{{ module.id }}">
+                                                                        Commentaire Tuteur
+                                                                    </button>
+                                                                    <!-- Modal pour le commentaire du mentor -->
+                                                                    <div class="modal fade" id="mentorCommentModal{{ module.id }}" tabindex="-1" aria-labelledby="mentorCommentModalLabel{{ module.id }}" aria-hidden="true">
+                                                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="mentorCommentModalLabel{{ module.id }}">Commentaire du tuteur</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    {{ action.mentorComment }}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
                                                     </li>
-                                                </ul>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>#}
-                            <div class="{{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
-                                <div class="card card-theme mb-1">
-                                    <div class="card-header d-flex justify-content-between align-items-center" id="header-theme-{{ theme.id }}">
-                                            <h2 class="mb-0">
-                                                <span class="card-toggle d-flex justify-content-between align-items-center w-100" type="button" data-target="#collapse-theme-{{ theme.id }}">
-                                                    <span>{{ theme.title }}</span>
-                                                    <span class="badge bg-primary ms-2">{{ theme.modules|length }}</span>
-                                                </span>
-                                            </h2>
-                                        <i class="bi bi-chevron-down chevron-icon ms-auto"></i>
-                                    </div>
-
-                                    <div id="collapse-theme-{{ theme.id }}" class="collapse">
-                                        <div class="card-body">
-                                            {% for module in theme.modules %}
-                                                <ul class="list-group mt-2">
-                                                    <li class="list-group-item list-group-item-action list-group-item-light">
-                                                        {{ loop.index }} - {{ module.title }}
-                                                        <a class="btn btn-sm btn-primary float-end"
-                                                           data-bs-toggle="modal"
-                                                           data-bs-target="#modalCreateAction{{module.id}}"
-                                                           href="#"
-                                                        >
-                                                            <i class="bi bi-eye float-end"> {{ module.id }}</i>
-                                                        </a>
-
-                                                        {{ include('modals/_create_action.html.twig', {
-                                                            module,
-                                                            'actionId': module.actions.first
-                                                            ? module.actions.first.id : null
-                                                        }) }}
-                                                    </li>
-                                                </ul>
-                                            {% endfor %}
+                                                {% endfor %}
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         {% endfor %}
                     </div>
                 </div>
@@ -159,3 +176,8 @@
         </div>
     </div>
 </section>
+
+
+
+
+{#{% include ('app/dashboard/Save/logbookForm.html.twig') %}#}

@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Action index{% endblock %}
+
+{% block body %}
+    {% set user = app.user %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+
+    <main id="main" class="main">
+        <h1>Action index</h1>
+
+        <table class="table table-bordered table-striped table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Theme</th>
+                    <th>Module</th>
+                    <th>Commentaire Agent</th>
+                    <th>Date de validation</th>
+                    <th>Visa Agent</th>
+                    <th>Commentaire Tuteur</th>
+                    <th>Visa Tuteur</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for action in actions %}
+                <tr class="align-middle">
+                    <td class="text-start">{{ action.module.theme.title }}</td>
+
+                    <td class="text-start">{{ action.module.title }}</td>
+
+                    <td class="text-start">{{ action.agentComment }}</td>
+
+                    <td>{{ action.agentValidatedAt ? action.agentValidatedAt|date('d-m-Y') : '' }}</td>
+
+                    {% if action.agentVisa %}
+                        <td style="cursor: pointer">
+                            <div class="dropdown w-100">
+                                <i class="bi bi-check-circle text-success" data-bs-toggle="dropdown"></i>
+                                <div class="card dropdown-menu">
+                                    <div class="card-body" style="width: 500px; margin-top: 5px;">
+                                        {{ action.agentVisa }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    {% endif %}
+
+                    {% if action.mentorComment %}
+                        <td style="cursor: pointer">
+                            <div class="dropdown w-100">
+                                <i class="bi bi-check-circle text-success" data-bs-toggle="dropdown"></i>
+                                <div class="card dropdown-menu">
+                                    <div class="card-body" style="max-width: 500px; margin-top: 5px;">
+                                        {{ action.mentorComment }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    {% else %}
+                        <td>
+                            <i class="bi bi-x-circle text-danger"></i>
+                        </td>
+                    {% endif %}
+
+                    {% if action.mentorVisa %}
+                        <td>
+                            <div class="dropdown w-100">
+                                <i class="bi bi-check-circle text-success" data-bs-toggle="dropdown"></i>
+                                <div class="card dropdown-menu">
+                                    <div class="card-body" style="width: 500px; margin-top: 5px;">
+                                        {{ action.mentorVisa }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        {% else %}
+                            <td>
+                                <i class="bi bi-x-circle text-danger"></i>
+                            </td>
+                    {% endif %}
+
+                    <td>
+                        <a href="{{ path('action_edit', {'nni': app.user.nni, 'id': action.module.id}) }}">edit</a>
+                    </td>
+
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+{% endblock %}
