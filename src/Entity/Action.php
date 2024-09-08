@@ -39,6 +39,11 @@ class Action
     #[ORM\JoinColumn(name: 'module_id', referencedColumnName: 'id')]
     private ?Module $module = null;
 
+    public function __toString(): string
+    {
+        return 'Action #'.$this->id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -1,0 +1,11 @@
+{% if action and action.id %}
+    <form method="post"
+          action="{{ path('action_delete', {'nni': app.user.nni, 'id': action.id}) }}"
+          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette action ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ action.id) }}">
+        <button class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i>
+            Supprimer: {{ action.module.title }}
+        </button>
+    </form>
+{% endif %}
