@@ -5,23 +5,41 @@ declare(strict_types=1);
 namespace App\Services\Dashboard;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Services\User\UserSeniorityService;
 use App\Services\User\UserValidationService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 readonly class DashboardService
 {
     public function __construct(
         private UserValidationService $userValidationService,
         private UserSeniorityService $seniorityService,
+        private UserRepository $userRepository,
     ) {
     }
 
-    public function getDashboardData(string $nni, ?User $currentUser): array
+    public function handleNniRedirection(string $nni, User $currentUser): ?Response
     {
-        // 1. Vérifier si l'utilisateur est connecté
-        $this->userValidationService->validateUser(currentUser: $currentUser, nni: $nni);
+        // Si le NNI dans l'URL est différent du NNI de l'utilisateur connecté
+        if ($currentUser->getNni() !== $nni) {
+            // Redirection vers le bon tableau de bord
+            return new RedirectResponse('/dashboard/'.$currentUser->getNni());
+        }
 
-        assert(assertion: $currentUser instanceof User);
+        // Pas de redirection nécessaire
+        return null;
+    }
+
+    public function getDashboardData(string $nni): array
+    {
+        // Validation et récupération de l'utilisateur par NNI
+        $user = $this->userValidationService->validateUserAccess($nni);
+
+        // Vérification des droits d'accès
+        $currentUser = $this->userValidationService->getCurrentUser($nni);
+
+        // assert(assertion: $currentUser instanceof User);
 
         $logbooks = $this->getLogbooksByUser($currentUser);
         $themes = $this->getThemesByLogbooks($logbooks);
@@ -88,7 +106,7 @@ readonly class DashboardService
     public function getNniByUser(?User $user): string
     {
         if (null === $user) {
-            return null; // ou un comportement par défaut
+            throw new \InvalidArgumentException(message: 'L\'utilisateur est introuvable.');
         }
 
         return $user->getNni();
@@ -97,5 +115,11 @@ readonly class DashboardService
     public function getMentorByUser(User $user): ?User
     {
         return $user->getMentor();
+    }
+
+    public function validateUserAndRedirect(string $nni, ?User $currentUser): ?RedirectResponse
+    {
+        // Délégation complète à UserValidationService
+        return $this->userValidationService->validateUser($currentUser, $nni);
     }
 }

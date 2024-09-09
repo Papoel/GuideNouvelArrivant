@@ -4,9 +4,9 @@ namespace App\Controller\App\Dashboard;
 
 use App\Entity\Action;
 use App\Entity\Module;
-use App\Entity\User;
 use App\Form\ActionType;
 use App\Repository\ActionRepository;
+use App\Services\Action\ActionService;
 use App\Services\Dashboard\DashboardService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +21,7 @@ class ActionController extends AbstractController
 {
     public function __construct(
         private readonly DashboardService $dashboardService,
+        private readonly ActionService $actionService,
     ) {
     }
 
@@ -35,22 +36,11 @@ class ActionController extends AbstractController
     #[Route('/{id}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
     public function edit(string $nni, Request $request, Module $module, EntityManagerInterface $entityManager): Response
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-        // Utilisation de assert() pour dire à PHPStan que $currentUser est une instance de User
-        assert($currentUser instanceof User);
-        $datas = $this->dashboardService->getDashboardData(nni: $nni, currentUser: $currentUser);
-        $nni = $this->dashboardService->getNniByUser(user: $currentUser);
+        // Obtenir les données du tableau de bord
+        $datas = $this->dashboardService->getDashboardData($nni);
+        // Trouver ou créer une action pour ce module
+        $action = $this->actionService->findOrCreateAction($module);
 
-        // Recherche une action existante pour ce module, sinon on en crée une nouvelle
-        $action = $entityManager->getRepository(Action::class)->findOneBy(['module' => $module]);
-
-        if (!$action) {
-            $action = new Action();
-            $action->setModule($module);  // Associer l'action au module
-        }
-
-        // On crée le formulaire
         $form = $this->createForm(type: ActionType::class, data: $action);
         $form->handleRequest($request);
 
@@ -58,7 +48,7 @@ class ActionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // On ajoute la signature numérique de l'agent
             $currentDate = new \DateTime(timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
-            $action->setAgentVisa(agentVisa: 'Visa numérique de '.$currentUser->getFullName().' le '.$currentDate->format(format: 'd/m/Y à H:i'));
+            $action->setAgentVisa(agentVisa: 'Visa numérique de '.$datas['user']->getFullName().' le '.$currentDate->format(format: 'd/m/Y à H:i'));
             // On enregistre l'action
             $entityManager->persist($action);
             $entityManager->flush();
@@ -67,7 +57,7 @@ class ActionController extends AbstractController
             return $this->redirectToRoute(
                 route: 'action_index',
                 parameters: [
-                    'nni' => $currentUser->getNni(),
+                    'nni' => $datas['user']->getNni(),
                 ],
                 status: Response::HTTP_SEE_OTHER
             );
@@ -75,33 +65,17 @@ class ActionController extends AbstractController
 
         // On affiche le formulaire
         return $this->render(view: 'action/edit.html.twig', parameters: [
-            'logbooks' => $datas['logbooks'],
-            'modules' => $datas['modules'],
-            'themes' => $datas['themes'],
-            'actions' => $datas['actions'],
             'action' => $action,
             'form' => $form,
         ], response: new Response());
     }
 
     #[Route('/{id}', name: 'action_delete', methods: ['POST'])]
-    public function delete(Request $request, Action $action, EntityManagerInterface $entityManager): Response
+    public function delete(string $nni, Request $request, Action $action, EntityManagerInterface $entityManager): Response
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-        // Utilisation de assert() pour dire à PHPStan que $currentUser est une instance de User
-        assert(assertion: $currentUser instanceof User);
+        $datas = $this->dashboardService->getDashboardData($nni);
 
-        $nni = $currentUser->getNni();
-
-        // Vérifier si le NNI est nul
-        if (null === $nni) {
-            throw new \LogicException(message: 'NNI ne peut pas être nul pour un utilisateur authentifié.');
-        }
-
-        $datas = $this->dashboardService->getDashboardData(nni: $nni, currentUser: $currentUser);
-
-        if ($this->isCsrfTokenValid('delete'.$action->getId(), $request->getPayload()->getString(key: '_token'))) {
+        if ($this->isCsrfTokenValid(id: 'delete'.$action->getId(), token: $request->getPayload()->getString(key: '_token'))) {
             $entityManager->remove($action);
             $entityManager->flush();
         }
@@ -109,7 +83,7 @@ class ActionController extends AbstractController
         return $this->redirectToRoute(
             route: 'action_index',
             parameters: [
-                'nni' => $currentUser->getNni(),
+                'nni' => $datas['user']->getNni(),
             ],
             status: Response::HTTP_SEE_OTHER
         );

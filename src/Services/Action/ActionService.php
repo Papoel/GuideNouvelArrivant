@@ -5,31 +5,36 @@ declare(strict_types=1);
 namespace App\Services\Action;
 
 use App\Entity\Action;
+use App\Entity\Module;
 use App\Repository\ActionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class ActionService
 {
     public function __construct(
-        private ActionRepository $actionRepository,
+        private readonly ActionRepository $actionRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    /**
-     * @return array{actions: Action[]} Returns an array with 'actions' key containing an array of Action objects
-     *
-     * @phpstan-return array{actions: Action[]}
-     */
-    public function getActionByModuleId(string $nni, ?int $moduleId): array
+    public function findOrCreateAction(Module $module): Action
     {
-        if (null === $moduleId) {
-            // Retourner un tableau vide si l'ID du module est null
-            return ['actions' => []];
+        $action = $this->actionRepository->findOneBy(['module' => $module]);
+
+        if (!$action) {
+            $action = new Action();
+            $action->setModule($module);
         }
 
-        $actions = $this->actionRepository->findByModuleIdAndUserNni(nni: $nni, moduleId: $moduleId);
+        return $action;
+    }
 
-        return [
-            'actions' => $actions,
-        ];
+    public function saveAction(Action $action, string $agentName): void
+    {
+        $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone('Europe/Paris'));
+        $action->setAgentVisa(agentVisa: 'Visa numérique de '.$agentName.' le '.$currentDate->format(format: 'd/m/Y à H:i'));
+
+        $this->entityManager->persist($action);
+        $this->entityManager->flush();
     }
 }
