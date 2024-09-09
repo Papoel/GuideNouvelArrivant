@@ -4,33 +4,33 @@ declare(strict_types=1);
 
 namespace App\Services\Dashboard;
 
+use App\Entity\Action;
+use App\Entity\Logbook;
+use App\Entity\Module;
+use App\Entity\Theme;
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Services\User\UserSeniorityService;
 use App\Services\User\UserValidationService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 readonly class DashboardService
 {
     public function __construct(
         private UserValidationService $userValidationService,
         private UserSeniorityService $seniorityService,
-        private UserRepository $userRepository,
     ) {
     }
 
-    public function handleNniRedirection(string $nni, User $currentUser): ?Response
-    {
-        // Si le NNI dans l'URL est différent du NNI de l'utilisateur connecté
-        if ($currentUser->getNni() !== $nni) {
-            // Redirection vers le bon tableau de bord
-            return new RedirectResponse('/dashboard/'.$currentUser->getNni());
-        }
-
-        // Pas de redirection nécessaire
-        return null;
-    }
-
+    /**
+     * @return array{
+     *     user: User,
+     *     logbooks: array<Logbook>,
+     *     themes: array<Theme>,
+     *     modules: array<Module>,
+     *     actions: array<Action>,
+     *     userSeniority: string,
+     *     mentorSeniority: ?string
+     * }
+     */
     public function getDashboardData(string $nni): array
     {
         // Validation et récupération de l'utilisateur par NNI
@@ -57,11 +57,19 @@ readonly class DashboardService
         ];
     }
 
+    /**
+     * @return array<Logbook>
+     */
     private function getLogbooksByUser(User $user): array
     {
         return $user->getLogbooks()->toArray();
     }
 
+    /**
+     * @param array<Logbook> $logbooks
+     *
+     * @return array<Theme>
+     */
     private function getThemesByLogbooks(array $logbooks): array
     {
         $themes = [];
@@ -74,6 +82,11 @@ readonly class DashboardService
         return $themes;
     }
 
+    /**
+     * @param array<Theme> $themes
+     *
+     * @return array<Module>
+     */
     private function getModulesByThemes(array $themes): array
     {
         $modules = [];
@@ -86,6 +99,11 @@ readonly class DashboardService
         return $modules;
     }
 
+    /**
+     * @param array<Module> $modules
+     *
+     * @return array<Action>
+     */
     private function getActionsByModules(array $modules): array
     {
         $actions = [];
@@ -101,25 +119,5 @@ readonly class DashboardService
     private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
     {
         return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
-    }
-
-    public function getNniByUser(?User $user): string
-    {
-        if (null === $user) {
-            throw new \InvalidArgumentException(message: 'L\'utilisateur est introuvable.');
-        }
-
-        return $user->getNni();
-    }
-
-    public function getMentorByUser(User $user): ?User
-    {
-        return $user->getMentor();
-    }
-
-    public function validateUserAndRedirect(string $nni, ?User $currentUser): ?RedirectResponse
-    {
-        // Délégation complète à UserValidationService
-        return $this->userValidationService->validateUser($currentUser, $nni);
     }
 }
