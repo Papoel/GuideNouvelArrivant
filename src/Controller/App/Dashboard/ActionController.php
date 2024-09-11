@@ -55,7 +55,7 @@ class ActionController extends AbstractController
 
             // On redirige vers la liste des actions
             return $this->redirectToRoute(
-                route: 'action_index',
+                route: 'dashboard_index',
                 parameters: [
                     'nni' => $datas['user']->getNni(),
                 ],
