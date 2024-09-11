@@ -1,10 +1,4 @@
-{{ form_start(form, {
-    attr: {
-        'novalidate': false,
-        'data-action': 'live#action:prevent',
-        'data-live-action-param': 'save',
-    }
-}) }}
+{{ form_start(form) }}
     <main>
         <div class="container-fluid">
             {% set module = action.module %}
