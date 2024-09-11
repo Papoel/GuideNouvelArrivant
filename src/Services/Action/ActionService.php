@@ -31,8 +31,11 @@ readonly class ActionService
 
     public function saveAction(Action $action, string $agentName): void
     {
-        $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone('Europe/Paris'));
-        $action->setAgentVisa(agentVisa: 'Visa numérique de '.$agentName.' le '.$currentDate->format(format: 'd/m/Y à H:i'));
+        $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+
+        if ($agentName) {
+            $action->setAgentVisa(agentVisa: 'Visa numérique de '.$agentName.' le '.$currentDate->format(format: 'd/m/Y à H:i'));
+        }
 
         $this->entityManager->persist($action);
         $this->entityManager->flush();

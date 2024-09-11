@@ -46,12 +46,10 @@ class ActionController extends AbstractController
 
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // On ajoute la signature numérique de l'agent
-            $currentDate = new \DateTime(timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
-            $action->setAgentVisa(agentVisa: 'Visa numérique de '.$datas['user']->getFullName().' le '.$currentDate->format(format: 'd/m/Y à H:i'));
-            // On enregistre l'action
-            $entityManager->persist($action);
-            $entityManager->flush();
+            $this->actionService->saveAction(
+                action: $action,
+                agentName: $datas['user']->getFullName()
+            );
 
             // On redirige vers la liste des actions
             return $this->redirectToRoute(
@@ -67,7 +65,7 @@ class ActionController extends AbstractController
         return $this->render(view: 'action/edit.html.twig', parameters: [
             'action' => $action,
             'form' => $form,
-        ], response: new Response());
+        ]);
     }
 
     #[Route('/{id}', name: 'action_delete', methods: ['POST'])]
