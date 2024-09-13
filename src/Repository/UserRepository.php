@@ -33,28 +33,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return User[]
+     */
+    public function findApprenantByMentorNni(string $mentorNni): array
+    {
+        $result = $this->createQueryBuilder(alias: 'u')
+            ->join(join: 'u.mentor', alias: 'm')
+            ->where('m.nni = :mentorNni')
+            ->setParameter(key: 'mentorNni', value: $mentorNni)
+            ->getQuery()
+            ->getResult();
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        // Forcer le type de retour à un tableau d'objets User
+        return is_array($result) ? $result : [];
+    }
+
+    public function countUsersByLogbookId(int $logbookId): int
+    {
+        return (int) $this->createQueryBuilder(alias: 'u')
+            ->join(join: 'u.logbooks', alias: 'l')
+            ->where('l.id = :logbookId')
+            ->setParameter(key: 'logbookId', value: $logbookId)
+            ->select('COUNT(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

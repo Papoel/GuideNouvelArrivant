@@ -709,3 +709,58 @@ aside.sidebar div {
     max-height: 70vh;
     overflow-y: auto;
 }
+
+/*----------------------------------------------
+# Custom Modal Header
+----------------------------------------------*/
+.modal-header {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Dégradé de couleur bleu pour un aspect moderne */
+    color: #fff; /* Texte en blanc pour contraster avec le fond */
+    display: flex; /* Utilisation de Flexbox pour aligner les éléments */
+    align-items: center; /* Centre les éléments verticalement */
+    justify-content: space-between; /* Espace entre le titre et le bouton de fermeture */
+    padding: 1rem; /* Ajoute un peu de padding autour du contenu du header */
+    border-bottom: 1px solid #dee2e6; /* Bordure pour délimiter le header */
+}
+
+.modal-title {
+    font-size: 1.5rem; /* Taille du titre */
+    margin: 0; /* Supprime les marges autour du titre */
+    display: flex; /* Utilisation de Flexbox pour centrer le titre */
+    align-items: center; /* Centre le titre verticalement */
+    justify-content: center; /* Centre le titre horizontalement */
+    width: 100%; /* Prend toute la largeur disponible */
+}
+
+.btn-close {
+    background: rgba(255, 255, 255, 0.2); /* Fond légèrement transparent pour un effet moderne */
+    border-radius: 50%; /* Forme ronde pour le bouton */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile pour un effet de profondeur */
+    width: 1.5rem; /* Taille du bouton */
+    height: 1.5rem; /* Taille du bouton */
+    padding: 0; /* Évite les marges internes */
+    display: flex; /* Utilise flexbox pour centrer le contenu */
+    align-items: center; /* Centre verticalement le contenu */
+    justify-content: center; /* Centre horizontalement le contenu */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; /* Animation douce pour les propriétés */
+    position: relative; /* Position relative pour le positionnement absolu des enfants */
+}
+
+.btn-close::before {
+    content: "\00d7"; /* Utilise le caractère 'X' comme contenu du bouton */
+    font-size: 1.5rem; /* Taille du 'X' */
+    color: #efecec; /* Couleur du 'X' pour un bon contraste */
+    font-weight: 700; /* Rend le 'X' plus épais pour plus de visibilité */
+    transition: color 0.3s ease, transform 0.3s ease; /* Animation douce pour la couleur et la transformation */
+}
+
+.btn-close:hover {
+    background: rgba(255, 255, 255, 0.4); /* Augmente la transparence au survol */
+    box-shadow: 0 8px 16px rgb(255, 112, 54); /* Ombre plus marquée au survol */
+    transform: scale(1.1) rotate(180deg) translateY(-5%); /* Agrandit, fait pivoter, et translateY lors du survol */
+}
+
+.btn-close:focus {
+    outline: none; /* Supprime le contour au focus pour un design plus propre */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Ajoute une ombre bleue autour du bouton au focus pour l'accessibilité */
+}

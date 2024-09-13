@@ -27,79 +27,77 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $faker = Faker::create(locale: 'fr_FR');
+        $faker = Faker::create('fr_FR'); // Correction : pas d'arguments nommés ici
 
         // Création des utilisateurs sans leur assigner de mentor
         for ($i = 2; $i <= 10; ++$i) {
             $user = new User();
-            $user->setFirstname(firstname: strtolower(string: $faker->firstName()));
-            $user->setLastname(lastname: strtolower(string: $faker->lastName()));
-            $user->setEmail(email: 'email'.$i.'@edf.fr');
-            $user->setNni(nni: $faker->regexify(regex: '/[A-Z]\d{5}/'));
+            $user->setFirstname(strtolower($faker->firstName())); // Correction : pas d'arguments nommés ici
+            $user->setLastname(strtolower($faker->lastName())); // Correction : pas d'arguments nommés ici
+            $user->setEmail('email'.$i.'@edf.fr');
+            $user->setNni($faker->regexify('/[A-Z]\d{5}/')); // Correction : pas d'arguments nommés ici
 
             $jobs = JobEnum::cases();
-            $user->setJob(job: $jobs[array_rand($jobs)]);
+            $user->setJob($jobs[array_rand($jobs)]);
 
             $specialities = SpecialityEnum::cases();
-            $user->setSpeciality(speciality: $specialities[array_rand($specialities)]);
+            $user->setSpeciality($specialities[array_rand($specialities)]);
 
-            $hireDate = $faker->dateTimeBetween(startDate: '-10 years');
-            $immutableHireDate = new \DateTimeImmutable(datetime: $hireDate->format(format: 'Y-m-d'));
-            $user->setHiringAt(hiringAt: $immutableHireDate);
-            $user->setRoles(roles: ['ROLE_USER']);
+            $hireDate = $faker->dateTimeBetween('-10 years');
+            $immutableHireDate = new \DateTimeImmutable($hireDate->format('Y-m-d'));
+            $user->setHiringAt($immutableHireDate);
+            $user->setRoles(['ROLE_USER']);
             $plainPassword = 'user';
-            $user->setPassword(password: $this->passwordHasher
-                ->hashPassword(user: $user, plainPassword: $plainPassword)
-            );
+            $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
             // Associer un nouveau Logbook pour chaque utilisateur
-            $user->addLogbook(logbook: $this->getReference(name: 'logbook_'.random_int(1, 3)));
+            $user->addLogbook($this->getReference('logbook_'.random_int(1, 3))); // Correction : pas d'arguments nommés ici
 
             // Ajouter la référence de l'utilisateur pour les mentors
-            $this->addReference(name: 'user_'.$i, object: $user);
+            $this->addReference('user_'.$i, $user); // Correction : pas d'arguments nommés ici
 
-            $manager->persist(object: $user);
+            $manager->persist($user); // Correction : pas d'arguments nommés ici
         }
 
         // Persist de l'administrateur sans mentor
         $admin = new User();
-        $admin->setFirstname(firstname: 'pascal');
-        $admin->setLastname(lastname: 'briffard');
-        $admin->setNni(nni: 'F07583');
-        $admin->setJob(job: JobEnum::CHARGE_AFFAIRES);
-        $admin->setSpeciality(speciality: SpecialityEnum::CHA);
-        $admin->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '2023-11-02'));
-        $admin->setEmail(email: 'pascal.briffard@edf.fr');
-        $admin->setRoles(roles: ['ROLE_ADMIN']);
+        $admin->setFirstname('pascal');
+        $admin->setLastname('briffard');
+        $admin->setNni('F07583');
+        $admin->setJob(JobEnum::CHARGE_AFFAIRES);
+        $admin->setSpeciality(SpecialityEnum::CHA);
+        $admin->setHiringAt(new \DateTimeImmutable('2023-11-02'));
+        $admin->setEmail('pascal.briffard@edf.fr');
+        $admin->setRoles(['ROLE_ADMIN']);
         $plainPassword = 'admin';
-        $admin->setPassword(password: $this->passwordHasher->hashPassword($admin, $plainPassword));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, $plainPassword));
 
         // Association avec un nouveau Logbook
-        $admin->addLogbook(logbook: $this->getReference(name: 'logbook_1'));
+        $admin->addLogbook($this->getReference('logbook_1')); // Correction : pas d'arguments nommés ici
 
-        $this->addReference(name: 'user_1', object: $admin);
-        $manager->persist(object: $admin);
+        $this->addReference('user_1', $admin); // Correction : pas d'arguments nommés ici
+        $manager->persist($admin); // Correction : pas d'arguments nommés ici
 
         // Sauvegarde initiale de tous les utilisateurs
         $manager->flush();
 
         // Deuxième étape : assigner les mentors
         for ($i = 2; $i <= 10; ++$i) {
-            $user = $this->getReference(name: 'user_'.$i);
+            $user = $this->getReference('user_'.$i); // Correction : pas d'arguments nommés ici
 
             if ($i < 10) {
-                $probableMentor = $this->getReference(name: 'user_'.($i + 1));
-                $user->setMentor(mentor: $probableMentor);
+                $probableMentor = $this->getReference('user_'.($i + 1)); // Correction : pas d'arguments nommés ici
+                $user->setMentor($probableMentor); // Correction : pas d'arguments nommés ici
             } else {
                 // Pour User 10, on peut choisir un mentor au hasard parmi les autres utilisateurs
-                $probableMentor = $this->getReference(name: 'user_'.random_int(2, 9));
-                $user->setMentor(mentor: $probableMentor);
+                $probableMentor = $this->getReference('user_'.random_int(2, 9)); // Correction : pas d'arguments nommés ici
+                $user->setMentor($probableMentor); // Correction : pas d'arguments nommés ici
             }
         }
 
         // Définir le mentor de l'admin (aléatoire parmi les utilisateurs)
-        $probableMentor = $this->getReference(name: 'user_'.random_int(2, 10));
-        $admin->setMentor(mentor: $probableMentor);
+        $probableMentor = $this->getReference('user_'.random_int(2, 10)); // Correction : pas d'arguments nommés ici
+        $admin->setMentor($probableMentor); // Correction : pas d'arguments nommés ici
 
         // Sauvegarde des modifications
         $manager->flush();

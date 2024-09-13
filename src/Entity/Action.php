@@ -39,6 +39,10 @@ class Action
     #[ORM\JoinColumn(name: 'module_id', referencedColumnName: 'id')]
     private ?Module $module = null;
 
+    #[ORM\ManyToOne(inversedBy: 'actions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __toString(): string
     {
         return 'Action #'.$this->id;
@@ -141,6 +145,18 @@ class Action
     public function setModule(?Module $module): static
     {
         $this->module = $module;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -5,7 +5,7 @@ parameters:
   excludePaths:
     - src/DataFixtures
     - src/Command
-    - src/Services/Dashboard/DashboardService.php
+    #- src/Services/Dashboard/DashboardService.php
   checkMissingIterableValueType: true
   reportUnmatchedIgnoredErrors: false
   editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'

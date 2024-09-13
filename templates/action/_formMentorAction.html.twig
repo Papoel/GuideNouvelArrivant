@@ -1,0 +1,57 @@
+{{ form_start(form) }}
+    <main>
+        <div class="container-fluid">
+            {% set module = action.module %}
+            <div class="callout callout-primary">
+                <div class="d-flex align-items-center">
+                    <div class="icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div>
+                        <span class="module-title"><strong>Titre du module:</strong> {{ module.title }}</span> <br>
+                        <span class="module-description"><strong>Description: </strong>{{ module.description|raw }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout callout-primary">
+                <div class="d-flex align-items-center">
+                    <div class="icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div>
+                        <span class="module-title"><strong>Commentaire de l'agent</strong> Next</span> <br>
+                        <span class="module-description"><strong>Description: </strong>Nexy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Agents -->
+            <section class="border border-1 border-success-subtle rounded-2 p-3 mb-3">
+                <fieldset id="agentAction">
+                    <legend class="bg-success-subtle text-success py-2 px-3 rounded-1 text-uppercase fw-bold">Agents</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.mentorComment, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_row(form.mentorValidatedAt, {
+                                'label_attr': { 'class': 'form-label' },
+                                'attr': { 'class': 'form-control' }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+            </section>
+
+        </div>
+    </main>
+
+    <div class="modal-footer">
+        {{ form_widget(form.submit) }}
+    </div>
+
+{{ form_end(form) }}

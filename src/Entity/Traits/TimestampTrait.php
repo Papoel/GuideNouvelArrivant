@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait TimestampTrait
 {
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTime $updatedAt = null;
@@ -39,9 +39,6 @@ trait TimestampTrait
         return $this;
     }
 
-    /**
-     * @throws \Exception
-     */
     #[ORM\PrePersist]
     public function createdTimestamps(): void
     {
@@ -49,9 +46,6 @@ trait TimestampTrait
         $this->setCreatedAt(new \DateTimeImmutable(datetime: 'now', timezone: $timezone));
     }
 
-    /**
-     * @throws \Exception
-     */
     #[ORM\PreUpdate]
     public function updatedTimestamps(): void
     {

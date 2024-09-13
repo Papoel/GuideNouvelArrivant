@@ -17,50 +17,14 @@ class LogbookCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new(propertyName: 'id')
-            ->hideOnForm()
-            ->hideOnIndex()
-        ;
-
-        yield TextField::new(propertyName: 'name', label: 'Nom');
-
-        yield AssociationField::new(propertyName: 'themes', label: 'Nb de Thèmes')
-            ->setFormTypeOptions([
-                'by_reference' => false,
-            ])
-        ;
-
-        yield AssociationField::new(propertyName: 'users', label: 'Propriétaire')
-            ->setFormTypeOptions([
-                'by_reference' => false,
-            ])
-        ;
+        return [
+            IdField::new(propertyName: 'id')->hideOnForm(),
+            TextField::new(propertyName: 'name')->setLabel(label: 'Nom du carnet')->onlyOnIndex(),
+            AssociationField::new(propertyName: 'owner', label: 'Propriétaire du carnet'),
+            AssociationField::new(propertyName: 'themes', label: 'index' === $pageName ? 'Nb de thèmes' : 'Thèmes associés')
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                ]),
+        ];
     }
-
-    /*    public function configureActions(Actions $actions): Actions
-        {
-            $dump = Action::new(name: self::DUMP, label: 'Dump', icon: 'fa fa-dumpster')
-                ->linkToCrudAction(crudActionName: 'dumpFunction')
-                ->setCssClass(cssClass: 'btn btn-danger')
-                ->setIcon(icon: 'fa fa-dumpster')
-            ;
-
-            return $actions
-                ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $dump);
-        }*/
-
-    /*    public function dumpFunction(AdminContext $context):void
-        {
-            $entity = $context->getEntity()->getInstance();
-            // Get All Module for each theme in the logbook
-            $themes = $entity->getThemes();
-            $modules = [];
-
-            foreach ($themes as $theme) {
-                $modules[] = $theme->getModules();
-            }
-
-            // Afficher tous les modules
-            // dd($modules);
-        }*/
 }
