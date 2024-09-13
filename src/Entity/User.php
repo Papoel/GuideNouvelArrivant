@@ -69,13 +69,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Logbook>
      */
-    #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'users')]
+    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner')]
     private Collection $logbooks;
+
+    /**
+     * @var Collection<int, Action>
+     */
+    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'user')]
+    private Collection $actions;
 
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->logbooks = new ArrayCollection();
+        $this->actions = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -272,6 +279,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isAdmin(): bool
+    {
+        return \in_array(needle: 'ROLE_ADMIN', haystack: $this->roles, strict: true);
+    }
+
     /**
      * @return Collection<int, Logbook>
      */
@@ -284,6 +296,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->logbooks->contains($logbook)) {
             $this->logbooks->add($logbook);
+            $logbook->setOwner($this);
         }
 
         return $this;
@@ -291,13 +304,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeLogbook(Logbook $logbook): static
     {
-        $this->logbooks->removeElement($logbook);
+        if ($this->logbooks->removeElement($logbook)) {
+            // set the owning side to null (unless already changed)
+            if ($logbook->getOwner() === $this) {
+                $logbook->setOwner(null);
+            }
+        }
 
         return $this;
     }
 
-    public function isAdmin(): bool
+    /**
+     * @return Collection<int, Action>
+     */
+    public function getActions(): Collection
     {
-        return \in_array(needle: 'ROLE_ADMIN', haystack: $this->roles, strict: true);
+        return $this->actions;
+    }
+
+    public function addAction(Action $action): static
+    {
+        if (!$this->actions->contains($action)) {
+            $this->actions->add($action);
+            $action->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAction(Action $action): static
+    {
+        if ($this->actions->removeElement($action)) {
+            // set the owning side to null (unless already changed)
+            if ($action->getUser() === $this) {
+                $action->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

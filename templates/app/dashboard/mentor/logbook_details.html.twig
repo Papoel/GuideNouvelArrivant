@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Carnet{% endblock %}
+
+{% block body %}
+    <main id="main" class="main">
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <h1>{{ logbook.name }}</h1>
+                    <!-- Affichage des modules et des actions -->
+                    {% for theme in logbook.themes %}
+                        <div class="accordion p-2 mt-4" id="theme-{{ theme.id }}">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading-{{ theme.id }}">
+                                    <button class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-theme-{{ theme.id }}"
+                                            aria-expanded="false"
+                                            aria-controls="collapse-theme-{{ theme.id }}">
+                                        {{ theme.title }}
+                                        <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                    </button>
+                                </h2>
+
+                                <div id="collapse-theme-{{ theme.id }}"
+                                     class="accordion-collapse collapse"
+                                     aria-labelledby="heading-{{ theme.id }}"
+                                     data-bs-parent="#theme-{{ theme.id }}">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for module in theme.modules %}
+                                                <li id="module-{{ module.id }}" class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                    {{ loop.index }} - {{ module.title }}
+                                                    <!-- Affichage des actions et des boutons de modification -->
+                                                    <!-- Ajoute des boutons ou des liens pour renseigner/modifier les actions ici -->
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

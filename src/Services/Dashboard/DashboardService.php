@@ -34,17 +34,23 @@ readonly class DashboardService
     public function getDashboardData(string $nni): array
     {
         // Validation et récupération de l'utilisateur par NNI
-        $user = $this->userValidationService->validateUserAccess($nni);
+        $currentUser = $this->userValidationService->validateUserAccess($nni);
 
         // Vérification des droits d'accès
-        $currentUser = $this->userValidationService->getCurrentUser($nni);
+        // assert($currentUser instanceof User);
 
-        // assert(assertion: $currentUser instanceof User);
-
+        // Récupération des logbooks associés à l'utilisateur
         $logbooks = $this->getLogbooksByUser($currentUser);
+
+        // Récupération des thèmes liés aux logbooks
         $themes = $this->getThemesByLogbooks($logbooks);
+
+        // Récupération des modules liés aux thèmes
         $modules = $this->getModulesByThemes($themes);
-        $actions = $this->getActionsByModules($modules);
+
+        // Récupération des actions liées aux modules
+        // Filtrer les actions pour l'utilisateur actuel
+        $actions = $this->getActionsByModulesForUser($modules, $currentUser);
 
         return [
             'user' => $currentUser,
@@ -99,25 +105,29 @@ readonly class DashboardService
         return $modules;
     }
 
+    private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
+    {
+        return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
+    }
+
     /**
      * @param array<Module> $modules
      *
      * @return array<Action>
      */
-    private function getActionsByModules(array $modules): array
+    private function getActionsByModulesForUser(array $modules, User $user): array
     {
         $actions = [];
+
         foreach ($modules as $module) {
             foreach ($module->getActions() as $action) {
-                $actions[] = $action;
+                // Vérifier si l'action est associée à l'utilisateur courant
+                if ($action->getUser()?->getId() === $user->getId()) {
+                    $actions[] = $action;
+                }
             }
         }
 
         return $actions;
-    }
-
-    private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
-    {
-        return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
     }
 }

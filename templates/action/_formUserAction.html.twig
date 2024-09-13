@@ -35,29 +35,6 @@
                 </fieldset>
             </section>
 
-            <!-- Section Tutor -->
-            {% if is_granted("ROLE_MENTOR") %}
-                <section class="border border-1 border-primary-subtle rounded-2 p-3">
-                    <fieldset id="mentorAction">
-                        <legend class="bg-primary-subtle text-primary py-2 px-3 rounded-1 text-uppercase fw-bold">Tuteur</legend>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(form.mentorComment, {
-                                    'label_attr': { 'class': 'form-label' },
-                                    'attr': { 'class': 'form-control' }
-                                }) }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(form.mentorValidatedAt, {
-                                    'label_attr': { 'class': 'form-label' },
-                                    'attr': { 'class': 'form-control' }
-                                }) }}
-                            </div>
-                        </div>
-                    </fieldset>
-                </section>
-            {% endif %}
-
         </div>
     </main>
 

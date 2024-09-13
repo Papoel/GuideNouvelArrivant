@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Tuteur{% endblock %}
+
+{% block body %}
+
+    {% set user = app.user %}’
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <!-- Message Flash -->
+        <section id="flash_messages" class="container-fluid mt-4">
+            {# Display messages Flash #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+        </section>
+
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    {% for apprenant in apprenants %}
+                        {% for logbook in apprenant.logbooks %}
+                            <div class="card info-card mentor-card h-100">
+                                <div class="card-header card-title ps-3 border-bottom border-secondary border-opacity-25">
+                                    <h5 class="text-uppercase fw-bold mb-0">{{ apprenant.fullname }}</h5>
+                                </div>
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="text-uppercase fw-bold">{{ logbook.name }}</h6>
+                                        <span class="badge bg-primary rounded-pill">{{ logbook.themes|length }} thèmes</span>
+                                    </div>
+                                    <!-- Affichage des détails du carnet -->
+                                    {#<a href="{{ path('mentor_logbook_details', { 'id': logbook.id }) }}" class="btn btn-sm btn-primary">#}
+                                    <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanName': apprenant.fullname }) }}" class="btn btn-sm btn-primary">
+                                        Voir les détails
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

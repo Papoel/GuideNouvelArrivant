@@ -21,54 +21,6 @@
         {{ include('app/dashboard/cards/mentorCard.html.twig') }}
         <!-- End Mentor Card -->
     </div>
-
-    {#<div class="row mt-4">
-                            <!-- Logbook Card -->
-                            {% for logbookData in logbooks %}
-                                <div class="col-12">
-                                    <div class="card info-card customers-card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Carnet de Compagnonnage</h5>
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-journal"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    {% set progress = logbookData.progress * 100 %}
-                                                    <h6>Progression: {{ progress }}%</h6>
-                                                    <div class="progress">
-                                                        {% set progress_class = logbookData.progress_class %}
-                                                        <div class="progress-bar {{ progress_class }}" role="progressbar"
-                                                             style="width: {{ progress }}%" aria-valuenow="{{ progress }}"
-                                                             aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                    <span class="text-muted small pt-2 d-block">Sections non validées : {{ logbookData.unvalidated_sections }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <div class="col-12">
-                                    <div class="card info-card no-mentor-card h-100">
-                                        <div class="card-body text-center">
-                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                                                <i class="bi bi-exclamation-circle"></i>
-                                            </div>
-                                            <h5 class="card-title">Pas de carnet de compagnonnage</h5>
-                                            <p class="text-muted">{{ user.fullname }} n'a actuellement été affecté.</p>
-                                            {% if is_granted('ROLE_ADMIN') %}
-                                                <a href="{{ path('admin', {
-                                                    crudAction: 'index',
-                                                    crudControllerFqcn: 'App\\Controller\\Admin\\Logbook\\LogbookCrudController',
-                                                }) }}" class="btn btn-sm" id="btn-assign--mentor">Affecter un carnet</a>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            <!-- End Logbook Card -->
-                        </div>#}
 </div>
 <!-- End Left side columns -->
 <section id="card-logbook">
@@ -105,78 +57,77 @@
                                                     <li id="module-{{ module.id }}" class="list-group-item d-flex justify-content-between align-items-center py-2">
                                                         {{ loop.index }} - {{ module.title }}
                                                         <!-- Conteneur pour les boutons -->
-                                                        {% if module.actions|filter(action => action.mentorVisa is not null)|length > 0 %}
-                                                            <!-- Lorsque le tuteur valide l'utilisateur ne peut plus apporter de modifications. -->
-                                                            <div class="d-flex align-items-center">
-                                                                <i class="bi bi-check-circle text-success" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                                                                <div class="card dropdown-menu border border-1 border-secondary border-opacity-50 rounded-4 p-0 m-0">
-                                                                    <div class="card-body p-3 bg-secondary-light shadow-lg rounded-4" style="width: 500px;">
-                                                                        {% for action in module.actions %}
-                                                                            {% if action.mentorVisa %}
-                                                                                <span>{{ action.mentorVisa }}</span>
-                                                                            {% endif %}
-                                                                        {% endfor %}
+                                                        <div class="d-flex gap-2">
+                                                            {% set actionByCurrentUser = module.actions|filter(action => action.agentComment is not null and action.user == app.user) %}
+                                                            {% set hasFilledActions = actionByCurrentUser|length > 0 %}
+
+                                                            {% if hasFilledActions %}
+                                                                <!-- Affiche le bouton Modifier si l'utilisateur connecté a déjà rempli les actions -->
+                                                                <a class="btn btn-sm btn-outline-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id, 'logbookId': logbook.id }) }}">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                    Modifier
+                                                                </a>
+
+                                                            {% else %}
+                                                                <!-- Affiche le bouton Remplir si l'utilisateur connecté n'a pas encore rempli les actions -->
+                                                                <a class="btn btn-sm btn-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id, 'logbookId': logbook.id }) }}">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                    Remplir
+                                                                </a>
+                                                            {% endif %}
+                                                            <!-- Bouton pour afficher les commentaires dans un modal -->
+                                                            {% if module.actions|filter(action => action.agentComment is not null and action.agentComment|length > 0 and action.user == app.user)|length > 0 %}
+                                                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userActionModal{{ module.id }}">
+                                                                    <i class="bi bi-info-circle"></i>
+                                                                    Voir Commentaire
+                                                                </button>
+                                                            {% endif %}
+                                                        </div>
+
+                                                        <!-- Modal pour afficher les commentaires de l'utilisateur et du tuteur -->
+                                                        {% if module.actions|filter(action => action.agentComment is not null and action.agentComment|length > 0 and action.user == app.user or action.mentorComment is not null)|length > 0 %}
+                                                            <div class="modal fade" id="userActionModal{{ module.id }}" tabindex="-1" aria-labelledby="userActionModalLabel{{ module.id }}" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h3 class="modal-title" id="userActionModalLabel{{ module.id }}">
+                                                                                <i class="bi bi-chat-dots me-3"></i> Commentaires
+                                                                            </h3>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            {% for action in module.actions %}
+                                                                                <!-- Commentaire de l'Agent -->
+                                                                                {% if action.agentComment is not null and action.user == app.user %}
+                                                                                    <div class="mb-4">
+                                                                                        <h5 class="mb-2 text-primary">Commentaire de l'Agent</h5>
+                                                                                        <div class="p-3 border rounded bg-light">
+                                                                                            <p class="lead mb-0">{{ action.agentComment }}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                {% endif %}
+
+                                                                                <!-- Commentaire du Tuteur (filtré pour l'utilisateur actuel) -->
+                                                                                {% if action.mentorComment is not null and action.user == app.user %}
+                                                                                    <div class="mt-4">
+                                                                                        <h5 class="mb-2 text-success">Commentaire du Tuteur</h5>
+                                                                                        <div class="p-3 border rounded bg-light">
+                                                                                            <p class="lead mb-0">{{ action.mentorComment }}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                        <div class="modal-footer border-top-0">
+                                                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">
+                                                                                <i class="bi bi-x-circle"></i> Fermer
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        {% else %}
-                                                            <div class="d-flex gap-2">
-                                                                <!-- Bouton conditionnel basé sur action.agentComment -->
-                                                                {% if module.actions|filter(action => action.agentComment is not null)|length > 0 %}
-                                                                    <a class="btn btn-sm btn-outline-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id }) }}">
-                                                                        <i class="bi bi-pencil-square"></i>
-                                                                        Modifier
-                                                                    </a>
-                                                                {% else %}
-                                                                    <a class="btn btn-sm btn-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id }) }}">
-                                                                        <i class="bi bi-pencil-square"></i>
-                                                                        Remplir
-                                                                    </a>
-                                                                {% endif %}
-
-                                                                {% for action in module.actions %}
-                                                                    {% if action.agentComment %}
-                                                                        <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#agentCommentModal{{ module.id }}">
-                                                                            Commentaire Agent
-                                                                        </button>
-                                                                        <!-- Modal pour le commentaire de l'agent -->
-                                                                        <div class="modal fade" id="agentCommentModal{{ module.id }}" tabindex="-1" aria-labelledby="agentCommentModalLabel{{ module.id }}" aria-hidden="true">
-                                                                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                                                <div class="modal-content">
-                                                                                    <div class="modal-header">
-                                                                                        <h5 class="modal-title" id="agentCommentModalLabel{{ module.id }}">Commentaire Agent</h5>
-                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                                    </div>
-                                                                                    <div class="modal-body">
-                                                                                        {{ action.agentComment }}
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-
-                                                                    {% if action.mentorComment %}
-                                                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#mentorCommentModal{{ module.id }}">
-                                                                            Commentaire Tuteur
-                                                                        </button>
-                                                                        <!-- Modal pour le commentaire du mentor -->
-                                                                        <div class="modal fade" id="mentorCommentModal{{ module.id }}" tabindex="-1" aria-labelledby="mentorCommentModalLabel{{ module.id }}" aria-hidden="true">
-                                                                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                                                <div class="modal-content">
-                                                                                    <div class="modal-header">
-                                                                                        <h5 class="modal-title" id="mentorCommentModalLabel{{ module.id }}">Commentaire du tuteur</h5>
-                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                                    </div>
-                                                                                    <div class="modal-body">
-                                                                                        {{ action.mentorComment }}
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                            </div>
                                                         {% endif %}
+
                                                     </li>
                                                 {% endfor %}
                                             </ul>

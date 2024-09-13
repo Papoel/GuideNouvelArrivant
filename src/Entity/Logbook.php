@@ -16,7 +16,7 @@ class Logbook
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
     /**
@@ -25,21 +25,18 @@ class Logbook
     #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbooks')]
     private Collection $themes;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'logbooks')]
-    private Collection $users;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'logbooks')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $owner = null;
 
     public function __construct()
     {
         $this->themes = new ArrayCollection();
-        $this->users = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return $this->name ?? '';
+        return $this->owner ? 'Carnet de '.$this->owner->getFullName() : 'Carnet sans propriétaire';
     }
 
     public function getId(): ?int
@@ -84,29 +81,14 @@ class Logbook
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
+    public function getOwner(): ?User
     {
-        return $this->users;
+        return $this->owner;
     }
 
-    public function addUser(User $user): static
+    public function setOwner(?User $owner): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addLogbook($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeLogbook($this);
-        }
+        $this->owner = $owner;
 
         return $this;
     }

@@ -3,8 +3,9 @@
 namespace App\Controller\App\Dashboard;
 
 use App\Entity\Action;
+use App\Entity\Logbook;
 use App\Entity\Module;
-use App\Form\ActionType;
+use App\Form\UserActionType;
 use App\Repository\ActionRepository;
 use App\Services\Action\ActionService;
 use App\Services\Dashboard\DashboardService;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/dashboard/{nni}/action')]
+#[Route('/dashboard/{nni}/module')]
 #[IsGranted('ROLE_USER')]
 class ActionController extends AbstractController
 {
@@ -33,38 +34,44 @@ class ActionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
-    public function edit(string $nni, Request $request, Module $module, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/carnet/{logbookId}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
+    public function edit(string $nni, Request $request, int $id, int $logbookId, EntityManagerInterface $entityManager): Response
     {
+        // Récupérer le module par son ID
+        $module = $entityManager->getRepository(Module::class)->find($id);
+        if (!$module) {
+            throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du module');
+        }
+
+        // Récupérer le logbook par son ID
+        $logbook = $entityManager->getRepository(Logbook::class)->find($logbookId);
+        if (!$logbook) {
+            throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du carnet');
+        }
+
         // Obtenir les données du tableau de bord
         $datas = $this->dashboardService->getDashboardData($nni);
+
         // Trouver ou créer une action pour ce module
         $action = $this->actionService->findOrCreateAction($module);
 
-        $form = $this->createForm(type: ActionType::class, data: $action);
+        // Créer le formulaire
+        $form = $this->createForm(type: UserActionType::class, data: $action);
         $form->handleRequest($request);
 
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->actionService->saveAction(
-                action: $action,
-                agentName: $datas['user']->getFullName()
-            );
+            $this->actionService->saveAction($action, $datas['user']->getFullName());
 
-            // On redirige vers la liste des actions
-            return $this->redirectToRoute(
-                route: 'dashboard_index',
-                parameters: [
-                    'nni' => $datas['user']->getNni(),
-                ],
-                status: Response::HTTP_SEE_OTHER
-            );
+            // Redirige vers la liste des actions
+            return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $datas['user']->getNni()]);
         }
 
-        // On affiche le formulaire
+        // Render de la vue
         return $this->render(view: 'action/edit.html.twig', parameters: [
-            'action' => $action,
             'form' => $form,
+            'action' => $action,
+            'logbook' => $logbook,
         ]);
     }
 
