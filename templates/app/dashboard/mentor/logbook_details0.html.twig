@@ -1,0 +1,208 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Carnet{% endblock %}
+
+{% block body %}
+    {% set user = app.user %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <!-- Message Flash -->
+        <section id="flash_messages" class="container-fluid mt-4">
+            {# Display messages Flash #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </section>
+
+        <section>
+            {#<form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>#}
+
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher...">
+                        <label for="searchInput"></label>
+                    </div>
+                </div>
+
+                {% set lastTheme = null %}
+                <div class="col-12">
+                    {% for data in padawanData %}
+                        {% if lastTheme != data.module.theme.title %}
+                            {% if lastTheme is not null %}
+                                </tbody>
+                                </table>
+                                </article>
+                            {% endif %}
+                            <article>
+                            <h3>{{ data.module.theme.title }}</h3>
+                                <table class="table table-striped table-bordered my-4">
+                                    <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Commentaire agent</th>
+                                        <th>Commentaire Mentor</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set lastTheme = data.module.theme.title %}
+                        {% endif %}
+                                <!-- Affichage des données du carnet de bord -->
+                                    <tr class="searchable align-middle">
+                                        <td>{{ data.module.title }}</td>
+                                        <td>{{ data.agentComment }}</td>
+                                        <td>{{ data.mentorComment ? data.mentorComment : 'Aucun commentaire' }}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                {% if not data.mentorComment and data.mentorValidatedAt is null %}
+                                                    <a class="btn btn-sm btn-outline-primary"
+                                                       href="{{ path('mentor_logbook_action_edit', {
+                                                           'nni': app.user.nni,
+                                                           'padawanNni': data.user.nni,
+                                                           'logbookId': data.logbook.id,
+                                                           'moduleId': data.module.id,
+                                                           'actionId': data.id
+                                                       }) }}">
+                                                        <i class="bi bi-chat-dots"></i>
+                                                        Commenter
+                                                    </a>
+                                                {% elseif data.mentorValidatedAt is null %}
+                                                    <a class="btn btn-sm btn-outline-primary"
+                                                       href="{{ path('mentor_logbook_action_edit', {
+                                                           'nni': app.user.nni,
+                                                           'padawanNni': data.user.nni,
+                                                           'logbookId': data.logbook.id,
+                                                           'moduleId': data.module.id,
+                                                           'actionId': data.id
+                                                       }) }}">
+                                                        <i class="bi bi-pencil"></i>
+                                                        Modifier
+                                                    </a>
+                                                    <a class="btn btn-sm btn-outline-danger"
+                                                       href="{{ path('mentor_logbook_action_delete_comment', {
+                                                           'nni': app.user.nni,
+                                                           'padawanNni': data.user.nni,
+                                                           'logbookId': data.logbook.id,
+                                                           'moduleId': data.module.id,
+                                                           'actionId': data.id
+                                                       }) }}">
+                                                        <i class="bi bi-trash"></i>
+                                                        Supprimer
+                                                    </a>
+                                                {% endif %}
+                                                {% if not data.mentorVisa %}
+                                                    <a href="{{ path('mentor_logbook_action_validate', {
+                                                        'nni': app.user.nni,
+                                                        'padawanNni': data.user.nni,
+                                                        'logbookId': data.logbook.id,
+                                                        'moduleId': data.module.id,
+                                                        'actionId': data.id
+                                                    }) }}" class="btn btn-sm btn-outline-success">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                        Valider
+                                                    </a>
+                                                {% else %}
+                                                    {#.Dévalider le commentaire #}
+                                                    <a href="{{ path('mentor_logbook_action_invalidate', {
+                                                        'nni': app.user.nni,
+                                                        'padawanNni': data.user.nni,
+                                                        'logbookId': data.logbook.id,
+                                                        'moduleId': data.module.id,
+                                                        'actionId': data.id
+                                                    }) }}" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-x-circle-fill"></i>
+                                                        Dévalider
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                    </article>
+
+                    <!-- Pagination Controls -->
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="#" id="prevPage">Précédent</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" id="nextPage">Suivant</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Filtrage des résultats de recherche
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let input = this.value.toLowerCase();
+            let rows = document.querySelectorAll('.searchable');
+
+            rows.forEach(function(row) {
+                if (row.textContent.toLowerCase().indexOf(input) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Pagination
+        let currentPage = 1;
+        let rowsPerPage = 5; // Nombre de lignes par page
+
+        function paginate() {
+            let rows = document.querySelectorAll('.searchable');
+            let totalRows = rows.length;
+            let totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            rows.forEach((row, index) => {
+                row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? '' : 'none';
+            });
+
+            // Gérer l'état des boutons de pagination
+            document.getElementById('prevPage').parentElement.classList.toggle('disabled', currentPage === 1);
+            document.getElementById('nextPage').parentElement.classList.toggle('disabled', currentPage === totalPages);
+        }
+
+        document.getElementById('prevPage').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                paginate();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function(e) {
+            e.preventDefault();
+            let totalRows = document.querySelectorAll('.searchable').length;
+            let totalPages = Math.ceil(totalRows / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                paginate();
+            }
+        });
+
+        // Initialiser la pagination au chargement
+        paginate();
+    </script>
+
+
+{% endblock %}

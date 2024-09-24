@@ -3,48 +3,211 @@
 {% block title %}Détails du Carnet{% endblock %}
 
 {% block body %}
-    <main id="main" class="main">
-        <section>
-            <div class="row">
-                <div class="col-12">
-                    <h1>{{ logbook.name }}</h1>
-                    <!-- Affichage des modules et des actions -->
-                    {% for theme in logbook.themes %}
-                        <div class="accordion p-2 mt-4" id="theme-{{ theme.id }}">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading-{{ theme.id }}">
-                                    <button class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapse-theme-{{ theme.id }}"
-                                            aria-expanded="false"
-                                            aria-controls="collapse-theme-{{ theme.id }}">
-                                        {{ theme.title }}
-                                        <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
-                                    </button>
-                                </h2>
+    {% set user = app.user %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
 
-                                <div id="collapse-theme-{{ theme.id }}"
-                                     class="accordion-collapse collapse"
-                                     aria-labelledby="heading-{{ theme.id }}"
-                                     data-bs-parent="#theme-{{ theme.id }}">
-                                    <div class="accordion-body">
-                                        <ul class="list-group list-group-flush">
-                                            {% for module in theme.modules %}
-                                                <li id="module-{{ module.id }}" class="list-group-item d-flex justify-content-between align-items-center py-2">
-                                                    {{ loop.index }} - {{ module.title }}
-                                                    <!-- Affichage des actions et des boutons de modification -->
-                                                    <!-- Ajoute des boutons ou des liens pour renseigner/modifier les actions ici -->
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
+    <main id="main" class="main">
+        <!-- Message Flash -->
+        <section id="flash_messages" class="container-fluid mt-4">
+            {# Display messages Flash #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </section>
+
+        {#<section class="container-fluid mt-4">
+            {% for theme, actions in actionsByTheme %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>{{ theme }}</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for action in actions %}
+                            <div class="mb-3">
+                                <h6>Module : {{ action.module.title }}</h6>
+                                <p>{{ action.module.description }}</p>
+
+                                <h6>Action</h6>
+                                <p><strong>Commentaire de l'agent :</strong> {{ action.agentComment }}</p>
+                                <p><strong>Commentaire du tuteur :</strong> {{ action.mentorComment }}</p>
+
+                                <div class="actions-tuteur mt-3">
+                                    <h6>Actions Tuteur</h6>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <button class="btn btn-secondary">Ajouter un commentaire</button>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-warning">Modifier un commentaire</button>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-danger">Supprimer un commentaire</button>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-success">Valider le module</button>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-danger">Dévalider le module</button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                            <hr />
+                        {% endfor %}
+                    </div>
                 </div>
+            {% endfor %}
+        </section>#}
+
+        {#<section class="container-fluid mt-4">
+            {% for theme, actions in actionsByTheme %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">{{ theme }}</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for action in actions %}
+                            <div class="mb-3 border p-3 rounded bg-light">
+                                <h6 class="font-weight-bold">Module : {{ action.module.title }}</h6>
+                                <p class="text-muted">{{ action.module.description }}</p>
+
+                                <h6>Commentaires</h6>
+                                <p><strong>Commentaire de l'agent :</strong> {{ action.agentComment ?: 'Aucun commentaire' }}</p>
+                                <p><strong>Commentaire du tuteur :</strong> {{ action.mentorComment ?: 'Aucun commentaire' }}</p>
+
+                                <div class="actions-tuteur mt-3">
+                                    <h6 class="font-weight-bold">Actions Tuteur</h6>
+                                    {% if action.agentComment is empty %}
+                                        <button class="btn btn-secondary mb-2">Ajouter un commentaire</button>
+                                    {% else %}
+                                        <button class="btn btn-warning mb-2">Modifier un commentaire</button>
+                                        <button class="btn btn-danger mb-2">Supprimer un commentaire</button>
+                                    {% endif %}
+
+                                    {% if action.mentorValidatedAt is not null %}
+                                        <button class="btn btn-danger">Dévalider le module</button>
+                                    {% else %}
+                                        <button class="btn btn-success mb-2">Valider le module</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <hr />
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </section>#}
+
+        <section class="container-fluid mt-4">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                    <tr class="align-middle">
+                        <th scope="col">Thème</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Commentaire Agent</th>
+                        <th scope="col">Commentaire Tuteur</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for theme, actions in actionsByTheme %}
+                        <tr class="table-info">
+                            <td colspan="6"><strong>{{ theme }}</strong></td>
+                        </tr>
+                        {% for action in actions %}
+                            <tr>
+                                <td>{{ action.module.title }}</td>
+                                <td>{{ action.module.description }}</td>
+                                <td>{{ action.agentComment ?: 'Aucun commentaire' }}</td>
+                                <td>{{ action.mentorComment ?: 'Aucun commentaire' }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        {# Conditions pour les commentaires #}
+                                        {% if not action.mentorComment and action.mentorValidatedAt is null %}
+                                            <a class="btn btn-sm btn-outline-primary"
+                                               href="{{ path('mentor_logbook_action_edit', {
+                                                   'nni': app.user.nni,
+                                                   'padawanNni': action.user.nni,
+                                                   'logbookId': action.logbook.id,
+                                                   'moduleId': action.module.id,
+                                                   'actionId': action.id
+                                               }) }}">
+                                                <i class="bi bi-chat-dots"></i>
+                                                Commenter
+                                            </a>
+                                        {% elseif action.mentorValidatedAt is null %}
+                                            <a class="btn btn-sm btn-outline-primary"
+                                               href="{{ path('mentor_logbook_action_edit', {
+                                                   'nni': app.user.nni,
+                                                   'padawanNni': action.user.nni,
+                                                   'logbookId': action.logbook.id,
+                                                   'moduleId': action.module.id,
+                                                   'actionId': action.id
+                                               }) }}">
+                                                <i class="bi bi-pencil"></i>
+                                                Modifier
+                                            </a>
+                                            <a class="btn btn-sm btn-outline-danger"
+                                               href="{{ path('mentor_logbook_action_delete_comment', {
+                                                   'nni': app.user.nni,
+                                                   'padawanNni': action.user.nni,
+                                                   'logbookId': action.logbook.id,
+                                                   'moduleId': action.module.id,
+                                                   'actionId': action.id
+                                               }) }}">
+                                                <i class="bi bi-trash"></i>
+                                                Supprimer
+                                            </a>
+                                        {% endif %}
+
+                                        {# Conditions pour la validation #}
+                                        {% if not action.mentorVisa %}
+                                            <a href="{{ path('mentor_logbook_action_validate', {
+                                                'nni': app.user.nni,
+                                                'padawanNni': action.user.nni,
+                                                'logbookId': action.logbook.id,
+                                                'moduleId': action.module.id,
+                                                'actionId': action.id
+                                            }) }}" class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Valider
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('mentor_logbook_action_invalidate', {
+                                                'nni': app.user.nni,
+                                                'padawanNni': action.user.nni,
+                                                'logbookId': action.logbook.id,
+                                                'moduleId': action.module.id,
+                                                'actionId': action.id
+                                            }) }}" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-circle-fill"></i>
+                                                Dévalider
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="6" class="table-secondary"><hr></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </section>
+
+
+
+
+
+
     </main>
 {% endblock %}

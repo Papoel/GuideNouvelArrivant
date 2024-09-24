@@ -4,13 +4,12 @@ namespace App\Form;
 
 use App\Entity\Action;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MentorActionFormType extends AbstractType
+class MentorActionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -24,19 +23,11 @@ class MentorActionFormType extends AbstractType
                     'required' => false]
             )
             ->add(
-                child: 'mentorValidatedAt',
-                type: DateType::class,
-                options: [
-                    'label' => 'Date de validation',
-                    'widget' => 'single_text',
-                    'required' => false,
-                ])
-            ->add(
                 child: 'submit',
                 type: SubmitType::class,
                 options: [
                     'label' => 'Sauvegarder',
-                    'attr' => ['class' => 'btn btn-sm btn-primary'],
+                    'attr' => ['class' => 'btn btn-sm btn-primary me-2'],
                 ]
             )
         ;

@@ -3,13 +3,13 @@
         <!-- Bandeau de spécialité -->
         <div class="ribbon-box mt-2">
             <div class="ribbon
-                {% if user.specialityLabel == 'CHA' %}ribbon-cha
-                {% elseif user.specialityLabel == 'LEV' %}ribbon-lev
-                {% elseif user.specialityLabel == 'MEC' %}ribbon-mec
-                {% elseif user.specialityLabel == 'ROB' %}ribbon-rob
+                {% if user.specialityAbreviation == 'CHA' %}ribbon-cha
+                {% elseif user.specialityAbreviation == 'LEV' %}ribbon-lev
+                {% elseif user.specialityAbreviation == 'MEC' %}ribbon-mec
+                {% elseif user.specialityAbreviation == 'ROB' %}ribbon-rob
                 {% endif %}
             ">
-                {{ user.specialityLabel }}
+                {{ user.specialityAbreviation }}
             </div>
         </div>
         <div class="card-body">

@@ -23,18 +23,11 @@
 
             </section>
 
-
         <section class="section dashboard">
             <div class="row">
-                {% if is_granted("ROLE_USER") %}
-                    {% include('app/dashboard/_dashboardUserIndex.html.twig') %}
-                {% else %}
-                    {% include('app/dashboard/_dashboardMentorIndex.html.twig') %}
-                {% endif %}
+                {% include('app/dashboard/_dashboardUserIndex.html.twig') %}
             </div>
-
         </section>
-
     </main>
     <!-- End #main -->
 

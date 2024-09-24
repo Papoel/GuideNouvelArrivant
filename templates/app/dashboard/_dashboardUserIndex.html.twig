@@ -23,122 +23,151 @@
     </div>
 </div>
 <!-- End Left side columns -->
+
+<!-- Modal Bootstrap pour les commentaires -->
 <section id="card-logbook">
     <div class="row mt-4">
         <div class="col-12">
-            {% for logbook in logbooks %}
-                <div class="card info-card mentor-card h-100">
-                    <div class="card-header card-title ps-3 border-bottom border-secondary border-opacity-25">
-                        <h5 class="text-uppercase fw-bold mb-0">{{ logbook.name }}</h5>
-                    </div>
-                    <div class="card-body">
-                        {% for theme in logbook.themes %}
-                            <div class="accordion p-2 {{ loop.first ? 'mt-4' }}" id="theme-{{ theme.id }}">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading-{{ theme.id }}">
-                                        <button class="accordion-button collapsed"
-                                                type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#collapse-theme-{{ theme.id }}"
-                                                aria-expanded="false"
-                                                aria-controls="collapse-theme-{{ theme.id }}">
-                                            {{ theme.title }}
-                                            <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
-                                        </button>
-                                    </h2>
+            {% if logbooks %}
+                {% for logbook in logbooks %}
+                    <div class="card info-card mentor-card shadow-sm rounded-4 mb-4 h-100">
+                        <div class="card-header bg-white text-uppercase fw-bold border-bottom border-secondary border-opacity-25 ps-3">
+                            <h5 class="mb-0">{{ logbook.name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for theme in logbook.themes %}
+                                <div class="accordion mt-3" id="theme-{{ theme.id }}">
+                                    <div class="accordion-item border-0">
+                                        <h2 class="accordion-header" id="heading-{{ theme.id }}">
+                                            <button class="accordion-button collapsed shadow-sm rounded-3 bg-primary-subtle text-dark"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapse-theme-{{ theme.id }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="collapse-theme-{{ theme.id }}">
+                                                {{ theme.title }}
+                                                <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                            </button>
+                                        </h2>
 
-                                    <div id="collapse-theme-{{ theme.id }}"
-                                         class="accordion-collapse collapse"
-                                         aria-labelledby="heading-{{ theme.id }}"
-                                         data-bs-parent="#theme-{{ theme.id }}">
-                                        <div class="accordion-body">
-                                            <ul class="list-group list-group-flush">
-                                                {% for module in theme.modules %}
-                                                    <li id="module-{{ module.id }}" class="list-group-item d-flex justify-content-between align-items-center py-2">
-                                                        {{ loop.index }} - {{ module.title }}
-                                                        <!-- Conteneur pour les boutons -->
-                                                        <div class="d-flex gap-2">
+                                        <div id="collapse-theme-{{ theme.id }}"
+                                             class="accordion-collapse collapse"
+                                             aria-labelledby="heading-{{ theme.id }}"
+                                             data-bs-parent="#theme-{{ theme.id }}">
+                                            <div class="accordion-body">
+                                                <!-- Ajout du conteneur scrollable -->
+                                                <div class="scrollable-modules">
+                                                    <ul class="list-group list-group-flush">
+                                                        {% for module in theme.modules %}
                                                             {% set actionByCurrentUser = module.actions|filter(action => action.agentComment is not null and action.user == app.user) %}
                                                             {% set hasFilledActions = actionByCurrentUser|length > 0 %}
-
-                                                            {% if hasFilledActions %}
-                                                                <!-- Affiche le bouton Modifier si l'utilisateur connecté a déjà rempli les actions -->
-                                                                <a class="btn btn-sm btn-outline-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id, 'logbookId': logbook.id }) }}">
-                                                                    <i class="bi bi-pencil-square"></i>
-                                                                    Modifier
-                                                                </a>
-
-                                                            {% else %}
-                                                                <!-- Affiche le bouton Remplir si l'utilisateur connecté n'a pas encore rempli les actions -->
-                                                                <a class="btn btn-sm btn-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'id': module.id, 'logbookId': logbook.id }) }}">
-                                                                    <i class="bi bi-pencil-square"></i>
-                                                                    Remplir
-                                                                </a>
-                                                            {% endif %}
-                                                            <!-- Bouton pour afficher les commentaires dans un modal -->
-                                                            {% if module.actions|filter(action => action.agentComment is not null and action.agentComment|length > 0 and action.user == app.user)|length > 0 %}
-                                                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userActionModal{{ module.id }}">
-                                                                    <i class="bi bi-info-circle"></i>
-                                                                    Voir Commentaire
-                                                                </button>
-                                                            {% endif %}
-                                                        </div>
-
-                                                        <!-- Modal pour afficher les commentaires de l'utilisateur et du tuteur -->
-                                                        {% if module.actions|filter(action => action.agentComment is not null and action.agentComment|length > 0 and action.user == app.user or action.mentorComment is not null)|length > 0 %}
-                                                            <div class="modal fade" id="userActionModal{{ module.id }}" tabindex="-1" aria-labelledby="userActionModalLabel{{ module.id }}" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h3 class="modal-title" id="userActionModalLabel{{ module.id }}">
-                                                                                <i class="bi bi-chat-dots me-3"></i> Commentaires
-                                                                            </h3>
-                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            {% for action in module.actions %}
-                                                                                <!-- Commentaire de l'Agent -->
-                                                                                {% if action.agentComment is not null and action.user == app.user %}
-                                                                                    <div class="mb-4">
-                                                                                        <h5 class="mb-2 text-primary">Commentaire de l'Agent</h5>
-                                                                                        <div class="p-3 border rounded bg-light">
-                                                                                            <p class="lead mb-0">{{ action.agentComment }}</p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                {% endif %}
-
-                                                                                <!-- Commentaire du Tuteur (filtré pour l'utilisateur actuel) -->
-                                                                                {% if action.mentorComment is not null and action.user == app.user %}
-                                                                                    <div class="mt-4">
-                                                                                        <h5 class="mb-2 text-success">Commentaire du Tuteur</h5>
-                                                                                        <div class="p-3 border rounded bg-light">
-                                                                                            <p class="lead mb-0">{{ action.mentorComment }}</p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                {% endif %}
-                                                                            {% endfor %}
-                                                                        </div>
-                                                                        <div class="modal-footer border-top-0">
-                                                                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">
-                                                                                <i class="bi bi-x-circle"></i> Fermer
+                                                            {% set moduleValidatedByMentor = module.actions|filter(action => action.mentorValidatedAt and action.user == app.user) %}
+                                                            {% set moduleCommentedByMentor = module.actions|filter(action => action.mentorComment is not null and action.user == app.user) %}
+                                                            <li id="module-{{ module.id }}"
+                                                                class="list-group-item d-flex justify-content-between align-items-center py-2
+                                                                {{ moduleCommentedByMentor is not empty ? 'bg-primary-subtle border border-primary rounded-1' : '' }}
+                                                                {{ moduleValidatedByMentor is not empty ? 'bg-success-subtle border-0' : '' }}">
+                                                                <span>{{ loop.index }} - {{ module.title }}</span>
+                                                                <div class="d-flex gap-2">
+                                                                    {% if  moduleValidatedByMentor|length > 0 %}
+                                                                        <span class="badge bg-success rounded-pill" data-bs-toggle="modal" data-bs-target="#userActionModal{{ module.id }}" style="cursor: pointer">
+                                                                            <i class="bi bi-check-circle"></i> Validé
+                                                                        </span>
+                                                                    {% else %}
+                                                                        {% if hasFilledActions %}
+                                                                            <a class="btn btn-sm btn-outline-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'moduleId': module.id, 'logbookId': logbook.id }) }}">
+                                                                                <i class="bi bi-pencil-square"></i> Modifier
+                                                                            </a>
+                                                                        {% else %}
+                                                                            <a class="btn btn-sm btn-primary" href="{{ path('action_edit', { 'nni': app.user.nni, 'moduleId': module.id, 'logbookId': logbook.id }) }}">
+                                                                                <i class="bi bi-pencil-square"></i> Renseigner le module
+                                                                            </a>
+                                                                        {% endif %}
+                                                                        {% if module.actions|filter(action => action.agentComment is not null and action.mentorComment is null and action.user == app.user)|length > 0 %}
+                                                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userActionModal{{ module.id }}">
+                                                                                <i class="bi bi-info-circle"></i> Commentaire agent
                                                                             </button>
-                                                                        </div>
-                                                                    </div>
+                                                                        {% elseif module.actions|filter(action => action.mentorComment is not null and action.user == app.user)|length > 0 %}
+                                                                            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#userActionModal{{ module.id }}">
+                                                                                <i class="bi bi-info-circle"></i> Commentaire tuteur
+                                                                            </button>
+                                                                        {% endif %}
+                                                                    {% endif %}
                                                                 </div>
-                                                            </div>
-                                                        {% endif %}
-
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                                <!-- Fin du conteneur scrollable -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    <p class="lead">Vous n'avez aucun carnet de compagnonnage...</p>
                 </div>
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
 </section>
+
+<!-- Modals pour afficher les commentaires des utilisateurs et tuteurs -->
+{% for logbook in logbooks %}
+    {% for theme in logbook.themes %}
+        {% for module in theme.modules %}
+            {% if module.actions|filter(action => action.agentComment is not null and action.agentComment|length > 0 and action.user == app.user or action.mentorComment is not null)|length > 0 %}
+                <div class="modal fade" id="userActionModal{{ module.id }}" tabindex="-1" aria-labelledby="userActionModalLabel{{ module.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content shadow-lg">
+                            <div class="modal-header bg-light border-0">
+                                <h3 class="modal-title text-dark" id="userActionModalLabel{{ module.id }}">
+                                    <i class="bi bi-chat-dots me-2"></i> Commentaires
+                                </h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% for action in module.actions %}
+                                    {% if action.agentComment and action.user == app.user %}
+                                        <div class="mb-4">
+                                            <h5 class="text-primary">Commentaire de l'Agent</h5>
+                                            <div class="bg-light p-3 border rounded">
+                                                <p>{{ action.agentComment }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if action.mentorComment and action.user == app.user %}
+                                        <div class="mt-4">
+                                            <h5 class="text-success">Commentaire du Tuteur</h5>
+                                            <div class="bg-light p-3 border rounded">
+                                                <p>{{ action.mentorComment }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if action.mentorValidatedAt and action.user == app.user %}
+                                        <div class="mt-4">
+                                            <hr>
+                                            <h5 class="text-success">Validation du Tuteur</h5>
+                                            <div class="bg-secondary-light p-3 border rounded">
+                                                <p>{{ action.mentorVisa }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle"></i> Fermer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endfor %}

@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Action;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,15 +20,6 @@ class UserActionType extends AbstractType
                 options: [
                     'label' => 'Commentaires',
                     'attr' => ['rows' => 5],
-                    'required' => false,
-                ]
-            )
-            ->add(
-                child: 'agentValidatedAt',
-                type: DateType::class,
-                options: [
-                    'label' => 'Date de validation',
-                    'widget' => 'single_text',
                     'required' => false,
                 ]
             )
