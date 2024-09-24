@@ -20,8 +20,8 @@ class Action
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $agentComment = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $agentValidatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $agentValidatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $agentVisa = null;
@@ -29,8 +29,11 @@ class Action
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $mentorComment = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $mentorValidatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $mentorValidatedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTime $mentorCommentedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mentorVisa = null;
@@ -42,6 +45,9 @@ class Action
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'actions')]
+    private ?Logbook $logbook = null;
 
     public function __toString(): string
     {
@@ -77,12 +83,12 @@ class Action
         return $this;
     }
 
-    public function getAgentValidatedAt(): ?\DateTimeImmutable
+    public function getAgentValidatedAt(): ?\DateTime
     {
         return $this->agentValidatedAt;
     }
 
-    public function setAgentValidatedAt(?\DateTimeImmutable $agentValidatedAt): static
+    public function setAgentValidatedAt(?\DateTime $agentValidatedAt): static
     {
         $this->agentValidatedAt = $agentValidatedAt;
 
@@ -113,14 +119,26 @@ class Action
         return $this;
     }
 
-    public function getMentorValidatedAt(): ?\DateTimeImmutable
+    public function getMentorValidatedAt(): ?\DateTime
     {
         return $this->mentorValidatedAt;
     }
 
-    public function setMentorValidatedAt(?\DateTimeImmutable $mentorValidatedAt): static
+    public function setMentorValidatedAt(?\DateTime $mentorValidatedAt): static
     {
         $this->mentorValidatedAt = $mentorValidatedAt;
+
+        return $this;
+    }
+
+    public function getMentorCommentedAt(): ?\DateTime
+    {
+        return $this->mentorCommentedAt;
+    }
+
+    public function setMentorCommentedAt(?\DateTime $mentorCommentedAt): static
+    {
+        $this->mentorCommentedAt = $mentorCommentedAt;
 
         return $this;
     }
@@ -157,6 +175,18 @@ class Action
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getLogbook(): ?Logbook
+    {
+        return $this->logbook;
+    }
+
+    public function setLogbook(?Logbook $logbook): static
+    {
+        $this->logbook = $logbook;
 
         return $this;
     }

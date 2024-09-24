@@ -34,11 +34,11 @@ class ActionController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/carnet/{logbookId}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
-    public function edit(string $nni, Request $request, int $id, int $logbookId, EntityManagerInterface $entityManager): Response
+    #[Route('/{moduleId}/carnet/{logbookId}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
+    public function edit(string $nni, Request $request, int $moduleId, int $logbookId, EntityManagerInterface $entityManager): Response
     {
         // Récupérer le module par son ID
-        $module = $entityManager->getRepository(Module::class)->find($id);
+        $module = $entityManager->getRepository(Module::class)->find($moduleId);
         if (!$module) {
             throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du module');
         }
@@ -61,7 +61,7 @@ class ActionController extends AbstractController
 
         // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->actionService->saveAction($action, $datas['user']->getFullName());
+            $this->actionService->saveAction($action, $datas['user']->getFullName(), $logbookId);
 
             // Redirige vers la liste des actions
             return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $datas['user']->getNni()]);

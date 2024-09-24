@@ -57,7 +57,7 @@ readonly class DashboardService
             'logbooks' => $logbooks,
             'themes' => $themes,
             'modules' => $modules,
-            'actions' => $actions,
+            'actions' => $this->getActionsByModulesForUser($modules, $currentUser),
             'userSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getHiringAt()),
             'mentorSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getMentor()?->getHiringAt()),
         ];

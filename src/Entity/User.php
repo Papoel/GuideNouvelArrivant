@@ -250,9 +250,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSpecialityLabel(): ?string
+    public function getSpecialityAbreviation(): ?string
     {
         return $this->speciality?->getAbbreviation();
+    }
+
+    public function getSpecialityLabel(): ?string
+    {
+        return $this->speciality?->value;
     }
 
     public function getMentor(): ?self
@@ -342,5 +347,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    // Calcul de l'ancienneté de l'utilisateur depuis sa date d'embauche (complete, avec jours, mois et années)
+    public function getSeniority(): ?string
+    {
+        if (null === $this->hiringAt) {
+            return null;
+        }
+
+        $now = new \DateTimeImmutable();
+        $diff = $now->diff($this->hiringAt);
+
+        $years = $diff->y;
+        $months = $diff->m;
+        $days = $diff->d;
+
+        $parts = [];
+        if ($years > 0) {
+            $parts[] = "$years an".($years > 1 ? 's' : '');
+        }
+        if ($months > 0) {
+            $parts[] = "$months mois";
+        }
+        if ($days > 0) {
+            $parts[] = "$days jour".($days > 1 ? 's' : '');
+        }
+
+        return implode(' ', $parts);
     }
 }

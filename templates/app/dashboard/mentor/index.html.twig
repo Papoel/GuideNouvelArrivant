@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Dashboard Tuteur{% endblock %}
-
 {% block body %}
 
-    {% set user = app.user %}’
+    {% set user = app.user %}
     {% include('app/dashboard/_dashboardHeader.html.twig') %}
     {% include('app/dashboard/_dashboardAside.html.twig') %}
 
@@ -24,30 +23,135 @@
         </section>
 
         <section>
-            <div class="row">
-                <div class="col-12">
+             <table class="table align-middle mb-0 bg-white">
+                <thead class="bg-light">
+                <tr class="text-start">
+                    <th>Nom</th>
+                    <th>Poste</th>
+                    <th>Spécialité</th>
+                    <th>Ancienneté</th>
+                    <th class="text-center">Avancement</th>
+                    <th class="text-center">Validations en attente</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for apprenant in apprenants %}
+                    {% for logbook in apprenant.logbooks %}
+                        {% if apprenant.specialityLabel == 'Chaudronnerie' %}
+                            {% set specialityColor = '#3d9d85' %}
+                        {% elseif apprenant.specialityLabel == 'Levage' %}
+                            {% set specialityColor = '#f0ad4e' %}
+                        {% elseif apprenant.specialityLabel == 'Mécanique' %}
+                            {% set specialityColor = '#d9534f' %}
+                        {% elseif apprenant.specialityLabel == 'Robinetterie' %}
+                            {% set specialityColor = '#5bc0de' %}
+                        {% else %}
+                            {% set specialityColor = '#6c757d' %}
+                        {% endif %}
+                        <tr class="text-start">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img
+                                            src="https://mdbootstrap.com/img/new/avatars/8.jpg"
+                                            alt=""
+                                            style="width: 45px; height: 45px"
+                                            class="rounded-circle"
+                                    />
+                                    <div class="ms-3">
+                                        <p class="fw-bold mb-1">{{ apprenant.fullname }}</p>
+                                        <p class="text-muted mb-0">{{ apprenant.email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ apprenant.jobLabel }}</td>
+                            <td>
+                    <span class="badge rounded-pill fw-light d-inline text-center align-middle"
+                          style="background-color: {{ specialityColor }}; letter-spacing: 1px">
+                        {{ apprenant.specialityLabel }}
+                    </span>
+                            </td>
+                            <td>{{ apprenant.seniority }}</td>
+                            <td class="text-center">75%</td>
+                            <td class="text-center">6</td>
+                            <td>
+                                <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanNni': apprenant.nni }) }}"
+                                   class="btn btn-sm btn-primary">
+                                    Voir les détails
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+        {#<section>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 bg-white">
+                    <thead class="bg-light">
+                    <tr class="text-start">
+                        <th>Nom</th>
+                        <th>Poste</th>
+                        <th>Spécialité</th>
+                        <th>Ancienneté</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {% for apprenant in apprenants %}
                         {% for logbook in apprenant.logbooks %}
-                            <div class="card info-card mentor-card h-100">
-                                <div class="card-header card-title ps-3 border-bottom border-secondary border-opacity-25">
-                                    <h5 class="text-uppercase fw-bold mb-0">{{ apprenant.fullname }}</h5>
-                                </div>
-                                <div class="card-body py-3">
-                                    <div class="d-flex justify-content-between">
-                                        <h6 class="text-uppercase fw-bold">{{ logbook.name }}</h6>
-                                        <span class="badge bg-primary rounded-pill">{{ logbook.themes|length }} thèmes</span>
-                                    </div>
-                                    <!-- Affichage des détails du carnet -->
-                                    {#<a href="{{ path('mentor_logbook_details', { 'id': logbook.id }) }}" class="btn btn-sm btn-primary">#}
-                                    <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanName': apprenant.fullname }) }}" class="btn btn-sm btn-primary">
-                                        Voir les détails
-                                    </a>
-                                </div>
-                            </div>
+                            {% set specialityColor = '' %}
+                            {% if apprenant.specialityLabel == 'Chaudronnerie' %}
+                                {% set specialityColor = '#3d9d85' %}
+                            {% elseif apprenant.specialityLabel == 'Levage' %}
+                                {% set specialityColor = '#f0ad4e' %}
+                            {% elseif apprenant.specialityLabel == 'Mécanique' %}
+                                {% set specialityColor = '#d9534f' %}
+                            {% elseif apprenant.specialityLabel == 'Robinetterie' %}
+                                {% set specialityColor = '#5bc0de' %}
+                            {% else %}
+                                {% set specialityColor = '#6c757d' %}
+                            {% endif %}
+                            <tr class="text-start">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img
+                                                    src="https://mdbootstrap.com/img/new/avatars/8.jpg"
+                                                    alt=""
+                                                    style="width: 45px; height: 45px"
+                                                    class="rounded-circle"
+                                            />
+                                            <div class="ms-3">
+                                                <p class="fw-bold mb-1">{{ apprenant.fullname }}</p>
+                                                <p class="text-muted mb-0">{{ apprenant.email }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1">{{ apprenant.jobLabel }}</p>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill fw-light d-inline text-center align-middle"
+                                              style="background-color: {{ specialityColor }}; letter-spacing: 1px">
+                                            {{ apprenant.specialityLabel }}
+                                        </span>
+                                    </td>
+                                    <td>{{ apprenant.seniority }}</td>
+                                    <td>
+                                        <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanName': apprenant.fullname }) }}"
+                                           class="btn btn-sm btn-primary">
+                                            Voir les détails
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </div>
+                    </tbody>
+                </table>
             </div>
-        </section>
+        </section>#}
+
     </main>
 {% endblock %}

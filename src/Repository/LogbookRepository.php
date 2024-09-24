@@ -51,29 +51,18 @@ class LogbookRepository extends ServiceEntityRepository
         return $result;
     }
 
-    /*    public function findLogbookDetails(Logbook $logbook): array
-        {
-            // Utiliser QueryBuilder pour obtenir les détails du carnet de compagnonnage
-            $qb = $this->createQueryBuilder(alias: 'l')
-                ->select(
-                    'm.id AS moduleId',
-                    'm.title AS moduleTitle',
-                    'm.description AS moduleDescription',
-                    't.id AS themeId',
-                    't.title AS themeTitle',
-                    't.description AS themeDescription',
-                    'a.id AS actionId',
-                    'a.description AS actionDescription',
-                )
-                ->join(join: 'l.themes', alias: 't')
-                ->join(join: 't.modules', alias: 'm')
-                ->leftJoin(join: 'm.actions', alias: 'a')
-                ->where('l.id = :logbookId')
-                ->setParameter(key: 'logbookId', value: $logbook->getId());
+    public function getPadawanLogbookAccordingToMentorNni(string $mentorNni, string $padawanNni): ?Logbook
+    {
+        $qb = $this->createQueryBuilder(alias: 'l')
+            ->join(join: 'l.owner', alias: 'u')
+            ->where('u.nni = :padawanNni')
+            ->andWhere('u.mentor = :mentorNni')
+            ->setParameter(key: 'padawanNni', value: $padawanNni)
+            ->setParameter(key: 'mentorNni', value: $mentorNni);
 
-            $result = $qb->getQuery()->getArrayResult();
-            assert(is_array($result));
+        $result = $qb->getQuery()->getOneOrNullResult();
 
-            return $result;
-        }*/
+        // Vérification explicite du type de retour
+        return $result instanceof Logbook ? $result : null;
+    }
 }

@@ -7,7 +7,7 @@ namespace App\Twig\Components;
 use App\Entity\Action;
 use App\Entity\Module;
 use App\Entity\User;
-use App\Form\MentorActionFormType;
+use App\Form\MentorActionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -56,7 +56,7 @@ class ActionForm extends AbstractController
         }
 
         return $this->createForm(
-            type: MentorActionFormType::class,
+            type: MentorActionType::class,
             data: $action
         );
     }

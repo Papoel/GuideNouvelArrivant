@@ -29,9 +29,16 @@ class Logbook
     #[ORM\JoinColumn(nullable: true)]
     private ?User $owner = null;
 
+    /**
+     * @var Collection<int, Action>
+     */
+    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'logbook')]
+    private Collection $actions;
+
     public function __construct()
     {
         $this->themes = new ArrayCollection();
+        $this->actions = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -89,6 +96,36 @@ class Logbook
     public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Action>
+     */
+    public function getActions(): Collection
+    {
+        return $this->actions;
+    }
+
+    public function addAction(Action $action): static
+    {
+        if (!$this->actions->contains($action)) {
+            $this->actions->add($action);
+            $action->setLogbook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAction(Action $action): static
+    {
+        if ($this->actions->removeElement($action)) {
+            // set the owning side to null (unless already changed)
+            if ($action->getLogbook() === $this) {
+                $action->setLogbook(null);
+            }
+        }
 
         return $this;
     }

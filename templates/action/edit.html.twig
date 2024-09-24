@@ -11,14 +11,18 @@
         <section>
             <div class="row">
                 <div class="col-12">
-                    {{ include('action/_formUserAction.html.twig', {'button_label': 'Update'}) }}
+                    {% set route = app.request.get('_route') %}
+                    {% if route == "mentor_logbook_action_edit" %}
+                        {{ include('action/_formMentorAction.html.twig') }}
+                    {% else %}
+                        {{ include('action/_formUserAction.html.twig') }}
+                    {% endif %}
                 </div>
                 <div class="d-flex justify-content-between mt-2">
                         <a class="btn btn-sm btn-link" href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
                             <i class="bi bi-arrow-left"></i>
                             Retourner sur le tableau de bord
                         </a>
-                     {{ include('action/_delete_form.html.twig') }}
                 </div>
             </div>
 

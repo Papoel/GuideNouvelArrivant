@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Logbook;
 
+use App\Entity\Logbook;
+
 class LogbookProgressService
 {
     /**
@@ -52,5 +54,30 @@ class LogbookProgressService
             'unvalidated_sections' => $totalActions - $validatedActions,
             'progress_class' => $progressClass,
         ];
+    }
+
+    public function calculateProgress(Logbook $logbook): float
+    {
+        $totalActions = 0;
+        $completedActions = 0;
+
+        foreach ($logbook->getThemes() as $theme) {
+            foreach ($theme->getModules() as $module) {
+                $actions = $module->getActions();
+                $totalActions += count($actions);
+
+                foreach ($actions as $action) {
+                    if (null !== $action) {
+                        ++$completedActions;
+                    }
+                }
+            }
+        }
+
+        if (0 === $totalActions) {
+            return 0; // Pas d'actions à faire, donc avancement nul
+        }
+
+        return ($completedActions / $totalActions) * 100;
     }
 }

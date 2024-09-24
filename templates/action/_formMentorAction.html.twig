@@ -14,14 +14,14 @@
                 </div>
             </div>
 
-            <div class="callout callout-primary">
+            <div class="callout callout-warning">
                 <div class="d-flex align-items-center">
                     <div class="icon">
                         <i class="bi bi-info-circle"></i>
                     </div>
                     <div>
-                        <span class="module-title"><strong>Commentaire de l'agent</strong> Next</span> <br>
-                        <span class="module-description"><strong>Description: </strong>Nexy</span>
+                        <span class="module-title"><strong>Commentaire de l'agent : </strong> {{ action.agentComment}} </span> <br>
+                        <span class="module-dateCompletion"><strong>Fait le : </strong>{{ action.agentValidatedAt|date('d/m/Y') }}</span>
                     </div>
                 </div>
             </div>
@@ -29,16 +29,10 @@
             <!-- Section Agents -->
             <section class="border border-1 border-success-subtle rounded-2 p-3 mb-3">
                 <fieldset id="agentAction">
-                    <legend class="bg-success-subtle text-success py-2 px-3 rounded-1 text-uppercase fw-bold">Agents</legend>
+                    <legend class="bg-success-subtle text-success py-2 px-3 rounded-1 text-uppercase fw-bold">Tuteur</legend>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-12 mb-3">
                             {{ form_row(form.mentorComment, {
-                                'label_attr': { 'class': 'form-label' },
-                                'attr': { 'class': 'form-control' }
-                            }) }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            {{ form_row(form.mentorValidatedAt, {
                                 'label_attr': { 'class': 'form-label' },
                                 'attr': { 'class': 'form-control' }
                             }) }}
