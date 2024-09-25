@@ -123,7 +123,7 @@
     {% if is_granted('ROLE_MENTOR') %}
 
         <ul class="sidebar-nav">
-            <li class="nav-heading py-3">CRUD Action (test)</li>
+            <li class="nav-heading py-3">Actions tuteur</li>
         </ul>
 
         <div>
@@ -131,7 +131,7 @@
                 <p class="d-inline-flex gap-1">
                     <a class="custom-link" data-bs-toggle="collapse" href="#aside-crud" role="button" aria-expanded="false" aria-controls="crud">
                         <i class="bi bi-file-ruled me-2"></i>
-                        <span class="custom-title">TUTEUR</span>
+                        <span class="custom-title">Mentorat</span>
                         <i class="bi bi-chevron-down chevron-icon ms-2"></i>
                     </a>
                 </p>
@@ -140,7 +140,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('mentor_dashboard_index', {'nni': app.user.nni}) }}">
                                 <i class="bi bi-caret-right"></i>
-                                Index
+                                Voir les carnets de compagnonnage
                             </a>
                         </li>
                     </ul>

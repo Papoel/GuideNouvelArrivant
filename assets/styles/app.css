@@ -55,11 +55,19 @@ div.ribbon-lev:after{
 }
 
 .ribbon-rob {
-    background: #5bc0de; /* Couleur pour Robotique */
+    background: #5bc0de; /* Couleur pour Robinetterie */
 }
 
 div.ribbon-rob:after{
     border-right-color: #46b8da;
+}
+
+.ribbon-sou {
+    background: #5b21b6; /* Couleur pour le Soudage */
+}
+
+div.ribbon-sou:after{
+    border-right-color: #3f157f;
 }
 
 .ribbon-mentor {
@@ -770,4 +778,224 @@ aside.sidebar div {
 .scrollable-modules {
     max-height: 300px; /* Définis une hauteur maximale, ajustable selon tes besoins */
     overflow-y: auto; /* Active le défilement vertical */
+}
+
+/*----------------------------------------------
+# Custom Data Table Mentors
+----------------------------------------------*/
+.custom-table-container {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.theme-section {
+    margin-bottom: 30px;
+}
+
+.theme-header {
+    background: linear-gradient(45deg, #4a6fa5, #166088);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.theme-header:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.theme-header h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.theme-header i {
+    transition: transform 0.3s ease;
+}
+
+.theme-header[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 10px;
+}
+
+.custom-table thead th {
+    border: none;
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px;
+}
+
+.custom-table tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.custom-table tbody td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.action-row td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.action-row td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.btn-group .btn {
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary {
+    color: #4a6fa5;
+    border-color: #4a6fa5;
+}
+
+.btn-outline-primary:hover {
+    background-color: #4a6fa5;
+    color: #ffffff;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+/* Carte propriétaire du carnet */
+.owner-card {
+    background: linear-gradient(135deg, #f6f9fc 0%, #e9eff5 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.owner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.owner-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #4a6fa5, #166088);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.owner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-item i {
+    color: #4a6fa5;
+    font-size: 1.2rem;
+}
+
+.info-item span {
+    color: #34495e;
+    font-weight: 500;
+}
+
+.owner-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 25px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #4a6fa5;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
