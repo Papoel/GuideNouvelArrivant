@@ -56,12 +56,24 @@
                         </div>
                         <div class="owner-stats">
                             <div class="stat-item">
-                                <div class="stat-value">{{ logbook.owner.seniority }}</div>
-                                <div class="stat-label">Ancienneté</div>
+                                <div class="stat-value">{{ logbookProgress.agent_progress }}%</div>
+                                <div class="stat-label">Progression de l'agent</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">75%</div>
-                                <div class="stat-label">Progression</div>
+                                <div class="stat-value">{{ logbookProgress.modules_awaiting_validation }}</div>
+                                <div class="stat-label">Validation en attente</div>
+                            </div>
+                        </div>
+
+                        <!-- Nouvelle barre de progression -->
+                        <div class="progress mt-3">
+                            <div class="progress-bar {{ logbookProgress.progress_class }}"
+                                 role="progressbar"
+                                 style="width: {{ logbookProgress.agent_progress }}%;"
+                                 aria-valuenow="{{ logbookProgress.agent_progress }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                {{ logbookProgress.agent_progress }}%
                             </div>
                         </div>
                     </div>
@@ -69,6 +81,69 @@
 
                 {% for theme, actions in actionsByTheme %}
                     <div class="theme-section mb-4">
+                        <div class="theme-header" data-bs-toggle="collapse" data-bs-target="#theme-{{ loop.index }}" aria-expanded="true" aria-controls="theme-{{ loop.index }}">
+                            <h5>{{ theme }}</h5>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div id="theme-{{ loop.index }}" class="collapse show">
+                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                <table class="table custom-table">
+                                    <thead class="sticky-top bg-white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Thème</th>
+                                        <th>Description</th>
+                                        <th>Commentaire Agent</th>
+                                        <th>Commentaire Tuteur</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for action in actions %}
+                                        <tr class="action-row" data-action-id="{{ action.id }}">
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ action.module.title }}</td>
+                                            <td>{{ action.module.description|raw }}</td>
+                                            <td>{{ action.agentComment ?: 'Aucun commentaire' }}</td>
+                                            <td>{{ action.mentorComment ?: 'Aucun commentaire' }}</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    {% if not action.mentorComment and action.mentorValidatedAt is null %}
+                                                        <a class="btn btn-sm btn-outline-primary" href="{{ path('mentor_logbook_action_edit', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
+                                                            <i class="bi bi-chat-dots"></i> Commenter
+                                                        </a>
+                                                    {% elseif action.mentorValidatedAt is null %}
+                                                        <a class="btn btn-sm btn-outline-primary" href="{{ path('mentor_logbook_action_edit', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
+                                                            <i class="bi bi-pencil"></i> Modifier
+                                                        </a>
+                                                        <a class="btn btn-sm btn-outline-danger" href="{{ path('mentor_logbook_action_delete_comment', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
+                                                            <i class="bi bi-trash"></i> Supprimer
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if not action.mentorVisa %}
+                                                        <a href="{{ path('mentor_logbook_action_validate', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}"
+                                                           class="btn btn-sm btn-outline-success action-btn {% if action.mentorVisa %}d-none{% endif %}"
+                                                           data-action="validate">
+                                                            <i class="bi bi-check-circle-fill"></i> Valider
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{{ path('mentor_logbook_action_invalidate', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}"
+                                                           class="btn btn-sm btn-outline-danger action-btn {% if not action.mentorVisa %}d-none{% endif %}"
+                                                           data-action="invalidate">
+                                                            <i class="bi bi-x-circle-fill"></i> Dévalider
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                   {# <div class="theme-section mb-4">
                         <div class="theme-header" data-bs-toggle="collapse" data-bs-target="#theme-{{ loop.index }}" aria-expanded="true" aria-controls="theme-{{ loop.index }}">
                             <h5>{{ theme }}</h5>
                             <i class="bi bi-chevron-down"></i>
@@ -124,7 +199,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div>#}
                 {% endfor %}
             </div>
         </section>

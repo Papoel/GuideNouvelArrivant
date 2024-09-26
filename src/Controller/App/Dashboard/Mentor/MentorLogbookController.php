@@ -8,6 +8,7 @@ use App\Entity\Action;
 use App\Entity\Logbook;
 use App\Entity\User;
 use App\Form\MentorActionType;
+use App\Services\Logbook\LogbookProgressService;
 use App\Services\Mentor\MentorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,8 +22,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/dashboard/mentor/{nni}/padawan/{padawanNni}/carnet', name: 'mentor_logbook_')]
 class MentorLogbookController extends AbstractController
 {
-    public function __construct(private readonly MentorService $mentorService, private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly MentorService $mentorService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LogbookProgressService $logbookProgressService
+    ) {
     }
 
     #[Route('/{id}', name: 'details', methods: [Request::METHOD_GET])]
@@ -45,11 +49,13 @@ class MentorLogbookController extends AbstractController
         }
 
         $padawanData = $this->mentorService->newGetPadawanData($mentor, $logbook);
+        $logbookProgress = $this->logbookProgressService->calculateLogbookProgress($logbook);
 
         return $this->render(view: 'app/dashboard/mentor/logbook_details.html.twig', parameters: [
             'padawan' => $padawanData['padawan'],
             'logbook' => $padawanData['logbook'],
             'actionsByTheme' => $padawanData['actionsByTheme'],
+            'logbookProgress' => $logbookProgress,
             // 'padawanData' => $padawanData
         ]);
     }
