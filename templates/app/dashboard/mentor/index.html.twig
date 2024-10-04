@@ -32,62 +32,6 @@
                 </ol>
             </nav>
         </div>
-
-        <style>
-            .avatar-wrapper {
-                width: 60px;
-                height: 60px;
-                position: relative;
-            }
-
-            .avatar-circle {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                background: #f0f0f0;
-                overflow: hidden;
-                position: relative;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-            .avatar-progress {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: conic-gradient(var(--color) var(--progress), transparent 0);
-                transition: all 0.3s ease;
-            }
-
-            .avatar-initials {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 1.2rem;
-                font-weight: bold;
-                color: #333;
-                background: white;
-                width: 80%;
-                height: 80%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                z-index: 2;
-            }
-
-            .avatar-circle:hover .avatar-progress {
-                transform: scale(1.1);
-            }
-
-            .avatar-circle:hover .avatar-initials {
-                color: var(--color);
-            }
-
-
-        </style>
         <section class="section dashboard">
             <div class="row">
                 <div class="col-lg-12">
@@ -115,7 +59,9 @@
                                             'Mécanique': 'danger',
                                             'Robinetterie': 'info'
                                         }[apprenant.specialityLabel] ?? 'secondary' %}
-                                        {% set progression = apprenantsProgress[apprenant.id] %}
+                                        {% set progression = apprenantsProgress[apprenant.id|ea_as_string] %}
+
+
                                         {% set progressColorMap = {
                                             'bg-danger': '#dc3545',
                                             'bg-warning': '#ffc107',

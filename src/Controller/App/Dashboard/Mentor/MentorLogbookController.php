@@ -48,7 +48,7 @@ class MentorLogbookController extends AbstractController
             throw $this->createAccessDeniedException(message: 'Vous n\'avez pas accès à ce carnet');
         }
 
-        $padawanData = $this->mentorService->newGetPadawanData($mentor, $logbook);
+        $padawanData = $this->mentorService->getPadawanData($mentor, $logbook);
         $logbookProgress = $this->logbookProgressService->calculateLogbookProgress($logbook);
 
         return $this->render(view: 'app/dashboard/mentor/logbook_details.html.twig', parameters: [

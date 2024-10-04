@@ -48,7 +48,8 @@ class MentorDashboardController extends AbstractController
             $logbook = $apprenant->getLogbooks()->first(); // Supposons que chaque apprenant n'a qu'un seul carnet
             if ($logbook) {
                 $progress = $this->logbookProgressService->calculateLogbookProgress($logbook);
-                $apprenantsProgress[$apprenant->getId()] = $progress;
+                // $apprenantsProgress[$apprenant->getId()] = $progress;
+                $apprenantsProgress[(string) $apprenant->getId()] = $progress;
             }
         }
 

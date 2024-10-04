@@ -48,7 +48,26 @@ readonly class ActionService
         return $action;
     }
 
-    public function saveAction(Action $action, string $agentName, int $logbookId): void
+    public function validateAction(Action $action): void
+    {
+        $currentUser = $this->security->getUser();
+
+        if (!$currentUser instanceof User) {
+            throw new \LogicException(message: 'L\'utilisateur actuel n\'est pas valide.');
+        }
+
+        $agentVisa = 'Validation numérique de '.$currentUser->getFullName().' le '.(new \DateTime())->format(format: 'd/m/Y');
+        $action->setAgentVisa($agentVisa);
+
+        $date = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+        $action->setAgentValidatedAt($date);
+        $action->setAgentComment(agentComment: null); // Pas de commentaire
+
+        $this->entityManager->persist($action);
+        $this->entityManager->flush();
+    }
+
+    public function saveAction(Action $action, string $agentName, string $logbookId): void
     {
         $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
 

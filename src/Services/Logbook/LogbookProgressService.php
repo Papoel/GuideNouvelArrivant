@@ -53,7 +53,7 @@ class LogbookProgressService
         $progressClass = 'bg-danger';
         if ($agentProgress > 75) {
             $progressClass = 'bg-success';
-        } elseif ($agentProgress > 50) {
+        } elseif ($agentProgress >= 50) {
             $progressClass = 'bg-warning text-dark';
         }
 
