@@ -55,11 +55,19 @@ div.ribbon-lev:after{
 }
 
 .ribbon-rob {
-    background: #5bc0de; /* Couleur pour Robotique */
+    background: #5bc0de; /* Couleur pour Robinetterie */
 }
 
 div.ribbon-rob:after{
     border-right-color: #46b8da;
+}
+
+.ribbon-sou {
+    background: #5b21b6; /* Couleur pour le Soudage */
+}
+
+div.ribbon-sou:after{
+    border-right-color: #3f157f;
 }
 
 .ribbon-mentor {
@@ -770,4 +778,373 @@ aside.sidebar div {
 .scrollable-modules {
     max-height: 300px; /* Définis une hauteur maximale, ajustable selon tes besoins */
     overflow-y: auto; /* Active le défilement vertical */
+}
+
+/*----------------------------------------------
+# Custom Data Table Mentors
+----------------------------------------------*/
+.custom-table-container {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.theme-section {
+    margin-bottom: 30px;
+}
+
+.theme-header {
+    background: linear-gradient(45deg, #4a6fa5, #166088);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.theme-header:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.theme-header h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.theme-header i {
+    transition: transform 0.3s ease;
+}
+
+.theme-header[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 10px;
+}
+
+.custom-table thead th {
+    border: none;
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px;
+}
+
+.custom-table tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.custom-table tbody td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.action-row td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.action-row td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.btn-group .btn {
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary {
+    color: #4a6fa5;
+    border-color: #4a6fa5;
+}
+
+.btn-outline-primary:hover {
+    background-color: #4a6fa5;
+    color: #ffffff;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+/* Carte propriétaire du carnet */
+.owner-card {
+    background: linear-gradient(135deg, #f6f9fc 0%, #e9eff5 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.owner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.owner-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #4a6fa5, #166088);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.owner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-item i {
+    color: #4a6fa5;
+    font-size: 1.2rem;
+}
+
+.info-item span {
+    color: #34495e;
+    font-weight: 500;
+}
+
+.owner-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 25px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #4a6fa5;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/*----------------------------------------------
+# Custom Card for User if no Logbook
+----------------------------------------------*/
+.card-logbook {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    transition: all 0.3s ease;
+}
+
+.glitch-text {
+    position: relative;
+    color: #012970;
+}
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+.glitch-text::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9;
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim 2.5s infinite linear alternate-reverse;
+}
+
+.dark-gradient-background {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+    background-size: 400% 400%;
+    animation: subtle-shift 15s ease infinite;
+}
+
+.floating-icon {
+    position: absolute;
+    color: rgba(255,255,255,0.6);
+    animation: float 6s ease-in-out infinite;
+}
+
+.hologram-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(15, 52, 96, 0.6) 0%, transparent 70%);
+    opacity: 0.7;
+    filter: blur(10px);
+    animation: hologram 5s infinite alternate;
+}
+
+.particle-system::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+@keyframes glitch-anim {
+    0% { clip: rect(14px, 9999px, 76px, 0); }
+    20% { clip: rect(38px, 9999px, 33px, 0); }
+    40% { clip: rect(6px, 9999px, 98px, 0); }
+    60% { clip: rect(74px, 9999px, 71px, 0); }
+    80% { clip: rect(46px, 9999px, 40px, 0); }
+    100% { clip: rect(66px, 9999px, 64px, 0); }
+}
+
+@keyframes subtle-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes hologram {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.9; }
+}
+
+/*----------------------------------------------
+# Custom Avatar in table for list padawans for mentors (with progress)
+----------------------------------------------*/
+.avatar-wrapper {
+    width: 60px;
+    height: 60px;
+    position: relative;
+}
+
+.avatar-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #f0f0f0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.avatar-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(var(--color) var(--progress), transparent 0);
+    transition: all 0.3s ease;
+}
+
+.avatar-initials {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    background: white;
+    width: 80%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.avatar-circle:hover .avatar-progress {
+    transform: scale(1.1);
+}
+
+.avatar-circle:hover .avatar-initials {
+    color: var(--color);
 }

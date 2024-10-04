@@ -48,7 +48,7 @@ class UserCrudController extends AbstractCrudController
 
         yield TextField::new(propertyName: 'lastname', label: 'Nom')
             ->setColumns(cols: 'col-md-3 col-sm-12')
-            ->addCssClass(cssClass: 'text-capitalize')
+            ->addCssClass(cssClass: 'text-uppercase')
         ;
 
         yield TextField::new(propertyName: 'nni', label: 'NNI')

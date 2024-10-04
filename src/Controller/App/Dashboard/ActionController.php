@@ -6,7 +6,6 @@ use App\Entity\Action;
 use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Form\UserActionType;
-use App\Repository\ActionRepository;
 use App\Services\Action\ActionService;
 use App\Services\Dashboard\DashboardService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,28 +22,21 @@ class ActionController extends AbstractController
     public function __construct(
         private readonly DashboardService $dashboardService,
         private readonly ActionService $actionService,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    #[Route('/', name: 'action_index', methods: ['GET'])]
-    public function index(ActionRepository $actionRepository): Response
-    {
-        return $this->render(view: 'action/index.html.twig', parameters: [
-            'actions' => $actionRepository->findAll(),
-        ]);
-    }
-
     #[Route('/{moduleId}/carnet/{logbookId}/edit', name: 'action_edit', methods: ['GET', 'POST'])]
-    public function edit(string $nni, Request $request, int $moduleId, int $logbookId, EntityManagerInterface $entityManager): Response
+    public function edit(string $nni, Request $request, string $moduleId, string $logbookId): Response
     {
         // Récupérer le module par son ID
-        $module = $entityManager->getRepository(Module::class)->find($moduleId);
+        $module = $this->entityManager->getRepository(Module::class)->find($moduleId);
         if (!$module) {
             throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du module');
         }
 
         // Récupérer le logbook par son ID
-        $logbook = $entityManager->getRepository(Logbook::class)->find($logbookId);
+        $logbook = $this->entityManager->getRepository(Logbook::class)->find($logbookId);
         if (!$logbook) {
             throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du carnet');
         }

@@ -7,16 +7,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ModuleRepository::class)]
+#[ORM\Table(name: '`modules`')]
 class Module
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Assert\Uuid]
+    private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un titre.')]
+    #[Assert\Length(max: 100, maxMessage: 'Le titre ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -49,7 +56,7 @@ class Module
         return $firstCharactersOfTheme.' | '.($this->title ?: '');
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -121,12 +128,17 @@ class Module
     }
 
     /**
-     * Get an action by ID.
+     * Get an action by module ID.
      */
     public function getActionByModuleId(int $moduleId): ?Action
     {
+        // Convertir le moduleId en chaîne pour la comparaison
+        $moduleIdString = (string) $moduleId;
+
         foreach ($this->actions as $action) {
-            if ($action->getId() === $moduleId) {
+            // Vérifier si l'ID de l'action n'est pas null et comparer
+            $actionId = $action->getId();
+            if (null !== $actionId && $actionId->toString() === $moduleIdString) {
                 return $action;
             }
         }

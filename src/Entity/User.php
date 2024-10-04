@@ -10,11 +10,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`users`')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cette adresse email.')]
+#[UniqueEntity(fields: ['nni'], message: 'Ce NNI est déjà utilisé.')]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -22,17 +27,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use TimestampTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Assert\Uuid]
+    private ?Uuid $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un prénom.')]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Le prénom doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le prénom doit contenir au maximum {{ limit }} caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\-\s]+$/',
+        message: 'Le prénom ne peut contenir que des lettres, des espaces et des tirets.'
+    )]
     private string $firstname;
 
     #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un nom.')]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Le nom doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom doit contenir au maximum {{ limit }} caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\-\s]+$/',
+        message: 'Le nom ne peut contenir que des lettres, des espaces et des tirets.'
+    )]
     private string $lastname;
 
     #[ORM\Column(type: Types::STRING, length: 180)]
+    #[Assert\NotBlank(message: 'Veuillez saisir une adresse email.')]
+    #[Assert\Email]
     private string $email;
 
     /**
@@ -45,21 +76,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column(type: Types::STRING)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un mot de passe.')]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/',
+        message: 'Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule et un chiffre.'
+    )]
+    #[Assert\Length(
+        min: 4,
+        max: 255,
+        minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le mot de passe doit contenir au maximum {{ limit }} caractères.'
+    )]
     private string $password;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\Type(type: \DateTimeInterface::class)]
     private ?\DateTimeInterface $lastLoginAt = null;
 
     #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: JobEnum::class)]
     private ?JobEnum $job = null;
 
     #[ORM\Column(type: Types::STRING, length: 6, nullable: true)]
+    #[Assert\Length(max: 6, maxMessage: 'Le NNI doit contenir 6 caractères.')]
+    #[Assert\Regex(pattern: '/^[a-zA-Z][0-9]{5}$/', message: 'Le NNI doit commencer par une lettre et être suivi de 5 chiffres.')]
+    #[Assert\NotBlank(message: 'Veuillez saisir un NNI.')]
     private ?string $nni = null;
 
     #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: SpecialityEnum::class)]
     private ?SpecialityEnum $speciality = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: \DateTimeImmutable::class)]
     private ?\DateTimeImmutable $hiringAt = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist'])]
@@ -90,7 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->getFullname();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

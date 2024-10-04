@@ -44,7 +44,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
         $owner = $entity->getOwner();
 
         if (null !== $owner) {
-            $entity->setName(name: 'Carnet de '.$owner->getFullname());
+            $entity->setName(name: 'Carnet de '.$owner->getFullname().' ('.$owner->getSpecialityAbreviation().')');
 
             $this->entityManager->persist($entity);
             $this->entityManager->flush();

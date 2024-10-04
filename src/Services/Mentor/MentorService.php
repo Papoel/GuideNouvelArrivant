@@ -7,7 +7,6 @@ namespace App\Services\Mentor;
 use App\Entity\Action;
 use App\Entity\Logbook;
 use App\Entity\User;
-use App\Repository\LogbookRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,7 +16,6 @@ readonly class MentorService
 {
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly LogbookRepository $logbookRepository,
         private readonly RequestStack $request,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -44,76 +42,13 @@ readonly class MentorService
         // Si getOwner() retourne un seul utilisateur
         if ($apprentices instanceof User) {
             $apprentice = $apprentices;
-            if ($apprentice->getMentor() && $apprentice->getMentor()->getNni() === $mentorNni) {
-                return true;
-            }
 
-            return false;
+            return $apprentice->getMentor() && $apprentice->getMentor()->getNni() === $mentorNni;
         }
 
         // Si aucun apprenant n'a le mentor correspondant, retourne false
         /* @phpstan-ignore-next-line */
         return false;
-    }
-
-    /**
-     * Récupère les données du Padawan pour un mentor.
-     *
-     * @return Action[]
-     */
-    public function getPadawanData(): array
-    {
-        // 1. Récupérer la requête actuelle
-        $currentRequest = $this->request->getCurrentRequest();
-
-        // Vérifier que la requête n'est pas nulle
-        if (!$currentRequest) {
-            throw new \LogicException(message: 'Impossible de récupérer la requête actuelle.');
-        }
-
-        // 2. Mentor, pour empêcher l'accès à un carnet d'un apprenant qui n'est pas le sien
-        $mentorNni = $currentRequest->attributes->get(key: 'nni');
-        $mentor = $this->userRepository->findOneBy(['nni' => $mentorNni]);
-        if (!$mentor) {
-            throw new AccessDeniedException(message: 'Le tuteur n\'a pas été trouvé');
-        }
-
-        // 3. Récupérer le NNI du Padawan dont le mentor veut voir le carnet
-        $padawanNni = $currentRequest->attributes->get(key: 'padawanNni');
-        $padawan = $this->userRepository->findOneBy(['nni' => $padawanNni]);
-        if (!$padawan || !$padawan->getMentor()) {
-            throw new AccessDeniedException(message: 'L\'apprenant n\'a pas été trouvé');
-        }
-
-        // 4. Vérifier si l'utilisateur connecté est bien le mentor de ce padawan
-        if ($padawan->getMentor()->getNni() !== $mentorNni) {
-            throw new AccessDeniedException(message: 'Vous n\'avez pas accès à ce carnet');
-        }
-
-        // 5. Récupérer le Carnet du Padawan
-        $padawanLogbookId = $currentRequest->attributes->get(key: 'id');
-        $padawanLogbook = $this->logbookRepository->find($padawanLogbookId);
-        if (!$padawanLogbook) {
-            throw new \LogicException(message: 'Le carnet de l\'apprenant n\'a pas été trouvé');
-        }
-
-        // 6. Récupérer les actions du carnet
-        /* @var Action[] $actions */
-        $actions = $padawanLogbook->getActions()->toArray();
-
-        // 7. Trier les actions par thème (assurez-vous que les thèmes ont des titres que vous pouvez comparer)
-        usort($actions, function ($a, $b) {
-            $themeA = $a->getModule() ? $a->getModule()->getTheme() : null;
-            $themeB = $b->getModule() ? $b->getModule()->getTheme() : null;
-
-            // Utilisation du null coalescent pour s'assurer que nous avons toujours une chaîne
-            $titleA = $themeA ? $themeA->getTitle() ?? '' : '';
-            $titleB = $themeB ? $themeB->getTitle() ?? '' : '';
-
-            return strcmp($titleA, $titleB);
-        });
-
-        return $actions;
     }
 
     /**
@@ -123,7 +58,7 @@ readonly class MentorService
      *     actionsByTheme: array<string, array<Action>>
      * }
      */
-    public function newGetPadawanData(User $mentor, Logbook $logbook): array
+    public function getPadawanData(User $mentor, Logbook $logbook): array
     {
         // 1. Récupérer le Padawan associé au carnet
         $padawan = $logbook->getOwner();
