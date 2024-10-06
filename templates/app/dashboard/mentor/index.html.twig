@@ -70,7 +70,7 @@
                                             'bg-primary': '#007bff'
                                         } %}
 
-                                        {% set bgClass = progression.progress_class|split(' ')|filter(class => class starts with 'bg-')|first %}
+                                        {% set bgClass = progression.progress_class_agent|split(' ')|filter(class => class starts with 'bg-')|first %}
                                         {% set progressColor = progressColorMap[bgClass] ?? '#6c757d' %}
                                         <tr>
                                             <td>
@@ -99,7 +99,7 @@
                                             <td>{{ apprenant.seniority }}</td>
                                             <td class="text-center">
                                                 <div class="progress" style="height: 20px;">
-                                                    <div class="progress-bar {{ progression.progress_class }}"
+                                                    <div class="progress-bar {{ progression.progress_class_agent }}"
                                                          role="progressbar"
                                                          style="width: {{ progression.agent_progress }}%;"
                                                          aria-valuenow="{{ progression.agent_progress }}"

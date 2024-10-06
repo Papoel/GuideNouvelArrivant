@@ -30,30 +30,30 @@
         <div class="col-12">
             {% if logbooks %}
             {% for logbook in logbooks %}
-                <div class="card info-card mentor-card shadow-sm rounded-4 mb-4 h-100">
+                <div class="card info-card mentor-card shadow-sm rounded-4 mb-4">
                     <div class="card-header bg-white text-uppercase fw-bold border-bottom border-secondary border-opacity-25 ps-3">
                         <h5 class="mb-0">{{ logbook.name }}</h5>
                     </div>
                     <div class="card-body">
                         {% for theme in logbook.themes %}
-                            <div class="accordion mt-3" id="theme-{{ theme.id }}">
+                            <div class="accordion mt-3" id="theme-{{ theme.id }}-logbook-{{ logbook.id }}">
                                 <div class="accordion-item border-0">
-                                    <h2 class="accordion-header" id="heading-{{ theme.id }}">
+                                    <h2 class="accordion-header" id="heading-{{ theme.id }}-logbook-{{ logbook.id }}">
                                         <button class="accordion-button collapsed shadow-sm rounded-3 bg-primary-subtle text-dark"
                                                 type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#collapse-theme-{{ theme.id }}"
+                                                data-bs-target="#collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}"
                                                 aria-expanded="false"
-                                                aria-controls="collapse-theme-{{ theme.id }}">
+                                                aria-controls="collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}">
                                             {{ theme.title }}
                                             <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
                                         </button>
                                     </h2>
 
-                                    <div id="collapse-theme-{{ theme.id }}"
+                                    <div id="collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}"
                                          class="accordion-collapse collapse"
-                                         aria-labelledby="heading-{{ theme.id }}"
-                                         data-bs-parent="#theme-{{ theme.id }}">
+                                         aria-labelledby="heading-{{ theme.id }}-logbook-{{ logbook.id }}"
+                                         data-bs-parent="#theme-{{ theme.id }}-logbook-{{ logbook.id }}">
                                         <div class="accordion-body">
                                             <!-- Ajout du conteneur scrollable -->
                                             <div class="scrollable-modules">
@@ -138,7 +138,6 @@
                         </div>
                     </div>
                 </div>
-
             {% endif %}
         </div>
     </div>

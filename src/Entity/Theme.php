@@ -32,7 +32,7 @@ class Theme
     /**
      * @var Collection<int, Logbook>
      */
-    #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'themes')]
+    #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'themes', cascade: ['persist'])]
     private Collection $logbooks;
 
     /**

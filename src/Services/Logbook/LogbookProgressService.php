@@ -19,7 +19,8 @@ class LogbookProgressService
      *     completed_by_agent: int,
      *     validated_by_mentor: int,
      *     modules_awaiting_validation: int,
-     *     progress_class: string
+     *     progress_class_agent: string,
+     *     progress_class_mentor: string
      * }
      */
     public function calculateLogbookProgress(Logbook $logbook): array
@@ -50,11 +51,18 @@ class LogbookProgressService
         $mentorProgress = $totalModules > 0 ? ($validatedByMentor / $totalModules) * 100 : 0;
 
         // Définir la classe de la barre de progression en fonction du pourcentage
-        $progressClass = 'bg-danger';
+        $progressClassAgent = 'bg-danger';
         if ($agentProgress > 75) {
-            $progressClass = 'bg-success';
+            $progressClassAgent = 'bg-success';
         } elseif ($agentProgress >= 50) {
-            $progressClass = 'bg-warning text-dark';
+            $progressClassAgent = 'bg-warning text-dark';
+        }
+
+        $progressClassMentor = 'bg-danger';
+        if ($mentorProgress > 75) {
+            $progressClassMentor = 'bg-success';
+        } elseif ($mentorProgress >= 50) {
+            $progressClassMentor = 'bg-warning text-dark';
         }
 
         return [
@@ -64,7 +72,8 @@ class LogbookProgressService
             'completed_by_agent' => $completedByAgent,
             'validated_by_mentor' => $validatedByMentor,
             'modules_awaiting_validation' => $completedByAgent - $validatedByMentor,
-            'progress_class' => $progressClass,
+            'progress_class_agent' => $progressClassAgent,
+            'progress_class_mentor' => $progressClassMentor,
         ];
     }
 
