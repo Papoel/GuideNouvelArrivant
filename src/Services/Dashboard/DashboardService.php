@@ -9,6 +9,7 @@ use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Entity\Theme;
 use App\Entity\User;
+use App\Services\Logbook\LogbookProgressService;
 use App\Services\User\UserSeniorityService;
 use App\Services\User\UserValidationService;
 
@@ -17,6 +18,7 @@ readonly class DashboardService
     public function __construct(
         private UserValidationService $userValidationService,
         private UserSeniorityService $seniorityService,
+        private LogbookProgressService $logbookProgressService,
     ) {
     }
 
@@ -36,9 +38,6 @@ readonly class DashboardService
         // Validation et récupération de l'utilisateur par NNI
         $currentUser = $this->userValidationService->validateUserAccess($nni);
 
-        // Vérification des droits d'accès
-        // assert($currentUser instanceof User);
-
         // Récupération des logbooks associés à l'utilisateur
         $logbooks = $this->getLogbooksByUser($currentUser);
 
@@ -48,13 +47,12 @@ readonly class DashboardService
         // Récupération des modules liés aux thèmes
         $modules = $this->getModulesByThemes($themes);
 
-        // Récupération des actions liées aux modules
-        // Filtrer les actions pour l'utilisateur actuel
-        $actions = $this->getActionsByModulesForUser($modules, $currentUser);
+        $logbooksProgress = $this->calculateLogbooksProgress($logbooks);
 
         return [
             'user' => $currentUser,
             'logbooks' => $logbooks,
+            'logbooksProgress' => $logbooksProgress,
             'themes' => $themes,
             'modules' => $modules,
             'actions' => $this->getActionsByModulesForUser($modules, $currentUser),
@@ -69,6 +67,20 @@ readonly class DashboardService
     private function getLogbooksByUser(User $user): array
     {
         return $user->getLogbooks()->toArray();
+    }
+
+    /** @phpstan-ignore-next-line */
+    private function calculateLogbooksProgress(array $logbooks): array
+    {
+        $logbooksProgress = [];
+        foreach ($logbooks as $logbook) {
+            if (!$logbook instanceof Logbook) {
+                throw new \InvalidArgumentException(message: 'Une erreur est survenue lors du calcul de la progression des carnets.');
+            }
+            $logbooksProgress[] = $this->logbookProgressService->calculateLogbookProgress($logbook);
+        }
+
+        return $logbooksProgress;
     }
 
     /**

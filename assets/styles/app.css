@@ -1148,3 +1148,71 @@ aside.sidebar div {
 .avatar-circle:hover .avatar-initials {
     color: var(--color);
 }
+
+/*----------------------------------------------
+# Custom Pages presentation
+----------------------------------------------*/
+a {
+    transition: color 0.3s ease-in-out;
+}
+a:hover {
+    color: #a020f0;
+}
+.hero {
+    background: linear-gradient(135deg, #4A90E2, #A2DFF7); /* Dégradé de bleu */
+    color: #fff; /* Couleur du texte en blanc */
+    padding: 50px 30px; /* Espacement intérieur */
+    border-radius: 15px; /* Coins arrondis */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Ombre portée */
+    text-align: center; /* Centrage du texte */
+}
+
+.hero h1 {
+    font-size: 3rem; /* Taille du titre */
+    font-weight: bold; /* Gras */
+    margin-bottom: 15px; /* Espacement en bas */
+}
+
+.hero p {
+    font-size: 1.25rem; /* Taille du paragraphe */
+    margin-bottom: 20px; /* Espacement en bas */
+}
+
+.hero a {
+    background: rgba(255, 255, 255, 0.2); /* Couleur de fond légèrement blanche */
+    color: #fff; /* Couleur du texte en blanc */
+    padding: 12px 30px; /* Espacement intérieur */
+    border-radius: 25px; /* Coins arrondis pour le bouton */
+    text-decoration: none; /* Pas de soulignement */
+    transition: background 0.3s; /* Transition douce pour l'effet de hover */
+}
+
+.hero a:hover {
+    background: rgba(255, 255, 255, 0.5); /* Effet hover plus clair */
+}
+
+.title-guide-page {
+    font-size: 2.5rem; /* Taille de la police */
+    font-weight: bold; /* Gras pour le titre */
+    color: #2c3e50; /* Couleur sombre pour le texte */
+    position: relative; /* Pour le pseudo-élément */
+    margin: 30px 0; /* Marge autour du titre */
+    padding: 10px 0; /* Espacement interne */
+    text-align: center; /* Centré horizontalement */
+    letter-spacing: 1px; /* Espacement entre les lettres */
+    text-transform: uppercase; /* Transforme le texte en majuscules */
+}
+
+.title-guide-page::before {
+    content: ""; /* Contenu vide pour créer un pseudo-élément */
+    position: absolute; /* Positionnement absolu */
+    left: 50%; /* Centré horizontalement */
+    bottom: 0; /* Aligné avec le bas du titre */
+    width: 100%; /* Largeur de la ligne */
+    height: 4px; /* Hauteur de la ligne */
+    border-radius: 45%; /* Arrondie les bords et donne un effet */
+    background: linear-gradient(90deg, #3498db, #9b59b6); /* Dégradé coloré */
+    transform: translateX(-50%); /* Centrer la ligne */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre portée pour un effet de profondeur */
+    transition: transform 0.3s ease; /* Transition douce pour le mouvement */
+}

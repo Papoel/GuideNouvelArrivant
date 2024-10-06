@@ -1,6 +1,15 @@
 grumphp:
     stop_on_failure: true
     tasks:
+        git_blacklist:
+            keywords:
+                - "var_dump("
+                - "die("
+                - "dump("
+                - "dd("
+                - "print_r("
+            regexp_type: G
+            match_word: true
         composer_script:
             script: before-commit
         git_commit_message:

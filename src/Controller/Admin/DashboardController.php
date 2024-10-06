@@ -60,8 +60,25 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        $currentUser = $this->getUser();
         /* Go to home page */
-        yield MenuItem::linkToRoute(label: 'Accéder au site', icon: 'fas fa-home', routeName: 'home_index');
+        // Vérifie que l'utilisateur est connecté
+        if (($currentUser instanceof User) && method_exists(object_or_class: $currentUser, method: 'getNni')) {
+            /* Go to home page */
+            yield MenuItem::linkToRoute(
+                label: 'Accéder au site',
+                icon: 'fas fa-home',
+                routeName: 'dashboard_index',
+                routeParameters: ['nni' => $currentUser->getNni()]
+            );
+        } else {
+            // Si l'utilisateur n'est pas connecté, redirige sans le paramètre 'nni'
+            yield MenuItem::linkToRoute(
+                label: 'Accéder au site',
+                icon: 'fas fa-home',
+                routeName: 'app_login'
+            );
+        }
 
         $totalUsers = $this->userRepository->count([]);
         yield MenuItem::section(label: 'Utilisateurs')->setBadge(content: $totalUsers);

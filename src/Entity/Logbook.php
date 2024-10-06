@@ -37,7 +37,7 @@ class Logbook
     /**
      * @var Collection<int, Action>
      */
-    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'logbook')]
+    #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'logbook', cascade: ['remove'])]
     private Collection $actions;
 
     public function __construct()
