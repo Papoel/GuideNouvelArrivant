@@ -46,12 +46,9 @@ class Module
 
     public function __toString(): string
     {
-        // Vérifier si le thème est défini et s'il a un titre
         $theme = $this->getTheme();
         $themeTitle = $theme ? $theme->getTitle() : '';
-
-        // Si le titre est null, fournir une chaîne vide pour éviter les erreurs avec substr
-        $firstCharactersOfTheme = substr(string: $themeTitle ?: '', offset: 0, length: 3);
+        $firstCharactersOfTheme = $themeTitle ? substr($themeTitle, offset: 0, length: 3) : '';
 
         return $firstCharactersOfTheme.' | '.($this->title ?: '');
     }
@@ -130,7 +127,7 @@ class Module
     /**
      * Get an action by module ID.
      */
-    public function getActionByModuleId(int $moduleId): ?Action
+    /*public function getActionByModuleId(int $moduleId): ?Action
     {
         // Convertir le moduleId en chaîne pour la comparaison
         $moduleIdString = (string) $moduleId;
@@ -139,6 +136,17 @@ class Module
             // Vérifier si l'ID de l'action n'est pas null et comparer
             $actionId = $action->getId();
             if (null !== $actionId && $actionId->toString() === $moduleIdString) {
+                return $action;
+            }
+        }
+
+        return null;
+    }*/
+    public function getActionByModuleId(Uuid $moduleId): ?Action
+    {
+        foreach ($this->actions as $action) {
+            $actionModuleId = $action->getModule()?->getId();
+            if (null !== $actionModuleId && $actionModuleId->equals($moduleId)) {
                 return $action;
             }
         }
