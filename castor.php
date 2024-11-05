@@ -2,6 +2,7 @@
 
 use Castor\Attribute\AsTask;
 
+use Castor\Context;
 use function Castor\finder;
 use function Castor\io;
 use function Castor\capture;
@@ -187,7 +188,7 @@ function showLogs(): void
     run(command: 'tail -f var/log/dev.log');
 }
 
-/* ******************** 🧪 TESTING 🧪 ******************** */
+/* ******************** 🧪 TESTING with PEST 🧪 ******************** */
 function pest(string $command): void
 {
     run(command: sprintf('./vendor/bin/pest %s', $command));
@@ -205,16 +206,45 @@ function testCrash(): void
     pest(command: '--bail');
 }
 
+/* ******************** 🧪 TESTING with PHPUNIT 🧪 ******************** */
+#[AsTask(description: 'Exécuter les tests avec PHPUnit')]
+function phpunit(): void
+{
+    run(command: 'symfony console doctrine:database:drop --force --env=test || true');
+    run(command: 'symfony console doctrine:database:create --env=test');
+    run(command: 'symfony console doctrine:migrations:migrate -n --env=test');
+    run(command: 'symfony console doctrine:fixtures:load -n --env=test');
+    run(command: 'php bin/phpunit');
+}
+
+#[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]
+function phpunitCrash(): void
+{
+    run(command: 'php bin/phpunit --stop-on-failure');
+}
+
+/* ******************** ⭐️ WIP ⭐️ ******************** */
 #[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
-function tests(): void
+function pests(): void
 {
     pest(command: '--coverage --min=80');
 }
 
+#[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
+function phpunitCoverage(): void
+{
+    run(command: 'php bin/phpunit --coverage-html var/metrics/tests/coverage');
+}
+/* ******************** ⭐️ WIP ⭐️ ******************** */
+
 #[AsTask(description: 'Créer un rapport de couverture des tests')]
 function testsCoverage(): void
 {
-    pest(command: '--coverage --coverage-html var/metrics/tests/coverage');
+    if (file_exists(filename: 'tests/Pest.php')) {
+        pest(command: '--coverage --coverage-html var/metrics/tests/coverage');
+    } else {
+        phpunitCoverage();
+    }
 
 }
 
@@ -280,7 +310,7 @@ function deployPreProd(): void
 
 /* ******************** 📝 QUALITÉ DU CODE 📝 ******************** */
 // Fonction pour exécuter une commande PHPQA
-function executePhpqaCommand(string $command): void
+/*function executePhpqaCommand(string $command): void
 {
     // Récupérer le répertoire courant
     $currentDirectory = capture(command: 'pwd');
@@ -297,6 +327,31 @@ function executePhpqaCommand(string $command): void
 
     // Exécuter la commande
     run(command: $fullCommand);
+}*/
+
+function executePhpqaCommand(string $command): void
+{
+    // Récupérer le répertoire courant
+    $currentDirectory = getcwd();
+
+    // Définir les variables pour la commande Docker
+    $dockerRunCommand = 'docker run --init --rm';
+    $phpQaImage = 'jakzal/phpqa:php8.3';
+    $projectVolume = '-v ' . $currentDirectory . ':/project';
+    $workingDirectory = '-w /project';
+    $userMapping = '--user $(id -u):$(id -g)';
+
+    // Concaténer les commandes Docker et la commande spécifique PHPQA
+    $fullCommand = implode(' ', [
+        $dockerRunCommand,
+        $projectVolume,
+        $workingDirectory,
+        $userMapping,
+        $phpQaImage,
+        $command
+    ]);
+    // Exécuter la commande
+    run($fullCommand, context: new Context(allowFailure: true));
 }
 
 function executeSymfonyLintCommand(string $command): void
@@ -335,16 +390,17 @@ function qaPhpcpd(): void
     executePhpqaCommand($phpCpdCommand);
 }
 
-#[AsTask(description: 'Qualité du code: PHPMD')]
+/** BUG : Problème dépréciation */
+/*#[AsTask(description: 'Qualité du code: PHPMD')]
 function qaPhpMetrics(): void
 {
     // Définir la commande de rapport PHP Metrics
-    $phpMetricsCommand = 'phpmetrics --report-html=var/metrics/application ./src';
+    // $phpMetricsCommand = 'phpmetrics --report-html=var/metrics/application ./src';
+    $phpMetricsCommand = 'phpmetrics --report-html=myreport.html var/metrics/application ./src';
 
     // Exécuter la commande
     executePhpqaCommand($phpMetricsCommand);
-
-}
+}*/
 
 #[AsTask(description: 'Vérifier la syntaxe des fichiers TWIG')]
 function qaTwigLint(): void
@@ -420,16 +476,22 @@ function beforeCommit(): void
 
     // Exécuter testSimply(); si le dossier tests contient plus d'un fichier
     $tests = finder()->in(dirs: 'tests')->files();
-    if (count($tests) > 1)
-        testSimply();
+    // Si le fichier tests/Pest.php existe, on exécute les tests avec Pest
+    if (file_exists(filename: 'tests/Pest.php')) {
+        if (count($tests) > 1)
+            testSimply();
+    } else {
+        phpunit();
+    }
 
 
-    if (io()->confirm(question: 'Voulez-vous exécuter les metrics ?', default: false)) {
+    /** BUG : Problème de dépréciation */
+    /*if (io()->confirm(question: 'Voulez-vous exécuter les metrics ?', default: false)) {
         parallel(
             fn() => qaPhpMetrics(),
             fn() => testsCoverage(),
         );
-    }
+    }*/
 
     // Success message
     io()->success('Tous les outils de qualité du code ont été exécutés avec succès, vous pouvez maintenant commiter vos modifications.');
