@@ -154,7 +154,10 @@ function createTest(): void
 #[AsTask(description: 'Effacer le cache')]
 function cc(): void
 {
-    run(command: 'php bin/console cache:clear');
+    parallel(
+        fn() => purge(),
+        fn() => run(command: 'php bin/console cache:clear'),
+    );
 }
 
 #[AsTask(description: 'Effacer le cache de production')]
@@ -207,14 +210,21 @@ function testCrash(): void
 }
 
 /* ******************** 🧪 TESTING with PHPUNIT 🧪 ******************** */
-#[AsTask(description: 'Exécuter les tests avec PHPUnit')]
-function phpunit(): void
+#[AsTask(description: 'Recréer la base de données de test')]
+function resetDbTest(): void
 {
     run(command: 'symfony console doctrine:database:drop --force --env=test || true');
     run(command: 'symfony console doctrine:database:create --env=test');
     run(command: 'symfony console doctrine:migrations:migrate -n --env=test');
     run(command: 'symfony console doctrine:fixtures:load -n --env=test');
-    run(command: 'php bin/phpunit');
+}
+
+
+#[AsTask(description: 'Exécuter les tests avec PHPUnit')]
+function phpunit(): void
+{
+    //resetDbTest();
+    run(command: 'php bin/phpunit --testdox');
 }
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]
@@ -562,5 +572,23 @@ function stop(): void
         fn() => serverStop()
     );
 
-    notify('Projet arrêté avec succès');
+    notify(message: 'Projet arrêté avec succès');
+}
+
+//  Commande utiles
+/* ******************** 🛠 UTILS 🛠 ******************** */
+#[AsTask(description: 'Ouvrir la couverture de test')]
+function openCoverage(): void
+{
+    run(command: 'open var/metrics/tests/coverage/index.html');
+}
+
+// Effacer les dossiers var/cache et var/log
+#[AsTask(description: 'Effacer les dossiers var/cache et var/log')]
+function purge(): void
+{
+    parallel(
+        fn() => run(command: 'rm -rf var/cache'),
+        fn() => run(command: 'rm -rf var/log')
+    );
 }
