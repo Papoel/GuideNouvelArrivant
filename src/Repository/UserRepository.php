@@ -25,11 +25,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+            throw new UnsupportedUserException(message: sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
-        $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
+        $user->setPassword(password: $newHashedPassword);
+        $this->getEntityManager()->persist(object: $user);
         $this->getEntityManager()->flush();
     }
 
@@ -47,16 +47,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         // Forcer le type de retour à un tableau d'objets User
         return is_array($result) ? $result : [];
-    }
-
-    public function countUsersByLogbookId(int $logbookId): int
-    {
-        return (int) $this->createQueryBuilder(alias: 'u')
-            ->join(join: 'u.logbooks', alias: 'l')
-            ->where('l.id = :logbookId')
-            ->setParameter(key: 'logbookId', value: $logbookId)
-            ->select('COUNT(u.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
     }
 }
