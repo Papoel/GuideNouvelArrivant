@@ -9,6 +9,12 @@ class UserSeniorityService
     public function getSeniority(\DateTimeInterface $hiringAt): string
     {
         $now = new \DateTime();
+
+        // Si la date d'embauche est aujourd'hui, on retourne un message sympathique
+        if ($hiringAt->format(format: 'Y-m-d') === $now->format(format: 'Y-m-d')) {
+            return 'Premier jour parmi nous !';
+        }
+
         $interval = $now->diff($hiringAt);
 
         $years = $interval->y;

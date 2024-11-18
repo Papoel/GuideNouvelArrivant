@@ -14,9 +14,9 @@ class ThemeFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('description')
-            ->add('logbooks', EntityType::class, [
+            ->add(child: 'title')
+            ->add(child: 'description')
+            ->add(child: 'logbooks', type: EntityType::class, options: [
                 'class' => Logbook::class,
                 'choice_label' => 'id',
                 'multiple' => true,

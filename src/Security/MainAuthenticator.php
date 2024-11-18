@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,9 +24,12 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
     public const HOME_ROUTE = 'dashboard_index';
+    public const TIMEZONE = 'Europe/Paris';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager
+    ) {
     }
 
     public function authenticate(Request $request): Passport
@@ -48,12 +52,16 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
     {
         $user = $token->getUser();
 
-        if ($user instanceof User) { // Remplace App\Entity\User par la classe réelle de ton utilisateur
+        if ($user instanceof User) {
             $userNni = $user->getNni();
         } else {
             // Gérer le cas où l'utilisateur est null ou n'est pas de la classe attendue
             throw new \LogicException(message: 'L\'utilisateur doit être une instance de '.User::class);
         }
+
+        // Mise à jour du lastLoginAt
+        $user->setLastLoginAt(new \DateTimeImmutable(timezone: new \DateTimeZone(self::TIMEZONE)));
+        $this->entityManager->flush();
 
         if ($targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName)) {
             return new RedirectResponse(url: $targetPath);
