@@ -10,19 +10,16 @@ use App\Security\MainAuthenticator;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
-use Flasher\Prime\FlasherInterface;
 use LogicException;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -214,7 +211,7 @@ class SecurityControllerTest extends WebTestCase
         self::assertEquals(expected: $this->dashboardRoute, actual: $response->getTargetUrl());
     }
 
-    public function test_successful_authentication_updates_last_login_at(): void
+    #[Test] public function successful_authentication_updates_last_login_at(): void
     {
         // Arrange
         $user = new User();
@@ -248,7 +245,7 @@ class SecurityControllerTest extends WebTestCase
         self::assertTrue(condition: $response->isRedirect(location: '/dashboard/J12345'));
     }
 
-    public function test_authentication_with_invalid_user_type_throws_exception(): void
+    #[Test] public function authentication_with_invalid_user_type_throws_exception(): void
     {
         // Arrange
         // Création d'un mock d'utilisateur qui implémente UserInterface mais n'est pas un User
@@ -268,7 +265,7 @@ class SecurityControllerTest extends WebTestCase
         $this->authenticator->onAuthenticationSuccess(request: $request, token: $token, firewallName: 'main');
     }
 
-    public function test_successful_authentication_with_target_path_redirects_to_target(): void
+    #[Test] public function successful_authentication_with_target_path_redirects_to_target(): void
     {
         // Arrange
         $user = new User();
@@ -291,7 +288,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertTrue($response->isRedirect('/target-path'));
     }
 
-    public function testLogoutThrowsLogicException(): void
+    #[Test] public function logoutThrowsLogicException(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('This method can be blank - it will be intercepted by the logout key on your firewall.');
@@ -308,6 +305,4 @@ class SecurityControllerTest extends WebTestCase
         $this->session = new Session(new MockArraySessionStorage());
         $this->authenticator = new MainAuthenticator($this->urlGenerator, $this->entityManager);
     }
-
-
 }
