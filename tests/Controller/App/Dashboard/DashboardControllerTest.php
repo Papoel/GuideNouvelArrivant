@@ -6,6 +6,7 @@ namespace App\Tests\Controller\App\Dashboard;
 
 use App\Security\MainAuthenticator;
 use App\Tests\Utils\AuthenticationHelper;
+use App\Tests\Utils\UserTestHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -29,39 +30,35 @@ class DashboardControllerTest extends WebTestCase
         $this->authenticator = new MainAuthenticator($this->urlGenerator, $this->entityManager);
     }
 
-    #[Test] public function loginSuccessfulWithValidCredentials(): void
+    #[Test] public function testUserIsRedirectedToDashboardAfterLogin(): void
     {
         $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
 
-        // Accès à la page de connexion
-        $crawler = $client->request(method: Request::METHOD_GET, uri: '/connexion');
+        // Utilisation de la méthode authenticateUser
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager);
 
-        // Soumission du formulaire avec les identifiants corrects
-        $form = $crawler->selectButton(value: 'Connexion')->form([
-            'email' => 'bruce.wayne@gotham.city',
-            'password' => 'admin'
-        ]);
-        $client->submit(form: $form);
-
-        // Vérification de la redirection vers la page dashboard/nni
-        self::assertStringStartsWith(
-            prefix: '/dashboard/H12345/',
-            string: $client->getResponse()->headers->get(key: 'Location'));
-
-        // Suivi de la redirection
-        $client->followRedirect();
-
-        // Vérification que la page d'accueil est bien chargée
+        // Vérifications après authentification
         self::assertResponseIsSuccessful();
+
+        // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
+        $uri = $client->getRequest()->getRequestUri();
+
+        // route = /dashboard/{nni}/module/{moduleId}/carnet/{logbookId}/edit
+        $nni = $user->getNni();
+
+
+        $redirectedTo = '/dashboard/' . $nni;
+        self::assertStringStartsWith($redirectedTo, $uri);
     }
 
     #[Test] public function iCanAuthenticateUser(): void
     {
-        // Given
         $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
 
-        // Authentification avec utilisateur par défaut
-        $user = AuthenticationHelper::authenticateUser(client: $client);
+        // Utilisation de la méthode authenticateUser
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager);
 
         // Assertions sur l'authentification par défaut
         self::assertNotNull(actual: $user);
@@ -69,14 +66,14 @@ class DashboardControllerTest extends WebTestCase
 
     #[Test] public function guideTechniquePageIsAccessible(): void
     {
-        // Créez un client HTTP
         $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
 
-        // Authentification avec soumission automatique du formulaire de connexion
-        AuthenticationHelper::authenticateUser($client, submitLoginForm: true);
+        // Utilisation de la méthode authenticateUser
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager);
 
         // Accédez à la page /guide-technique
-        $client->request(method: Request::METHOD_GET, uri: '/dashboard/H12345/guide-technique');
+        $client->request(method: Request::METHOD_GET, uri: '/dashboard/' . $user->getNni() . '/guide-technique');
 
         // Vérifiez que la page est bien accessible (code de statut HTTP 200)
         self::assertResponseIsSuccessful();

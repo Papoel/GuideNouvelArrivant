@@ -38,7 +38,7 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
         $previousMentor = $originalData['mentor'] ?? null;
 
         // Si le mentor a changé ou est supprimé
-        if ($previousMentor && $previousMentor !== $currentMentor) {
+        if ($previousMentor instanceof User && $previousMentor !== $currentMentor) {
             $this->removeRoleMentor(mentor: $previousMentor);
         }
 

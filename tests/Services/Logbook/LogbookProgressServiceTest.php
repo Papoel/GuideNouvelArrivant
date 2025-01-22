@@ -24,7 +24,7 @@ class LogbookProgressServiceTest extends TestCase
         $this->service = new LogbookProgressService();
     }
 
-    private function createLogbookWithModules(array $modules, array $actions = [], User $user = null): Logbook
+    private function createLogbookWithModules(array $modules, array $actions = [], ?User $user = null): Logbook
     {
         $logbook = $this->createMock(originalClassName: Logbook::class);
         $theme = $this->createMock(originalClassName: Theme::class);

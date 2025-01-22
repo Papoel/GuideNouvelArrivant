@@ -7,12 +7,14 @@ namespace App\Tests\Controller\Security;
 use App\Controller\Security\SecurityController;
 use App\Entity\User;
 use App\Security\MainAuthenticator;
+use App\Tests\Utils\UserTestHelper;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -20,6 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -36,7 +39,7 @@ class SecurityControllerTest extends WebTestCase
     private SessionInterface $session;
     private MainAuthenticator $authenticator;
 
-    #[Test] public function login(): void
+    #[Test] public function loginPageIsAccessible(): void
     {
         $client = static::createClient();
         $client->request(method: Request::METHOD_GET, uri: $this->pathBase);
@@ -44,7 +47,7 @@ class SecurityControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
-    #[Test] public function loginAccessibleIfUserIsNotAuthenticated(): void
+    #[Test] public function loginPageIsAccessibleIfUserIsNotAuthenticated(): void
     {
         $client = static::createClient();
 
@@ -63,7 +66,7 @@ class SecurityControllerTest extends WebTestCase
 
         // Vérification de la présence du bouton de soumission du formulaire nommé Connexion
         self::assertSelectorExists(selector: 'button[type="submit"]');
-        self::assertSelectorTextSame(selector: 'button[type="submit"]', text: 'Connexion');
+        self::assertSelectorTextSame(selector: 'button[type="submit"]', text: 'Se connecter');
 
         // Vérification de la présence du lien "Mot de passe oublié ?" pointant vers "#"
         // TODO: Création de la page de réinitialisation du mot de passe
@@ -74,22 +77,34 @@ class SecurityControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
+        // Créer et persister l'utilisateur
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+        $user = UserTestHelper::createUser();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
         // Accès à la page de connexion
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
 
         // Soumission du formulaire avec les identifiants corrects
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => $this->emailAdmin, 'password' => 'admin']);
-
-        $client->submit(form: $form);
-
-        // Vérification de la redirection vers la page dashboard/nni
-        self::assertStringStartsWith(prefix: $this->dashboardRoute, string: $client->getResponse()->headers->get(key: 'Location'));
+        $form = $crawler->selectButton(value: 'Se connecter')->form([
+            'email' => $user->getEmail(),
+            'password' => 'password',
+        ]);
+        $client->submit($form);
 
         // Suivi de la redirection
         $client->followRedirect();
 
-        // Vérification que la page d'accueil est bien chargée
+        // Vérifications
         self::assertResponseIsSuccessful();
+
+        // Variables de redirection
+        $uri = $client->getRequest()->getRequestUri();
+        $redirectedTo = '/dashboard/' . $user->getNni() . '/';
+
+        // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
+        self::assertStringStartsWith(prefix: $redirectedTo, string: $uri);
     }
 
     #[Test] public function loginFailureWithInvalidCredentials(): void
@@ -98,89 +113,67 @@ class SecurityControllerTest extends WebTestCase
 
         // Test avec email invalide et mot de passe correct
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => 'invalid@email.com', 'password' => 'admin']);
+        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => 'invalid@email.com', 'password' => 'admin']);
 
         $client->submit(form: $form);
         $client->followRedirect(); // Suivre la redirection vers la page de connexion
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert.alert-danger');
-        self::assertSelectorTextContains(selector: 'div.alert.alert-danger', text: 'Identifiants invalides');
+        self::assertSelectorExists(selector: 'div.alert');
+        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
 
         // Test avec email valide et mot de passe incorrect
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => $this->emailAdmin, 'password' => 'wrongpassword']);
+        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => $this->emailAdmin, 'password' => 'wrongpassword']);
 
         $client->submit(form: $form);
         $client->followRedirect(); // Suivre la redirection vers la page de connexion
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert.alert-danger');
-        self::assertSelectorTextContains(selector: 'div.alert.alert-danger', text: 'Identifiants invalides');
+        self::assertSelectorExists(selector: 'div.alert');
+        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
 
         // Test avec email et mot de passe incorrects
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => 'wrong@email.com', 'password' => 'wrongpassword']);
+        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => 'wrong@email.com', 'password' => 'wrongpassword']);
 
         $client->submit(form: $form);
         $client->followRedirect(); // Suivre la redirection vers la page de connexion
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert.alert-danger');
-        self::assertSelectorTextContains(selector: 'div.alert.alert-danger', text: 'Identifiants invalides');
+        self::assertSelectorExists(selector: 'div.alert');
+        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
     }
 
     #[Test] public function authenticationSuccessThrowsExceptionForInvalidUserType(): void
     {
         $client = static::createClient();
 
-        // Simuler une connexion avec des identifiants valides
-        $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => 'bruce.wayne@gotham.city', 'password' => 'admin']);
+        // Créer et simuler une connexion
+        $crawler = $client->request(method: 'GET', uri: $this->pathLogin);
+        $form = $crawler->selectButton(value: 'Se connecter')->form([
+            'email' => 'bruce.wayne@gotham.city',
+            'password' => 'admin',
+        ]);
+        $client->submit($form);
 
-        $client->submit(form: $form);
-
-        // Créer une classe utilisateur de test qui respecte UserInterface mais n'est pas une instance de User
+        // Créer un fakeUser
         $fakeUser = new class implements UserInterface {
-            public function getRoles(): array
-            {
-                return [];
-            }
-
-            public function getPassword(): ?string
-            {
-                return null;
-            }
-
-            public function getSalt(): ?string
-            {
-                return null;
-            }
-
-            public function getUsername(): string
-            {
-                return 'fakeuser';
-            }
-
-            public function eraseCredentials(): void
-            {
-            }
-
-            public function getUserIdentifier(): string
-            {
-                return 'fakeuser';
-            }
+            public function getRoles(): array { return []; }
+            public function getPassword(): ?string { return null; }
+            public function eraseCredentials(): void {}
+            public function getUserIdentifier(): string { return 'fake-user'; }
         };
 
-        // Récupérer le jeton et définir l'utilisateur comme FakeUser
-        $token = $client->getContainer()->get(id: 'security.token_storage')->getToken();
-        $token->setUser(user: $fakeUser);
+        // Créer et injecter un jeton manuel
+        $token = new UsernamePasswordToken(user: $fakeUser, firewallName: 'main', roles: ['ROLE_USER']);
+        $client->getContainer()->get(id: 'security.token_storage')->setToken(token: $token);
 
-        // Définir l'exception attendue
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('L\'utilisateur doit être une instance de ' . User::class);
+        // Vérifier que l'exception est levée
+        $this->expectException(exception: LogicException::class);
+        $this->expectExceptionMessage(message: 'L\'utilisateur doit être une instance de ' . User::class);
 
-        // Appeler `onAuthenticationSuccess` qui devrait lever l'exception
+        // Appeler `onAuthenticationSuccess`
         $authenticator = $client->getContainer()->get(id: MainAuthenticator::class);
         $authenticator->onAuthenticationSuccess(request: new Request(), token: $token, firewallName: 'main');
     }
@@ -189,22 +182,27 @@ class SecurityControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        // Créer un mock du UserProvider
-        $userProviderMock = $this->createMock(originalClassName: UserProviderInterface::class);
-        $userProviderMock->expects($this->any())->method(constraint: 'loadUserByIdentifier')->willReturn(value: new User($this->emailAdmin, 'admin'));
+        // Créer un utilisateur fictif
+        $user = UserTestHelper::createAdminUser();
 
-        // Remplacer le UserProvider par le mock dans le container
-        $client->getContainer()->set(id: UserProviderInterface::class, service: $userProviderMock);
+        // Créer un jeton manuel
+        $token = new UsernamePasswordToken(user: $user, firewallName: 'main', roles: $user->getRoles());
 
-        // Simuler une connexion réussie
-        $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Connexion')->form(['email' => $this->emailAdmin, 'password' => 'admin']);
-        $client->submit($form);
+        // Injecter le jeton dans le TokenStorage
+        $client->getContainer()->get(id: 'security.token_storage')->setToken($token);
 
-        // Appeler `onAuthenticationSuccess` pour tester la redirection
+        // Créer une session factice pour la requête
+        $session = $client->getContainer()->get(id: 'session.factory')->createSession();
+        $session->set(name: '_security.main.target_path', value: $this->dashboardRoute); // Définir le chemin cible
+        $session->save(); // Sauvegarder la session pour qu'elle soit utilisable
+
+        // Simuler une requête avec la session
+        $request = new Request();
+        $request->setSession(session: $session); // Attacher la session à la requête
+
+        // Appeler `onAuthenticationSuccess`
         $authenticator = $client->getContainer()->get(id: MainAuthenticator::class);
-        $token = $client->getContainer()->get(id: 'security.token_storage')->getToken();
-        $response = $authenticator->onAuthenticationSuccess(request: $client->getRequest(), token: $token, firewallName: 'main');
+        $response = $authenticator->onAuthenticationSuccess(request: $request, token: $token, firewallName: 'main');
 
         // Vérifier la redirection
         self::assertInstanceOf(expected: RedirectResponse::class, actual: $response);
@@ -285,13 +283,13 @@ class SecurityControllerTest extends WebTestCase
         $response = $this->authenticator->onAuthenticationSuccess(request: $request, token: $token, firewallName: 'main');
 
         // Assert
-        $this->assertTrue($response->isRedirect('/target-path'));
+        self::assertTrue($response->isRedirect(location: '/target-path'));
     }
 
     #[Test] public function logoutThrowsLogicException(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        $this->expectException(exception: LogicException::class);
+        $this->expectExceptionMessage(message: 'This method can be blank - it will be intercepted by the logout key on your firewall.');
 
         // Appel direct de la méthode logout
         $controller = new SecurityController();

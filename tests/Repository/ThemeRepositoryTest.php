@@ -75,12 +75,12 @@ class ThemeRepositoryTest extends KernelTestCase
     {
         // Créer et persister deux Themes
         $theme1 = new Theme();
-        $theme1->setTitle(title: 'Theme 1');
-        $theme1->setDescription(description: 'Description 1');
+        $theme1->setTitle(title: 'Ratus');
+        $theme1->setDescription(description: 'Un petit rat');
 
         $theme2 = new Theme();
-        $theme2->setTitle(title: 'Theme 2');
-        $theme2->setDescription(description: 'Description 2');
+        $theme2->setTitle(title: 'Batman');
+        $theme2->setDescription(description: 'Un super-héros');
 
         $this->entityManager->persist(object: $theme1);
         $this->entityManager->persist(object: $theme2);
@@ -90,18 +90,19 @@ class ThemeRepositoryTest extends KernelTestCase
         $this->entityManager->clear();
 
         // Tester findOneBy avec le titre
-        $foundTheme = $this->repository->findOneBy(criteria: ['title' => 'Theme 1']);
+        $foundTheme = $this->repository->findOneBy(criteria: ['title' => 'Ratus']);
         self::assertInstanceOf(expected: Theme::class, actual: $foundTheme);
-        self::assertEquals(expected: 'Theme 1', actual: $foundTheme->getTitle());
-        self::assertEquals(expected: 'Description 1', actual: $foundTheme->getDescription());
+        self::assertEquals(expected: 'Ratus', actual: $foundTheme->getTitle());
+        self::assertEquals(expected: 'Un petit rat', actual: $foundTheme->getDescription());
 
         // Tester findOneBy avec plusieurs critères
         $foundThemeMultiCriteria = $this->repository->findOneBy([
-            'title' => 'Theme 2',
-            'description' => 'Description 2'
+            'title' => 'Batman',
+            'description' => 'Un super-héros',
         ]);
         self::assertInstanceOf(expected: Theme::class, actual: $foundThemeMultiCriteria);
-        self::assertEquals(expected: 'Theme 2', actual: $foundThemeMultiCriteria->getTitle());
+        self::assertEquals(expected: 'Batman', actual: $foundThemeMultiCriteria->getTitle());
+        self::assertEquals(expected: 'Un super-héros', actual: $foundThemeMultiCriteria->getDescription());
 
         // Tester findOneBy avec un critère qui ne correspond à aucun thème
         $nonExistentTheme = $this->repository->findOneBy(criteria: ['title' => 'Theme Inexistant']);
