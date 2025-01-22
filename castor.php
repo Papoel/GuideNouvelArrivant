@@ -219,12 +219,20 @@ function resetDbTest(): void
     run(command: 'symfony console doctrine:fixtures:load -n --env=test');
 }
 
+#[AsTask(description: 'Nettoyer la base de données de test sans fixtures')]
+function cdb(): void
+{
+    run(command: 'symfony console doctrine:database:drop --force --env=test || true');
+    run(command: 'symfony console doctrine:database:create --env=test');
+    run(command: 'symfony console doctrine:database:create --env=test');
+    run(command: 'symfony console doctrine:migrations:migrate -n --env=test');
+}
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit')]
 function phpunit(): void
 {
     //resetDbTest();
-    run(command: 'php bin/phpunit --testdox');
+    run(command: 'XDEBUG_MODE=coverage php bin/phpunit --testdox');
 }
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]
