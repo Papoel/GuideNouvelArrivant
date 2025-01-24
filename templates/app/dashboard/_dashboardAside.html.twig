@@ -67,6 +67,7 @@
             </div>
         {% endif %}
     </div>
+    {# TODO: P1: Lorsque je désigne un tuteur je dois lui affecter le ROLE_MENTOR avec un listener #}
     {% if is_granted('ROLE_MENTOR') %}
         <ul class="sidebar-nav">
             <li class="nav-heading py-3">Actions tuteur</li>

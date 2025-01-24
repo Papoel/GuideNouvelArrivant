@@ -1,96 +1,149 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion - Guide du Nouvel Arrivant{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/login.css') }}">
+{% endblock %}
+
+{% block body_class %}login-page{% endblock %}
 {% block body %}
-    <!-- Login 1 - Bootstrap Brain Component -->
-    <div class="py-3 py-md-5">
-        <div class="container">
-            <div class="row justify-content-md-center">
-                <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
-                    <div class="bg-white p-4 p-md-5 rounded shadow-sm">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="text-center mb-5">
-                                    <a href="{{ path('app_login') }}">
-                                        <img src="{{ asset('images/logos/edf.png') }}" alt="EDF Logo">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <form method="post">
-                            {% if error %}
-                                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                            {% endif %}
+    <div class="login-container">
+        <!-- Fond animé -->
+        <div class="background">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-                            {% if app.user %}
-                                <div class="mb-3 alert alert-danger">
-                                    Vous êtes déjà connecté en tant que <strong> {{ app.user.userIdentifier }} </strong>.
-                                    <a href="{{ path('app_logout') }}">cliquez ici pour vous déconnecter</a>.
-                                </div>
-                            {% endif %}
+        <!-- Carte de connexion -->
+        <div class="login-card" data-aos="zoom-in" data-aos-duration="800">
+            <div class="brand-logo" data-aos="fade-down" data-aos-delay="400">
+                <img src="{{ asset('images/logos/edf.svg') }}" alt="EDF Logo" class="edf-logo">
+                <div class="logo-shine"></div>
+            </div>
 
-                            <div class="row gy-3 gy-md-4 overflow-hidden">
-                                <div class="col-12">
-                                    <label for="email" class="form-label">
-                                        Email
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="bi bi-envelope"
-                                                 width="16"
-                                                 height="16"
-                                                 fill="currentColor"
-                                                 viewBox="0 0 16 16">
-                                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="email" class="form-control" name="email" id="email" value="{{ last_username }}" required>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="bi bi-key"
-                                                 width="16"
-                                                 height="16"
-                                                 fill="currentColor"
-                                                 viewBox="0 0 16 16">
-                                                <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z"/>
-                                                <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-                                            </svg>
-                                        </span>
-                                        <input id="password" class="form-control" type="password" name="password" value="" required>
-                                    </div>
-                                </div>
-                                <!-- Token -->
-                                <input type="hidden" name="_csrf_token"
-                                       value="{{ csrf_token('authenticate') }}"
-                                >
-                                <div class="col-12">
-                                    <div class="d-grid">
-                                        <button class="btn btn-primary btn-lg" type="submit">Connexion</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="row">
-                            <div class="col-12">
-                                <hr class="mt-5 mb-4 border-secondary-subtle">
-                                <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center">
-                                    <a href="#!" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                                        Mot de passe oublié ?
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+            <h1 class="title" data-aos="fade-up" data-aos-delay="600">
+                <span class="gradient-text">Bienvenue</span>
+            </h1>
+
+            <p class="subtitle" data-aos="fade-up" data-aos-delay="700">
+                Accédez à votre espace personnel
+            </p>
+
+            <!-- Messages d'erreur/info -->
+            {% if error %}
+                <div class="alert error" data-aos="fade-in" data-aos-delay="100">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="alert info" data-aos="fade-in" data-aos-delay="100">
+                    <i class="bi bi-info-circle"></i>
+                    Vous êtes connecté en tant que {{ app.user.userIdentifier }}
+                    <a href="{{ path('app_logout') }}" class="alert-link">Se déconnecter</a>
+                </div>
+            {% endif %}
+
+            <!-- Formulaire -->
+            <form id="loginForm" method="post" class="login-form" data-aos="fade-up" data-aos-delay="800">
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="email"
+                               id="inputEmail"
+                               name="email"
+                               value="{{ last_username }}"
+                               required
+                               autofocus>
+                        <label for="inputEmail">Email</label>
+                        <i class="bi bi-envelope input-icon"></i>
+                        <div class="input-underline"></div>
                     </div>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="password"
+                               id="inputPassword"
+                               name="password"
+                               required>
+                        <label for="inputPassword">Mot de passe</label>
+                        <i class="bi bi-lock input-icon"></i>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="_remember_me">
+                        <span class="checkmark"></span>
+                        <span>Se souvenir de moi</span>
+                    </label>
+
+                    <a href="#" class="forgot-password">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="submit-btn">
+                    <span class="btn-content">Se connecter</span>
+                    <i class="bi bi-arrow-right"></i>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <div class="register-link">
+                    <span>Pas encore de compte ?</span>
+                    <a href="#">Demandez un accès</a>
+                </div>
+            </form>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('inputPassword');
+            const icon = document.querySelector('.toggle-password i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            }
+        }
+
+        // Input animations
+        document.querySelectorAll('.input-wrapper input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', () => {
+                if (!input.value) {
+                    input.parentElement.classList.remove('focused');
+                }
+            });
+
+            if (input.value) {
+                input.parentElement.classList.add('focused');
+            }
+        });
+    </script>
 {% endblock %}

@@ -14,14 +14,11 @@ class MentorActionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(
-                child: 'mentorComment',
-                type: TextareaType::class,
-                options: [
-                    'label' => 'Commentaires',
-                    'attr' => ['rows' => 5],
-                    'required' => false]
-            )
+            ->add(child: 'mentorComment', type: TextareaType::class, options: [
+                'label' => 'Commentaires',
+                'attr' => ['rows' => 5],
+                'required' => false,
+            ])
             ->add(
                 child: 'submit',
                 type: SubmitType::class,

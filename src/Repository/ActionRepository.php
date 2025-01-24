@@ -16,12 +16,12 @@ class ActionRepository extends ServiceEntityRepository
         parent::__construct($registry, Action::class);
     }
 
-    /**
+    /*
      * @return Action[] Returns an array of Action objects
      *
      * @phpstan-return Action[]
      */
-    public function findByModuleIdAndUserNni(string $nni, int $moduleId): array
+    /*public function findByModuleIdAndUserNni(string $nni, int $moduleId): array
     {
         $qb = $this->createQueryBuilder(alias: 'a')
             ->select('a')
@@ -40,5 +40,5 @@ class ActionRepository extends ServiceEntityRepository
         assert(assertion: is_array($qb) && $qb === array_filter($qb, static fn ($item) => $item instanceof Action));
 
         return $qb;
-    }
+    }*/
 }

@@ -71,7 +71,8 @@ class LogbookProgressService
             'total_modules' => $totalModules,
             'completed_by_agent' => $completedByAgent,
             'validated_by_mentor' => $validatedByMentor,
-            'modules_awaiting_validation' => $completedByAgent - $validatedByMentor,
+            // 'modules_awaiting_validation' => $completedByAgent - $validatedByMentor,
+            'modules_awaiting_validation' => $totalModules - $completedByAgent,
             'progress_class_agent' => $progressClassAgent,
             'progress_class_mentor' => $progressClassMentor,
         ];
@@ -86,30 +87,5 @@ class LogbookProgressService
         }
 
         return null;
-    }
-
-    public function calculateProgress(Logbook $logbook): float
-    {
-        $totalActions = 0;
-        $completedActions = 0;
-
-        foreach ($logbook->getThemes() as $theme) {
-            foreach ($theme->getModules() as $module) {
-                $actions = $module->getActions();
-                $totalActions += count($actions);
-
-                foreach ($actions as $action) {
-                    if (null !== $action) {
-                        ++$completedActions;
-                    }
-                }
-            }
-        }
-
-        if (0 === $totalActions) {
-            return 0; // Pas d'actions à faire, donc avancement nul
-        }
-
-        return ($completedActions / $totalActions) * 100;
     }
 }

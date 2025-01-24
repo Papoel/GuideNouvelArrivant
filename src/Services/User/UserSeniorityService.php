@@ -9,6 +9,12 @@ class UserSeniorityService
     public function getSeniority(\DateTimeInterface $hiringAt): string
     {
         $now = new \DateTime();
+
+        // Si la date d'embauche est aujourd'hui, on retourne un message sympathique
+        if ($hiringAt->format(format: 'Y-m-d') === $now->format(format: 'Y-m-d')) {
+            return 'Premier jour parmi nous !';
+        }
+
         $interval = $now->diff($hiringAt);
 
         $years = $interval->y;
@@ -17,16 +23,22 @@ class UserSeniorityService
 
         $seniority = '';
 
+        // Ajouter les années si elles existent
         if ($years > 0) {
             $seniority .= $years.' année'.($years > 1 ? 's' : '').' ';
         }
 
-        $seniority .= $months.' mois ';
+        // Ajouter les mois seulement s'il y a des années ou si les mois ne sont pas nuls
+        if ($months > 0 || (0 === $years && 0 === $months && 0 === $days)) {
+            $seniority .= $months.' mois ';
+        }
 
-        if ($days > 0) {
+        // Ajouter les jours si c'est la seule information, ou s'ils sont non nuls
+        if ($days > 0 || (0 === $years && 0 === $months)) {
             $seniority .= $days.' jour'.($days > 1 ? 's' : '').' ';
         }
 
-        return $seniority;
+        // Retirer l'espace en fin de chaîne
+        return trim($seniority);
     }
 }

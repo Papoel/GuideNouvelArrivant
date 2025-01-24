@@ -19,7 +19,8 @@
                         </a>
                     {% endif %}
                     {% if app.user %}
-                        <a class="me-3 text-dark text-decoration-none" href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
+                        <a class="me-3 text-dark text-decoration-none"
+                           href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
                             Tableau de bord
                         </a>
                         <a class="btn btn-sm btn-outline-danger" href="{{ path('app_logout') }}">Déconnexion</a>
@@ -41,7 +42,9 @@
 
             <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                 <h1 class="display-4 fw-normal">Pricing</h1>
-                <p class="fs-5 text-muted">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It’s built with default Bootstrap components and utilities with little customization.</p>
+                <p class="fs-5 text-muted">Quickly build an effective pricing table for your potential customers with
+                    this Bootstrap example. It’s built with default Bootstrap components and utilities with little
+                    customization.</p>
             </div>
         </div>
     </header>
@@ -52,4 +55,24 @@
             </div>
         </div>
     </div>
+
+    {#<div class="fl-wrapper" data-position="bottom-left" data-turbo-temporary>
+        <div class="fl-flasher fl-warning fl-container fl-show" role="alert"
+             aria-live="assertive" aria-atomic="true">
+            <div class="fl-content">
+                <div class="fl-icon">--</div>
+                <div>
+                    <strong class="fl-title">Avertissement</strong>
+                    <span class="fl-message">
+                        Vous ne pouvez pas accéder à la page de connexion car vous êtes déjà connecté en tant que
+                        Bruce Wayne.
+                    </span>
+                </div>
+                <button class="fl-close" aria-label="Close warning message">x</button>
+            </div>
+            <span class="fl-progress-bar">--</span>
+        </div>
+    </div>#}
+
+
 {% endblock %}

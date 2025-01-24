@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="400" cy="300" r="280" fill="#E0E7FF" fill-opacity="0.3"/>
+    <circle cx="400" cy="300" r="200" fill="#C7D2FE" fill-opacity="0.3"/>
+    
+    <!-- Main Dashboard -->
+    <g transform="translate(200,150)">
+        <!-- Dashboard Frame -->
+        <rect x="0" y="0" width="400" height="300" rx="15" fill="white" stroke="#4F46E5" stroke-width="3"/>
+        
+        <!-- Top Bar -->
+        <rect x="0" y="0" width="400" height="50" rx="15" fill="#4F46E5"/>
+        <circle cx="30" cy="25" r="10" fill="white"/>
+        <circle cx="60" cy="25" r="10" fill="white"/>
+        <circle cx="90" cy="25" r="10" fill="white"/>
+        
+        <!-- Content -->
+        <!-- Progress Circle -->
+        <circle cx="100" cy="150" r="50" stroke="#818CF8" stroke-width="10"/>
+        <path d="M100 100 A50 50 0 1 1 150 150" stroke="#4F46E5" stroke-width="10" stroke-linecap="round"/>
+        <text x="85" y="160" font-family="Arial" font-size="20" fill="#4F46E5">75%</text>
+        
+        <!-- Stats Bars -->
+        <rect x="200" y="100" width="150" height="20" rx="10" fill="#E0E7FF"/>
+        <rect x="200" y="100" width="120" height="20" rx="10" fill="#4F46E5"/>
+        
+        <rect x="200" y="140" width="150" height="20" rx="10" fill="#E0E7FF"/>
+        <rect x="200" y="140" width="90" height="20" rx="10" fill="#818CF8"/>
+        
+        <rect x="200" y="180" width="150" height="20" rx="10" fill="#E0E7FF"/>
+        <rect x="200" y="180" width="135" height="20" rx="10" fill="#6366F1"/>
+    </g>
+    
+    <!-- Decorative Elements -->
+    <circle cx="150" cy="100" r="20" fill="#4F46E5" fill-opacity="0.2"/>
+    <circle cx="650" cy="500" r="15" fill="#818CF8" fill-opacity="0.2"/>
+    <circle cx="700" cy="150" r="25" fill="#6366F1" fill-opacity="0.2"/>
+    <circle cx="100" cy="450" r="30" fill="#4F46E5" fill-opacity="0.2"/>
+    
+    <!-- Connection Lines -->
+    <path d="M150 100 Q 200 150 150 200" stroke="#4F46E5" stroke-width="2" stroke-dasharray="5 5"/>
+    <path d="M650 500 Q 600 450 650 400" stroke="#818CF8" stroke-width="2" stroke-dasharray="5 5"/>
+</svg>

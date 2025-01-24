@@ -13,7 +13,7 @@
     scroll-behavior: smooth;
 }
 
-body {
+body.default {
     font-family: "Open Sans", sans-serif;
     background: #f6f9ff;
     color: #444444;
@@ -477,6 +477,7 @@ h6 {
 
 .header-nav .nav-profile {
     color: #012970;
+    cursor: pointer;
 }
 
 .header-nav .nav-profile img {

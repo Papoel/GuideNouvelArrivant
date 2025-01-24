@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Module;
+use App\Entity\Theme;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,9 +14,9 @@ class ModuleFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $theme1 = $this->getReference(name: 'theme_1');
-        $theme2 = $this->getReference(name: 'theme_2');
-        $theme3 = $this->getReference(name: 'theme_3');
+        $theme1 = $this->getReference(name: 'theme_1', class: Theme::class);
+        $theme2 = $this->getReference(name: 'theme_2', class: Theme::class);
+        $theme3 = $this->getReference(name: 'theme_3', class: Theme::class);
 
         $moduleData = [
             // Modules pour $theme1
