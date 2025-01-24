@@ -286,14 +286,33 @@ class SecurityControllerTest extends WebTestCase
         self::assertTrue($response->isRedirect(location: '/target-path'));
     }
 
-    #[Test] public function logoutThrowsLogicException(): void
+    #[Test] public function logout_redirects_to_home_and_invalidates_session(): void
     {
-        $this->expectException(exception: LogicException::class);
-        $this->expectExceptionMessage(message: 'This method can be blank - it will be intercepted by the logout key on your firewall.');
+        $client = static::createClient();
 
-        // Appel direct de la méthode logout
-        $controller = new SecurityController();
-        $controller->logout();
+        // Create a mock user
+        $user = UserTestHelper::createAdminUser();
+        // Create a manual token
+        $token = new UsernamePasswordToken(user: $user, firewallName: 'main', roles: $user->getRoles());
+
+        // Inject the token into TokenStorage
+        $tokenStorage = $client->getContainer()->get(id: 'security.token_storage');
+        $tokenStorage->setToken(token: $token);
+
+        // Perform logout request
+        $client->request(method: Request::METHOD_GET, uri: '/deconnexion');
+
+        // Assert redirects to home page
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
+        self::assertRouteSame(expectedRoute: 'home_index');
+
+        // Verify token is cleared
+        self::assertNull(actual: $tokenStorage->getToken());
+
+        // Instead of directly checking session, verify logout behavior
+        $session = $client->getRequest()->getSession();
+        self::assertFalse(condition: $session->isStarted() || $session->getId() === '');
     }
 
     protected function setUp(): void

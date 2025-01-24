@@ -4,8 +4,12 @@ namespace App\Controller\Security;
 
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -37,8 +41,16 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/deconnexion', name: 'app_logout')]
-    public function logout(): void
-    {
-        throw new \LogicException(message: 'This method can be blank - it will be intercepted by the logout key on your firewall.');
+    public function logout(
+        UrlGeneratorInterface $urlGenerator,
+        TokenStorageInterface $tokenStorage,
+        SessionInterface $session
+    ): RedirectResponse {
+        $tokenStorage->setToken(token: null);
+        $session->invalidate();
+
+        $url = $urlGenerator->generate(name: 'home_index');
+
+        return new RedirectResponse(url: $url, status: Response::HTTP_SEE_OTHER);
     }
 }

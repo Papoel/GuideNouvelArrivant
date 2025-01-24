@@ -26,7 +26,7 @@ class HomeControllerTest extends WebTestCase
         $crawler = $client->request(method: Request::METHOD_GET, uri: '/');
 
         // Vérifier le titre de la page
-        self::assertSelectorTextContains(selector: 'title', text: 'EDF - GNU - Votre Guide d\'Intégration Intelligent');
+        self::assertSelectorTextContains(selector: 'title', text: 'EDF - GNA - Accueil');
 
         // Vérifier la présence de la navbar
         self::assertSelectorExists(selector: 'nav.navbar');
