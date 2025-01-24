@@ -108,7 +108,7 @@
         }
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.6",
+        "doctrine/doctrine-fixtures-bundle": "^4.0",
         "fakerphp/faker": "^1.23",
         "phpro/grumphp": "^2.6",
         "phpunit/phpunit": "^11.4",
