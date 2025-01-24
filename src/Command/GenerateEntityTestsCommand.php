@@ -384,11 +384,11 @@ class %sTest extends EntityTestCase
 
                 return sprintf('"%s"', $this->faker->words(3, true));
             case 'integer':
-                return (string) $this->faker->numberBetween(1, 100);
+                return (string) $this->faker->numberBetween(int1: 1, int2: 100);
             case 'boolean':
                 return $this->faker->boolean ? 'true' : 'false';
             case 'float':
-                return (string) $this->faker->randomFloat(2, 0, 100);
+                return (string) $this->faker->randomFloat(nbMaxDecimals: 2, min: 0, max: 100);
             case 'datetime':
             case 'date':
                 return 'new DateTimeImmutable()';

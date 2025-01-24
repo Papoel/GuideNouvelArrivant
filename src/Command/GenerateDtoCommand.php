@@ -48,56 +48,56 @@ class GenerateDtoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle(input: $input, output: $output);
 
         // Récupération de la liste des entités disponibles
         $allMetadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-        $entities = array_map(static fn ($meta) => $meta->getName(), $allMetadata);
+        $entities = array_map(callback: static fn ($meta) => $meta->getName(), array: $allMetadata);
 
         // Vérifie si l'argument "entity" est manquant et propose une sélection
-        $entityClass = $input->getArgument('entity');
+        $entityClass = $input->getArgument(name: 'entity');
         if (!$entityClass) {
             $entityClass = $io->choice(
-                'Pour quelle entité voulez-vous créer un DTO ?',
-                $entities
+                question: 'Pour quelle entité voulez-vous créer un DTO ?',
+                choices: $entities
             );
-            $input->setArgument('entity', $entityClass);
+            $input->setArgument(name: 'entity', value: $entityClass);
         }
 
-        $selectedProperties = $input->getArgument('properties');
+        $selectedProperties = $input->getArgument(name: 'properties');
 
         // Vérification de l'existence de l'entité
         if (!class_exists($entityClass)) {
-            $io->error("L'entité $entityClass n'existe pas.");
+            $io->error(message: "L'entité $entityClass n'existe pas.");
 
             return Command::FAILURE;
         }
 
         // Analyse de l'entité via Doctrine
-        $metadata = $this->entityManager->getClassMetadata($entityClass);
+        $metadata = $this->entityManager->getClassMetadata(className: $entityClass);
         $properties = empty($selectedProperties)
-            ? array_keys($metadata->fieldMappings)
+            ? array_keys(array: $metadata->fieldMappings)
             : $selectedProperties;
 
         // Génération du namespace et du nom de la classe
-        $entityName = (new UnicodeString(basename(str_replace('\\', '/', $entityClass))))
+        $entityName = (new UnicodeString(basename(str_replace(search: '\\', replace: '/', subject: $entityClass))))
             ->toString();
-        $dtoNamespace = str_replace('Entity', 'Dto', $metadata->namespace);
+        $dtoNamespace = str_replace(search: 'Entity', replace: 'Dto', subject: $metadata->namespace);
         $dtoClassName = $entityName.'Dto';
 
         // Génération du code du DTO
-        $dtoCode = $this->generateDtoCode($dtoNamespace, $dtoClassName, $properties, $metadata);
+        $dtoCode = $this->generateDtoCode(namespace: $dtoNamespace, className: $dtoClassName, properties: $properties, metadata: $metadata);
 
         // Création du fichier
         $dtoDir = $this->projectDir.'/src/Dto';
-        if (!is_dir($dtoDir) && !mkdir($dtoDir, recursive: true) && !is_dir($dtoDir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dtoDir));
+        if (!is_dir(filename: $dtoDir) && !mkdir(directory: $dtoDir, recursive: true) && !is_dir($dtoDir)) {
+            throw new \RuntimeException(message: sprintf('Directory "%s" was not created', $dtoDir));
         }
 
         $filePath = $dtoDir.'/'.$dtoClassName.'.php';
-        file_put_contents($filePath, $dtoCode);
+        file_put_contents(filename: $filePath, data: $dtoCode);
 
-        $io->success("DTO généré avec succès : $filePath");
+        $io->success(message: "DTO généré avec succès : $filePath");
 
         return Command::SUCCESS;
     }
@@ -113,14 +113,14 @@ class GenerateDtoCommand extends Command
 
         // Propriétés
         foreach ($properties as $property) {
-            $type = $this->getPropertyType($metadata, $property);
+            $type = $this->getPropertyType(metadata: $metadata, property: $property);
             $code .= "    private $type \$$property;\n\n";
         }
 
         // Constructeur
         $code .= "    public function __construct(\n";
         foreach ($properties as $property) {
-            $type = $this->getPropertyType($metadata, $property);
+            $type = $this->getPropertyType(metadata: $metadata, property: $property);
             $code .= "        $type \$$property,\n";
         }
         $code .= "    ) {\n";
@@ -131,8 +131,8 @@ class GenerateDtoCommand extends Command
 
         // Getters
         foreach ($properties as $property) {
-            $type = $this->getPropertyType($metadata, $property);
-            $getter = 'get'.ucfirst($property);
+            $type = $this->getPropertyType(metadata: $metadata, property: $property);
+            $getter = 'get'.ucfirst(string: $property);
             $code .= "    public function $getter(): $type\n";
             $code .= "    {\n";
             $code .= "        return \$this->$property;\n";
