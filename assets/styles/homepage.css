@@ -1,23 +1,23 @@
 /* Variables */
 :root {
-    --primary-color: #4f46e5;
-    --secondary-color: #818cf8;
-    --text-color: #1f2937;
-    --light-text: #6b7280;
-    --background-light: #f9fafb;
-    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+    --homepage-primary-color: #4f46e5;
+    --homepage-secondary-color: #818cf8;
+    --homepage-text-color: #1f2937;
+    --homepage-light-text: #6b7280;
+    --homepage-background-light: #f9fafb;
+    --homepage-card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --homepage-gradient-primary: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
 }
 
 /* Global Styles */
-body {
-    color: var(--text-color);
+body.homepage {
+    color: var(--homepage-text-color);
     line-height: 1.6;
 }
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--homepage-primary-color), var(--homepage-secondary-color));
     min-height: 100vh;
     color: white;
     position: relative;
@@ -165,14 +165,14 @@ body {
 
 .stat-icon {
     font-size: 2.5rem;
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     margin-bottom: 1rem;
 }
 
 .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     margin-bottom: 0.5rem;
 }
 
@@ -183,26 +183,26 @@ body {
 }
 
 .stat-label {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     font-size: 1.1rem;
 }
 
 /* Features Section */
 .features-section {
     padding: 6rem 0;
-    background-color: var(--background-light);
+    background-color: var(--homepage-background-light);
 }
 
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     margin-bottom: 1rem;
 }
 
 .section-subtitle {
     font-size: 1.25rem;
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     max-width: 600px;
     margin: 0 auto;
 }
@@ -213,7 +213,7 @@ body {
     padding: 2rem;
     height: 100%;
     transition: all 0.3s ease;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--homepage-card-shadow);
 }
 
 .feature-card:hover {
@@ -225,7 +225,7 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: var(--homepage-primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,20 +238,20 @@ body {
 }
 
 .feature-card h3 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     margin-bottom: 1rem;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
 .feature-card p {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     margin-bottom: 0;
 }
 
 /* Benefits Section */
 .benefits-section {
     padding: 6rem 0;
-    background: var(--background-light);
+    background: var(--homepage-background-light);
     position: relative;
     overflow: hidden;
 }
@@ -262,7 +262,7 @@ body {
     padding: 2rem;
     height: 100%;
     transition: all 0.3s ease;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--homepage-card-shadow);
     position: relative;
     overflow: hidden;
 }
@@ -274,7 +274,7 @@ body {
     left: 0;
     width: 100%;
     height: 4px;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s ease;
@@ -292,7 +292,7 @@ body {
 .benefit-icon {
     width: 60px;
     height: 60px;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     border-radius: 1rem;
     display: flex;
     align-items: center;
@@ -311,11 +311,11 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
 .benefit-card p {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     margin-bottom: 1.5rem;
     line-height: 1.6;
 }
@@ -330,11 +330,11 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 0.75rem;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
 .benefit-list li i {
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     margin-right: 0.75rem;
     font-size: 1.1rem;
 }
@@ -343,11 +343,11 @@ body {
     background: white;
     border-radius: 1rem;
     padding: 3rem;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--homepage-card-shadow);
 }
 
 .impact-metrics h3 {
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     font-size: 1.75rem;
     font-weight: 600;
     margin-bottom: 2rem;
@@ -361,7 +361,7 @@ body {
 .metric-value {
     font-size: 2.5rem;
     font-weight: 700;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
@@ -369,7 +369,7 @@ body {
 }
 
 .metric-label {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     font-size: 1.1rem;
     line-height: 1.4;
 }
@@ -401,7 +401,7 @@ body {
 /* Testimonials Section */
 .testimonials-section {
     padding: 6rem 0;
-    background-color: var(--background-light);
+    background-color: var(--homepage-background-light);
 }
 
 .testimonial-card {
@@ -410,7 +410,7 @@ body {
     padding: 2rem;
     height: 100%;
     transition: all 0.3s ease;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--homepage-card-shadow);
 }
 
 .testimonial-card:hover {
@@ -425,7 +425,7 @@ body {
 
 .quote-icon {
     font-size: 2rem;
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     opacity: 0.2;
     position: absolute;
     top: -1rem;
@@ -434,7 +434,7 @@ body {
 
 .testimonial-content p {
     font-style: italic;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     line-height: 1.6;
     margin-bottom: 0;
 }
@@ -448,7 +448,7 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: var(--background-light);
+    background: var(--homepage-background-light);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -457,24 +457,24 @@ body {
 
 .author-avatar i {
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
 }
 
 .author-info h4 {
     font-size: 1.1rem;
     margin-bottom: 0.25rem;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
 .author-info p {
     font-size: 0.9rem;
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     margin-bottom: 0;
 }
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, var(--homepage-primary-color), var(--homepage-secondary-color));
     color: white;
     padding: 6rem 0;
     position: relative;
@@ -534,7 +534,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     border-radius: 12px;
     color: white;
     font-size: 1.25rem;
@@ -553,10 +553,10 @@ body {
 }
 
 .navbar-scrolled .navbar-brand span {
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
-.nav-link {
+.nav-link-homepage {
     font-weight: 500;
     padding: 0.5rem 1rem;
     color: rgba(255, 255, 255, 0.9);
@@ -564,11 +564,11 @@ body {
     position: relative;
 }
 
-.navbar-scrolled .nav-link {
-    color: var(--text-color);
+.navbar-scrolled .nav-link-homepage {
+    color: var(--homepage-text-color);
 }
 
-.nav-link::after {
+.nav-link-homepage::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -580,20 +580,20 @@ body {
     transition: transform 0.3s ease;
 }
 
-.navbar-scrolled .nav-link::after {
-    background: var(--primary-color);
+.navbar-scrolled .nav-link-homepage::after {
+    background: var(--homepage-primary-color);
 }
 
-.nav-link:hover::after {
+.nav-link-homepage-homepage:hover::after {
     transform: scaleX(1);
 }
 
-.nav-link i {
+.nav-link-homepage i {
     font-size: 1.1rem;
     transition: transform 0.3s ease;
 }
 
-.nav-link:hover i {
+.nav-link-homepage:hover i {
     transform: translateY(-2px);
 }
 
@@ -611,26 +611,26 @@ body {
 }
 
 .navbar-scrolled .btn-outline {
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     border-color: rgba(0, 0, 0, 0.1);
 }
 
 .btn-outline:hover {
     background: white;
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     border-color: white;
     transform: translateY(-2px);
 }
 
 .navbar-scrolled .btn-outline:hover {
-    background: var(--primary-color);
+    background: var(--homepage-primary-color);
     color: white;
-    border-color: var(--primary-color);
+    border-color: var(--homepage-primary-color);
 }
 
 .btn-primary {
     padding: 0.6rem 1.5rem;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     color: white;
     border-radius: 50px;
     text-decoration: none;
@@ -659,7 +659,7 @@ body {
 /* Footer Styles */
 .footer {
     background: #f8fafc;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     padding-top: 6rem;
     position: relative;
     overflow: hidden;
@@ -689,11 +689,11 @@ body {
 .footer-brand h3 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
 }
 
 .brand-description {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     font-size: 1.1rem;
     line-height: 1.6;
     margin: 1.5rem 0;
@@ -713,14 +713,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     font-size: 1.2rem;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .social-link:hover {
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
     color: white;
     transform: translateY(-3px) rotate(8deg);
     box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
@@ -733,7 +733,7 @@ body {
 .footer-widget h4 {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--homepage-text-color);
     margin-bottom: 1.5rem;
     position: relative;
     padding-bottom: 0.75rem;
@@ -746,7 +746,7 @@ body {
     left: 0;
     width: 40px;
     height: 2px;
-    background: var(--gradient-primary);
+    background: var(--homepage-gradient-primary);
 }
 
 .footer-links {
@@ -760,7 +760,7 @@ body {
 }
 
 .footer-links a {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -774,7 +774,7 @@ body {
 }
 
 .footer-links a:hover {
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
     transform: translateX(5px);
 }
 
@@ -799,7 +799,7 @@ body {
 }
 
 .copyright p {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     font-size: 0.95rem;
 }
 
@@ -813,14 +813,14 @@ body {
 }
 
 .footer-bottom-links a {
-    color: var(--light-text);
+    color: var(--homepage-light-text);
     text-decoration: none;
     font-size: 0.95rem;
     transition: color 0.3s ease;
 }
 
 .footer-bottom-links a:hover {
-    color: var(--primary-color);
+    color: var(--homepage-primary-color);
 }
 
 @media (max-width: 991.98px) {
@@ -868,12 +868,12 @@ body {
     }
 
     .navbar-brand span,
-    .nav-link {
-        color: var(--text-color);
+    .nav-link-homepage {
+        color: var(--homepage-text-color);
     }
 
     .btn-outline {
-        color: var(--text-color);
+        color: var(--homepage-text-color);
         border-color: rgba(0, 0, 0, 0.1);
     }
 

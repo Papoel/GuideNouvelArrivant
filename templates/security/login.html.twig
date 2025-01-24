@@ -7,108 +7,109 @@
     <link rel="stylesheet" href="{{ asset('styles/login.css') }}">
 {% endblock %}
 
+{% block body_class %}login-page{% endblock %}
 {% block body %}
-<div class="login-container">
-    <!-- Fond animé -->
-    <div class="background">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <!-- Carte de connexion -->
-    <div class="login-card" data-aos="zoom-in" data-aos-duration="800">
-        <div class="brand-logo" data-aos="fade-down" data-aos-delay="400">
-            <img src="{{ asset('images/logos/edf.svg') }}" alt="EDF Logo" class="edf-logo">
-            <div class="logo-shine"></div>
+    <div class="login-container">
+        <!-- Fond animé -->
+        <div class="background">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
-        <h1 class="title" data-aos="fade-up" data-aos-delay="600">
-            <span class="gradient-text">Bienvenue</span>
-        </h1>
-
-        <p class="subtitle" data-aos="fade-up" data-aos-delay="700">
-            Accédez à votre espace personnel
-        </p>
-
-        <!-- Messages d'erreur/info -->
-        {% if error %}
-            <div class="alert error" data-aos="fade-in" data-aos-delay="100">
-                <i class="bi bi-exclamation-triangle"></i>
-                {{ error.messageKey|trans(error.messageData, 'security') }}
+        <!-- Carte de connexion -->
+        <div class="login-card" data-aos="zoom-in" data-aos-duration="800">
+            <div class="brand-logo" data-aos="fade-down" data-aos-delay="400">
+                <img src="{{ asset('images/logos/edf.svg') }}" alt="EDF Logo" class="edf-logo">
+                <div class="logo-shine"></div>
             </div>
-        {% endif %}
 
-        {% if app.user %}
-            <div class="alert info" data-aos="fade-in" data-aos-delay="100">
-                <i class="bi bi-info-circle"></i>
-                Vous êtes connecté en tant que {{ app.user.userIdentifier }}
-                <a href="{{ path('app_logout') }}" class="alert-link">Se déconnecter</a>
-            </div>
-        {% endif %}
+            <h1 class="title" data-aos="fade-up" data-aos-delay="600">
+                <span class="gradient-text">Bienvenue</span>
+            </h1>
 
-        <!-- Formulaire -->
-        <form id="loginForm" method="post" class="login-form" data-aos="fade-up" data-aos-delay="800">
-            <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="email"
-                           id="inputEmail"
-                           name="email"
-                           value="{{ last_username }}"
-                           required
-                           autofocus>
-                    <label for="inputEmail">Email</label>
-                    <i class="bi bi-envelope input-icon"></i>
-                    <div class="input-underline"></div>
+            <p class="subtitle" data-aos="fade-up" data-aos-delay="700">
+                Accédez à votre espace personnel
+            </p>
+
+            <!-- Messages d'erreur/info -->
+            {% if error %}
+                <div class="alert error" data-aos="fade-in" data-aos-delay="100">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
                 </div>
-            </div>
+            {% endif %}
 
-            <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="password"
-                           id="inputPassword"
-                           name="password"
-                           required>
-                    <label for="inputPassword">Mot de passe</label>
-                    <i class="bi bi-lock input-icon"></i>
-                    <button type="button" class="toggle-password" onclick="togglePassword()">
-                        <i class="bi bi-eye-slash"></i>
-                    </button>
-                    <div class="input-underline"></div>
+            {% if app.user %}
+                <div class="alert info" data-aos="fade-in" data-aos-delay="100">
+                    <i class="bi bi-info-circle"></i>
+                    Vous êtes connecté en tant que {{ app.user.userIdentifier }}
+                    <a href="{{ path('app_logout') }}" class="alert-link">Se déconnecter</a>
                 </div>
-            </div>
+            {% endif %}
 
-            <div class="form-options">
-                <label class="custom-checkbox">
-                    <input type="checkbox" name="_remember_me">
-                    <span class="checkmark"></span>
-                    <span>Se souvenir de moi</span>
-                </label>
+            <!-- Formulaire -->
+            <form id="loginForm" method="post" class="login-form" data-aos="fade-up" data-aos-delay="800">
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="email"
+                               id="inputEmail"
+                               name="email"
+                               value="{{ last_username }}"
+                               required
+                               autofocus>
+                        <label for="inputEmail">Email</label>
+                        <i class="bi bi-envelope input-icon"></i>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
 
-                <a href="#" class="forgot-password">
-                    Mot de passe oublié ?
-                </a>
-            </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="password"
+                               id="inputPassword"
+                               name="password"
+                               required>
+                        <label for="inputPassword">Mot de passe</label>
+                        <i class="bi bi-lock input-icon"></i>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                        <div class="input-underline"></div>
+                    </div>
+                </div>
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="form-options">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="_remember_me">
+                        <span class="checkmark"></span>
+                        <span>Se souvenir de moi</span>
+                    </label>
 
-            <button type="submit" class="submit-btn">
-                <span class="btn-content">Se connecter</span>
-                <i class="bi bi-arrow-right"></i>
-                <div class="btn-glow"></div>
-            </button>
+                    <a href="#" class="forgot-password">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
 
-            <div class="register-link">
-                <span>Pas encore de compte ?</span>
-                <a href="#">Demandez un accès</a>
-            </div>
-        </form>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="submit-btn">
+                    <span class="btn-content">Se connecter</span>
+                    <i class="bi bi-arrow-right"></i>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <div class="register-link">
+                    <span>Pas encore de compte ?</span>
+                    <a href="#">Demandez un accès</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
