@@ -16,17 +16,22 @@ Cette table stocke les informations des utilisateurs pour l'authentification et 
 
 ### Structure de la Table
 
-| Colonne    | Type               | Description                                    | Contraintes               |
-|------------|--------------------|------------------------------------------------|---------------------------|
-| id         | SERIAL             | Identifiant unique de l'utilisateur            | PRIMARY KEY               |
-| firstname  | VARCHAR(100)       | Prénom de l'utilisateur                        | NOT NULL                  |
-| lastname   | VARCHAR(100)       | Nom de famille de l'utilisateur                | NOT NULL                  |
-| email      | VARCHAR(100)       | Adresse e-mail de l'utilisateur                | UNIQUE, NOT NULL          |
-| password   | VARCHAR(255)       | Mot de passe haché de l'utilisateur            | NOT NULL                  |
-| roles      | ARRAY              | Rôles de l'utilisateur (sous forme de tableau) | NOT NULL, DEFAULT '[]'    |
-| created_at | DATETIME_IMMUTABLE | Date de création du compte                     | DEFAULT CURRENT_TIMESTAMP |
-| updated_at | DATETIME_MUTABLE   | Date de la dernière mise à jour du compte      | DEFAULT CURRENT_TIMESTAMP |
-| last_login | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
+| Colonne       | Type               | Description                                    | Contraintes               |
+|---------------|--------------------|------------------------------------------------|---------------------------|
+| id            | SERIAL             | Identifiant unique de l'utilisateur            | PRIMARY KEY               |
+| mentor_id     | VARCHAR(100)       | Relation                                       | PRIMARY KEY               |
+| firstname     | VARCHAR(100)       | Prénom de l'utilisateur                        | NOT NULL                  |
+| lastname      | VARCHAR(100)       | Nom de famille de l'utilisateur                | NOT NULL                  |
+| email         | VARCHAR(100)       | Adresse e-mail de l'utilisateur                | UNIQUE, NOT NULL          |
+| roles         | ARRAY              | Rôles de l'utilisateur (sous forme de tableau) | NOT NULL, DEFAULT '[]'    |
+| password      | VARCHAR(255)       | Mot de passe haché de l'utilisateur            | NOT NULL                  |
+| last_login_at | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
+| job           | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | ENUM: JobEnum             |
+| nni           | VARCHAR(6)         | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
+| speciality    | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | Enum: SpecialityEnum      |
+| hiring_at     | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
+| created_at    | DATETIME_IMMUTABLE | Date de création du compte                     | DEFAULT CURRENT_TIMESTAMP |
+| updated_at    | DATETIME_MUTABLE   | Date de la dernière mise à jour du compte      | DEFAULT CURRENT_TIMESTAMP |
 
 ## Table: [SERVICE](database/SERVICE.md)
 
