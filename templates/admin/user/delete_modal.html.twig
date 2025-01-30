@@ -1,0 +1,46 @@
+{#
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow border-0">
+            <div class="modal-header border-bottom-0 bg-light">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirmation de suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-4">
+                <p class="text-muted mb-4">Choisissez une option de suppression :</p>
+                <div class="d-flex flex-column gap-3">
+                    <a href="{{ delete_user_url }}" class="btn btn-danger-subtle text-danger border-danger border-1 p-3 position-relative d-flex align-items-center">
+                        <i class="fas fa-user-times me-3"></i>
+                        <span>Supprimer uniquement l'utilisateur</span>
+                        <i class="fas fa-chevron-right ms-auto"></i>
+                    </a>
+
+                    <a href="{{ delete_all_url }}" class="btn btn-danger p-3 position-relative d-flex align-items-center">
+                        <i class="fas fa-trash-alt me-3"></i>
+                        <span>Tout supprimer</span>
+                        <i class="fas fa-chevron-right ms-auto"></i>
+                    </a>
+
+                    <a href="{{ delete_logbooks_url }}" class="btn btn-warning text-dark p-3 position-relative d-flex align-items-center">
+                        <i class="fas fa-book me-3"></i>
+                        <span>Supprimer uniquement les carnets</span>
+                        <i class="fas fa-chevron-right ms-auto"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 bg-light">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+    alert('delete_modal.html.twig');
+{% endblock %}
+#}

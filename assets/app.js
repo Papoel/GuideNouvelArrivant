@@ -18,3 +18,4 @@ import './scripts/theme/theme.js';
 
 // Script JS
 import './scripts/typewriterOnCard.js'; // Effet machine à écrire lorsque le User n'a pas de carnet
+import './scripts/admin/delete-confirmation.js'; // Confirmation de suppression d'un utilisateur ou de ses carnets
