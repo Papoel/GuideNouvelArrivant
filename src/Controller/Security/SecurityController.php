@@ -21,15 +21,17 @@ class SecurityController extends AbstractController
         $user = $this->getUser();
 
         if ($this->getUser()) {
-            flash()->warning(
-                message: 'Vous ne pouvez pas accéder à la page de connexion car vous êtes déjà connecté en tant que '.$user->getFullname().'.',
-                options: [
-                    'position' => 'bottom-left',
-                    'timer' => 5000 * 5,
-                ]
-            );
+            return $this->redirectToRoute(route: 'dashboard_index',parameters: [
+                'nni' => $user->getNni(),
+                flash()->warning(
+                    message: 'Bonjour '.$user->getFirstname().', vous avez était redirigé vers votre tableau de bord.',
+                    options: [
+                        'position' => 'top-left',
+                        'timer' => 9000 * 5,
+                    ]
+                )
+            ]);
 
-            return $this->redirectToRoute(route: 'home_index');
         }
 
         // get the login error if there is one
