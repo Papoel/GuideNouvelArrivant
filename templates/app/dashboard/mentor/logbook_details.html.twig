@@ -32,6 +32,8 @@
                                 {{ logbook.owner.firstname|slice(0, 1) }}{{ logbook.owner.lastname|slice(0, 1) }}
                             </div>
                         </div>
+
+                        {{ dump(logbookProgress) }}
                         <div class="owner-info">
                             <div class="info-group">
                                 <div class="info-item">
@@ -58,6 +60,10 @@
                             <div class="stat-item">
                                 <div class="stat-value">{{ logbookProgress.agent_progress }}%</div>
                                 <div class="stat-label">Progression de l'agent</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">{{ logbookProgress.completed_by_agent ~ " / " ~ logbookProgress.total_modules }}</div>
+                                <div class="stat-label">Module réalisé</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-value">{{ logbookProgress.modules_awaiting_validation }}</div>
