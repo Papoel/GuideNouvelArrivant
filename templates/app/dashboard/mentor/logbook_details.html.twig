@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails du Carnet{% endblock %}
+{% block title %}Carnet de {{ logbook.owner() }} {% endblock %}
 
 {% block body %}
     {% set user = app.user %}
@@ -143,65 +143,20 @@
                             </div>
                         </div>
                     </div>
-                   {# <div class="theme-section mb-4">
-                        <div class="theme-header" data-bs-toggle="collapse" data-bs-target="#theme-{{ loop.index }}" aria-expanded="true" aria-controls="theme-{{ loop.index }}">
-                            <h5>{{ theme }}</h5>
-                            <i class="bi bi-chevron-down"></i>
-                        </div>
-                        <div id="theme-{{ loop.index }}" class="collapse show">
-                            <table class="table custom-table">
-                                <thead class="align-middle">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Thème</th>
-                                        <th>Description</th>
-                                        <th>Commentaire Agent</th>
-                                        <th>Commentaire Tuteur</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for action in actions %}
-                                    <tr class="action-row">
-                                        <td>{{ loop.index }}</td>
-                                        <td>{{ action.module.title }}</td>
-                                        <td>{{ action.module.description }}</td>
-                                        <td>{{ action.agentComment ?: 'Aucun commentaire' }}</td>
-                                        <td>{{ action.mentorComment ?: 'Aucun commentaire' }}</td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                {% if not action.mentorComment and action.mentorValidatedAt is null %}
-                                                    <a class="btn btn-sm btn-outline-primary" href="{{ path('mentor_logbook_action_edit', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
-                                                        <i class="bi bi-chat-dots"></i> Commenter
-                                                    </a>
-                                                {% elseif action.mentorValidatedAt is null %}
-                                                    <a class="btn btn-sm btn-outline-primary" href="{{ path('mentor_logbook_action_edit', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
-                                                        <i class="bi bi-pencil"></i> Modifier
-                                                    </a>
-                                                    <a class="btn btn-sm btn-outline-danger" href="{{ path('mentor_logbook_action_delete_comment', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}">
-                                                        <i class="bi bi-trash"></i> Supprimer
-                                                    </a>
-                                                {% endif %}
-
-                                                {% if not action.mentorVisa %}
-                                                    <a href="{{ path('mentor_logbook_action_validate', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}" class="btn btn-sm btn-outline-success">
-                                                        <i class="bi bi-check-circle-fill"></i> Valider
-                                                    </a>
-                                                {% else %}
-                                                    <a href="{{ path('mentor_logbook_action_invalidate', {'nni': app.user.nni, 'padawanNni': action.user.nni, 'logbookId': action.logbook.id, 'moduleId': action.module.id, 'actionId': action.id}) }}" class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-x-circle-fill"></i> Dévalider
-                                                    </a>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>#}
                 {% endfor %}
+
+                <a href="{{ path('mentor_dashboard_index', {'nni': user.nni}) }}" class="btn btn-md btn-outline-primary rounded-pill ">
+                    Revenir au tableau de bord
+                </a>
             </div>
+
+
         </section>
+
+        <!-- Retour au Dashboard -->
+        <div>
+            <a id="back-to-dashboard" href="{{ path('dashboard_index', {'nni': user.nni}) }}" aria-label="back-to-dashboard" role="button" class="">
+            </a>
+        </div>
     </main>
 {% endblock %}
