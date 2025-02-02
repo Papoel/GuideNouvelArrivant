@@ -241,6 +241,13 @@ function phpunitCrash(): void
     run(command: 'php bin/phpunit --stop-on-failure');
 }
 
+#[AsTask(description: 'Vérifier la couverture de test d\'un fichier')]
+function cover(): void
+{
+    $file = io()->ask(question: 'Nom du chemin complet du fichier a tester');
+    run(command: sprintf('php -dxdebug.mode=coverage vendor/bin/phpunit --coverage-text tests/%s', $file));
+}
+
 /* ******************** ⭐️ WIP ⭐️ ******************** */
 #[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
 function pests(): void
