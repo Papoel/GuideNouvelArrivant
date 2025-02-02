@@ -113,6 +113,28 @@ class MentorServiceTest extends TestCase
         self::assertSame(expected: $apprenantMock, actual: $apprenants[0]);  // Vérifie que c'est bien l'apprenant que l'on attend
     }
 
+    #[Test] public function getApprenantLogbooksReturnsEmptyArray(): void
+    {
+        $mentor = UserTestHelper::createMentorUser();
+        $mentorNni = $mentor->getNni();
+
+        // Simuler le comportement du repository pour renvoyer une liste vide
+        $this->userRepository->method('findApprenantByMentorNni')
+            ->with($mentorNni)
+            ->willReturn([]);
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $apprenants = $mentorService->getApprenantLogbooks($mentorNni);
+
+        self::assertEmpty($apprenants);
+        self::assertIsArray($apprenants);
+    }
+
     #[Test] public function isLogbookAccessibleByMentor(): void
     {
         // Créez un Mentor avec UserTestHelper
@@ -251,6 +273,92 @@ class MentorServiceTest extends TestCase
         $this->expectException(exception: AccessDeniedException::class);
         $this->expectExceptionMessage(message: 'Aucun apprenant associé à ce carnet');
         $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
+    }
+
+    #[Test] public function getPadawanDataWithActionsWithoutModuleOrTheme(): void
+    {
+        $mentor = $this->createMock(User::class);
+        $mentor->method('getNni')->willReturn('M12345');
+
+        $logbook = $this->createMock(Logbook::class);
+        $padawan = $this->createMock(User::class);
+        
+        // Action sans module
+        $actionWithoutModule = $this->createMock(Action::class);
+        $actionWithoutModule->method('getModule')->willReturn(null);
+        
+        // Action avec module mais sans thème
+        $moduleWithoutTheme = $this->createMock(Module::class);
+        $moduleWithoutTheme->method('getTheme')->willReturn(null);
+        $actionWithModuleWithoutTheme = $this->createMock(Action::class);
+        $actionWithModuleWithoutTheme->method('getModule')->willReturn($moduleWithoutTheme);
+
+        // Configurer le padawan
+        $padawan->method('getMentor')->willReturn($mentor);
+        
+        // Configurer le logbook
+        $logbook->method('getOwner')->willReturn($padawan);
+        $logbook->method('getActions')->willReturn(new ArrayCollection([
+            $actionWithoutModule,
+            $actionWithModuleWithoutTheme
+        ]));
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $result = $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
+
+        self::assertSame($padawan, $result['padawan']);
+        self::assertSame($logbook, $result['logbook']);
+        self::assertEmpty($result['actionsByTheme']);
+    }
+
+    #[Test] public function getPadawanDataWithMixedActions(): void
+    {
+        $mentor = $this->createMock(User::class);
+        $mentor->method('getNni')->willReturn('M12345');
+
+        $logbook = $this->createMock(Logbook::class);
+        $padawan = $this->createMock(User::class);
+        
+        // Action valide avec module et thème
+        $theme = $this->createMock(Theme::class);
+        $theme->method('getTitle')->willReturn('Theme 1');
+        $module = $this->createMock(Module::class);
+        $module->method('getTheme')->willReturn($theme);
+        $validAction = $this->createMock(Action::class);
+        $validAction->method('getModule')->willReturn($module);
+
+        // Action sans module
+        $actionWithoutModule = $this->createMock(Action::class);
+        $actionWithoutModule->method('getModule')->willReturn(null);
+
+        // Configurer le padawan
+        $padawan->method('getMentor')->willReturn($mentor);
+        
+        // Configurer le logbook
+        $logbook->method('getOwner')->willReturn($padawan);
+        $logbook->method('getActions')->willReturn(new ArrayCollection([
+            $validAction,
+            $actionWithoutModule
+        ]));
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $result = $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
+
+        self::assertSame($padawan, $result['padawan']);
+        self::assertSame($logbook, $result['logbook']);
+        self::assertArrayHasKey('Theme 1', $result['actionsByTheme']);
+        self::assertCount(1, $result['actionsByTheme']['Theme 1']);
+        self::assertSame($validAction, $result['actionsByTheme']['Theme 1'][0]);
     }
 
     #[Test] public function deleteComment(): void

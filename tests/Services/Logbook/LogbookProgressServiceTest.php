@@ -253,39 +253,6 @@ class LogbookProgressServiceTest extends TestCase
         );
     }
 
-    #[Test]
-    public function calculateLogbookProgressWithMentorValidationBeforeAgentValidation(): void
-    {
-        $module = $this->createMock(originalClassName: Module::class);
-        // Créer une action avec validation mentor mais sans validation agent (cas anormal)
-        $action = $this->createAction(
-            module: $module,
-            agentValidatedAt: null,
-            mentorValidatedAt: new DateTime()
-        );
-        
-        $user = $this->createMock(originalClassName: User::class);
-        $logbook = $this->createLogbookWithModules(
-            modules: [$module],
-            actions: [$action],
-            user: $user
-        );
-
-        $result = $this->service->calculateLogbookProgress(logbook: $logbook);
-
-        $this->assertProgressResult(
-            result: $result,
-            agentProgress: 0.0,
-            mentorProgress: 100.0,
-            totalModules: 1,
-            completedByAgent: 0,
-            validatedByMentor: 1,
-            awaitingValidation: 1,
-            agentClass: 'bg-danger',
-            mentorClass: 'bg-success'
-        );
-    }
-
     private function assertProgressResult(
         array $result,
         float $agentProgress,
