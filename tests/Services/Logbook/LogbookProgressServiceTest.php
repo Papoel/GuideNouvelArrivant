@@ -65,7 +65,6 @@ class LogbookProgressServiceTest extends TestCase
             agentClass: 'bg-danger',
             mentorClass: 'bg-danger'
         );
-        $this->markTestSkipped('must be revisited.');
     }
 
     #[Test] public function calculateLogbookProgressWithCompletedActions(): void
@@ -99,7 +98,7 @@ class LogbookProgressServiceTest extends TestCase
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
 
-        /*$this->assertProgressResult(
+        $this->assertProgressResult(
             result: $result,
             agentProgress: 100.0,
             mentorProgress: 0.0,
@@ -109,8 +108,7 @@ class LogbookProgressServiceTest extends TestCase
             awaitingValidation: 0,
             agentClass: 'bg-success',
             mentorClass: 'bg-danger'
-        );*/
-        $this->markTestSkipped('must be revisited.');
+        );
     }
 
     #[Test] public function calculateLogbookProgressWithoutAnyValidation(): void
@@ -122,7 +120,7 @@ class LogbookProgressServiceTest extends TestCase
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
 
-        /*$this->assertProgressResult(
+        $this->assertProgressResult(
             result: $result,
             agentProgress: 0.0,
             mentorProgress: 0.0,
@@ -132,8 +130,7 @@ class LogbookProgressServiceTest extends TestCase
             awaitingValidation: 1,
             agentClass: 'bg-danger',
             mentorClass: 'bg-danger'
-        );*/
-        $this->markTestSkipped('must be revisited.');
+        );
     }
 
     #[Test] public function calculateLogbookProgressClassBelow50Percent(): void
@@ -187,7 +184,7 @@ class LogbookProgressServiceTest extends TestCase
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
 
-        /*$this->assertProgressResult(
+        $this->assertProgressResult(
             result: $result,
             agentProgress: 0.0,
             mentorProgress: 0.0,
@@ -197,9 +194,98 @@ class LogbookProgressServiceTest extends TestCase
             awaitingValidation: 1,
             agentClass: 'bg-danger',
             mentorClass: 'bg-danger'
-        );*/
-        $this->markTestSkipped('must be revisited.');
+        );
     }
+
+    #[Test]
+    public function calculateLogbookProgressWithNullOwner(): void
+    {
+        $module = $this->createMock(originalClassName: Module::class);
+        $logbook = $this->createLogbookWithModules(modules: [$module]);
+
+        $result = $this->service->calculateLogbookProgress(logbook: $logbook);
+
+        $this->assertProgressResult(
+            result: $result,
+            agentProgress: 0.0,
+            mentorProgress: 0.0,
+            totalModules: 1,
+            completedByAgent: 0,
+            validatedByMentor: 0,
+            awaitingValidation: 1,
+            agentClass: 'bg-danger',
+            mentorClass: 'bg-danger'
+        );
+    }
+
+    #[Test]
+    public function calculateLogbookProgressWithMultipleThemes(): void
+    {
+        $module1 = $this->createMock(originalClassName: Module::class);
+        $module2 = $this->createMock(originalClassName: Module::class);
+        $module3 = $this->createMock(originalClassName: Module::class);
+        
+        $actions = [
+            $this->createAction($module1, new DateTime(), new DateTime()),
+            $this->createAction($module2, new DateTime(), null),
+            $this->createAction($module3)
+        ];
+        
+        $user = $this->createMock(originalClassName: User::class);
+        $logbook = $this->createLogbookWithModules(
+            modules: [$module1, $module2, $module3],
+            actions: $actions,
+            user: $user
+        );
+
+        $result = $this->service->calculateLogbookProgress(logbook: $logbook);
+
+        $this->assertProgressResult(
+            result: $result,
+            agentProgress: 66.7,
+            mentorProgress: 33.3,
+            totalModules: 3,
+            completedByAgent: 2,
+            validatedByMentor: 1,
+            awaitingValidation: 1,
+            agentClass: 'bg-warning text-dark',
+            mentorClass: 'bg-danger'
+        );
+    }
+
+    #[Test]
+    public function calculateLogbookProgressWithMentorValidationBeforeAgentValidation(): void
+    {
+        $module = $this->createMock(originalClassName: Module::class);
+        // Créer une action avec validation mentor mais sans validation agent (cas anormal)
+        $action = $this->createAction(
+            module: $module,
+            agentValidatedAt: null,
+            mentorValidatedAt: new DateTime()
+        );
+        
+        $user = $this->createMock(originalClassName: User::class);
+        $logbook = $this->createLogbookWithModules(
+            modules: [$module],
+            actions: [$action],
+            user: $user
+        );
+
+        $result = $this->service->calculateLogbookProgress(logbook: $logbook);
+
+        $this->assertProgressResult(
+            result: $result,
+            agentProgress: 0.0,
+            mentorProgress: 100.0,
+            totalModules: 1,
+            completedByAgent: 0,
+            validatedByMentor: 1,
+            awaitingValidation: 1,
+            agentClass: 'bg-danger',
+            mentorClass: 'bg-success'
+        );
+    }
+
     private function assertProgressResult(
         array $result,
         float $agentProgress,
@@ -216,7 +302,7 @@ class LogbookProgressServiceTest extends TestCase
         $this->assertEquals(expected: $totalModules, actual: $result['total_modules']);
         $this->assertEquals(expected: $completedByAgent, actual: $result['completed_by_agent']);
         $this->assertEquals(expected: $validatedByMentor, actual: $result['validated_by_mentor']);
-        $this->assertEquals(expected: $awaitingValidation, actual: $result['modules_awaiting_validation']);
+        $this->assertEquals(expected: $awaitingValidation, actual: $result['modules_awaiting_completion']);
         $this->assertEquals(expected: $agentClass, actual: $result['progress_class_agent']);
         $this->assertEquals(expected: $mentorClass, actual: $result['progress_class_mentor']);
     }

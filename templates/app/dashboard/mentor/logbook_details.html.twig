@@ -33,7 +33,6 @@
                             </div>
                         </div>
 
-                        {{ dump(logbookProgress) }}
                         <div class="owner-info">
                             <div class="info-group">
                                 <div class="info-item">
@@ -151,7 +150,8 @@
                     </div>
                 {% endfor %}
 
-                <a href="{{ path('mentor_dashboard_index', {'nni': user.nni}) }}" class="btn btn-md btn-outline-primary rounded-pill ">
+                <a href="{{ path('mentor_dashboard_index', {'nni': user.nni}) }}" class="btn btn-md btn-outline-primary rounded-pill">
+                    <i class="bi bi-arrow-left"></i>
                     Revenir au tableau de bord
                 </a>
             </div>
