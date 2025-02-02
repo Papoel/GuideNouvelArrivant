@@ -251,7 +251,7 @@ function pests(): void
 #[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
 function phpunitCoverage(): void
 {
-    run(command: 'php bin/phpunit --coverage-html var/metrics/tests/coverage');
+    run(command: 'XDEBUG_MODE=coverage php bin/phpunit --coverage-html var/coverage/');
 }
 /* ******************** ⭐️ WIP ⭐️ ******************** */
 
@@ -259,7 +259,7 @@ function phpunitCoverage(): void
 function testsCoverage(): void
 {
     if (file_exists(filename: 'tests/Pest.php')) {
-        pest(command: '--coverage --coverage-html var/metrics/tests/coverage');
+        pest(command: '--coverage --coverage-html var/coverage/');
     } else {
         phpunitCoverage();
     }

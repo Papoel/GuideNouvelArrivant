@@ -180,11 +180,6 @@ class UserCrudController extends AbstractCrudController
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: 'detail')
             ->add(pageName: Crud::PAGE_EDIT, actionNameOrObject: $removeLogbookAction)
-            ->reorder(pageName: Crud::PAGE_EDIT, orderedActionNames: [
-                Action::SAVE_AND_CONTINUE,
-                Action::SAVE_AND_RETURN,
-                self::REMOVE_LOGBOOK_ACTION,
-            ])
         ;
     }
 
