@@ -7,11 +7,14 @@ use App\Entity\Logbook;
 use App\Entity\User;
 use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -25,9 +28,54 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+/**
+ * Test proxy for AdminContext
+ */
+class TestAdminContextProxy
+{
+    private EntityDto $entityDto;
+
+    public function __construct(EntityDto $entityDto)
+    {
+        $this->entityDto = $entityDto;
+    }
+
+    public function getEntity(): EntityDto
+    {
+        return $this->entityDto;
+    }
+}
+
+/**
+ * Test proxy for AdminUrlGenerator
+ */
+class TestAdminUrlGeneratorProxy
+{
+    public function setController(string $controller): self
+    {
+        return $this;
+    }
+
+    public function setAction(string $action): self
+    {
+        return $this;
+    }
+
+    public function setEntityId($id): self
+    {
+        return $this;
+    }
+
+    public function generateUrl(): string
+    {
+        return '/admin';
+    }
+}
 
 class UserCrudControllerTest extends KernelTestCase
 {
@@ -195,5 +243,36 @@ class UserCrudControllerTest extends KernelTestCase
             ->method(constraint: 'hashPassword');
 
         $this->controller->persistEntity(entityManager: $this->entityManager, entityInstance: $user);
+    }
+
+    public function testRemoveLogbookFromUser(): void
+    {
+        // Create a user with logbooks
+        $user = new User();
+        $user->setFirstname('John');
+        $user->setLastname('Doe');
+        $user->setEmail('john@example.com');
+        $user->setNni('12345');
+        $user->setPassword('password');
+        $user->setRoles(['ROLE_USER']);
+        $user->setJob(JobEnum::TECHNICIEN);
+        $user->setSpeciality(SpecialityEnum::MEC);
+
+        $logbook1 = new Logbook();
+        $logbook2 = new Logbook();
+        $user->addLogbook($logbook1);
+        $user->addLogbook($logbook2);
+
+        // Test initial state
+        self::assertCount(2, $user->getLogbooks());
+
+        // Remove logbooks
+        $user->removeLogbook($logbook1);
+        $user->removeLogbook($logbook2);
+
+        // Test final state
+        self::assertCount(0, $user->getLogbooks());
+        self::assertNull($logbook1->getOwner());
+        self::assertNull($logbook2->getOwner());
     }
 }
