@@ -11,6 +11,7 @@ use App\Repository\LogbookRepository;
 use App\Repository\ModuleRepository;
 use App\Repository\ThemeRepository;
 use App\Repository\UserRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -32,6 +33,12 @@ class DashboardController extends AbstractDashboardController
     ) {
     }
 
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addJsFile(pathOrAsset: 'scripts/admin/delete-confirmation.js');
+    }
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
@@ -43,7 +50,7 @@ class DashboardController extends AbstractDashboardController
 
         $url = $this->adminUrlGenerator
             ->setController(crudControllerFqcn: UserCrudController::class)
-            ->setAction('index')
+            ->setAction(action: 'index')
             ->generateUrl();
 
         return $this->redirect($url);

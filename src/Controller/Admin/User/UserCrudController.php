@@ -2,10 +2,11 @@
 
 namespace App\Controller\Admin\User;
 
-use App\Entity\Logbook;
 use App\Entity\User;
 use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
+use App\Repository\UserRepository;
+use App\Services\Admin\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -27,10 +28,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {
-    public const REMOVE_LOGBOOK_ACTION = 'removeLogbook';
+    public const DELETE_USER_ONLY = 'deleteUserOnly';
+    public const DELETE_ALL = 'deleteAll';
+    public const DELETE_LOGBOOKS_ONLY = 'deleteLogbooksOnly';
 
     public function __construct(
-        private readonly UserPasswordHasherInterface $passwordHasher
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly UserDeletionService $userDeletionService,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -119,8 +124,12 @@ class UserCrudController extends AbstractCrudController
             ->setFormTypeOptions([
                 'by_reference' => false,
             ])
-            // Afficher le nom du carnet dans la liste
-            ->formatValue(fn ($value, $entity) => $entity->getLogbooks()->count().' carnet'.($entity->getLogbooks()->count() > 1 ? 's' : ''))
+            ->formatValue(fn ($value, $entity) => '<span style="display: inline-block" class="badge bg-'.
+                ($entity->getLogbooks()->count() > 0 ? 'success-subtle' : 'danger-subtle').'">'.
+                ($entity->getLogbooks()->count() > 0 ? 'Oui' : 'Non').
+                '</span>'
+            )
+            ->setTemplatePath(path: 'admin/field/badge.html.twig')
         ;
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
@@ -171,54 +180,85 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $removeLogbookAction = Action::new(name: self::REMOVE_LOGBOOK_ACTION)
-            ->linkToCrudAction(crudActionName: 'removeLogbook')
-            ->setCssClass(cssClass: 'btn btn-sm btn-danger')
-            ->setIcon(icon: 'fa fa-trash')
-            ->setLabel(label: 'Supprimer les carnets');
+        $actions = parent::configureActions($actions);
+
+        // Add custom actions
+        $deleteUserOnly = Action::new(self::DELETE_USER_ONLY, 'Supprimer l\'utilisateur')
+            ->setIcon('fa fa-user-times')
+            ->linkToCrudAction('deleteUserOnly')
+            ->displayIf(static function ($user) {
+                return true;
+            });
+
+        $deleteAll = Action::new(self::DELETE_ALL, 'Tout supprimer')
+            ->setIcon('fa fa-trash-alt')
+            ->linkToCrudAction('deleteAll')
+            ->displayIf(static function ($user) {
+                return $user instanceof User && $user->hasLogbooks();
+            });
+
+        $deleteLogbooksOnly = Action::new(self::DELETE_LOGBOOKS_ONLY, 'Supprimer les carnets')
+            ->setIcon('fa fa-book')
+            ->linkToCrudAction('deleteLogbooksOnly')
+            ->displayIf(static function ($user) {
+                return $user instanceof User && $user->hasLogbooks();
+            });
 
         return $actions
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: 'detail')
-            ->add(pageName: Crud::PAGE_EDIT, actionNameOrObject: $removeLogbookAction)
-        ;
+            ->add(Crud::PAGE_INDEX, $deleteUserOnly)
+            ->add(Crud::PAGE_INDEX, $deleteAll)
+            ->add(Crud::PAGE_INDEX, $deleteLogbooksOnly);
     }
 
-    public function removeLogbook(
+    public function deleteUserOnly(
         AdminContext $context,
-        EntityManagerInterface $entityManager,
         AdminUrlGenerator $adminUrlGenerator
     ): Response {
+        /** @var User $user */
         $user = $context->getEntity()->getInstance();
 
-        /* @var $logbooks Logbook */
-        $logbooks = $user->getLogbooks();
-
-        $deletedLogbooks = 0;
-        foreach ($logbooks as $logbook) {
-            $user->removeLogbook($logbook);
-            ++$deletedLogbooks;
+        try {
+            $this->userDeletionService->deleteUserOnly($user);
+            $this->addFlash('success', sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
         }
 
-        parent::persistEntity($entityManager, $user);
+        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+    }
 
-        $this->addFlash(
-            type: 'danger',
-            message: sprintf(
-                'Le%s carnet%s de %s %s supprimé%s.',
-                $deletedLogbooks > 1 ? 's' : '',
-                $deletedLogbooks > 1 ? 's' : '',
-                $user->getFullName(),
-                $deletedLogbooks > 1 ? 'ont étaient' : 'a été',
-                $deletedLogbooks > 1 ? 's' : ''
-            )
-        );
+    public function deleteAll(
+        AdminContext $context,
+        AdminUrlGenerator $adminUrlGenerator
+    ): Response {
+        /** @var User $user */
+        $user = $context->getEntity()->getInstance();
 
-        $url = $adminUrlGenerator->setController(crudControllerFqcn: self::class)
-            ->setAction(Action::INDEX)
-            ->generateUrl()
-        ;
+        try {
+            $this->userDeletionService->deleteUserAndLogbooks($user);
+            $this->addFlash('success', sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+        }
 
-        return $this->redirect(url: $url);
+        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+    }
+
+    public function deleteLogbooksOnly(
+        AdminContext $context,
+        AdminUrlGenerator $adminUrlGenerator
+    ): Response {
+        /** @var User $user */
+        $user = $context->getEntity()->getInstance();
+
+        try {
+            $this->userDeletionService->deleteLogbooksOnly($user);
+            $this->addFlash('success', sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+        }
+
+        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
     }
 
     /**

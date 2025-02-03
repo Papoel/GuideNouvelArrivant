@@ -5,26 +5,25 @@ namespace App\Tests\Controller\Admin\User;
 use App\Controller\Admin\User\UserCrudController;
 use App\Entity\Logbook;
 use App\Entity\User;
-use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Services\Admin\UserDeletionService;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\DashboardDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\I18nDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -81,6 +80,8 @@ class UserCrudControllerTest extends KernelTestCase
 {
     private UserCrudController $controller;
     private UserPasswordHasherInterface $passwordHasher;
+    private UserDeletionService $userDeletionService;
+    private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
     private FlashBagInterface $flashBag;
     private RequestStack $requestStack;
@@ -92,29 +93,36 @@ class UserCrudControllerTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->passwordHasher = $this->createMock(originalClassName: UserPasswordHasherInterface::class);
-        $this->controller = new UserCrudController(passwordHasher: $this->passwordHasher);
+        $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $this->userDeletionService = $this->createMock(UserDeletionService::class);
+        $this->userRepository = $this->createMock(UserRepository::class);
 
-        $this->entityManager = $this->createMock(originalClassName: EntityManagerInterface::class);
+        $this->controller = new UserCrudController(
+            $this->passwordHasher,
+            $this->userDeletionService,
+            $this->userRepository
+        );
+
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         // Set up flash messages
-        $this->flashBag = $this->createMock(originalClassName: FlashBagInterface::class);
-        $session = $this->createMock(originalClassName: Session::class);
-        $session->method('getFlashBag')->willReturn(value: $this->flashBag);
+        $this->flashBag = $this->createMock(FlashBagInterface::class);
+        $session = $this->createMock(Session::class);
+        $session->method('getFlashBag')->willReturn($this->flashBag);
 
-        $this->requestStack = $this->createMock(originalClassName: RequestStack::class);
-        $this->requestStack->method('getSession')->willReturn(value: $session);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->method('getSession')->willReturn($session);
 
         $container = self::getContainer();
-        $container->set(id: 'request_stack', service: $this->requestStack);
+        $container->set('request_stack', $this->requestStack);
     }
 
-    public function testGetEntityFqcn(): void
+    #[Test] public function GetEntityFqcn(): void
     {
         self::assertEquals(expected: User::class, actual: UserCrudController::getEntityFqcn());
     }
 
-    public function testConfigureFields(): void
+    #[Test] public function ConfigureFields(): void
     {
         $fields = iterator_to_array(iterator: $this->controller->configureFields(pageName: 'index'));
 
@@ -199,7 +207,32 @@ class UserCrudControllerTest extends KernelTestCase
         self::assertEquals(expected: 'Dernière connexion', actual: $fields[14]->getAsDto()->getLabel());
     }
 
-    public function testConfigureCrud(): void
+    #[Test] public function ConfigureFieldsOnEditPage(): void
+    {
+        $fields = iterator_to_array($this->controller->configureFields('edit'));
+
+        // On edit page, password field should be configured correctly
+        $passwordFields = array_filter($fields, function ($field) {
+            return $field->getAsDto()->getProperty() === 'password';
+        });
+
+        $passwordField = reset($passwordFields);
+        self::assertNotNull($passwordField, 'Password field should be present on edit page');
+        self::assertEquals(PasswordType::class, $passwordField->getAsDto()->getFormType());
+    }
+
+    #[Test] public function ConfigureFieldsOnNewPage(): void
+    {
+        $fields = iterator_to_array($this->controller->configureFields('new'));
+
+        // Password field should be present on new page
+        $passwordFields = array_filter($fields, function ($field) {
+            return $field->getAsDto()->getProperty() === 'password';
+        });
+        self::assertNotEmpty($passwordFields, 'Password field should be present on new page');
+    }
+
+    #[Test] public function ConfigureCrud(): void
     {
         $crud = $this->controller->configureCrud(crud: Crud::new());
 
@@ -207,15 +240,112 @@ class UserCrudControllerTest extends KernelTestCase
         self::assertInstanceOf(expected: Crud::class, actual: $crud);
     }
 
-    public function testConfigureActions(): void
+    #[Test] public function ConfigureActions(): void
     {
-        $actions = $this->controller->configureActions(actions: Actions::new());
+        $actions = Actions::new()
+            ->add(Crud::PAGE_INDEX, Action::NEW)
+            ->add(Crud::PAGE_INDEX, Action::EDIT);
 
-        // Test that actions configuration is returned
-        self::assertInstanceOf(expected: Actions::class, actual: $actions);
+        $configuredActions = $this->controller->configureActions($actions);
+
+        // Test that actions are configured correctly
+        $actionsDto = $configuredActions->getAsDto(Crud::PAGE_INDEX);
+        $actionsList = $actionsDto->getActions();
+
+        // Verify that custom actions are present
+        self::assertArrayHasKey(UserCrudController::DELETE_USER_ONLY, $actionsList);
+        self::assertArrayHasKey(UserCrudController::DELETE_ALL, $actionsList);
+        self::assertArrayHasKey(UserCrudController::DELETE_LOGBOOKS_ONLY, $actionsList);
     }
 
-    public function testPersistEntity(): void
+    #[Test] public function ConfigureActionsWithCustomActions(): void
+    {
+        $actions = Actions::new()
+            ->add(Crud::PAGE_INDEX, Action::NEW)
+            ->add(Crud::PAGE_INDEX, Action::EDIT);
+
+        $configuredActions = $this->controller->configureActions($actions);
+        $actionsDto = $configuredActions->getAsDto(Crud::PAGE_INDEX);
+        $actionsList = $actionsDto->getActions();
+
+        // Test that custom actions are properly configured
+        $deleteUserOnlyAction = $actionsList[UserCrudController::DELETE_USER_ONLY];
+        self::assertEquals('Supprimer l\'utilisateur', $deleteUserOnlyAction->getLabel());
+        self::assertEquals('fa fa-user-times', $deleteUserOnlyAction->getIcon());
+
+        $deleteAllAction = $actionsList[UserCrudController::DELETE_ALL];
+        self::assertEquals('Tout supprimer', $deleteAllAction->getLabel());
+        self::assertEquals('fa fa-trash-alt', $deleteAllAction->getIcon());
+
+        $deleteLogbooksOnlyAction = $actionsList[UserCrudController::DELETE_LOGBOOKS_ONLY];
+        self::assertEquals('Supprimer les carnets', $deleteLogbooksOnlyAction->getLabel());
+        self::assertEquals('fa fa-book', $deleteLogbooksOnlyAction->getIcon());
+    }
+
+    #[Test] public function CustomActionsDisplayConditions(): void
+    {
+        $actions = Actions::new()
+            ->add(Crud::PAGE_INDEX, Action::NEW)
+            ->add(Crud::PAGE_INDEX, Action::EDIT);
+
+        $configuredActions = $this->controller->configureActions($actions);
+        $actionsDto = $configuredActions->getAsDto(Crud::PAGE_INDEX);
+        $actionsList = $actionsDto->getActions();
+
+        // Create a user with no logbooks
+        $user = new User();
+        $user->setFirstname('John');
+        $user->setLastname('Doe');
+
+        $entityDto = new EntityDto(
+            User::class,
+            $this->entityManager->getClassMetadata(User::class),
+            $user->getId(),
+            $user
+        );
+
+        $deleteUserOnlyAction = $actionsList[UserCrudController::DELETE_USER_ONLY];
+        $deleteAllAction = $actionsList[UserCrudController::DELETE_ALL];
+        $deleteLogbooksOnlyAction = $actionsList[UserCrudController::DELETE_LOGBOOKS_ONLY];
+
+        // Test display conditions for user without logbooks
+        self::assertTrue($deleteUserOnlyAction->isDisplayed($entityDto));
+        self::assertFalse($deleteAllAction->isDisplayed($entityDto));
+        self::assertFalse($deleteLogbooksOnlyAction->isDisplayed($entityDto));
+
+        // Add a logbook and test again
+        $logbook = new Logbook();
+        $user->addLogbook($logbook);
+        $entityDto = new EntityDto(
+            User::class,
+            $this->entityManager->getClassMetadata(User::class),
+            $user->getId(),
+            $user
+        );
+
+        self::assertTrue($deleteUserOnlyAction->isDisplayed($entityDto));
+        self::assertTrue($deleteAllAction->isDisplayed($entityDto));
+        self::assertTrue($deleteLogbooksOnlyAction->isDisplayed($entityDto));
+    }
+
+    #[Test] public function IsGrantedAttribute(): void
+    {
+        $reflectionClass = new \ReflectionClass(UserCrudController::class);
+        $attributes = $reflectionClass->getAttributes();
+
+        $hasIsGrantedAttribute = false;
+        foreach ($attributes as $attribute) {
+            if ($attribute->getName() === 'Symfony\Component\Security\Http\Attribute\IsGranted') {
+                $hasIsGrantedAttribute = true;
+                $arguments = $attribute->getArguments();
+                self::assertEquals('ROLE_ADMIN', $arguments[0], 'Controller should require ROLE_ADMIN');
+            }
+        }
+
+        self::assertTrue($hasIsGrantedAttribute, 'Controller should have IsGranted attribute');
+    }
+
+    #[Test] public function PersistEntity(): void
     {
         $user = new User();
         $user->setPassword(password: 'password123');
@@ -232,7 +362,7 @@ class UserCrudControllerTest extends KernelTestCase
         self::assertEquals(expected: 'hashed_password', actual: $user->getPassword());
     }
 
-    public function testPersistEntityWithoutPassword(): void
+    #[Test] public function PersistEntityWithoutPassword(): void
     {
         $user = new User();
         $user->setPassword(password: ''); // Initialize with empty string
@@ -245,18 +375,12 @@ class UserCrudControllerTest extends KernelTestCase
         $this->controller->persistEntity(entityManager: $this->entityManager, entityInstance: $user);
     }
 
-    public function testRemoveLogbookFromUser(): void
+    #[Test] public function RemoveLogbookFromUser(): void
     {
         // Create a user with logbooks
         $user = new User();
         $user->setFirstname('John');
         $user->setLastname('Doe');
-        $user->setEmail('john@example.com');
-        $user->setNni('12345');
-        $user->setPassword('password');
-        $user->setRoles(['ROLE_USER']);
-        $user->setJob(JobEnum::TECHNICIEN);
-        $user->setSpeciality(SpecialityEnum::MEC);
 
         $logbook1 = new Logbook();
         $logbook2 = new Logbook();

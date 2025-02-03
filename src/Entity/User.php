@@ -366,6 +366,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function hasLogbooks(): bool
+    {
+        return !$this->logbooks->isEmpty();
+    }
+
     /**
      * @return Collection<int, Action>
      */
