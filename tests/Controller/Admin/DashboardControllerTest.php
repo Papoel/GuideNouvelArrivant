@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Locale;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\LocaleDto;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,14 +30,14 @@ class DashboardControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(id: UserRepository::class);
     }
 
-    public function testAdminRouteRequiresAuthentication(): void
+    #[Test] public function adminRouteRequiresAuthentication(): void
     {
         $this->client->request(method: Request::METHOD_GET, uri: '/admin');
 
         self::assertResponseRedirects(expectedLocation: '/connexion');
     }
 
-    public function testAdminRouteRequiresAdminRole(): void
+    #[Test] public function adminRouteRequiresAdminRole(): void
     {
         // Create a regular user
         $user = new User();
@@ -64,7 +65,7 @@ class DashboardControllerTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    public function testConfigureDashboard(): void
+    #[Test] public function configureDashboard(): void
     {
         $controller = static::getContainer()->get(id: DashboardController::class);
         $dashboard = $controller->configureDashboard();
@@ -86,7 +87,7 @@ class DashboardControllerTest extends WebTestCase
         $this->assertEquals(expected: '🇫🇷 Français', actual: $locale->getName());
     }
 
-    public function testMenuItemsForLoggedInUser(): void
+    #[Test] public function menuItemsForLoggedInUser(): void
     {
         // Create an admin user
         $user = new User();
@@ -120,7 +121,7 @@ class DashboardControllerTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    public function testMenuItemsForNonLoggedInUser(): void
+    #[Test] public function menuItemsForNonLoggedInUser(): void
     {
         $controller = static::getContainer()->get(id: DashboardController::class);
         $menuItems = iterator_to_array(iterator: $controller->configureMenuItems());
@@ -132,13 +133,71 @@ class DashboardControllerTest extends WebTestCase
         $this->assertEmpty(actual: $homeItem->getRouteParameters());
     }
 
+    #[Test] public function configureAssets(): void
+    {
+        $controller = static::getContainer()->get(DashboardController::class);
+        $assets = $controller->configureAssets();
+
+        // Vérifie que les assets sont correctement configurés
+        $this->assertInstanceOf(\EasyCorp\Bundle\EasyAdminBundle\Config\Assets::class, $assets);
+
+        // Convertir en DTO et vérifier qu'il n'y a pas d'erreur
+        $assetsDto = $assets->getAsDto();
+        $this->assertNotNull($assetsDto);
+    }
+
+    #[Test]
+    public function indexRedirectsToUserCrudController(): void
+    {
+        // Désactiver temporairement les avertissements de dépréciation
+        $oldErrorHandler = set_error_handler(function() { return false; });
+
+        try {
+            // Votre code de test existant...
+            // Créer un utilisateur admin
+            $admin = new User();
+            $admin->setEmail(email: 'admin.test@example.com');
+            $admin->setRoles(roles: ['ROLE_ADMIN']);
+            $admin->setNni(nni: 'A99999');
+            $admin->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'password123'));
+            $admin->setFirstname(firstname: 'Admin');
+            $admin->setLastname(lastname: 'Test');
+
+            $this->entityManager->persist(object: $admin);
+            $this->entityManager->flush();
+
+            // Se connecter en tant qu'admin
+            $this->client->loginUser(user: $admin);
+
+            // Faire la requête vers /admin
+            $this->client->request(method: Request::METHOD_GET, uri: '/admin');
+
+            // Vérifier que la redirection a lieu
+            self::assertResponseRedirects();
+
+            // Vérifier que l'URL de redirection contient le bon contrôleur
+            self::assertStringContainsString('UserCrudController', $this->client->getResponse()->headers->get('Location'));
+
+            // Nettoyer la base de données
+            $this->entityManager->clear(); // Détache toutes les entités
+            $admin = $this->userRepository->findOneBy(['email' => 'admin.test@example.com']);
+            if ($admin) {
+                $this->entityManager->remove($admin);
+                $this->entityManager->flush();
+            }
+        } finally {
+            // Restaurer le gestionnaire d'erreurs original
+            restore_error_handler();
+        }
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
 
         // Ensure we clean up any remaining test users
         $this->entityManager->createQuery(dql: 'DELETE FROM App\Entity\User u WHERE u.email IN (:emails)')
-            ->setParameter(key: 'emails', value: ['user@example.com', 'admin@example.com'])
+            ->setParameter(key: 'emails', value: ['user@example.com', 'admin@example.com', 'admin.test@example.com'])
             ->execute();
     }
 }

@@ -77,7 +77,7 @@ class UserCrudController extends AbstractCrudController
                 'Tuteur' => 'ROLE_MENTOR',
                 'Nouvel arrivant' => 'ROLE_NEWCOMER',
             ])
-            ->allowMultipleChoices(allow: true) // Permet la sélection multiple
+            ->allowMultipleChoices()
             ->renderExpanded(expanded: false) // Affiche les choix comme une liste déroulante
             ->renderAsBadges([
                 'ROLE_ADMIN' => 'danger',
@@ -150,28 +150,21 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular(label: 'Utilisateur')
-
             ->setEntityLabelInPlural(label: 'Utilisateurs')
-
             ->setPageTitle(pageName: 'index', title: '⚡️ Liste des agents')
-
             ->setPaginatorPageSize(maxResultsPerPage: 20)
-
             ->setPageTitle(
                 pageName: 'detail',
                 title: fn (User $user) => '👁️ Détails - '.$user->getFullName()
             )
-
             ->setPageTitle(
                 pageName: 'edit',
                 title: fn (User $user) => '🧑‍💻 Modifier - '.$user->getFullName()
             )
-
             ->setPageTitle(
                 pageName: 'new',
                 title: '⭐️ Créer un nouvel utilisateur'
             )
-
             ->setDateTimeFormat(
                 dateFormatOrPattern: DateTimeField::FORMAT_LONG,
                 timeFormat: DateTimeField::FORMAT_SHORT
@@ -180,12 +173,26 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $actions = parent::configureActions($actions);
+        // $actions = parent::configureActions($actions);
+
+        // Désactiver complètement les actions par défaut
+        $actions = $actions
+            ->disable(Action::DELETE);
+
+        // Mettre à jour l'action de modification existante
+        $actions = $actions->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-edit text-primary')
+                ->setLabel('Modifier')
+                ->addCssClass('btn btn-sm btn-outline-primary')
+            ;
+        });
 
         // Add custom actions
         $deleteUserOnly = Action::new(self::DELETE_USER_ONLY, 'Supprimer l\'utilisateur')
-            ->setIcon('fa fa-user-times')
+            ->setIcon('fa fa-user-times text-danger')
             ->linkToCrudAction('deleteUserOnly')
+            ->setCssClass('text-danger')
             ->displayIf(static function ($user) {
                 return true;
             });
@@ -219,12 +226,12 @@ class UserCrudController extends AbstractCrudController
 
         try {
             $this->userDeletionService->deleteUserOnly($user);
-            $this->addFlash('success', sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
+            $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
         }
 
-        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+        return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     public function deleteAll(

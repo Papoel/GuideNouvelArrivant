@@ -116,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Logbook>
      */
-    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner')]
+    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner', cascade: ['remove'])]
     private Collection $logbooks;
 
     /**

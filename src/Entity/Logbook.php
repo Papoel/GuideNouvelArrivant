@@ -31,7 +31,7 @@ class Logbook
     private Collection $themes;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'logbooks')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?User $owner = null;
 
     /**
