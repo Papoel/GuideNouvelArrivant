@@ -39,6 +39,11 @@ class UserCrudController extends AbstractCrudController
     ) {
     }
 
+    public static function getEntityFqcn(): string
+    {
+        return User::class;
+    }
+
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new(propertyName: 'id')
@@ -142,11 +147,6 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new(propertyName: 'lastLoginAt', label: 'Dernière connexion')->hideOnIndex()->hideOnForm();
     }
 
-    public static function getEntityFqcn(): string
-    {
-        return User::class;
-    }
-
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -175,8 +175,6 @@ class UserCrudController extends AbstractCrudController
         ;
     }
 
-    // TODO: Alerte avant suppression !!
-
     public function configureActions(Actions $actions): Actions
     {
         // $actions = parent::configureActions($actions);
@@ -186,41 +184,41 @@ class UserCrudController extends AbstractCrudController
             ->disable(Action::DELETE);
 
         // Mettre à jour l'action de modification existante
-        $actions = $actions->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+        $actions = $actions->update(pageName: Crud::PAGE_INDEX, actionName: Action::EDIT, callable: function (Action $action) {
             return $action
-                ->setIcon('fa fa-edit text-primary')
-                ->setLabel('Modifier')
-                ->addCssClass('btn btn-sm btn-outline-primary')
+                ->setIcon(icon: 'fa fa-edit text-primary')
+                ->setLabel(label: 'Modifier')
+                ->addCssClass(cssClass: 'btn btn-sm btn-outline-primary')
             ;
         });
 
         // Add custom actions
-        $deleteUserOnly = Action::new(self::DELETE_USER_ONLY, 'Supprimer l\'utilisateur')
-            ->setIcon('fa fa-user-times text-danger')
-            ->linkToCrudAction('deleteUserOnly')
-            ->setCssClass('text-danger')
+        $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
+            ->setIcon(icon: 'fa fa-user-times text-danger')
+            ->linkToCrudAction(crudActionName: 'deleteUserOnly')
+            ->setCssClass(cssClass: 'text-danger')
             ->displayIf(static function ($user) {
                 return true;
             });
 
-        $deleteAll = Action::new(self::DELETE_ALL, 'Tout supprimer')
-            ->setIcon('fa fa-trash-alt')
-            ->linkToCrudAction('deleteAll')
+        $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
+            ->setIcon(icon: 'fa fa-trash-alt')
+            ->linkToCrudAction(crudActionName: 'deleteAll')
             ->displayIf(static function ($user) {
                 return $user instanceof User && $user->hasLogbooks();
             });
 
-        $deleteLogbooksOnly = Action::new(self::DELETE_LOGBOOKS_ONLY, 'Supprimer les carnets')
-            ->setIcon('fa fa-book')
-            ->linkToCrudAction('deleteLogbooksOnly')
+        $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer les carnets')
+            ->setIcon(icon: 'fa fa-book')
+            ->linkToCrudAction(crudActionName: 'deleteLogbooksOnly')
             ->displayIf(static function ($user) {
                 return $user instanceof User && $user->hasLogbooks();
             });
 
         return $actions
-            ->add(Crud::PAGE_INDEX, $deleteUserOnly)
-            ->add(Crud::PAGE_INDEX, $deleteAll)
-            ->add(Crud::PAGE_INDEX, $deleteLogbooksOnly);
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteAll)
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly);
     }
 
     public function deleteUserOnly(
@@ -249,9 +247,9 @@ class UserCrudController extends AbstractCrudController
 
         try {
             $this->userDeletionService->deleteUserAndLogbooks($user);
-            $this->addFlash('success', sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
+            $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
         }
 
         return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
@@ -266,12 +264,12 @@ class UserCrudController extends AbstractCrudController
 
         try {
             $this->userDeletionService->deleteLogbooksOnly($user);
-            $this->addFlash('success', sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
+            $this->addFlash(type: 'success', message: sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
         }
 
-        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+        return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     /**
