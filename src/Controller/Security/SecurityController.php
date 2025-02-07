@@ -21,7 +21,16 @@ class SecurityController extends AbstractController
         $user = $this->getUser();
 
         if ($this->getUser()) {
-            return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $user->getNni()]);
+            return $this->redirectToRoute(route: 'dashboard_index', parameters: [
+                'nni' => $user->getNni(),
+                flash()->warning(
+                    message: 'Bonjour '.$user->getFirstname().', vous avez était redirigé vers votre tableau de bord.',
+                    options: [
+                        'position' => 'top-left',
+                        'timer' => 9000 * 5,
+                    ]
+                ),
+            ]);
         }
 
         // get the login error if there is one

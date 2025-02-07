@@ -1,4 +1,3 @@
-// public/js/admin/delete-confirmation.js
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Script de confirmation de suppression chargé');
 

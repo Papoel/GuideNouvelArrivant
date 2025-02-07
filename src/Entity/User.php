@@ -116,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Logbook>
      */
-    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner')]
+    #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner', cascade: ['remove'])]
     private Collection $logbooks;
 
     /**
@@ -364,6 +364,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function hasLogbooks(): bool
+    {
+        return !$this->logbooks->isEmpty();
     }
 
     /**

@@ -27,3 +27,5 @@
 ###> phpstorm ###
 /.idea/
 ###< phpstorm ###
+
+grumphp-pre-commit.sh

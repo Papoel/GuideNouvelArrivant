@@ -77,7 +77,7 @@ class UserCrudController extends AbstractCrudController
                 'Tuteur' => 'ROLE_MENTOR',
                 'Nouvel arrivant' => 'ROLE_NEWCOMER',
             ])
-            ->allowMultipleChoices(allow: true) // Permet la sélection multiple
+            ->allowMultipleChoices()
             ->renderExpanded(expanded: false) // Affiche les choix comme une liste déroulante
             ->renderAsBadges([
                 'ROLE_ADMIN' => 'danger',
@@ -130,8 +130,7 @@ class UserCrudController extends AbstractCrudController
                 ($entity->getLogbooks()->count() > 0 ? 'Oui' : 'Non').
                 '</span>'
             )
-            ->setTemplatePath(path: 'admin/field/badge.html.twig') // Utilise un template personnalisé pour ne pas avoir deux badges
-            ->setSortable(isSortable: false)
+            ->setTemplatePath(path: 'admin/field/badge.html.twig')
         ;
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
@@ -152,28 +151,21 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular(label: 'Utilisateur')
-
             ->setEntityLabelInPlural(label: 'Utilisateurs')
-
-            ->setPageTitle(pageName: 'index', title: 'Liste des '.$this->userRepository->count().' utilisateurs.')
-
+            ->setPageTitle(pageName: 'index', title: '⚡️ Liste des agents')
             ->setPaginatorPageSize(maxResultsPerPage: 20)
-
             ->setPageTitle(
                 pageName: 'detail',
                 title: fn (User $user) => '👁️ Détails - '.$user->getFullName()
             )
-
             ->setPageTitle(
                 pageName: 'edit',
                 title: fn (User $user) => '🧑‍💻 Modifier - '.$user->getFullName()
             )
-
             ->setPageTitle(
                 pageName: 'new',
                 title: '⭐️ Créer un nouvel utilisateur'
             )
-
             ->setDateTimeFormat(
                 dateFormatOrPattern: DateTimeField::FORMAT_LONG,
                 timeFormat: DateTimeField::FORMAT_SHORT
@@ -187,43 +179,48 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY)
-            ->linkToCrudAction(crudActionName: 'deleteUserOnly')
-            ->setIcon(icon: 'fa fa-user-times')
-            ->setLabel(label: 'Supprimer l\'utilisateur')
-            // Si il y a des carnets, il faut d'abord les supprimer
-            ->displayIf(fn ($entity) => !$entity->getLogbooks()->count())
-            ->setHtmlAttributes([
-                'data-action' => 'deleteUserOnly',
-            ])
-        ;
+        // $actions = parent::configureActions($actions);
 
-        $deleteAll = Action::new(name: self::DELETE_ALL)
-            ->linkToCrudAction(crudActionName: 'deleteAll')
-            ->setIcon(icon: 'fa fa-trash-alt')
-            ->setLabel(label: 'Tout supprimer')
-            ->setHtmlAttributes([
-                'data-action' => 'deleteAll',
-            ]);
+        // Désactiver complètement les actions par défaut
+        $actions = $actions
+            ->disable(Action::DELETE);
 
-        // ->addCssClass(cssClass: 'btn btn-danger')
+        // Mettre à jour l'action de modification existante
+        $actions = $actions->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
+            return $action
+                ->setIcon('fa fa-edit text-primary')
+                ->setLabel('Modifier')
+                ->addCssClass('btn btn-sm btn-outline-primary')
+            ;
+        });
 
-        $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY)
-            ->linkToCrudAction(crudActionName: 'deleteLogbooksOnly')
-            ->setIcon(icon: 'fa fa-book')
-            ->setLabel(label: 'Supprimer les carnets')
-            ->displayIf(fn ($entity) => $entity->getLogbooks()->count())
-            ->setHtmlAttributes([
-                'data-action' => 'deleteLogbooksOnly',
-            ])
-        ;
+        // Add custom actions
+        $deleteUserOnly = Action::new(self::DELETE_USER_ONLY, 'Supprimer l\'utilisateur')
+            ->setIcon('fa fa-user-times text-danger')
+            ->linkToCrudAction('deleteUserOnly')
+            ->setCssClass('text-danger')
+            ->displayIf(static function ($user) {
+                return true;
+            });
+
+        $deleteAll = Action::new(self::DELETE_ALL, 'Tout supprimer')
+            ->setIcon('fa fa-trash-alt')
+            ->linkToCrudAction('deleteAll')
+            ->displayIf(static function ($user) {
+                return $user instanceof User && $user->hasLogbooks();
+            });
+
+        $deleteLogbooksOnly = Action::new(self::DELETE_LOGBOOKS_ONLY, 'Supprimer les carnets')
+            ->setIcon('fa fa-book')
+            ->linkToCrudAction('deleteLogbooksOnly')
+            ->displayIf(static function ($user) {
+                return $user instanceof User && $user->hasLogbooks();
+            });
 
         return $actions
-            ->remove(pageName: Crud::PAGE_INDEX, actionName: Action::DELETE)
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteAll)
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly)
-        ;
+            ->add(Crud::PAGE_INDEX, $deleteUserOnly)
+            ->add(Crud::PAGE_INDEX, $deleteAll)
+            ->add(Crud::PAGE_INDEX, $deleteLogbooksOnly);
     }
 
     public function deleteUserOnly(
@@ -235,12 +232,12 @@ class UserCrudController extends AbstractCrudController
 
         try {
             $this->userDeletionService->deleteUserOnly($user);
-            $this->addFlash('success', sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
+            $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
         } catch (\Exception $e) {
-            $this->addFlash('danger', 'Une erreur est survenue lors de la suppression.');
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
         }
 
-        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+        return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     public function deleteAll(
