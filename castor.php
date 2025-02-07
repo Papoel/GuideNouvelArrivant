@@ -241,6 +241,13 @@ function phpunitCrash(): void
     run(command: 'php bin/phpunit --stop-on-failure');
 }
 
+#[AsTask(description: 'Vérifier la couverture de test d\'un fichier')]
+function cover(): void
+{
+    $file = io()->ask(question: 'Nom du chemin complet du fichier a tester');
+    run(command: sprintf('php -dxdebug.mode=coverage vendor/bin/phpunit --coverage-text tests/%s', $file));
+}
+
 /* ******************** ⭐️ WIP ⭐️ ******************** */
 #[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
 function pests(): void
@@ -251,7 +258,7 @@ function pests(): void
 #[AsTask(description: 'Exécuter les tests et vérifier la couverture de code')]
 function phpunitCoverage(): void
 {
-    run(command: 'php bin/phpunit --coverage-html var/metrics/tests/coverage');
+    run(command: 'XDEBUG_MODE=coverage php bin/phpunit --coverage-html var/coverage/');
 }
 /* ******************** ⭐️ WIP ⭐️ ******************** */
 
@@ -259,7 +266,7 @@ function phpunitCoverage(): void
 function testsCoverage(): void
 {
     if (file_exists(filename: 'tests/Pest.php')) {
-        pest(command: '--coverage --coverage-html var/metrics/tests/coverage');
+        pest(command: '--coverage --coverage-html var/coverage/');
     } else {
         phpunitCoverage();
     }

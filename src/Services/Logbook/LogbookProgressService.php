@@ -71,8 +71,8 @@ class LogbookProgressService
             'total_modules' => $totalModules,
             'completed_by_agent' => $completedByAgent,
             'validated_by_mentor' => $validatedByMentor,
-            // 'modules_awaiting_validation' => $completedByAgent - $validatedByMentor,
-            'modules_awaiting_validation' => $totalModules - $completedByAgent,
+            'modules_awaiting_completion' => $totalModules - $completedByAgent,
+            'modules_awaiting_validation' => $completedByAgent - $validatedByMentor,
             'progress_class_agent' => $progressClassAgent,
             'progress_class_mentor' => $progressClassMentor,
         ];

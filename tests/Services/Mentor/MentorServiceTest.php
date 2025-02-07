@@ -12,10 +12,13 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\Mentor\MentorService;
 use App\Tests\Utils\UserTestHelper;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use LogicException;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +31,9 @@ class MentorServiceTest extends TestCase
     private RequestStack $requestStack;
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         // Initialisation des mocks
@@ -56,15 +62,17 @@ class MentorServiceTest extends TestCase
         self::assertFalse($mentorService->isLogbookAccessibleByMentor(mentorNni: $mentorNni, logbook: $logbook));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test]
     public function testIsLogbookAccessibleByMentorReturnsFalseWhenNoMentorMatches(): void
     {
-        // Crée un User et lui affecté un mentor
+        // Crée un User et lui affecter un mentor
         $user = UserTestHelper::createUser();
         $mentor = UserTestHelper::createMentorUser();
 
         $user->setMentor(mentor: $mentor);
-        $mentorNni = $mentor->getNni();
 
         // Créer un Logbook et assigner l'apprenti à ce carnet
         $logbook = $this->createMock(originalClassName: Logbook::class);
@@ -84,6 +92,9 @@ class MentorServiceTest extends TestCase
         $this->assertFalse(condition: $result);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function getApprenantLogbooks(): void
     {
         // Créez un Mentor réel avec UserTestHelper
@@ -113,6 +124,28 @@ class MentorServiceTest extends TestCase
         self::assertSame(expected: $apprenantMock, actual: $apprenants[0]);  // Vérifie que c'est bien l'apprenant que l'on attend
     }
 
+    #[Test] public function getApprenantLogbooksReturnsEmptyArray(): void
+    {
+        $mentor = UserTestHelper::createMentorUser();
+        $mentorNni = $mentor->getNni();
+
+        // Simuler le comportement du repository pour renvoyer une liste vide
+        $this->userRepository->method('findApprenantByMentorNni')
+            ->with($mentorNni)
+            ->willReturn([]);
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $apprenants = $mentorService->getApprenantLogbooks($mentorNni);
+
+        self::assertEmpty($apprenants);
+        self::assertIsArray($apprenants);
+    }
+
     #[Test] public function isLogbookAccessibleByMentor(): void
     {
         // Créez un Mentor avec UserTestHelper
@@ -121,11 +154,11 @@ class MentorServiceTest extends TestCase
 
         // Créez un apprenant avec UserTestHelper et associez-le à un mentor
         $apprenant = UserTestHelper::createUser(['nni' => 'A12345']);
-        $apprenant->setMentor($mentor); // Associer le mentor à l'apprenant
+        $apprenant->setMentor(mentor: $mentor); // Associer le mentor à l'apprenant
 
         // Créez un Logbook et associez l'apprenant à ce Logbook
         $logbook = new Logbook();
-        $logbook->setOwner($apprenant); // Associer l'apprenant au Logbook
+        $logbook->setOwner(owner: $apprenant); // Associer l'apprenant au Logbook
 
         // Instanciation du service MentorService avec les mocks
         $mentorService = new MentorService(
@@ -135,19 +168,22 @@ class MentorServiceTest extends TestCase
         );
 
         // Appel de la méthode isLogbookAccessibleByMentor
-        $isAccessible = $mentorService->isLogbookAccessibleByMentor($mentorNni, $logbook);
+        $isAccessible = $mentorService->isLogbookAccessibleByMentor(mentorNni: $mentorNni, logbook: $logbook);
 
         // Vérification que l'accès est autorisé
-        self::assertTrue($isAccessible, 'Le mentor devrait avoir accès au carnet de l\'apprenant');
+        self::assertTrue(condition: $isAccessible, message: 'Le mentor devrait avoir accès au carnet de l\'apprenant');
 
         // Test avec un mentor incorrect (celui qui n'est pas associé à l'apprenant)
         $wrongMentor = UserTestHelper::createMentorUser();
-        $isAccessible = $mentorService->isLogbookAccessibleByMentor($wrongMentor->getNni(), $logbook);
+        $isAccessible = $mentorService->isLogbookAccessibleByMentor(mentorNni: $wrongMentor->getNni(), logbook: $logbook);
 
         // Vérification que l'accès n'est pas autorisé
-        self::assertFalse($isAccessible, 'Un mentor non associé ne devrait pas avoir accès au carnet de l\'apprenant');
+        self::assertFalse(condition: $isAccessible, message: 'Un mentor non associé ne devrait pas avoir accès au carnet de l\'apprenant');
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function isLogbookNotAccessibleByMentor(): void
     {
         $mentorNni = 'E54681';
@@ -173,6 +209,9 @@ class MentorServiceTest extends TestCase
         self::assertFalse(condition: $mentorService->isLogbookAccessibleByMentor(mentorNni: $mentorNni, logbook: $logbook));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function getPadawanData(): void
     {
         $mentor = $this->createMock(User::class);
@@ -211,6 +250,9 @@ class MentorServiceTest extends TestCase
         self::assertIsArray(actual: $result['actionsByTheme']);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function getPadawanDataAccessDenied(): void
     {
         $mentor = $this->createMock(originalClassName: User::class);
@@ -233,6 +275,9 @@ class MentorServiceTest extends TestCase
         $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function getPadawanDataThrowsAccessDeniedWhenNoPadawan(): void
     {
         $mentor = $this->createMock(originalClassName: User::class);
@@ -253,6 +298,101 @@ class MentorServiceTest extends TestCase
         $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
     }
 
+    /**
+     * @throws Exception
+     */
+    #[Test] public function getPadawanDataWithActionsWithoutModuleOrTheme(): void
+    {
+        $mentor = $this->createMock(User::class);
+        $mentor->method('getNni')->willReturn('M12345');
+
+        $logbook = $this->createMock(Logbook::class);
+        $padawan = $this->createMock(User::class);
+
+        // Action sans module
+        $actionWithoutModule = $this->createMock(Action::class);
+        $actionWithoutModule->method('getModule')->willReturn(null);
+
+        // Action avec module, mais sans thème
+        $moduleWithoutTheme = $this->createMock(Module::class);
+        $moduleWithoutTheme->method('getTheme')->willReturn(null);
+        $actionWithModuleWithoutTheme = $this->createMock(Action::class);
+        $actionWithModuleWithoutTheme->method('getModule')->willReturn($moduleWithoutTheme);
+
+        // Configurer le padawan
+        $padawan->method('getMentor')->willReturn($mentor);
+
+        // Configurer le logbook
+        $logbook->method('getOwner')->willReturn($padawan);
+        $logbook->method('getActions')->willReturn(new ArrayCollection([
+            $actionWithoutModule,
+            $actionWithModuleWithoutTheme
+        ]));
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $result = $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
+
+        self::assertSame($padawan, $result['padawan']);
+        self::assertSame($logbook, $result['logbook']);
+        self::assertEmpty($result['actionsByTheme']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test] public function getPadawanDataWithMixedActions(): void
+    {
+        $mentor = $this->createMock(User::class);
+        $mentor->method('getNni')->willReturn('M12345');
+
+        $logbook = $this->createMock(Logbook::class);
+        $padawan = $this->createMock(User::class);
+
+        // Action valide avec module et thème
+        $theme = $this->createMock(Theme::class);
+        $theme->method('getTitle')->willReturn('Theme 1');
+        $module = $this->createMock(Module::class);
+        $module->method('getTheme')->willReturn($theme);
+        $validAction = $this->createMock(Action::class);
+        $validAction->method('getModule')->willReturn($module);
+
+        // Action sans module
+        $actionWithoutModule = $this->createMock(Action::class);
+        $actionWithoutModule->method('getModule')->willReturn(null);
+
+        // Configurer le padawan
+        $padawan->method('getMentor')->willReturn($mentor);
+
+        // Configurer le logbook
+        $logbook->method('getOwner')->willReturn($padawan);
+        $logbook->method('getActions')->willReturn(new ArrayCollection([
+            $validAction,
+            $actionWithoutModule
+        ]));
+
+        $mentorService = new MentorService(
+            $this->userRepository,
+            $this->requestStack,
+            $this->entityManager
+        );
+
+        $result = $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
+
+        self::assertSame($padawan, $result['padawan']);
+        self::assertSame($logbook, $result['logbook']);
+        self::assertArrayHasKey('Theme 1', $result['actionsByTheme']);
+        self::assertCount(1, $result['actionsByTheme']['Theme 1']);
+        self::assertSame($validAction, $result['actionsByTheme']['Theme 1'][0]);
+    }
+
+    /**
+     * @throws Exception
+     */
     #[Test] public function deleteComment(): void
     {
         // 1. Créer un User
@@ -269,7 +409,7 @@ class MentorServiceTest extends TestCase
 
         // Ajouter un commentaire à l'action
         $action->setMentorComment(mentorComment: 'Commentaire du mentor');
-        $action->setMentorCommentedAt(mentorCommentedAt: new \DateTime()); // Date de commentaire
+        $action->setMentorCommentedAt(mentorCommentedAt: new DateTime()); // Date de commentaire
 
         // Avant la suppression
         self::assertNotNull($action->getMentorComment()); // Vérifiez que le commentaire existe
@@ -304,9 +444,12 @@ class MentorServiceTest extends TestCase
         // Ajoutez des attentes sur la méthode persist
         $this->entityManager->expects($this->once())
             ->method(constraint: 'persist')
-            ->with($this->equalTo($action));  // Vérifie que persist est appelé avec l'action correcte
+            ->with($this->equalTo($action))  // Vérifie que persist est appelé avec l'action correcte
+            ->willReturn(null);
+
         $this->entityManager->expects($this->once())
-            ->method(constraint: 'flush');
+            ->method(constraint: 'flush')
+            ->willReturn(null);
 
         // Appel de la méthode deleteComment
         $mentorService->deleteComment();
@@ -326,11 +469,14 @@ class MentorServiceTest extends TestCase
             entityManager: $this->entityManager
         );
 
-        $this->expectException(exception: \LogicException::class);
+        $this->expectException(exception: LogicException::class);
         $this->expectExceptionMessage(message: 'Impossible de récupérer la requête actuelle.');
         $mentorService->deleteComment();
     }
 
+    /**
+     * @throws Exception
+     */
     #[Test] public function deleteCommentThrowsAccessDeniedWhenActionNotFound(): void
     {
         // Créer un mock pour Request

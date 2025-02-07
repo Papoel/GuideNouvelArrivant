@@ -1216,3 +1216,7 @@ a:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre portée pour un effet de profondeur */
     transition: transform 0.3s ease; /* Transition douce pour le mouvement */
 }
+
+.fl-wrapper {
+    z-index: 100000 !important;
+}

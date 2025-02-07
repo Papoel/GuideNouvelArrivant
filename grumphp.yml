@@ -10,6 +10,8 @@ grumphp:
                 - "print_r("
             regexp_type: G
             match_word: true
+            ignore_patterns:
+                - "castor.php" # Exclure spécifiquement le fichier castor.php
         composer_script:
             script: before-commit
         git_commit_message:
