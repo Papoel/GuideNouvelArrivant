@@ -5,7 +5,6 @@ namespace App\Controller\Admin\User;
 use App\Entity\User;
 use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
-use App\Repository\UserRepository;
 use App\Services\Admin\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -35,7 +34,6 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-        private readonly UserRepository $userRepository,
     ) {
     }
 

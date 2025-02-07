@@ -232,7 +232,7 @@ function cdb(): void
 function phpunit(): void
 {
     //resetDbTest();
-    run(command: 'XDEBUG_MODE=coverage php bin/phpunit --testdox');
+    run(command: 'XDEBUG_MODE=coverage php bin/phpunit');
 }
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]

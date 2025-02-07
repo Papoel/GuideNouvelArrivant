@@ -60,8 +60,8 @@ class SecurityControllerTest extends WebTestCase
         // Vérification que nous sommes bien sur la page de login id du formulaire="loginForm"
         self::assertSelectorExists(selector: 'form#loginForm');
 
-        // Vérification de la présence des champs du formulaire email et password
-        self::assertSelectorExists(selector: 'input[name="email"]');
+        // Vérification de la présence des champs du formulaire identifier et password
+        self::assertSelectorExists(selector: 'input[name="identifier"]');
         self::assertSelectorExists(selector: 'input[name="password"]');
 
         // Vérification de la présence du bouton de soumission du formulaire nommé Connexion
@@ -73,7 +73,7 @@ class SecurityControllerTest extends WebTestCase
         self::assertSelectorTextSame(selector: 'a[href="#"]', text: 'Mot de passe oublié ?');
     }
 
-    #[Test] public function loginSuccessfulWithValidCredentials(): void
+    #[Test] public function loginSuccessfulWithValidEmailCredentials(): void
     {
         $client = static::createClient();
 
@@ -86,9 +86,9 @@ class SecurityControllerTest extends WebTestCase
         // Accès à la page de connexion
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
 
-        // Soumission du formulaire avec les identifiants corrects
+        // Soumission du formulaire avec l'email
         $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'email' => $user->getEmail(),
+            'identifier' => $user->getEmail(),
             'password' => 'password',
         ]);
         $client->submit($form);
@@ -98,51 +98,58 @@ class SecurityControllerTest extends WebTestCase
 
         // Vérifications
         self::assertResponseIsSuccessful();
-
-        // Variables de redirection
-        $uri = $client->getRequest()->getRequestUri();
-        $redirectedTo = '/dashboard/' . $user->getNni() . '/';
-
-        // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
-        self::assertStringStartsWith(prefix: $redirectedTo, string: $uri);
+        self::assertRouteSame('dashboard_index');
     }
 
-    #[Test] public function loginFailureWithInvalidCredentials(): void
+    #[Test] public function loginSuccessfulWithValidNNICredentials(): void
     {
         $client = static::createClient();
 
-        // Test avec email invalide et mot de passe correct
+        // Créer et persister l'utilisateur
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+        $user = UserTestHelper::createUser();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Accès à la page de connexion
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => 'invalid@email.com', 'password' => 'admin']);
 
-        $client->submit(form: $form);
-        $client->followRedirect(); // Suivre la redirection vers la page de connexion
+        // Soumission du formulaire avec le NNI
+        $form = $crawler->selectButton(value: 'Se connecter')->form([
+            'identifier' => $user->getNni(),
+            'password' => 'password',
+        ]);
+        $client->submit($form);
 
+        // Suivi de la redirection
+        $client->followRedirect();
+
+        // Vérifications
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert');
-        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
+        self::assertRouteSame('dashboard_index');
+    }
 
-        // Test avec email valide et mot de passe incorrect
+    #[Test] public function loginFailsWithInvalidCredentials(): void
+    {
+        $client = static::createClient();
+
+        // Accès à la page de connexion
         $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => $this->emailAdmin, 'password' => 'wrongpassword']);
 
-        $client->submit(form: $form);
-        $client->followRedirect(); // Suivre la redirection vers la page de connexion
+        // Soumission du formulaire avec des identifiants incorrects
+        $form = $crawler->selectButton(value: 'Se connecter')->form([
+            'identifier' => 'invalid@email.com',
+            'password' => 'wrongpassword',
+        ]);
+        $client->submit($form);
 
+        // Suivi de la redirection
+        $client->followRedirect();
+
+        // Vérifications
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert');
-        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
-
-        // Test avec email et mot de passe incorrects
-        $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
-        $form = $crawler->selectButton(value: 'Se connecter')->form(['email' => 'wrong@email.com', 'password' => 'wrongpassword']);
-
-        $client->submit(form: $form);
-        $client->followRedirect(); // Suivre la redirection vers la page de connexion
-
-        self::assertResponseIsSuccessful();
-        self::assertSelectorExists(selector: 'div.alert');
-        self::assertSelectorTextContains(selector: 'div.alert.error', text: 'Identifiants invalides.');
+        self::assertSelectorExists('div.alert.error');
+        self::assertSelectorTextContains('div.alert.error', 'Identifiants invalides.');
     }
 
     #[Test] public function authenticationSuccessThrowsExceptionForInvalidUserType(): void
@@ -152,7 +159,7 @@ class SecurityControllerTest extends WebTestCase
         // Créer et simuler une connexion
         $crawler = $client->request(method: 'GET', uri: $this->pathLogin);
         $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'email' => 'bruce.wayne@gotham.city',
+            'identifier' => 'bruce.wayne@gotham.city',
             'password' => 'admin',
         ]);
         $client->submit($form);

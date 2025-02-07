@@ -34,15 +34,14 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->getPayload()->getString(key: 'email');
-
-        $request->getSession()->set(name: SecurityRequestAttributes::LAST_USERNAME, value: $email);
+        $identifier = $request->getPayload()->getString('identifier');
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $identifier);
 
         return new Passport(
-            new UserBadge(userIdentifier: $email),
-            credentials: new PasswordCredentials(password: $request->getPayload()->getString(key: 'password')),
-            badges: [
-                new CsrfTokenBadge(csrfTokenId: 'authenticate', csrfToken: $request->getPayload()->getString(key: '_csrf_token')),
+            new UserBadge($identifier),
+            new PasswordCredentials($request->getPayload()->getString('password')),
+            [
+                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
                 new RememberMeBadge(),
             ]
         );

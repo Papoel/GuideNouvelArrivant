@@ -19,7 +19,7 @@ class DashboardControllerTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
     private UrlGeneratorInterface $urlGenerator;
-    private session $session;
+    private Session $session;
     private MainAuthenticator $authenticator;
 
     protected function setUp(): void
@@ -52,6 +52,40 @@ class DashboardControllerTest extends WebTestCase
         self::assertStringStartsWith($redirectedTo, $uri);
     }
 
+    #[Test] public function testUserIsRedirectedToDashboardAfterLoginWithEmail(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Utilisation de la méthode authenticateUser avec email
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
+
+        // Vérifications après authentification
+        self::assertResponseIsSuccessful();
+
+        // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
+        $uri = $client->getRequest()->getRequestUri();
+        $redirectedTo = '/dashboard/' . $user->getNni();
+        self::assertStringStartsWith($redirectedTo, $uri);
+    }
+
+    #[Test] public function testUserIsRedirectedToDashboardAfterLoginWithNNI(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Utilisation de la méthode authenticateUser avec NNI
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
+
+        // Vérifications après authentification
+        self::assertResponseIsSuccessful();
+
+        // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
+        $uri = $client->getRequest()->getRequestUri();
+        $redirectedTo = '/dashboard/' . $user->getNni();
+        self::assertStringStartsWith($redirectedTo, $uri);
+    }
+
     #[Test] public function iCanAuthenticateUser(): void
     {
         $client = static::createClient();
@@ -62,6 +96,28 @@ class DashboardControllerTest extends WebTestCase
 
         // Assertions sur l'authentification par défaut
         self::assertNotNull(actual: $user);
+    }
+
+    #[Test] public function iCanAuthenticateUserWithEmail(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Test avec email
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
+        self::assertNotNull($user);
+        self::assertResponseIsSuccessful();
+    }
+
+    #[Test] public function iCanAuthenticateUserWithNNI(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Test avec NNI
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
+        self::assertNotNull($user);
+        self::assertResponseIsSuccessful();
     }
 
     #[Test] public function guideTechniquePageIsAccessible(): void
@@ -83,5 +139,31 @@ class DashboardControllerTest extends WebTestCase
 
         // Vérifiez qu'un breadcrumb avec le lien vers la page d'accueil est présent
         self::assertSelectorTextContains(selector: '.breadcrumb-item a', text: 'Accueil');
+    }
+
+    #[Test] public function guideTechniquePageIsAccessibleAfterLoginWithEmail(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Test avec email
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
+        $client->request(Request::METHOD_GET, '/dashboard/' . $user->getNni() . '/guide-technique');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Guide Technique');
+        self::assertSelectorTextContains('.breadcrumb-item a', 'Accueil');
+    }
+
+    #[Test] public function guideTechniquePageIsAccessibleAfterLoginWithNNI(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get(id: EntityManagerInterface::class);
+
+        // Test avec NNI
+        [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
+        $client->request(Request::METHOD_GET, '/dashboard/' . $user->getNni() . '/guide-technique');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Guide Technique');
+        self::assertSelectorTextContains('.breadcrumb-item a', 'Accueil');
     }
 }
