@@ -12,8 +12,8 @@ grumphp:
             match_word: true
             ignore_patterns:
                 - "castor.php" # Exclure spécifiquement le fichier castor.php
-        #composer_script:
-        #    script: before-commit
+        composer_script:
+            script: before-commit
         git_commit_message:
             allow_empty_message: false # N'accepte pas les commits vides
             enforce_capitalized_subject: false # Garantit que la ligne d’objet du message de validation commence par une lettre majuscule.
