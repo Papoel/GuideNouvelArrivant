@@ -15,9 +15,10 @@ class AuthenticationHelper
      *
      * @param KernelBrowser $client Le client Symfony.
      * @param EntityManagerInterface $entityManager L'EntityManager pour gérer les entités.
+     * @param bool $useNni Utiliser le NNI pour l'authentification.
      * @return array [KernelBrowser $client, User $user] Le client connecté et l'utilisateur authentifié.
      */
-    public static function authenticateUser(KernelBrowser $client, EntityManagerInterface $entityManager): array
+    public static function authenticateUser(KernelBrowser $client, EntityManagerInterface $entityManager, bool $useNni = false): array
     {
         // Créer et persister un utilisateur
         $user = UserTestHelper::createUserAndAddLogbook($client);
@@ -30,7 +31,7 @@ class AuthenticationHelper
 
         // Soumission du formulaire avec les identifiants de l'utilisateur
         $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'email' => $user->getEmail(),
+            'identifier' => $useNni ? $user->getNni() : $user->getEmail(),
             'password' => 'password',
         ]);
         $client->submit(form: $form);
