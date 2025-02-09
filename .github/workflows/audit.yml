@@ -15,7 +15,7 @@ jobs:
           tools: composer:v2
 
       - name: Setup Cache
-        run: echo "COMPOSER_CACHE_DIR_=$(composer config cache-dir)" >> $GITHUB_ENV
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
       - name: Caching deps
         uses: actions/cache@v4
@@ -31,16 +31,16 @@ jobs:
       - name: install deps
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      - name: Security audit
+      - name: security audit
         run: |
-          composer audit \ 
-          --no-dev \
-          --abandoned="report" \
-          --ignore-severity="low" \
-          --ignore-severity="medium" \
-          --format="json" \
-          --no-ainsi \
-          > /tmp/security-audit.json
+          composer audit \
+            --no-dev \
+            --abandoned="report" \
+            --ignore-severity="low" \
+            --ignore-severity="medium" \
+            --format="json" \
+            --no-ansi \
+            > /tmp/security-audit.json
 
       - name: upload security audit report
         uses: actions/upload-artifact@v4
