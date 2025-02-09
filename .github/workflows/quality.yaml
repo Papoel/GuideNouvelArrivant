@@ -42,10 +42,10 @@ jobs:
         run: phpcpd ./src
 
       - name: Lint YAML
-        run: symfony lint:yaml config
+        run: php bin/console lint:yaml config
 
       - name: Lint Twig
-        run: symfony lint:twig templates
+        run: php bin/console lint:twig templates
 
       - name: Lint Container
-        run: symfony lint:container
+        run: php bin/console lint:container
