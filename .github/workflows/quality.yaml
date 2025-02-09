@@ -4,6 +4,7 @@ jobs:
   quality:
     name: Quality Analysis
     runs-on: ubuntu-latest
+    container: jakzal/phpqa:php8.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,5 +32,20 @@ jobs:
       - name: install deps
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
-      - name: Quality analysis
-        run: composer app:code-quality
+      - name: PHP-CS-Fixer
+        run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
+
+      - name: PHPStan
+        run: phpstan analyse --configuration=phpstan.neon
+
+      - name: PHPCPD
+        run: phpcpd ./src
+
+      - name: Lint YAML
+        run: symfony lint:yaml config
+
+      - name: Lint Twig
+        run: symfony lint:twig templates
+
+      - name: Lint Container
+        run: symfony lint:container

@@ -96,6 +96,20 @@
             "php bin/console doctrine:migrations:migrate --no-interaction",
             "php bin/console doctrine:fixtures:load --group=AppFixtures --no-interaction"
         ],
+        "qa:cs-fixer": "docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.3 php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run",
+        "qa:phpstan": "docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.3 phpstan analyse --configuration=phpstan.neon",
+        "qa:phpcpd": "docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.3 phpcpd ./src",
+        "qa:lint-yaml": "php bin/console lint:yaml config",
+        "qa:lint-twig": "php bin/console lint:twig templates",
+        "qa:lint-container": "php bin/console lint:container",
+        "app:code-quality": [
+            "@qa:cs-fixer",
+            "@qa:phpstan",
+            "@qa:phpcpd",
+            "@qa:lint-yaml",
+            "@qa:lint-twig",
+            "@qa:lint-container"
+        ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
