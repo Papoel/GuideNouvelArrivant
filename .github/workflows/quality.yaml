@@ -21,9 +21,7 @@ jobs:
             php8.2-composer-latest-
 
       - name: install deps
-        run: |
-          composer self-update
-          composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
         run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
