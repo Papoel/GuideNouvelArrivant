@@ -69,8 +69,7 @@ class SecurityControllerTest extends WebTestCase
         self::assertSelectorTextSame(selector: 'button[type="submit"]', text: 'Se connecter');
 
         // Vérification de la présence du lien "Mot de passe oublié ?" pointant vers "#"
-        // TODO: Création de la page de réinitialisation du mot de passe
-        self::assertSelectorTextSame(selector: 'a[href="#"]', text: 'Mot de passe oublié ?');
+        self::assertSelectorTextSame(selector: 'a[href="/reset-password"]', text: 'Mot de passe oublié ?');
     }
 
     #[Test] public function loginSuccessfulWithValidEmailCredentials(): void
