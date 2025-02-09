@@ -342,7 +342,7 @@ body.homepage {
 .impact-metrics {
     background: white;
     border-radius: 1rem;
-    padding: 3rem;
+    padding: 2.5rem;
     box-shadow: var(--homepage-card-shadow);
 }
 

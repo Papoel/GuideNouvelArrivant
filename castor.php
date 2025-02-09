@@ -224,7 +224,6 @@ function cdb(): void
 {
     run(command: 'symfony console doctrine:database:drop --force --env=test || true');
     run(command: 'symfony console doctrine:database:create --env=test');
-    run(command: 'symfony console doctrine:database:create --env=test');
     run(command: 'symfony console doctrine:migrations:migrate -n --env=test');
 }
 
