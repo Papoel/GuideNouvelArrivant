@@ -9,12 +9,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-          tools: composer:v2
-
       - name: Setup Cache
         run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
@@ -26,11 +20,10 @@ jobs:
           restore-keys: |
             php8.2-composer-latest-
 
-      - name: Update composer
-        run: composer self-update
-
       - name: install deps
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        run: |
+          composer self-update
+          composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: PHP-CS-Fixer
         run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
