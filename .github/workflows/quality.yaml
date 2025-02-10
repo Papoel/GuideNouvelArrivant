@@ -41,7 +41,10 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
-        run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run --diff
+        run: |
+          wget https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/download/v3.59.3/php-cs-fixer.phar -O php-cs-fixer
+          chmod +x php-cs-fixer
+          ./php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
 
       - name: PHPStan
         run: phpstan analyse --configuration=phpstan.neon
