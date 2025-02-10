@@ -41,8 +41,7 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
-        run: |
-          docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.2 php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
+        run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
 
       - name: PHPStan
         run: phpstan analyse --configuration=phpstan.neon
