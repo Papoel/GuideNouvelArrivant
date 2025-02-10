@@ -15,10 +15,6 @@ class HomeControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request(method: Request::METHOD_GET, uri: '/');
 
-        if (!$client->getResponse()->isSuccessful()) {
-            var_dump($client->getResponse()->getContent());
-        }
-
         self::assertResponseIsSuccessful();
         self::assertResponseStatusCodeSame(expectedCode: Response::HTTP_OK);
     }
