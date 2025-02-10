@@ -38,12 +38,16 @@ jobs:
             sleep 1
           done
 
-      - name: Prepare database
+      - name: Verify database configuration
         run: |
+          echo "Database port: ${{ job.services.database.ports['3306'] }}"
+          mysql -h 127.0.0.1 -P ${{ job.services.database.ports['3306'] }} -u root -proot -e "SHOW DATABASES;"
           mysql -h 127.0.0.1 -P ${{ job.services.database.ports['3306'] }} -u root -proot -e "CREATE DATABASE IF NOT EXISTS app_test;"
 
       - name: Tests
-        run: composer app:tests
+        run: |
+          export DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.database.ports['3306'] }}/app_test"
+          echo "Using DATABASE_URL: $DATABASE_URL"
+          composer app:tests
         env:
           APP_ENV: test
-          DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.database.ports['3306'] }}/app_test
