@@ -6,11 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       database:
-        image: mariadb:11.3.2
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: app_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
         ports:
           - 3306/tcp
         options: >-
@@ -18,7 +17,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-          --tmpfs=/var/lib/mysql
 
     steps:
       - name: Checkout
@@ -31,22 +29,8 @@ jobs:
           tools: composer:v2
           extensions: pdo, pdo_mysql
 
-      - name: Setup Cache
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
-
-      - name: Caching deps
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.COMPOSER_CACHE_DIR }}
-          key: php8.2-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php8.2-composer-latest-
-
-      - name: Update composer
-        run: composer self-update
-
       - name: Install deps
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: Wait for database
         run: |
