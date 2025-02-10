@@ -41,7 +41,7 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
-        run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
+        run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run --diff
 
       - name: PHPStan
         run: phpstan analyse --configuration=phpstan.neon
