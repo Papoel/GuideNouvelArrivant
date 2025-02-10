@@ -165,7 +165,7 @@ class ResetPasswordController extends AbstractController
         }
 
         $this->mailerService->sendEmail(
-            from: 'contact-gna@edf.fr',
+            from: 'contact@gna.papoel.fr',
             to: $email,
             subject: 'Réinitialisation du mot de passe',
             htmlTemplate: 'reset_password/email.html.twig',

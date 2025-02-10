@@ -6,7 +6,7 @@ use App\DataFixtures\LogbookFixtures;
 use App\DataFixtures\LogbookThemeFixtures;
 use App\DataFixtures\ModuleFixtures;
 use App\DataFixtures\ThemeFixtures;
-use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
+use App\Services\Datas\DataLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +30,7 @@ class PushFixturesCommand extends Command
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly SymfonyFixturesLoader $fixturesLoader,
+        private readonly DataLoader $dataLoader,
     ) {
         parent::__construct();
     }
@@ -44,7 +44,7 @@ class PushFixturesCommand extends Command
         );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): int
+    /*public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $skippedFixtures = $input->getOption(name: 'skip-fixtures') ?? $this->defaultSkippedFixtures;
@@ -68,6 +68,28 @@ class PushFixturesCommand extends Command
 
             // Execute fixtures with append option (true) to not purge the database
             $executor->execute(fixtures: $fixturesToLoad, append: true);
+
+            $io->success('Données chargées avec succès !');
+
+            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            $io->error('Une erreur est survenue lors du chargement des données: '.$e->getMessage());
+            $io->error(message: $e->getTraceAsString());
+
+            return Command::FAILURE;
+        }
+    }*/
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        try {
+            $io->info('Chargement des thèmes...');
+            $themes = $this->dataLoader->loadThemes();
+
+            $io->info('Chargement des modules...');
+            $this->dataLoader->loadModules($themes);
 
             $io->success('Données chargées avec succès !');
 

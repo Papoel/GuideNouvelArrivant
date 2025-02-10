@@ -24,4 +24,4 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # Ajouter cet alias pour le FixturesLoader
-    Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader: '@doctrine.fixtures.loader'
+    # Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader: '@doctrine.fixtures.loader'
