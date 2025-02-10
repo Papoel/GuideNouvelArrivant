@@ -38,6 +38,10 @@ jobs:
             sleep 1
           done
 
+      - name: Prepare database
+        run: |
+          mysql -h 127.0.0.1 -P ${{ job.services.database.ports['3306'] }} -u root -proot -e "CREATE DATABASE IF NOT EXISTS app_test;"
+
       - name: Tests
         run: composer app:tests
         env:
