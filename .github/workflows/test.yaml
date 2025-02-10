@@ -45,10 +45,10 @@ jobs:
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:schema:update --env=test --force
         env:
-          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
 
       - name: Tests
         run: |
           php vendor/phpunit/phpunit/phpunit --colors=always
         env:
-          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
