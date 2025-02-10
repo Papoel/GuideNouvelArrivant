@@ -10,7 +10,7 @@ jobs:
         env:
           MYSQL_DATABASE: db_compagnonnage
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: "mysql://root:@127.0.0.1:3306/db_compagnonnage?serverVersion=11.3.2-MariaDB&charset=utf8mb4"
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
