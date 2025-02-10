@@ -49,6 +49,9 @@ jobs:
 
       - name: Tests
         run: |
-          vendor/bin/phpunit --testdox --colors=always --display-warnings --display-errors 
+          vendor/bin/phpunit --testdox --colors=always --display-warnings --display-errors
         env:
           DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
+          APP_ENV: test
+          KERNEL_CLASS: 'App\Kernel'
+          SYMFONY_DEPRECATIONS_HELPER: disabled
