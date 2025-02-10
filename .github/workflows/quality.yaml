@@ -4,10 +4,23 @@ jobs:
   quality:
     name: Quality Analysis
     runs-on: ubuntu-latest
-    container: jakzal/phpqa:php8.2
+    container:
+      image: jakzal/phpqa:php8.2
+      options: --user root
     steps:
+      - name: Set safe directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          chown -R $(id -u):$(id -g) "$GITHUB_WORKSPACE"
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install XSL extension
+        run: |
+          apt-get update
+          apt-get install -y libxslt-dev
+          docker-php-ext-install xsl
 
       - name: Setup Cache
         run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
@@ -20,8 +33,12 @@ jobs:
           restore-keys: |
             php8.2-composer-latest-
 
+      - name: Validate composer.json
+        run: composer validate --strict
+
       - name: install deps
-        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
         run: php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
