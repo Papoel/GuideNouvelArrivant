@@ -8,7 +8,7 @@ jobs:
       database:
         image: mariadb:latest
         env:
-          MYSQL_DATABASE: db_gna
+          MYSQL_DATABASE: db_compagnonnage
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         ports:
