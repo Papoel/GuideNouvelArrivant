@@ -42,7 +42,7 @@ jobs:
 
       - name: PHP-CS-Fixer
         run: |
-          docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.3 php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
+          docker run --init --rm -v $(pwd):/project -w /project jakzal/phpqa:php8.2 php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
 
       - name: PHPStan
         run: phpstan analyse --configuration=phpstan.neon
