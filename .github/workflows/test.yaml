@@ -8,12 +8,17 @@ jobs:
       database:
         image: mariadb:latest
         env:
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: db_compagnonnage
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          DATABASE_URL: "mysql://root:@127.0.0.1:3306/db_compagnonnage?serverVersion=11.3.2-MariaDB&charset=utf8mb4"
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout
@@ -31,7 +36,7 @@ jobs:
 
       - name: Wait for database
         run: |
-          while ! mysqladmin ping -h"127.0.0.1" -P"${{ job.services.database.ports['3306'] }}" --silent; do
+          while ! mysqladmin ping -h"127.0.0.1" -P"3306" -uroot -proot --silent; do
             sleep 1
           done
 
@@ -41,7 +46,11 @@ jobs:
           php bin/console doctrine:database:drop --force --env=test --if-exists
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:schema:update --env=test --force
+        env:
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
 
       - name: Tests
         run: |
           php vendor/phpunit/phpunit/phpunit --colors=always
+        env:
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
