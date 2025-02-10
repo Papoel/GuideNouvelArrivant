@@ -41,6 +41,7 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: PHP-CS-Fixer
+        # "-trailing_comma_in_multiline" => Permet d'ignorer cette erreur qui se produit dans la pipeline mais pas en local ....
         run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline" --verbose --dry-run
 
       - name: PHPStan
