@@ -5,20 +5,18 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     services:
-      database:
-        image: mariadb:latest
+      mariadb:
+        image: mariadb:10.11
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: db_compagnonnage
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: db_compagnonnage
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -proot"
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=3
 
     steps:
       - name: Checkout
@@ -34,10 +32,10 @@ jobs:
       - name: Install deps
         run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      - name: Wait for database
+      - name: Wait for MariaDB
         run: |
           while ! mysqladmin ping -h"127.0.0.1" -P"3306" -uroot -proot --silent; do
-            sleep 1
+            sleep 2
           done
 
       - name: Database Creation
@@ -47,10 +45,10 @@ jobs:
           php bin/console doctrine:database:create --env=test
           php bin/console doctrine:schema:update --env=test --force
         env:
-          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11"
 
       - name: Tests
         run: |
           php vendor/phpunit/phpunit/phpunit --colors=always
         env:
-          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11.0"
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/db_compagnonnage?serverVersion=mariadb-10.11"
