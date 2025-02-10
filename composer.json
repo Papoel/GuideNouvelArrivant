@@ -102,6 +102,7 @@
         "qa:lint-yaml": "php bin/console lint:yaml config",
         "qa:lint-twig": "php bin/console lint:twig templates",
         "qa:lint-container": "php bin/console lint:container",
+        "app:tests": "vendor/bin/phpunit",
         "app:code-quality": [
             "@qa:cs-fixer",
             "@qa:phpstan",
