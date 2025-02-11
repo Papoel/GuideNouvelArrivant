@@ -11,12 +11,12 @@ class EnumJobAndSpecialityTest extends TestCase
 {
     #[Test] public function specialityEnumValues(): void
     {
-        self::assertSame(expected: ['Chaudronnerie', 'Levage', 'Mécanique', 'Robinetterie', 'Soudage'], actual: array_column(SpecialityEnum::cases(), column_key: 'value'));
+        self::assertSame(expected: ['Chaudronnerie', 'Levage', 'Mécanique', 'Robinetterie', 'Soudage', 'Examen Non Destructif'], actual: array_column(SpecialityEnum::cases(), column_key: 'value'));
     }
 
     #[Test] public function specialityEnumAbbreviations(): void
     {
-        self::assertSame(['CHA', 'LEV', 'MEC', 'ROB', 'SOU'], array_map(fn (SpecialityEnum $enum) => $enum->getAbbreviation(), SpecialityEnum::cases()));
+        self::assertSame(['CHA', 'LEV', 'MEC', 'ROB', 'SOU', 'END'], array_map(fn (SpecialityEnum $enum) => $enum->getAbbreviation(), SpecialityEnum::cases()));
     }
 
     #[Test] public function jobEnumValues(): void
