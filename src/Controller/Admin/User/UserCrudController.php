@@ -112,6 +112,7 @@ class UserCrudController extends AbstractCrudController
                 'Mécanique' => SpecialityEnum::MEC,
                 'Robinetterie' => SpecialityEnum::ROB,
                 'Soudage' => SpecialityEnum::SOU,
+                'Examen Non Destructif' => SpecialityEnum::END,
             ])
             ->onlyOnForms()
             ->setColumns(cols: 'col-md-6 col-sm-12')

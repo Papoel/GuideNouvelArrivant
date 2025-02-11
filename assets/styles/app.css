@@ -70,6 +70,14 @@ div.ribbon-sou:after{
     border-right-color: #3f157f;
 }
 
+.ribbon-end {
+    background: #23cea9; 
+}
+
+div.ribbon-end:after{
+    border-right-color: #1e9c8f;
+}
+
 .ribbon-mentor {
     background: linear-gradient(70deg, #FFD700, #FFEC8B, #FFD700, #FFEC8B, #FFD700);
     background-size: 200%;
