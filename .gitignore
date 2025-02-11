@@ -27,3 +27,7 @@
 ###> phpstorm ###
 /.idea/
 ###< phpstorm ###
+
+###> PROD ###
+.env.local.prod
+###< PROD ###
