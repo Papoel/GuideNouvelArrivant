@@ -444,12 +444,10 @@ class MentorServiceTest extends TestCase
         // Ajoutez des attentes sur la méthode persist
         $this->entityManager->expects($this->once())
             ->method(constraint: 'persist')
-            ->with($this->equalTo($action))  // Vérifie que persist est appelé avec l'action correcte
-            ->willReturn(null);
+            ->with($this->equalTo($action));  // Vérifie que persist est appelé avec l'action correcte
 
         $this->entityManager->expects($this->once())
-            ->method(constraint: 'flush')
-            ->willReturn(null);
+            ->method(constraint: 'flush');
 
         // Appel de la méthode deleteComment
         $mentorService->deleteComment();
