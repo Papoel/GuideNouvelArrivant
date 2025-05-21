@@ -175,8 +175,8 @@ class DashboardControllerTest extends WebTestCase
             // Vérifier que la redirection a lieu
             self::assertResponseRedirects();
 
-            // Vérifier que l'URL de redirection contient le bon contrôleur
-            self::assertStringContainsString('UserCrudController', $this->client->getResponse()->headers->get('Location'));
+            // Vérifier que l'URL de redirection contient le bon chemin
+            self::assertStringContainsString('/admin/user', $this->client->getResponse()->headers->get('Location'));
 
             // Nettoyer la base de données
             $this->entityManager->clear(); // Détache toutes les entités

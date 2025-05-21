@@ -10,8 +10,12 @@
 
 ###> phpunit/phpunit ###
 /phpunit.xml
+<<<<<<< ours
 .phpunit.result.cache
 /coverage/
+=======
+/.phpunit.cache/
+>>>>>>> theirs
 ###< phpunit/phpunit ###
 
 ###> symfony/phpunit-bridge ###
