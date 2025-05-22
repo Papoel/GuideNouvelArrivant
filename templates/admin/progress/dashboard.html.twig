@@ -252,6 +252,7 @@
                             <th>Validation tuteur</th>
                             <th>Dernière action</th>
                             <th class="text-center">Actions</th>
+                            <th class="text-center">PDF</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -343,6 +344,16 @@
                                         </a>
                                     {% else %}
                                         <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
+                                    {% endif %}
+                                </td>
+                                {# Bouton pour générer le carnet de compagnonnage en PDF #}
+                                <td class="text-center">
+                                    {% if user_data.logbook %}
+                                        <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
+                                            <i class="fas fa-file-pdf me-1"></i> PDF
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
                                     {% endif %}
                                 </td>
                             </tr>

@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\LogbookRepository;
+use App\Repository\UserRepository;
 use App\Services\Admin\ProgressTrackingService;
+use App\Services\Logbook\LogbookProgressService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,5 +83,75 @@ class ProgressController extends AbstractController
             'logbook' => $logbook,
             'progress' => $progress,
         ]);
+    }
+
+    /**
+     * Génère le carnet de compagnonnage en PDF pour un utilisateur.
+     */
+    #[Route('/generate-workbook/{id}', name: 'generate_workbook', methods: ['GET'])]
+    public function generateWorkbook(
+        string $id,
+        UserRepository $userRepository,
+        LogbookRepository $logbookRepository,
+        LogbookProgressService $logbookProgressService
+    ): Response {
+        // Récupérer l'utilisateur par son ID
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+
+        // Récupérer le carnet de l'utilisateur
+        $logbook = $logbookRepository->findOneBy(['owner' => $user]);
+
+        if (!$logbook) {
+            $this->addFlash('warning', 'Cet utilisateur n\'a pas de carnet de progression');
+            return $this->redirectToRoute('admin_progress_dashboard');
+        }
+
+        $progress = $logbookProgressService->calculateLogbookProgress($logbook);
+
+        // Configuration de Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'Helvetica');
+
+        $dompdf = new Dompdf($options);
+        
+        // Génération du HTML
+        $html = $this->renderView('pdf/workbook.html.twig', [
+            'user' => $user,
+            'logbook' => $logbook,
+            'progress' => $progress,
+            'date_generation' => new \DateTime()
+        ]);
+        
+        $dompdf->loadHtml($html);
+        
+        // Paramétrage de la première page en portrait
+        // Les pages suivantes seront configurées en paysage via CSS dans le template
+        $dompdf->setPaper('A4', 'portrait');
+        
+        // Rendu du PDF
+        $dompdf->render();
+        
+        // Génération du nom de fichier
+        $filename = sprintf('carnet-compagnonnage-%s-%s-%s.pdf', 
+            $user->getFirstname(), 
+            $user->getLastname(),
+            (new \DateTime())->format('d-m-Y')
+        );
+        
+        // Envoi du PDF au navigateur
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename)
+            ]
+        );
     }
 }
