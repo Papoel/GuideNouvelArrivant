@@ -114,5 +114,13 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud(label: 'Liste des modules', icon: 'fas fa-list', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_INDEX),
             MenuItem::linkToCrud(label: 'Créer modules', icon: 'fas fa-plus-circle', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_NEW),
         ]);
+
+        // Section Tableau de bord de progression
+        yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
+        yield MenuItem::linkToRoute(
+            label: 'Tableau de bord de progression',
+            icon: 'fas fa-chart-pie',
+            routeName: 'admin_progress_dashboard'
+        );
     }
 }
