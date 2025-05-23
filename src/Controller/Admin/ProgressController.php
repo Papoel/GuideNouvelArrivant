@@ -56,9 +56,9 @@ class ProgressController extends AbstractController
      */
     #[Route('/user/{id}', name: 'user_details', methods: ['GET'])]
     public function userProgressDetails(string $id,
-        \App\Repository\UserRepository $userRepository,
-        \App\Repository\LogbookRepository $logbookRepository,
-        \App\Services\Logbook\LogbookProgressService $logbookProgressService
+        UserRepository $userRepository,
+        LogbookRepository $logbookRepository,
+        LogbookProgressService $logbookProgressService
     ): Response {
         // Récupérer l'utilisateur par son ID
         $user = $userRepository->find($id);
@@ -107,6 +107,7 @@ class ProgressController extends AbstractController
 
         if (!$logbook) {
             $this->addFlash('warning', 'Cet utilisateur n\'a pas de carnet de progression');
+
             return $this->redirectToRoute('admin_progress_dashboard');
         }
 
@@ -119,38 +120,38 @@ class ProgressController extends AbstractController
         $options->set('defaultFont', 'Helvetica');
 
         $dompdf = new Dompdf($options);
-        
+
         // Génération du HTML
         $html = $this->renderView('pdf/workbook.html.twig', [
             'user' => $user,
             'logbook' => $logbook,
             'progress' => $progress,
-            'date_generation' => new \DateTime()
+            'date_generation' => new \DateTime(),
         ]);
-        
+
         $dompdf->loadHtml($html);
-        
+
         // Paramétrage de la première page en portrait
         // Les pages suivantes seront configurées en paysage via CSS dans le template
         $dompdf->setPaper('A4', 'portrait');
-        
+
         // Rendu du PDF
         $dompdf->render();
-        
+
         // Génération du nom de fichier
-        $filename = sprintf('carnet-compagnonnage-%s-%s-%s.pdf', 
-            $user->getFirstname(), 
+        $filename = sprintf('carnet-compagnonnage-%s-%s-%s.pdf',
+            $user->getFirstname(),
             $user->getLastname(),
             (new \DateTime())->format('d-m-Y')
         );
-        
+
         // Envoi du PDF au navigateur
         return new Response(
             $dompdf->output(),
             Response::HTTP_OK,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename)
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
             ]
         );
     }
