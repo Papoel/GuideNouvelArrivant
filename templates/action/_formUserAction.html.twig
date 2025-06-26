@@ -33,7 +33,14 @@
     </main>
 
     <div class="modal-footer">
-        {{ form_widget(form.submit) }}
+        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        
+        {% if form.agentComment.vars.value is not empty %}
+            <a href="{{ path('action_clear', {'id': action.id, 'nni': app.user.nni}) }}" class="btn btn-outline-danger ms-2">
+                <i class="bi bi-trash"></i> Supprimer le commentaire
+            </a>
+        {% endif %}
     </div>
+
 
 {{ form_end(form) }}

@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Action;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,18 +37,7 @@ class UserActionType extends AbstractType
                         ]),
                     ],
                 ]
-            )
-            ->add(
-                child: 'submit',
-                type: SubmitType::class,
-                options: [
-                    'label' => 'Sauvegarder',
-                    'attr' => [
-                        'class' => 'btn btn-sm btn-primary',
-                    ],
-                ]
-            )
-        ;
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -57,7 +45,6 @@ class UserActionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Action::class,
             'attr' => ['novalidate' => 'novalidate'],
-        ])
-        ;
+        ]);
     }
 }

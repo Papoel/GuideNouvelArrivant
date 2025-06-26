@@ -39,7 +39,6 @@ class UserActionTypeTest extends TypeTestCase
 
         // Vérifie que les champs existent dans le formulaire
         self::assertTrue(condition: $form->has(name: 'agentComment'));
-        self::assertTrue(condition: $form->has(name: 'submit'));
 
         // Vérifie les options des champs
         self::assertEquals(
@@ -61,20 +60,6 @@ class UserActionTypeTest extends TypeTestCase
                 ->get('agentComment')
                 ->getConfig()
                 ->getOption(name: 'required')
-        );
-        self::assertEquals(
-            expected: 'Sauvegarder',
-            actual: $form
-                ->get('submit')
-                ->getConfig()
-                ->getOption(name: 'label')
-        );
-        self::assertEquals(
-            expected: 'btn btn-sm btn-primary',
-            actual: $form
-                ->get('submit')
-                ->getConfig()
-                ->getOption(name: 'attr')['class']
         );
     }
 
@@ -116,10 +101,10 @@ class UserActionTypeTest extends TypeTestCase
 
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        
+
         $errors = $form->get('agentComment')->getErrors();
         $this->assertGreaterThan(0, count($errors));
-        
+
         $errorMessages = array_map(fn($error) => $error->getMessage(), iterator_to_array($errors));
         $this->assertContains(
             'Le commentaire doit faire au moins 2 caractères',
@@ -140,10 +125,10 @@ class UserActionTypeTest extends TypeTestCase
 
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        
+
         $errors = $form->get('agentComment')->getErrors();
         $this->assertGreaterThan(0, count($errors));
-        
+
         $errorMessages = array_map(fn($error) => $error->getMessage(), iterator_to_array($errors));
         $this->assertContains(
             'Le commentaire ne peut pas dépasser 1000 caractères',
@@ -160,14 +145,14 @@ class UserActionTypeTest extends TypeTestCase
 
         $action = new Action();
         $form = $this->formFactory->create(type: UserActionType::class, data: $action);
-        
+
         $this->expectException(\Symfony\Component\PropertyAccess\Exception\InvalidTypeException::class);
         $this->expectExceptionMessage('Expected argument of type "?string", "resource" given at property path "agentComment"');
         $form->submit(submittedData: $data);
     }
 
     // Test de la soumission avec des données invalides (champ vide)
-    #[Test] 
+    #[Test]
     public function submitEmptyData(): void
     {
         $data = [
@@ -183,10 +168,10 @@ class UserActionTypeTest extends TypeTestCase
         // Vérifie que le formulaire n'est pas valide
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        
+
         $errors = $form->get('agentComment')->getErrors();
         $this->assertGreaterThan(0, count($errors));
-        
+
         $errorMessages = array_map(fn($error) => $error->getMessage(), iterator_to_array($errors));
         $this->assertContains(
             'Un commentaire est requis, merci de laissé un petit mot à ton tuteur.',
@@ -195,7 +180,7 @@ class UserActionTypeTest extends TypeTestCase
     }
 
     // Test de la soumission avec des données nulles
-    #[Test] 
+    #[Test]
     public function submitNullData(): void
     {
         $data = [
@@ -211,10 +196,10 @@ class UserActionTypeTest extends TypeTestCase
         // Vérifie que le formulaire n'est pas valide
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        
+
         $errors = $form->get('agentComment')->getErrors();
         $this->assertGreaterThan(0, count($errors));
-        
+
         $errorMessages = array_map(fn($error) => $error->getMessage(), iterator_to_array($errors));
         $this->assertContains(
             'Un commentaire est requis, merci de laissé un petit mot à ton tuteur.',

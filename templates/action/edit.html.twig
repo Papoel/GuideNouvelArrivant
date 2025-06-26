@@ -15,15 +15,9 @@
                     {% if route == "mentor_logbook_action_edit" %}
                         {{ include('action/_formMentorAction.html.twig') }}
                     {% else %}
-                        {% if action.agentComment is not null %}
-                            <div class="container-fluid">
-                                <h1 class="title-guide-page h3">Modifier votre commentaire</h1>
-                            </div>
-                            {% else %}
-                            <div class="container-fluid">
-                                <h1 class="title-guide-page h3">Ajouter un commentaire</h1>
-                            </div>
-                        {% endif %}
+                        <div class="container-fluid">
+                            <h1 class="title-guide-page">{{ module.title }}</h1>
+                        </div>
                         {{ include('action/_formUserAction.html.twig') }}
                     {% endif %}
                 </div>

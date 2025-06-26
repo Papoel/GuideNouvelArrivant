@@ -7,11 +7,8 @@ namespace App\Tests\Controller\App\Dashboard;
 use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Entity\Theme;
-use App\Entity\User;
-use App\Tests\Utils\AuthenticationHelper;
 use App\Tests\Utils\UserTestHelper;
 use PHPUnit\Framework\Attributes\Test;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +48,8 @@ class ActionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         // 5. Test de l'action d'édition
-        $url = sprintf('/dashboard/%s/module/%s/carnet/%s/edit',
+        $url = sprintf(
+            '/dashboard/%s/module/%s/carnet/%s/edit',
             $user->getNni(),
             $module->getId(),
             $logbook->getId()
@@ -67,7 +65,6 @@ class ActionControllerTest extends WebTestCase
             [
                 'user_action' => [
                     'agentComment' => 'Test comment',
-                    'submit' => true,
                     '_token' => $token
                 ]
             ]

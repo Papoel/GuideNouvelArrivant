@@ -46,7 +46,14 @@
                                                 aria-expanded="false"
                                                 aria-controls="collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}">
                                             {{ theme.title }}
-                                            <span class="badge bg-primary rounded-pill ms-3">{{ theme.modules|length }}</span>
+                                            {% set completedModules = 0 %}
+                                            {% for module in theme.modules %}
+                                                {% set actionByCurrentUser = module.actions|filter(action => action.agentComment is not null and action.user == app.user) %}
+                                                {% if actionByCurrentUser|length > 0 %}
+                                                    {% set completedModules = completedModules + 1 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span class="badge {% if completedModules == theme.modules|length %}bg-success{% else %}bg-primary{% endif %} rounded-pill ms-3">{{ completedModules }} / {{ theme.modules|length }}</span>
                                         </button>
                                     </h2>
 

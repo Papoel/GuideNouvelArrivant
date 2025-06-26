@@ -1200,7 +1200,7 @@ a:hover {
 }
 
 .title-guide-page {
-    font-size: 2.5rem; /* Taille de la police */
+    font-size: 2rem; /* Taille de la police */
     font-weight: bold; /* Gras pour le titre */
     color: #2c3e50; /* Couleur sombre pour le texte */
     position: relative; /* Pour le pseudo-élément */

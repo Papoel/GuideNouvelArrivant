@@ -6,6 +6,7 @@ use App\Entity\Action;
 use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Form\UserActionType;
+use App\Repository\ActionRepository;
 use App\Services\Action\ActionService;
 use App\Services\Dashboard\DashboardService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,6 +64,7 @@ class ActionController extends AbstractController
         return $this->render(view: 'action/edit.html.twig', parameters: [
             'form' => $form,
             'action' => $action,
+            'module' => $module,
             'logbook' => $logbook,
         ]);
     }
@@ -84,5 +86,22 @@ class ActionController extends AbstractController
             ],
             status: Response::HTTP_SEE_OTHER
         );
+    }
+
+    #[Route('/{id}/comment-clear', name: 'action_clear', methods: ['GET'])]
+    public function clearComment(Action $action, ActionRepository $actionRepository): Response
+    {
+        $actionRepository->remove($action);
+
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Le commentaire a été supprimé avec succès.');
+
+        return $this->redirectToRoute(route: 'action_edit', parameters: [
+            'id' => $action->getId(),
+            'nni' => $action->getUser()->getNni(),
+            'moduleId' => $action->getModule()->getId(),
+            'logbookId' => $action->getLogbook()->getId(),
+        ]);
     }
 }
