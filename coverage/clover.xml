@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1751043472">
-  <project timestamp="1751043472">
+<coverage generated="1751044009">
+  <project timestamp="1751044009">
     <package name="App\Controller\Admin\Action">
       <file name="/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/src/Controller/Admin/Action/ActionCrudController.php">
         <class name="App\Controller\Admin\Action\ActionCrudController" namespace="App\Controller\Admin\Action">
           <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="11" coveredelements="11"/>
         </class>
-        <line num="15" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="17" type="stmt" count="2"/>
+        <line num="15" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="17" type="stmt" count="1"/>
         <line num="20" type="method" name="configureFields" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="22" type="stmt" count="1"/>
         <line num="24" type="stmt" count="1"/>
@@ -25,8 +25,8 @@
         <class name="App\Controller\Admin\DashboardController" namespace="App\Controller\Admin">
           <metrics complexity="7" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="61" coveredstatements="61" elements="66" coveredelements="66"/>
         </class>
-        <line num="27" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="34" type="stmt" count="6"/>
+        <line num="27" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="34" type="stmt" count="5"/>
         <line num="36" type="method" name="configureAssets" visibility="public" complexity="1" crap="1" count="2"/>
         <line num="38" type="stmt" count="2"/>
         <line num="39" type="stmt" count="2"/>
@@ -172,8 +172,8 @@
         <class name="App\Controller\Admin\Logbook\LogbookCrudController" namespace="App\Controller\Admin\Logbook">
           <metrics complexity="3" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="12" coveredelements="12"/>
         </class>
-        <line num="13" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="15" type="stmt" count="2"/>
+        <line num="13" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="15" type="stmt" count="1"/>
         <line num="18" type="method" name="configureFields" visibility="public" complexity="2" crap="2" count="2"/>
         <line num="20" type="stmt" count="2"/>
         <line num="21" type="stmt" count="2"/>
@@ -192,8 +192,8 @@
         <class name="App\Controller\Admin\Module\ModuleCrudController" namespace="App\Controller\Admin\Module">
           <metrics complexity="3" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="8" elements="12" coveredelements="10"/>
         </class>
-        <line num="15" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="17" type="stmt" count="2"/>
+        <line num="15" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="17" type="stmt" count="1"/>
         <line num="20" type="method" name="configureFields" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="22" type="stmt" count="1"/>
         <line num="23" type="stmt" count="1"/>
@@ -212,8 +212,8 @@
         <class name="App\Controller\Admin\Theme\ThemeCrudController" namespace="App\Controller\Admin\Theme">
           <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="10" coveredelements="10"/>
         </class>
-        <line num="14" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="16" type="stmt" count="2"/>
+        <line num="14" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="16" type="stmt" count="1"/>
         <line num="19" type="method" name="configureFields" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="21" type="stmt" count="1"/>
         <line num="22" type="stmt" count="1"/>
@@ -230,10 +230,10 @@
         <class name="App\Controller\Admin\User\UserCrudController" namespace="App\Controller\Admin\User">
           <metrics complexity="18" methods="9" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="170" coveredstatements="110" elements="179" coveredelements="113"/>
         </class>
-        <line num="34" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="16"/>
-        <line num="38" type="stmt" count="16"/>
-        <line num="40" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="42" type="stmt" count="2"/>
+        <line num="34" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="38" type="stmt" count="15"/>
+        <line num="40" type="method" name="getEntityFqcn" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="42" type="stmt" count="1"/>
         <line num="45" type="method" name="configureFields" visibility="public" complexity="3" crap="3" count="15"/>
         <line num="47" type="stmt" count="15"/>
         <line num="48" type="stmt" count="15"/>
@@ -1162,10 +1162,10 @@
         </class>
         <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
         <line num="17" type="stmt" count="5"/>
-        <line num="19" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="21" type="stmt" count="2"/>
-        <line num="22" type="stmt" count="2"/>
-        <line num="23" type="stmt" count="2"/>
+        <line num="19" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
         <line num="26" type="method" name="onBeforeEntityUpdated" visibility="public" complexity="5" crap="5" count="4"/>
         <line num="28" type="stmt" count="4"/>
         <line num="30" type="stmt" count="4"/>
@@ -1197,10 +1197,10 @@
         </class>
         <line num="16" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="4"/>
         <line num="21" type="stmt" count="4"/>
-        <line num="23" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="25" type="stmt" count="2"/>
-        <line num="26" type="stmt" count="2"/>
-        <line num="27" type="stmt" count="2"/>
+        <line num="23" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
         <line num="30" type="method" name="checkExistingLogbook" visibility="public" complexity="4" crap="4" count="3"/>
         <line num="32" type="stmt" count="3"/>
         <line num="34" type="stmt" count="3"/>
@@ -1222,11 +1222,11 @@
         </class>
         <line num="15" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
         <line num="18" type="stmt" count="6"/>
-        <line num="23" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="25" type="stmt" count="2"/>
-        <line num="26" type="stmt" count="2"/>
-        <line num="27" type="stmt" count="2"/>
-        <line num="28" type="stmt" count="2"/>
+        <line num="23" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
         <line num="31" type="method" name="nameLogbookWithUserFullname" visibility="public" complexity="2" crap="2" count="2"/>
         <line num="33" type="stmt" count="2"/>
         <line num="35" type="stmt" count="2"/>
@@ -1475,16 +1475,16 @@
         <class name="App\Repository\LogbookRepository" namespace="App\Repository">
           <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
         </class>
-        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="22"/>
-        <line num="16" type="stmt" count="22"/>
+        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="21"/>
+        <line num="16" type="stmt" count="21"/>
         <metrics loc="19" ncloc="16" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
       </file>
       <file name="/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/src/Repository/ModuleRepository.php">
         <class name="App\Repository\ModuleRepository" namespace="App\Repository">
           <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
         </class>
-        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="10"/>
-        <line num="16" type="stmt" count="10"/>
+        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="9"/>
+        <line num="16" type="stmt" count="9"/>
         <metrics loc="44" ncloc="18" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
       </file>
       <file name="/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/src/Repository/ResetPasswordRequestRepository.php">
@@ -1501,8 +1501,8 @@
         <class name="App\Repository\ThemeRepository" namespace="App\Repository">
           <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
         </class>
-        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="10"/>
-        <line num="16" type="stmt" count="10"/>
+        <line num="14" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="9"/>
+        <line num="16" type="stmt" count="9"/>
         <metrics loc="44" ncloc="18" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
       </file>
       <file name="/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/src/Repository/UserRepository.php">
@@ -1806,10 +1806,10 @@
       </file>
       <file name="/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/src/Services/Admin/UserDeletionService.php">
         <class name="App\Services\Admin\UserDeletionService" namespace="App\Services\Admin">
-          <metrics complexity="9" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="1" elements="21" coveredelements="2"/>
+          <metrics complexity="9" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="0" elements="21" coveredelements="0"/>
         </class>
-        <line num="10" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="13" type="stmt" count="1"/>
+        <line num="10" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="13" type="stmt" count="0"/>
         <line num="15" type="method" name="deleteUserOnly" visibility="public" complexity="3" crap="12" count="0"/>
         <line num="18" type="stmt" count="0"/>
         <line num="19" type="stmt" count="0"/>
@@ -1829,7 +1829,7 @@
         <line num="50" type="stmt" count="0"/>
         <line num="51" type="stmt" count="0"/>
         <line num="54" type="stmt" count="0"/>
-        <metrics loc="57" ncloc="52" classes="1" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="1" elements="21" coveredelements="2"/>
+        <metrics loc="57" ncloc="52" classes="1" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="0" elements="21" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services\Dashboard">
@@ -2306,6 +2306,6 @@
         <metrics loc="102" ncloc="95" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="28" coveredstatements="0" elements="31" coveredelements="0"/>
       </file>
     </package>
-    <metrics files="55" loc="5001" ncloc="4471" classes="55" methods="261" coveredmethods="202" conditionals="0" coveredconditionals="0" statements="1658" coveredstatements="943" elements="1919" coveredelements="1145"/>
+    <metrics files="55" loc="5001" ncloc="4471" classes="55" methods="261" coveredmethods="201" conditionals="0" coveredconditionals="0" statements="1658" coveredstatements="942" elements="1919" coveredelements="1143"/>
   </project>
 </coverage>

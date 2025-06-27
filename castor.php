@@ -11,6 +11,7 @@ use function Castor\parallel;
 use function Castor\run;
 
 /* ******************** 🐳 DOCKER 🐳 ******************** */
+
 #[AsTask(description: 'start docker containers')]
 function up(): void
 {
@@ -57,7 +58,6 @@ function simpleStart(): void
         fn() => run(command: 'phpstorm .'),
         fn() => run(command: 'open https://localhost:8000')
     );
-
 }
 
 /* ******************** 📜 DOCTRINE 📜 ******************** */
@@ -231,7 +231,8 @@ function cdb(): void
 function phpunit(): void
 {
     //resetDbTest();
-    run(command: 'XDEBUG_MODE=coverage php bin/phpunit');
+    // run(command: 'XDEBUG_MODE=coverage php bin/phpunit');
+    run(command: 'php bin/phpunit --testdox');
 }
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]
@@ -269,7 +270,6 @@ function testsCoverage(): void
     } else {
         phpunitCoverage();
     }
-
 }
 
 /* ******************** 🌐 ASSETS 🌐 ******************** */
@@ -540,7 +540,7 @@ function createPhpStanNeon(): void
     }
 
     // Créer le contenu du fichier phpstan.neon
-$content = "cat <<EOL > phpstan.neon
+    $content = "cat <<EOL > phpstan.neon
 parameters:
   level: max
   paths:
