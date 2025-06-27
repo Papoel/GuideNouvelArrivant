@@ -22,42 +22,25 @@ class ProgressTrackingService
     }
 
     /**
-     * Récupère les statistiques de progression pour tous les utilisateurs
-     * Version avec pagination et recherche.
-     *
-     * @param string|null $searchTerm Terme de recherche (optionnel)
-     * @param int         $page       Page courante (commence à 1)
-     * @param int         $limit      Nombre d'éléments par page
-     *
-     * @return array [
-     *               'users' => [
-     *               [
-     *               'user' => User,
-     *               'progress' => [
-     *               'agent_progress' => float,
-     *               'mentor_progress' => float,
-     *               'total_modules' => int,
-     *               ...
-     *               ],
-     *               'logbook' => Logbook,
-     *               'mentor' => User|null,
-     *               'last_action_date' => \DateTime|null
-     *               ],
-     *               ...
-     *               ],
-     *               'global_stats' => [
-     *               'total_users' => int,
-     *               'average_agent_progress' => float,
-     *               'average_mentor_progress' => float,
-     *               ...
-     *               ],
-     *               'pagination' => [
-     *               'currentPage' => int,
-     *               'totalPages' => int,
-     *               'totalItems' => int,
-     *               'itemsPerPage' => int
-     *               ]
-     *               ]
+     * @return array{
+     *     users: array<array{
+     *         user: \App\Entity\User,
+     *         progress: array<string, mixed>,
+     *         logbook: \App\Entity\Logbook|null,
+     *         mentor: \App\Entity\User|null,
+     *         last_action_date: \DateTimeInterface|null,
+     *         hiring_date: \DateTimeInterface|null,
+     *         days_since_hiring: int|null
+     *     }>,
+     *     global_stats: array<string, int|float>,
+     *     pagination: array{
+     *         currentPage: int,
+     *         totalPages: int,
+     *         totalItems: int,
+     *         itemsPerPage: int
+     *     },
+     *     search_term: string|null
+     * }
      */
     public function getUsersProgressData(?string $searchTerm = null, int $page = 1, int $limit = 25): array
     {
@@ -127,7 +110,13 @@ class ProgressTrackingService
     }
 
     /**
-     * Récupère les statistiques globales pour tous les utilisateurs.
+     * @return array{
+     *     total_users: int,
+     *     users_with_logbook: int,
+     *     users_with_mentor_validation: int,
+     *     average_agent_progress: float,
+     *     average_mentor_progress: float
+     * }
      */
     private function getGlobalStatistics(): array
     {
@@ -169,7 +158,14 @@ class ProgressTrackingService
     }
 
     /**
-     * Récupère les statistiques par thème pour visualisation.
+     * @return array<array{
+     *     theme: \App\Entity\Theme,
+     *     total_modules: int,
+     *     modules_completed_by_agent: int,
+     *     modules_validated_by_mentor: int,
+     *     agent_progress: float,
+     *     mentor_progress: float
+     * }>
      */
     public function getThemeProgressData(): array
     {
@@ -256,6 +252,6 @@ class ProgressTrackingService
         $now = new \DateTimeImmutable();
         $diff = $now->diff($hiringDate);
 
-        return $diff->days;
+        return is_int($diff->days) ? $diff->days : null;
     }
 }

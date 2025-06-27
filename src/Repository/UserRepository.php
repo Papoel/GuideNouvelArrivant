@@ -62,6 +62,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByRole(string $role): array
     {
         // Récupérer tous les utilisateurs
+        /** @var User[] $allUsers */
         $allUsers = $this->findAll();
 
         // Filtrer les utilisateurs qui ont le rôle spécifié
@@ -94,14 +95,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             );
 
             $qb->where($searchCondition)
-               ->setParameter('search', '%'.$searchTerm.'%');
+                ->setParameter('search', '%'.$searchTerm.'%');
         }
 
         // Tri par nom
         $qb->orderBy('u.lastname', 'ASC')
-           ->addOrderBy('u.firstname', 'ASC');
+            ->addOrderBy('u.firstname', 'ASC');
 
         // Exécution de la requête pour obtenir tous les utilisateurs (sans la pagination)
+        /** @var User[] $allUsers */
         $allUsers = $qb->getQuery()->getResult();
 
         // Filtrage manuel par rôle (comme dans findByRole)
@@ -113,7 +115,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $totalItems = count($filteredUsers);
 
         // Calcul du nombre total de pages
-        $totalPages = ceil($totalItems / $limit);
+        $totalPages = (int) ceil($totalItems / $limit);
 
         // Application manuelle de la pagination
         $offset = ($page - 1) * $limit;

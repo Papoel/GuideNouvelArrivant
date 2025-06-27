@@ -73,35 +73,41 @@ class ActionController extends AbstractController
     public function delete(string $nni, Request $request, Action $action, EntityManagerInterface $entityManager): Response
     {
         $datas = $this->dashboardService->getDashboardData($nni);
+        $user = $datas['user'];
 
-        if ($this->isCsrfTokenValid(id: 'delete'.$action->getId(), token: $request->getPayload()->getString(key: '_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$action->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($action);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute(
-            route: 'action_index',
-            parameters: [
-                'nni' => $datas['user']->getNni(),
-            ],
-            status: Response::HTTP_SEE_OTHER
+            'action_index',
+            ['nni' => $user->getNni()],
+            Response::HTTP_SEE_OTHER
         );
     }
 
     #[Route('/{id}/comment-clear', name: 'action_clear', methods: ['GET'])]
     public function clearComment(Action $action, ActionRepository $actionRepository): Response
     {
-        $actionRepository->remove($action);
+        $user = $action->getUser();
+        $module = $action->getModule();
+        $logbook = $action->getLogbook();
 
+        if (!$user || !$module || !$logbook) {
+            throw new \RuntimeException('Action incomplète : utilisateur, module ou carnet manquant.');
+        }
+
+        $actionRepository->remove($action);
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Le commentaire a été supprimé avec succès.');
 
         return $this->redirectToRoute(route: 'action_edit', parameters: [
             'id' => $action->getId(),
-            'nni' => $action->getUser()->getNni(),
-            'moduleId' => $action->getModule()->getId(),
-            'logbookId' => $action->getLogbook()->getId(),
+            'nni' => $user->getNni(),
+            'moduleId' => $module->getId(),
+            'logbookId' => $logbook->getId(),
         ]);
     }
 }

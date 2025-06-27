@@ -32,7 +32,9 @@ class ProgressController extends AbstractController
     public function dashboard(Request $request): Response
     {
         // Récupération des paramètres de recherche et de pagination
-        $searchTerm = $request->query->get('search', null);
+        $rawSearchTerm = $request->query->get('search', null);
+        $searchTerm = is_string($rawSearchTerm) ? $rawSearchTerm : null;
+
         $page = max(1, (int) $request->query->get('page', 1));
         $limit = 25; // Nombre d'éléments par page
 
@@ -55,7 +57,8 @@ class ProgressController extends AbstractController
      * Affiche les détails de progression d'un utilisateur spécifique.
      */
     #[Route('/user/{id}', name: 'user_details', methods: ['GET'])]
-    public function userProgressDetails(string $id,
+    public function userProgressDetails(
+        string $id,
         UserRepository $userRepository,
         LogbookRepository $logbookRepository,
         LogbookProgressService $logbookProgressService
@@ -139,7 +142,8 @@ class ProgressController extends AbstractController
         $dompdf->render();
 
         // Génération du nom de fichier
-        $filename = sprintf('carnet-compagnonnage-%s-%s-%s.pdf',
+        $filename = sprintf(
+            'carnet-compagnonnage-%s-%s-%s.pdf',
             $user->getFirstname(),
             $user->getLastname(),
             (new \DateTime())->format('d-m-Y')
