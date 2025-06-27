@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Revue du retour d'expérience{% endblock %}
+
+{% block body %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Revue du retour d'expérience</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}">Liste des REX</a></li>
+                    <li class="breadcrumb-item active">Revue</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                Détail du retour d'expérience
+                                {% set badge_class = {
+                                    'integration_process': 'bg-primary',
+                                    'training': 'bg-success',
+                                    'documentation': 'bg-info',
+                                    'tools': 'bg-warning',
+                                    'communication': 'bg-secondary',
+                                    'other': 'bg-dark'
+                                } %}
+                                
+                                {% set category_labels = {
+                                    'integration_process': 'Processus d\'intégration',
+                                    'training': 'Formation',
+                                    'documentation': 'Documentation',
+                                    'tools': 'Outils',
+                                    'communication': 'Communication',
+                                    'other': 'Autre'
+                                } %}
+                                
+                                <span class="badge {{ badge_class[feedback.category] }}">
+                                    {{ category_labels[feedback.category] }}
+                                </span>
+                            </h5>
+
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">{{ feedback.title }}</h6>
+                                        <small class="text-muted">{{ feedback.createdAt|date('d/m/Y H:i') }}</small>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">{{ feedback.content|nl2br }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <small class="text-muted">Par {{ feedback.author.fullname }}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if feedback.isReviewed %}
+                                <div class="alert alert-success">
+                                    <h6 class="alert-heading">Commentaire du manager</h6>
+                                    <p>{{ feedback.managerComment|nl2br }}</p>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <small>Traité par: {{ feedback.reviewedBy.fullname }}</small>
+                                        <small>Le: {{ feedback.reviewAt|date('d/m/Y H:i') }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-left me-1"></i> Retour à la liste
+                                    </a>
+                                </div>
+                            {% else %}
+                                <form method="post" action="{{ path('dashboard_feedback_review', {'nni': app.user.nni, 'id': feedback.id}) }}">
+                                    <div class="mb-3">
+                                        <label for="managerComment" class="form-label">Votre commentaire</label>
+                                        <textarea class="form-control" id="managerComment" name="managerComment" rows="5" required></textarea>
+                                        <div class="form-text">Votre analyse et vos recommandations suite à ce retour d'expérience.</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Annuler
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle me-1"></i> Valider le traitement
+                                        </button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau retour d'expérience{% endblock %}
+
+{% block body %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Nouveau retour d'expérience</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
+                    <li class="breadcrumb-item active">Nouveau REX</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">Partagez votre retour d'expérience</h5>
+
+                            {{ form_start(form) }}
+                            <div class="mb-3">
+                                {{ form_label(form.title) }}
+                                {{ form_widget(form.title) }}
+                                {{ form_errors(form.title) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_label(form.category) }}
+                                {{ form_widget(form.category) }}
+                                {{ form_errors(form.category) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form_label(form.content) }}
+                                {{ form_widget(form.content) }}
+                                {{ form_errors(form.content) }}
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="btn btn-secondary">Annuler</a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send me-1"></i> Envoyer
+                                </button>
+                            </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
+{% endblock %}

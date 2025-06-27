@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des retours d'expérience{% endblock %}
+
+{% block body %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Capitalisation des retours d'expérience</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
+                    <li class="breadcrumb-item active">Liste des REX</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">Retours d'expérience</h5>
+                            
+                            {% if feedbacks is empty %}
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Aucun retour d'expérience n'a été soumis pour le moment.
+                                </div>
+                            {% else %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Auteur</th>
+                                                <th>Titre</th>
+                                                <th>Catégorie</th>
+                                                <th>Statut</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for feedback in feedbacks %}
+                                                <tr>
+                                                    <td>{{ feedback.createdAt|date('d/m/Y') }}</td>
+                                                    <td>{{ feedback.author.fullname }}</td>
+                                                    <td>{{ feedback.title }}</td>
+                                                    <td>
+                                                        {% set badge_class = {
+                                                            'integration_process': 'bg-primary',
+                                                            'training': 'bg-success',
+                                                            'documentation': 'bg-info',
+                                                            'tools': 'bg-warning',
+                                                            'communication': 'bg-secondary',
+                                                            'other': 'bg-dark'
+                                                        } %}
+                                                        
+                                                        {% set category_labels = {
+                                                            'integration_process': 'Processus d\'intégration',
+                                                            'training': 'Formation',
+                                                            'documentation': 'Documentation',
+                                                            'tools': 'Outils',
+                                                            'communication': 'Communication',
+                                                            'other': 'Autre'
+                                                        } %}
+                                                        
+                                                        <span class="badge {{ badge_class[feedback.category] }}">
+                                                            {{ category_labels[feedback.category] }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {% if feedback.isReviewed %}
+                                                            <span class="badge bg-success">Traité</span>
+                                                        {% else %}
+                                                            <span class="badge bg-warning text-dark">En attente</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ path('dashboard_feedback_review', {'nni': app.user.nni, 'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                            {% if feedback.isReviewed %}
+                                                                <i class="bi bi-eye"></i> Voir
+                                                            {% else %}
+                                                                <i class="bi bi-check-circle"></i> Traiter
+                                                            {% endif %}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
+{% endblock %}

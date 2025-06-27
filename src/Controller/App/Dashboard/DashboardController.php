@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\App\Dashboard;
 
+use App\Entity\Feedback;
+use App\Form\FeedbackType;
 use App\Repository\LogbookRepository;
 use App\Repository\UserRepository;
 use App\Services\Dashboard\DashboardService;
@@ -18,10 +20,20 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardController extends AbstractController
 {
     #[Route('/', name: 'index', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function index(string $nni, DashboardService $dashboardService, LogbookRepository $logbookRepository, UserRepository $userRepository): Response
+    public function index(string $nni, Request $request, DashboardService $dashboardService, LogbookRepository $logbookRepository, UserRepository $userRepository): Response
     {
+        // Création du formulaire de feedback pour la sidebar
+        $feedback = new Feedback();
+        $feedbackForm = $this->createForm(FeedbackType::class, $feedback, [
+            'action' => $this->generateUrl('dashboard_feedback_new', ['nni' => $nni]),
+            'method' => 'POST',
+        ]);
+        
         // Appel au DashboardService pour obtenir les données en fonction du NNI
         $dashboardData = $dashboardService->getDashboardData($nni);
+        
+        // Ajout du formulaire de feedback aux données du tableau de bord
+        $dashboardData['feedback_form'] = $feedbackForm->createView();
 
         // Rendu du tableau de bord avec les données obtenues
         return $this->render(view: 'app/dashboard/dashboard.html.twig', parameters: $dashboardData);

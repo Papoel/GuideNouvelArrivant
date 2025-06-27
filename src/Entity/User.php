@@ -128,15 +128,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Feedback>
      */
-    #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author')]
-    private Collection $feedback;
-
+    #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', cascade: ['remove'])]
+    private Collection $feedbacks;
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->logbooks = new ArrayCollection();
         $this->actions = new ArrayCollection();
-        $this->feedback = new ArrayCollection();
+        $this->feedbacks = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -260,7 +259,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $firstname = ucfirst($this->firstname);
         $lastname = ucfirst($this->lastname);
 
-        return $firstname.' '.$lastname;
+        return $firstname . ' ' . $lastname;
     }
 
     public function getJob(): ?JobEnum
@@ -424,13 +423,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $parts = [];
         if ($years > 0) {
-            $parts[] = "$years an".($years > 1 ? 's' : '');
+            $parts[] = "$years an" . ($years > 1 ? 's' : '');
         }
         if ($months > 0) {
             $parts[] = "$months mois";
         }
         if ($days > 0) {
-            $parts[] = "$days jour".($days > 1 ? 's' : '');
+            $parts[] = "$days jour" . ($days > 1 ? 's' : '');
         }
 
         return implode(' ', $parts);
@@ -441,13 +440,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getFeedback(): Collection
     {
-        return $this->feedback;
+        return $this->feedbacks;
     }
 
     public function addFeedback(Feedback $feedback): static
     {
-        if (!$this->feedback->contains($feedback)) {
-            $this->feedback->add($feedback);
+        if (!$this->feedbacks->contains($feedback)) {
+            $this->feedbacks->add($feedback);
             $feedback->setAuthor($this);
         }
 
@@ -456,7 +455,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeFeedback(Feedback $feedback): static
     {
-        if ($this->feedback->removeElement($feedback)) {
+        if ($this->feedbacks->removeElement($feedback)) {
             // set the owning side to null (unless already changed)
             if ($feedback->getAuthor() === $this) {
                 $feedback->setAuthor(null);
