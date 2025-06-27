@@ -232,7 +232,7 @@ function phpunit(): void
 {
     //resetDbTest();
     // run(command: 'XDEBUG_MODE=coverage php bin/phpunit');
-    run(command: 'php bin/phpunit --testdox');
+    run(command: 'php bin/phpunit');
 }
 
 #[AsTask(description: 'Exécuter les tests avec PHPUnit et arrêter à la première erreur')]
@@ -507,15 +507,6 @@ function beforeCommit(): void
     } else {
         phpunit();
     }
-
-
-    /** BUG : Problème de dépréciation */
-    /*if (io()->confirm(question: 'Voulez-vous exécuter les metrics ?', default: false)) {
-        parallel(
-            fn() => qaPhpMetrics(),
-            fn() => testsCoverage(),
-        );
-    }*/
 
     // Success message
     io()->success('Tous les outils de qualité du code ont été exécutés avec succès, vous pouvez maintenant commiter vos modifications.');

@@ -27,12 +27,13 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <!-- Permet de générer automatiquement le dossier coverage à chaque exécution des tests -->
+    <!-- <coverage>
         <report>
             <html outputDirectory="coverage"/>
             <clover outputFile="coverage/clover.xml"/>
         </report>
-    </coverage>
+    </coverage> -->
 
     <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
