@@ -24,6 +24,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.2-purple.svg)
 ![Symfony](https://img.shields.io/badge/Symfony-7.1-black.svg)
 ![License](https://img.shields.io/badge/license-proprietary-red.svg)
+![CI/CD](https://github.com/Papoel/GuideNouvelArrivant/workflows/Quality%20Analysis/badge.svg)
 
 Application de livret de compagnonnage moderne, intuitive et collaborative, qui sert de référence pour l'intégration des nouveaux arrivants et améliore leur expérience dès leur arrivée dans l'entreprise.
 
