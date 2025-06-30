@@ -23,7 +23,7 @@
                     <div class="card">
                         <div class="card-body p-4">
                             <h5 class="card-title">Retours d'expérience</h5>
-                            
+
                             {% if feedbacks is empty %}
                                 <div class="alert alert-info">
                                     <i class="bi bi-info-circle me-2"></i>
@@ -57,7 +57,7 @@
                                                             'communication': 'bg-secondary',
                                                             'other': 'bg-dark'
                                                         } %}
-                                                        
+
                                                         {% set category_labels = {
                                                             'integration_process': 'Processus d\'intégration',
                                                             'training': 'Formation',
@@ -66,7 +66,7 @@
                                                             'communication': 'Communication',
                                                             'other': 'Autre'
                                                         } %}
-                                                        
+
                                                         <span class="badge {{ badge_class[feedback.category] }}">
                                                             {{ category_labels[feedback.category] }}
                                                         </span>
@@ -79,7 +79,7 @@
                                                         {% endif %}
                                                     </td>
                                                     <td>
-                                                        <a href="{{ path('dashboard_feedback_review', {'nni': app.user.nni, 'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                        <a href="{{ path('my_feedbacks_review', {'nni': app.user.nni, 'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary">
                                                             {% if feedback.isReviewed %}
                                                                 <i class="bi bi-eye"></i> Voir
                                                             {% else %}

@@ -19,7 +19,7 @@ class FeedbackType extends AbstractType
                 'label' => 'Titre',
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Titre de votre retour d\'expérience'
+                    'placeholder' => 'Titre de votre retour d\'expérience',
                 ],
                 'required' => true,
             ])
@@ -34,7 +34,7 @@ class FeedbackType extends AbstractType
                     'Autre' => 'other',
                 ],
                 'attr' => [
-                    'class' => 'form-select'
+                    'class' => 'form-select',
                 ],
                 'required' => true,
             ])
@@ -43,7 +43,7 @@ class FeedbackType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                     'rows' => 5,
-                    'placeholder' => 'Détaillez votre retour d\'expérience...'
+                    'placeholder' => 'Détaillez votre retour d\'expérience...',
                 ],
                 'required' => true,
             ])

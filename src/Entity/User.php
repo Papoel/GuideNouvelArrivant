@@ -130,6 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', cascade: ['remove'])]
     private Collection $feedbacks;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
@@ -259,7 +260,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $firstname = ucfirst($this->firstname);
         $lastname = ucfirst($this->lastname);
 
-        return $firstname . ' ' . $lastname;
+        return $firstname.' '.$lastname;
     }
 
     public function getJob(): ?JobEnum
@@ -423,13 +424,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $parts = [];
         if ($years > 0) {
-            $parts[] = "$years an" . ($years > 1 ? 's' : '');
+            $parts[] = "$years an".($years > 1 ? 's' : '');
         }
         if ($months > 0) {
             $parts[] = "$months mois";
         }
         if ($days > 0) {
-            $parts[] = "$days jour" . ($days > 1 ? 's' : '');
+            $parts[] = "$days jour".($days > 1 ? 's' : '');
         }
 
         return implode(' ', $parts);

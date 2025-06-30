@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Feedback
 {
     use TimestampTrait;
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,7 +37,7 @@ class Feedback
         minMessage: 'Le contenu doit contenir au moins {{ limit }} caractères.'
     )]
     private ?string $content = null;
-    
+
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: 'Veuillez sélectionner une catégorie.')]
     private ?string $category = null;
@@ -146,7 +146,7 @@ class Feedback
 
         return $this;
     }
-    
+
     public function getCategory(): ?string
     {
         return $this->category;

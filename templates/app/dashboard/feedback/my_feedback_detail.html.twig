@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du retour d'expérience{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <!-- En-tête avec bordure latérale élégante -->
+        <div class="dashboard-header d-flex justify-content-between align-items-center mb-4 border-start border-primary ps-3" style="border-left-width: 5px !important; border-left-color: #3d5f9e !important;">
+            <div>
+                <h1 class="text-dark fw-bold"><i class="fas fa-comment-dots me-3 text-primary"></i>Détail du retour d'expérience</h1>
+                <p class="text-muted mb-0 mt-2 fw-light">Consultez les détails de votre retour d'expérience</p>
+            </div>
+            <a href="{{ path('my_feedbacks_index', {'nni': nni}) }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm transition-all">
+                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+            </a>
+        </div>
+
+        <!-- Carte principale avec ombre douce et coins arrondis -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 0.75rem;">
+            <!-- En-tête de carte élégant -->
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 px-4 border-0">
+                <h5 class="mb-0 fw-bold text-dark">{{ feedback.title }}</h5>
+                {% if feedback.isReviewed %}
+                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">
+                        <i class="fas fa-check-circle me-1"></i> Traité
+                    </span>
+                {% else %}
+                    <span class="badge rounded-pill bg-warning-subtle text-warning px-3 py-2">
+                        <i class="fas fa-clock me-1"></i> En attente
+                    </span>
+                {% endif %}
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Informations de base -->
+                <div class="row mb-4 g-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="text-primary me-3">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <label class="text-muted fw-medium mb-1 small">Date de soumission</label>
+                                <div class="fw-bold">{{ feedback.createdAt|date('d/m/Y à H:i') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="text-primary me-3">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <div>
+                                {% set category_labels = {
+                                    'integration_process': 'Processus d\'intégration',
+                                    'training': 'Formation',
+                                    'documentation': 'Documentation',
+                                    'tools': 'Outils',
+                                    'communication': 'Communication',
+                                    'other': 'Autre'
+                                } %}
+                                
+                                {% set category_icons = {
+                                    'integration_process': 'fas fa-users',
+                                    'training': 'fas fa-graduation-cap',
+                                    'documentation': 'fas fa-file-alt',
+                                    'tools': 'fas fa-tools',
+                                    'communication': 'fas fa-comments',
+                                    'other': 'fas fa-question-circle'
+                                } %}
+
+                                <label class="text-muted fw-medium mb-1 small">Catégorie</label>
+                                <div class="fw-bold">
+                                    <i class="{{ category_icons[feedback.category] }} me-1 small"></i>
+                                    {{ category_labels[feedback.category] }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenu du retour d'expérience -->
+                <div class="card bg-white border mb-4" style="border-radius: 0.5rem;">
+                    <div class="card-header bg-light py-3 px-4 border-bottom" style="border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+                        <h6 class="mb-0 fw-bold">
+                            <i class="fas fa-quote-left text-primary me-2"></i>
+                            Votre retour d'expérience
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="feedback-text lh-lg">
+                            {{ feedback.content|nl2br }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Réponse du manager -->
+                {% if feedback.isReviewed %}
+                    <div class="card bg-white border mb-0" style="border-radius: 0.5rem;">
+                        <div class="card-header bg-light py-3 px-4 border-bottom" style="border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 fw-bold">
+                                    <i class="fas fa-reply text-primary me-2"></i>
+                                    Réponse du manager
+                                </h6>
+                                <div class="text-muted small">
+                                    <i class="fas fa-user-tie me-1"></i>
+                                    {{ feedback.reviewedBy.firstname }} {{ feedback.reviewedBy.lastname }}
+                                    <span class="ms-2 opacity-75">|</span>
+                                    <i class="fas fa-calendar-check ms-2 me-1"></i>
+                                    {{ feedback.reviewAt|date('d/m/Y') }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="manager-comment lh-lg">
+                                {{ feedback.managerComment|nl2br }}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info d-flex align-items-center" style="border-radius: 0.5rem; background-color: rgba(61, 95, 158, 0.08); border-color: rgba(61, 95, 158, 0.2); color: #3d5f9e;">
+                        <i class="fas fa-info-circle me-3 fa-lg"></i>
+                        <div>
+                            Votre retour d'expérience est en cours d'analyse et sera traité prochainement par un manager.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .transition-all {
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        transform: translateY(-2px);
+    }
+    
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+    }
+</style>
+{% endblock %}

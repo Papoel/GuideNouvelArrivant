@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du retour d'expérience - Administration{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+        <div class="dashboard-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-comment-dots me-3"></i>Détail du retour d'expérience</h1>
+                <p class="text-muted mb-0 mt-2">Consultez et traitez ce retour d'expérience</p>
+            </div>
+            <a href="{{ path('admin_progress_feedbacks') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+            </a>
+        </div>
+
+        <div class="content-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ feedback.title }}</h5>
+                <span class="badge {{ feedback.isReviewed ? 'bg-success' : 'bg-warning text-dark' }}">
+                    {{ feedback.isReviewed ? 'Traité' : 'En attente' }}
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="avatar me-3">
+                                <div class="avatar-placeholder rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    {{ feedback.author.firstname|first }}{{ feedback.author.lastname|first }}
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ feedback.author.firstname }} {{ feedback.author.lastname }}</h6>
+                                <small class="text-muted">{{ feedback.author.email }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="mb-2">
+                            <span class="text-muted">Date de soumission:</span>
+                            <strong>{{ feedback.createdAt|date('d/m/Y à H:i') }}</strong>
+                        </div>
+                        
+                        {% set category_labels = {
+                            'integration_process': 'Processus d\'intégration',
+                            'training': 'Formation',
+                            'documentation': 'Documentation',
+                            'tools': 'Outils',
+                            'communication': 'Communication',
+                            'other': 'Autre'
+                        } %}
+                        
+                        {% set badge_class = {
+                            'integration_process': 'bg-primary',
+                            'training': 'bg-success',
+                            'documentation': 'bg-info',
+                            'tools': 'bg-warning',
+                            'communication': 'bg-secondary',
+                            'other': 'bg-dark'
+                        } %}
+                        
+                        <div>
+                            <span class="text-muted">Catégorie:</span>
+                            <span class="badge {{ badge_class[feedback.category] }} ms-2">
+                                {{ category_labels[feedback.category] }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-content p-4 bg-light rounded mb-4">
+                    {{ feedback.content|nl2br }}
+                </div>
+
+                {% if feedback.isReviewed %}
+                    <div class="manager-response p-4 border rounded mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0"><i class="fas fa-reply me-2"></i>Réponse du manager</h6>
+                            <small class="text-muted">
+                                Traité le {{ feedback.reviewAt|date('d/m/Y') }} par {{ feedback.reviewedBy.firstname }} {{ feedback.reviewedBy.lastname }}
+                            </small>
+                        </div>
+                        <div class="manager-comment mb-3">
+                            {{ feedback.managerComment|nl2br }}
+                        </div>
+                        <form method="post" action="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}" class="text-end">
+                            <input type="hidden" name="action" value="mark_pending">
+                            <button type="submit" class="btn btn-outline-warning">
+                                <i class="fas fa-undo me-2"></i>Remettre en attente
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <form method="post" action="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}">
+                        <input type="hidden" name="action" value="mark_reviewed">
+                        <div class="mb-3">
+                            <label for="managerComment" class="form-label">Votre commentaire</label>
+                            <textarea class="form-control" id="managerComment" name="managerComment" rows="5"></textarea>
+                            <div class="form-text">
+                                Votre commentaire sera visible par l'auteur du retour d'expérience.
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check-circle me-2"></i>Marquer comme traité
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">Accueil</a></li>
-                    <li class="breadcrumb-item"><a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}">Liste des REX</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('my_feedbacks_list', {'nni': app.user.nni}) }}">Liste des REX</a></li>
                     <li class="breadcrumb-item active">Revue</li>
                 </ol>
             </nav>
@@ -33,7 +33,7 @@
                                     'communication': 'bg-secondary',
                                     'other': 'bg-dark'
                                 } %}
-                                
+
                                 {% set category_labels = {
                                     'integration_process': 'Processus d\'intégration',
                                     'training': 'Formation',
@@ -42,7 +42,7 @@
                                     'communication': 'Communication',
                                     'other': 'Autre'
                                 } %}
-                                
+
                                 <span class="badge {{ badge_class[feedback.category] }}">
                                     {{ category_labels[feedback.category] }}
                                 </span>
@@ -74,19 +74,19 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
+                                    <a href="{{ path('my_feedbacks_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
                                         <i class="bi bi-arrow-left me-1"></i> Retour à la liste
                                     </a>
                                 </div>
                             {% else %}
-                                <form method="post" action="{{ path('dashboard_feedback_review', {'nni': app.user.nni, 'id': feedback.id}) }}">
+                                <form method="post" action="{{ path('my_feedbacks_review', {'nni': app.user.nni, 'id': feedback.id}) }}">
                                     <div class="mb-3">
                                         <label for="managerComment" class="form-label">Votre commentaire</label>
                                         <textarea class="form-control" id="managerComment" name="managerComment" rows="5" required></textarea>
                                         <div class="form-text">Votre analyse et vos recommandations suite à ce retour d'expérience.</div>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <a href="{{ path('dashboard_feedback_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
+                                        <a href="{{ path('my_feedbacks_list', {'nni': app.user.nni}) }}" class="btn btn-secondary">
                                             <i class="bi bi-arrow-left me-1"></i> Annuler
                                         </a>
                                         <button type="submit" class="btn btn-primary">
