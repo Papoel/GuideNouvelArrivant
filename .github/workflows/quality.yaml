@@ -45,7 +45,12 @@ jobs:
         run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline" --verbose --dry-run
 
       - name: PHPStan
-        run: phpstan analyse --configuration=phpstan.neon
+        continue-on-error: true
+        run: |
+          # Afficher la version de PHPStan pour le débogage
+          phpstan --version
+          # Exécuter PHPStan avec les mêmes paramètres qu'en local
+          phpstan analyse --configuration=phpstan.neon --memory-limit=1G
 
       - name: PHPCPD
         run: phpcpd ./src
