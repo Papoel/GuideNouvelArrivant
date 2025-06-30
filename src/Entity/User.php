@@ -125,11 +125,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'user')]
     private Collection $actions;
 
+    /**
+     * @var Collection<int, Feedback>
+     */
+    #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', cascade: ['remove'])]
+    private Collection $feedbacks;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
         $this->logbooks = new ArrayCollection();
         $this->actions = new ArrayCollection();
+        $this->feedbacks = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -427,5 +434,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return implode(' ', $parts);
+    }
+
+    /**
+     * @return Collection<int, Feedback>
+     */
+    public function getFeedback(): Collection
+    {
+        return $this->feedbacks;
+    }
+
+    public function addFeedback(Feedback $feedback): static
+    {
+        if (!$this->feedbacks->contains($feedback)) {
+            $this->feedbacks->add($feedback);
+            $feedback->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeedback(Feedback $feedback): static
+    {
+        if ($this->feedbacks->removeElement($feedback)) {
+            // set the owning side to null (unless already changed)
+            if ($feedback->getAuthor() === $this) {
+                $feedback->setAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }

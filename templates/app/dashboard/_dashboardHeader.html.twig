@@ -19,18 +19,18 @@
                     <!-- Profile Image Icon -->
                     <span class="dropdown-toggle nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle"></i>
-                        <span class="d-none d-md-block ps-2">{{ user.fullname }}</span>
+                        <span class="d-none d-md-block ps-2">{{ app.user.fullname }}</span>
                     </span>
                     <!-- End Profile Image Icon -->
 
                     <!-- Profile Dropdown Items -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header text-center">
-                            <h6 class="fw-bold">{{ user.fullname }}</h6>
-                            <span class="d-block text-muted">{{ user.jobLabel }}</span>
-                            <small class="d-block fst-italic text-muted">{{ user.specialityLabel }}</small>
+                            <h6 class="fw-bold">{{ app.user.fullname }}</h6>
+                            <span class="d-block text-muted">{{ app.user.jobLabel }}</span>
+                            <small class="d-block fst-italic text-muted">{{ app.user.specialityLabel }}</small>
                             <div class="mt-2">
-                                <small class="badge bg-success text-white" style="letter-spacing: 1px;">{{ user.nni }}</small>
+                                <small class="badge bg-success text-white" style="letter-spacing: 1px;">{{ app.user.nni }}</small>
                             </div>
                         </li>
                         <li>
@@ -59,6 +59,20 @@
                             <hr class="dropdown-divider">
                         </li>
 
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ path('my_feedbacks_index', {'nni': app.user.nni}) }}">
+                                <i class="bi bi-chat-quote"></i>
+                                <span>Mes retours d'expérience</span>
+                                {% if app.user.feedback|length > 0 %}
+                                    <span class="badge rounded-pill bg-success ms-auto">{{ app.user.feedback|length }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+
+                         <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-question-circle"></i>

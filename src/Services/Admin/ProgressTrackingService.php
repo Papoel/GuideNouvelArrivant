@@ -6,6 +6,7 @@ namespace App\Services\Admin;
 
 use App\Entity\Logbook;
 use App\Entity\User;
+use App\Repository\FeedbackRepository;
 use App\Repository\LogbookRepository;
 use App\Repository\UserRepository;
 use App\Services\Logbook\LogbookProgressService;
@@ -18,6 +19,7 @@ class ProgressTrackingService
         private readonly LogbookRepository $logbookRepository,
         private readonly LogbookProgressService $logbookProgressService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly FeedbackRepository $feedbackRepository,
     ) {
     }
 
@@ -115,7 +117,9 @@ class ProgressTrackingService
      *     users_with_logbook: int,
      *     users_with_mentor_validation: int,
      *     average_agent_progress: float,
-     *     average_mentor_progress: float
+     *     average_mentor_progress: float,
+     *     total_feedbacks: int,
+     *     pending_feedbacks: int
      * }
      */
     private function getGlobalStatistics(): array
@@ -148,12 +152,18 @@ class ProgressTrackingService
         $averageAgentProgress = $usersWithLogbook > 0 ? $totalAgentProgress / $usersWithLogbook : 0;
         $averageMentorProgress = $usersWithLogbook > 0 ? $totalMentorProgress / $usersWithLogbook : 0;
 
+        // Récupérer les statistiques des feedbacks
+        $totalFeedbacks = $this->feedbackRepository->count([]);
+        $pendingFeedbacks = $this->feedbackRepository->count(['isReviewed' => false]);
+
         return [
             'total_users' => count($allUsers),
             'users_with_logbook' => $usersWithLogbook,
             'users_with_mentor_validation' => $usersWithMentorValidation,
             'average_agent_progress' => round($averageAgentProgress, 1),
             'average_mentor_progress' => round($averageMentorProgress, 1),
+            'total_feedbacks' => $totalFeedbacks,
+            'pending_feedbacks' => $pendingFeedbacks,
         ];
     }
 

@@ -1,0 +1,224 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Retours d'expérience - Administration{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+        <div class="dashboard-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-comment-dots me-3"></i>Capitalisation des retours d'expérience</h1>
+                <p class="text-muted mb-0 mt-2">Consultez et traitez les retours d'expérience des utilisateurs</p>
+            </div>
+            <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i>Tableau de bord
+            </a>
+        </div>
+
+        {# Statistiques des feedbacks #}
+        <div class="content-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Statistiques des retours</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-md-4">
+                        <div class="stat-card shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="d-flex align-items-center justify-content-center mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                                        <i class="fas fa-comment-dots fa-lg text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">{{ stats.total }}</div>
+                                <div class="stat-label">Total des retours</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="d-flex align-items-center justify-content-center mb-3">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                                        <i class="fas fa-clock fa-lg text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">{{ stats.pending }}</div>
+                                <div class="stat-label">En attente de traitement</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="d-flex align-items-center justify-content-center mb-3">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                                        <i class="fas fa-check-circle fa-lg text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">{{ stats.reviewed }}</div>
+                                <div class="stat-label">Traités</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Filtres et recherche #}
+        <div class="content-card mb-4">
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <form action="{{ path('admin_progress_feedbacks') }}" method="get" class="search-form">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="Rechercher..." value="{{ search_term }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="btn-group" role="group">
+                            <a href="{{ path('admin_progress_feedbacks') }}" class="btn btn-outline-secondary {{ current_status == 'all' ? 'active' : '' }}">
+                                Tous
+                            </a>
+                            <a href="{{ path('admin_progress_feedbacks', {'status': 'pending'}) }}" class="btn btn-outline-warning {{ current_status == 'pending' ? 'active' : '' }}">
+                                En attente
+                            </a>
+                            <a href="{{ path('admin_progress_feedbacks', {'status': 'reviewed'}) }}" class="btn btn-outline-success {{ current_status == 'reviewed' ? 'active' : '' }}">
+                                Traités
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Liste des feedbacks #}
+        <div class="content-card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des retours d'expérience</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if feedbacks is empty %}
+                    <div class="p-4 text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                            <h5>Aucun retour d'expérience trouvé</h5>
+                            <p class="text-muted">
+                                {% if search_term %}
+                                    Aucun résultat ne correspond à votre recherche "{{ search_term }}".
+                                {% elseif current_status == 'pending' %}
+                                    Il n'y a pas de retours d'expérience en attente de traitement.
+                                {% elseif current_status == 'reviewed' %}
+                                    Il n'y a pas de retours d'expérience traités.
+                                {% else %}
+                                    Aucun retour d'expérience n'a été soumis pour le moment.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Auteur</th>
+                                    <th>Titre</th>
+                                    <th>Catégorie</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feedback in feedbacks %}
+                                    <tr>
+                                        <td>{{ feedback.createdAt|date('d/m/Y') }}</td>
+                                        <td>{{ feedback.author.firstname }} {{ feedback.author.lastname }}</td>
+                                        <td>{{ feedback.title }}</td>
+                                        <td>
+                                            {% set badge_class = {
+                                                'integration_process': 'bg-primary',
+                                                'training': 'bg-success',
+                                                'documentation': 'bg-info',
+                                                'tools': 'bg-warning',
+                                                'communication': 'bg-secondary',
+                                                'other': 'bg-dark'
+                                            } %}
+                                            
+                                            {% set category_labels = {
+                                                'integration_process': 'Processus d\'intégration',
+                                                'training': 'Formation',
+                                                'documentation': 'Documentation',
+                                                'tools': 'Outils',
+                                                'communication': 'Communication',
+                                                'other': 'Autre'
+                                            } %}
+                                            
+                                            <span class="badge {{ badge_class[feedback.category] }}">
+                                                {{ category_labels[feedback.category] }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if feedback.isReviewed %}
+                                                <span class="badge bg-success">Traité</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">En attente</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                {% if feedback.isReviewed %}
+                                                    <i class="fas fa-eye"></i> Voir
+                                                {% else %}
+                                                    <i class="fas fa-check-circle"></i> Traiter
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {# Pagination #}
+                    {% if pagination.totalPages > 1 %}
+                        <div class="p-3 border-top">
+                            <nav>
+                                <ul class="pagination justify-content-center mb-0">
+                                    {% set queryParams = app.request.query.all %}
+                                    
+                                    {# Bouton précédent #}
+                                    <li class="page-item {{ pagination.currentPage == 1 ? 'disabled' : '' }}">
+                                        {% set queryParams = queryParams|merge({'page': pagination.currentPage - 1}) %}
+                                        <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Précédent">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    
+                                    {# Pages #}
+                                    {% for i in 1..pagination.totalPages %}
+                                        {% set queryParams = app.request.query.all|merge({'page': i}) %}
+                                        <li class="page-item {{ pagination.currentPage == i ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}">{{ i }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    
+                                    {# Bouton suivant #}
+                                    <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'disabled' : '' }}">
+                                        {% set queryParams = app.request.query.all|merge({'page': pagination.currentPage + 1}) %}
+                                        <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Suivant">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+</div>
+{% endblock %}

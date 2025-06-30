@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\User;
+use App\Repository\FeedbackRepository;
 use App\Repository\LogbookRepository;
 use App\Repository\UserRepository;
 use App\Services\Admin\ProgressTrackingService;
 use App\Services\Logbook\LogbookProgressService;
+use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -85,6 +88,104 @@ class ProgressController extends AbstractController
             'user' => $user,
             'logbook' => $logbook,
             'progress' => $progress,
+        ]);
+    }
+
+    /**
+     * Affiche et gère les retours d'expérience (feedbacks).
+     */
+    #[Route('/feedbacks', name: 'feedbacks', methods: ['GET', 'POST'])]
+    public function feedbacks(Request $request, FeedbackRepository $feedbackRepository): Response
+    {
+        // Récupération des paramètres de recherche et de pagination
+        $rawSearchTerm = $request->query->get('search', null);
+        $searchTerm = is_string($rawSearchTerm) ? $rawSearchTerm : null;
+        $status = $request->query->get('status', 'all');
+
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = 10; // Nombre d'éléments par page
+
+        // Préparation des critères de filtrage
+        $criteria = [];
+        if ('pending' === $status) {
+            $criteria['isReviewed'] = false;
+        } elseif ('reviewed' === $status) {
+            $criteria['isReviewed'] = true;
+        }
+
+        // Récupération des feedbacks avec pagination
+        $feedbacks = $feedbackRepository->findByCriteriaPaginated($criteria, $searchTerm, $page, $limit);
+
+        // Statistiques des feedbacks
+        $stats = [
+            'total' => $feedbackRepository->count([]),
+            'pending' => $feedbackRepository->count(['isReviewed' => false]),
+            'reviewed' => $feedbackRepository->count(['isReviewed' => true]),
+        ];
+
+        return $this->render('admin/progress/feedbacks.html.twig', [
+            'feedbacks' => $feedbacks['items'],
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $feedbacks['totalPages'],
+                'totalItems' => $feedbacks['totalItems'],
+                'itemsPerPage' => $limit,
+            ],
+            'stats' => $stats,
+            'search_term' => $searchTerm,
+            'current_status' => $status,
+        ]);
+    }
+
+    /**
+     * Affiche et traite un feedback spécifique.
+     */
+    #[Route('/feedback/{id}', name: 'feedback_detail', methods: ['GET', 'POST'])]
+    public function feedbackDetail(int $id, Request $request, FeedbackRepository $feedbackRepository, EntityManagerInterface $entityManager): Response
+    {
+        $feedback = $feedbackRepository->find($id);
+
+        if (!$feedback) {
+            throw $this->createNotFoundException('Feedback non trouvé');
+        }
+
+        // Traitement du formulaire de commentaire manager ou de l'action de remise en attente
+        if ($request->isMethod('POST')) {
+            $action = $request->request->get('action');
+
+            if ('mark_pending' === $action) {
+                // Remise en attente du feedback
+                $feedback->setIsReviewed(false);
+                $feedback->setReviewedBy(null);
+                $feedback->setReviewAt(null);
+
+                $entityManager->flush();
+
+                $this->addFlash('success', "Le retour d'expérience a été remis en attente.");
+
+                return $this->redirectToRoute('admin_progress_feedbacks');
+            } else {
+                // Traitement normal du feedback
+                // $comment = $request->request->get('managerComment');
+                $rawComment = $request->request->get('managerComment');
+                $comment = is_scalar($rawComment) ? (string) $rawComment : null;
+
+                $feedback->setManagerComment($comment);
+                $feedback->setIsReviewed(true);
+                $user = $this->getUser();
+                $feedback->setReviewedBy($user instanceof User ? $user : null);
+                $feedback->setReviewAt(new \DateTimeImmutable());
+
+                $entityManager->flush();
+
+                $this->addFlash('success', "Le retour d'expérience a été traité avec succès.");
+
+                return $this->redirectToRoute('admin_progress_feedbacks');
+            }
+        }
+
+        return $this->render('admin/progress/feedback_detail.html.twig', [
+            'feedback' => $feedback,
         ]);
     }
 
