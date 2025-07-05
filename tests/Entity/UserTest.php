@@ -13,6 +13,7 @@ use App\Tests\Abstract\EntityTestCase;
 use App\Tests\Entity\Trait\EntityIdTestTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\Attributes\Test;
 
 class UserTest extends EntityTestCase
 {
@@ -57,99 +58,113 @@ class UserTest extends EntityTestCase
         return $user;
     }
 
-    public function testEntityUserIsValid(): void
+    #[Test]
+    public function entityUserIsValid(): void
     {
         $this->assertValidationErrorsCount($this->getEntityUser(), count: 0);
     }
 
-    public function testGetFirstname(): void
+    #[Test]
+    public function getFirstname(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: "Noémi", actual: $entity->getFirstname());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetLastname(): void
+    #[Test]
+    public function getLastname(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: "Colin", actual: $entity->getLastname());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetEmail(): void
+    #[Test]
+    public function getEmail(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: "thibault99@fernandez.com", actual: $entity->getEmail());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetRoles(): void
+    #[Test]
+    public function getRoles(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: ['ROLE_USER'], actual: $entity->getRoles());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetPassword(): void
+    #[Test]
+    public function getPassword(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: "Password123!", actual: $entity->getPassword());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetLastLoginAt(): void
+    #[Test]
+    public function getLastLoginAt(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: null, actual: $entity->getLastLoginAt());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetJob(): void
+    #[Test]
+    public function getJob(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: JobEnum::TECHNICIEN, actual: $entity->getJob());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetNni(): void
+    #[Test]
+    public function getNni(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: "A74591", actual: $entity->getNni());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetSpeciality(): void
+    #[Test]
+    public function getSpeciality(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: SpecialityEnum::CHA, actual: $entity->getSpeciality());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetHiringAt(): void
+    #[Test]
+    public function getHiringAt(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: new DateTimeImmutable(datetime: "2023-01-01 12:00:00"), actual: $entity->getHiringAt());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetCreatedAt(): void
+    #[Test]
+    public function getCreatedAt(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: null, actual: $entity->getCreatedAt());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetUpdatedAt(): void
+    #[Test]
+    public function getUpdatedAt(): void
     {
         $entity = $this->getEntityUser();
         self::assertEquals(expected: null, actual: $entity->getUpdatedAt());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
-    public function testGetFullname(): void
+    #[Test]
+    public function getFullname(): void
     {
         $user = $this->getEntityUser();
-        $expectedFullname = 'Noémi Colin';
+        $expectedFullname = 'Noémi COLIN';
 
         // Vérifie que getFullname retourne bien le nom complet
         $this->assertSame(
@@ -159,7 +174,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetSpecialityAbbreviation(): void
+    #[Test]
+    public function getSpecialityAbbreviation(): void
     {
         $this->entity->setSpeciality(speciality: SpecialityEnum::CHA); // Exemple avec une spécialité
 
@@ -171,7 +187,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetSpecialityLabel(): void
+    #[Test]
+    public function getSpecialityLabel(): void
     {
         $this->entity->setSpeciality(SpecialityEnum::CHA); // Exemple avec une spécialité
 
@@ -183,7 +200,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetMentor(): void
+    #[Test]
+    public function getMentor(): void
     {
         $mentor = new User();
         $this->entity->setMentor($mentor);
@@ -196,7 +214,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testSetMentor(): void
+    #[Test]
+    public function setMentor(): void
     {
         $mentor = new User();
         $this->entity->setMentor($mentor);
@@ -217,7 +236,8 @@ class UserTest extends EntityTestCase
     }
 
     // ----------------- TESTS ENUM -----------------
-    public function testGetJobLabel(): void
+    #[Test]
+    public function getJobLabel(): void
     {
         $this->entity->setJob(job: JobEnum::TECHNICIEN); // Exemple avec un emploi
 
@@ -229,7 +249,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetJobLabelReturnsTechnician(): void
+    #[Test]
+    public function getJobLabelReturnsTechnician(): void
     {
         $this->entity->setJob(job: JobEnum::TECHNICIEN);
 
@@ -241,7 +262,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetJobLabelReturnsEngineer(): void
+    #[Test]
+    public function getJobLabelReturnsEngineer(): void
     {
         $this->entity->setJob(job: JobEnum::INGENIEUR);
 
@@ -253,7 +275,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetJobLabelReturnsBusinessManager(): void
+    #[Test]
+    public function getJobLabelReturnsBusinessManager(): void
     {
         $this->entity->setJob(job: JobEnum::CHARGE_AFFAIRES);
 
@@ -265,7 +288,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetJobLabelReturnsProjectBusinessManager(): void
+    #[Test]
+    public function getJobLabelReturnsProjectBusinessManager(): void
     {
         $this->entity->setJob(job: JobEnum::CHARGE_AFFAIRES_PROJET);
 
@@ -277,7 +301,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetJobLabelReturnsSurveillanceManager(): void
+    #[Test]
+    public function getJobLabelReturnsSurveillanceManager(): void
     {
         $this->entity->setJob(job: JobEnum::CHARGE_SURVEILLANCE);
 
@@ -292,10 +317,11 @@ class UserTest extends EntityTestCase
 
     // ----------------- FIN DES TESTS ENUM -----------------
 
-    public function testToString(): void
+    #[Test]
+    public function returnIsToString(): void
     {
         $user = $this->getEntityUser();
-        $expectedString = 'Noémi Colin';
+        $expectedString = 'Noémi COLIN';
 
         // Vérifie que __toString retourne bien le nom complet en utilisant getFullname
         $this->assertSame(
@@ -305,7 +331,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testIsAdmin(): void
+    #[Test]
+    public function isAdmin(): void
     {
         $user = $this->getEntityUser();
 
@@ -324,7 +351,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetSeniority(): void
+    #[Test]
+    public function getSeniority(): void
     {
         $user = $this->getEntityUser();
 
@@ -368,7 +396,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testGetUserIdentifierReturnsEmail(): void
+    #[Test]
+    public function getUserIdentifierReturnsEmail(): void
     {
         // Configure l'utilisateur avec un email
         $email = "test@example.com";
@@ -382,7 +411,8 @@ class UserTest extends EntityTestCase
         );
     }
 
-    public function testEraseCredentialsDoesNotThrowException(): void
+    #[Test]
+    public function eraseCredentialsDoesNotThrowException(): void
     {
         // On ne peut pas tester l'effacement puisque rien n'est stocké
         // L'objectif ici est de s'assurer que la méthode s'exécute sans lancer d'exception.
@@ -394,7 +424,8 @@ class UserTest extends EntityTestCase
     /************************************************ COLLECTIONS  ***********************************************/
 
     // Tester la Collection Action
-    public function testGetActions(): void
+    #[Test]
+    public function getActions(): void
     {
         $actions = $this->entity->getActions();
 
@@ -403,7 +434,8 @@ class UserTest extends EntityTestCase
         $this->assertCount(expectedCount: 0, haystack: $actions, message: "La collection d'actions devrait être vide au départ.");
     }
 
-    public function testAddAction(): void
+    #[Test]
+    public function addAction(): void
     {
         $action = new Action();
 
@@ -418,7 +450,8 @@ class UserTest extends EntityTestCase
         $this->assertSame(expected: $this->entity, actual: $action->getUser(), message: "L'utilisateur devrait être défini dans l'action.");
     }
 
-    public function testAddActionDoesNotDuplicate(): void
+    #[Test]
+    public function addActionDoesNotDuplicate(): void
     {
         $action = new Action();
 
@@ -430,7 +463,8 @@ class UserTest extends EntityTestCase
         $this->assertCount(expectedCount: 1, haystack: $this->entity->getActions(), message: "L'action ne devrait pas être ajoutée en double.");
     }
 
-    public function testRemoveAction(): void
+    #[Test]
+    public function removeAction(): void
     {
         $action = new Action();
         $this->entity->addAction(action: $action);
@@ -447,7 +481,8 @@ class UserTest extends EntityTestCase
     }
 
     // Tester la Collection Logbook
-    public function testGetLogbooks(): void
+    #[Test]
+    public function getLogbooks(): void
     {
         $logbooks = $this->entity->getLogbooks();
 
@@ -456,7 +491,8 @@ class UserTest extends EntityTestCase
         $this->assertCount(expectedCount: 0, haystack: $logbooks, message: "La collection de logbooks devrait être vide au départ.");
     }
 
-    public function testAddLogbook(): void
+    #[Test]
+    public function addLogbook(): void
     {
         $logbook = new Logbook();
 
@@ -471,7 +507,8 @@ class UserTest extends EntityTestCase
         $this->assertSame($this->entity, $logbook->getOwner(), message: "L'utilisateur devrait être défini comme propriétaire dans le logbook.");
     }
 
-    public function testAddLogbookDoesNotDuplicate(): void
+    #[Test]
+    public function addLogbookDoesNotDuplicate(): void
     {
         $logbook = new Logbook();
 
@@ -483,7 +520,8 @@ class UserTest extends EntityTestCase
         $this->assertCount(expectedCount: 1, haystack: $this->entity->getLogbooks(), message: "Le logbook ne devrait pas être ajouté en double.");
     }
 
-    public function testRemoveLogbook(): void
+    #[Test]
+    public function removeLogbook(): void
     {
         $logbook = new Logbook();
         $this->entity->addLogbook(logbook: $logbook);

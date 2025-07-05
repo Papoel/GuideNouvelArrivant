@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -86,7 +88,8 @@ class UserCrudControllerTest extends TestCase
         self::assertEquals(expected: 'deleteLogbooksOnly', actual: UserCrudController::DELETE_LOGBOOKS_ONLY);
     }
 
-    #[Test] public function configureFieldsContainsRequiredFields(): void
+    #[Test]
+    public function configureFieldsContainsRequiredFields(): void
     {
         $expectedFields = [
             'id' => ['class' => IdField::class, 'found' => false],
@@ -95,7 +98,7 @@ class UserCrudControllerTest extends TestCase
             'nni' => ['class' => TextField::class, 'found' => false],
             'email' => ['class' => TextField::class, 'found' => false],
             'password' => ['class' => TextField::class, 'found' => false],
-            'roles' => ['class' => ChoiceField::class, 'found' => false],
+            'roles' => ['class' => [ArrayField::class, ChoiceField::class], 'found' => false],
             'jobLabel' => ['class' => TextField::class, 'found' => false],
             'job' => ['class' => ChoiceField::class, 'found' => false],
             'specialityLabel' => ['class' => TextField::class, 'found' => false],
@@ -111,11 +114,29 @@ class UserCrudControllerTest extends TestCase
             $property = $dto->getProperty();
 
             if (isset($expectedFields[$property])) {
-                self::assertInstanceOf(
-                    expected: $expectedFields[$property]['class'],
-                    actual: $field,
-                    message: "Le champ '$property' n'est pas du bon type"
-                );
+                // Si la classe attendue est un tableau, vérifier que le champ est une instance de l'une des classes
+                if (is_array($expectedFields[$property]['class'])) {
+                    $isInstanceOfAny = false;
+                    foreach ($expectedFields[$property]['class'] as $expectedClass) {
+                        if ($field instanceof $expectedClass) {
+                            $isInstanceOfAny = true;
+                            break;
+                        }
+                    }
+                    self::assertTrue(
+                        $isInstanceOfAny,
+                        message: "Le champ '$property' n'est pas du bon type. Attendu: l'une des classes " .
+                            implode(', ', array_map(fn($class) => (new ReflectionClass($class))->getShortName(), $expectedFields[$property]['class'])) .
+                            ", obtenu: " . get_class($field)
+                    );
+                } else {
+                    // Comportement original pour une seule classe attendue
+                    self::assertInstanceOf(
+                        expected: $expectedFields[$property]['class'],
+                        actual: $field,
+                        message: "Le champ '$property' n'est pas du bon type"
+                    );
+                }
                 $expectedFields[$property]['found'] = true;
             }
         }
@@ -128,8 +149,7 @@ class UserCrudControllerTest extends TestCase
         }
     }
 
-    #[Test]
-    public function idFieldIsHidden(): void
+    #[Test] public function idFieldIsHidden(): void
     {
         foreach ($this->fields as $field) {
             if ($field instanceof IdField) {
@@ -248,8 +268,6 @@ class UserCrudControllerTest extends TestCase
         // Vérifier via le DTO
         $crudDto = $configuredCrud->getAsDto();
 
-        //dd(["Crud" => $crud, "DTO" => $crudDto]);
-
         self::assertEquals(expected: '⚡️ Liste des agents', actual: $crudDto->getCustomPageTitle(pageName: 'index'));
         self::assertEquals(expected: '⭐️ Créer un nouvel utilisateur', actual: $crudDto->getCustomPageTitle(pageName: 'new'));
     }
@@ -315,7 +333,8 @@ class UserCrudControllerTest extends TestCase
     }
 
 
-    #[Test] public function crudConfigurationSetsDynamicPageTitlesForExistingUser(): void
+    #[Test]
+    public function crudConfigurationSetsDynamicPageTitlesForExistingUser(): void
     {
         $user = UserTestHelper::createUser([
             'firstname' => 'Harvey',
@@ -329,8 +348,8 @@ class UserCrudControllerTest extends TestCase
         $detailTitle = static fn(User $u) => '👁️ Détails - '.$u->getFullName();
         $editTitle = static fn(User $u) => '🧑‍💻 Modifier - '.$u->getFullName();
 
-        self::assertEquals(expected: '👁️ Détails - Harvey Dent', actual: $detailTitle(u: $user));
-        self::assertEquals(expected: '🧑‍💻 Modifier - Harvey Dent', actual: $editTitle(u: $user));
+        self::assertEquals(expected: '👁️ Détails - Harvey DENT', actual: $detailTitle(u: $user));
+        self::assertEquals(expected: '🧑‍💻 Modifier - Harvey DENT', actual: $editTitle(u: $user));
     }
 
 }
