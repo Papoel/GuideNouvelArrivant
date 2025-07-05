@@ -131,6 +131,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', cascade: ['remove'])]
     private Collection $feedbacks;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Service $service = null;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
@@ -258,7 +261,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullname(): string
     {
         $firstname = ucfirst($this->firstname);
-        $lastname = ucfirst($this->lastname);
+        $lastname = strtoupper($this->lastname);
 
         return $firstname.' '.$lastname;
     }
@@ -459,9 +462,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->feedbacks->removeElement($feedback)) {
             // set the owning side to null (unless already changed)
             if ($feedback->getAuthor() === $this) {
-                $feedback->setAuthor(null);
+                $feedback->setAuthor(author: null);
             }
         }
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
 
         return $this;
     }

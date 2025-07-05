@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -46,49 +47,85 @@ class UserCrudController extends AbstractCrudController
     {
         yield IdField::new(propertyName: 'id')
             ->hideOnForm()
-            ->hideOnIndex()
-        ;
+            ->hideOnIndex();
+
+        yield TextField::new(propertyName: 'fullname', label: 'Prénom')
+            ->addCssClass(cssClass: 'text-capitalize')
+            ->onlyOnIndex();
 
         yield TextField::new(propertyName: 'firstname', label: 'Prénom')
-            ->setColumns(cols: 'col-md-3 col-sm-12')
-            ->addCssClass(cssClass: 'text-capitalize')
-        ;
+            ->onlyOnForms()
+            ->setColumns(cols: 'col-md-4 col-sm-12')
+            ->addCssClass(cssClass: 'text-capitalize');
 
         yield TextField::new(propertyName: 'lastname', label: 'Nom')
-            ->setColumns(cols: 'col-md-3 col-sm-12')
-            ->addCssClass(cssClass: 'text-uppercase')
-        ;
+            ->onlyOnForms()
+            ->setColumns(cols: 'col-md-4 col-sm-12')
+            ->addCssClass(cssClass: 'text-capitalize');
 
         yield TextField::new(propertyName: 'nni', label: 'NNI')
-            ->setColumns(cols: 'col-md-3 col-sm-12')
-        ;
+            ->setColumns(cols: 'col-md-4 col-sm-12');
 
-        yield TextField::new(propertyName: 'email', label: 'Email')->hideOnIndex()
-            ->setColumns(cols: 'col-md-3 col-sm-12')
-        ;
+        yield TextField::new(propertyName: 'email', label: 'Email')
+            ->hideOnIndex()
+            ->setColumns(cols: 'col-md-6 col-sm-12');
+
+        yield AssociationField::new(propertyName: 'mentor', label: 'Tuteur')
+            ->setRequired(isRequired: false)
+            ->setColumns(cols: 'col-md-6 col-sm-12');
 
         yield TextField::new(propertyName: 'password', label: 'Mot de passe')
             ->setFormType(formTypeFqcn: PasswordType::class)
             ->onlyWhenCreating()
-            ->setColumns(cols: 'col-md-6 col-sm-12')
-        ;
+            ->setColumns(cols: 'col-md-6 col-sm-12');
 
+        // Affichage du rôle le plus important dans la liste
+        yield ArrayField::new(propertyName: 'roles', label: 'Rôle principal')
+            ->setTemplatePath(path: 'admin/field/user_role_badge.html.twig')
+            ->onlyOnIndex();
+
+        // Champ pour l'édition des rôles dans le formulaire
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
             ->setChoices(choiceGenerator: [
                 'Utilisateur' => 'ROLE_USER',
                 'Administrateur' => 'ROLE_ADMIN',
+                'Chef de service' => 'ROLE_SERVICE_HEAD',
+                'Chef de service délégué' => 'ROLE_SERVICE_HEAD_DELEGATE',
+                'Manager' => 'ROLE_MANAGER',
+                'Manager délégué' => 'ROLE_MANAGER_DELEGATE',
                 'Tuteur' => 'ROLE_MENTOR',
                 'Nouvel arrivant' => 'ROLE_NEWCOMER',
             ])
             ->allowMultipleChoices()
-            ->renderExpanded(expanded: false) // Affiche les choix comme une liste déroulante
+            ->renderExpanded(expanded: false)
             ->renderAsBadges([
                 'ROLE_ADMIN' => 'danger',
+                'ROLE_SERVICE_HEAD' => 'primary',
+                'ROLE_SERVICE_HEAD_DELEGATE' => 'primary',
+                'ROLE_MANAGER' => 'info',
+                'ROLE_MANAGER_DELEGATE' => 'info',
                 'ROLE_MENTOR' => 'success',
                 'ROLE_NEWCOMER' => 'warning',
             ])
+            ->setColumns(cols: 'col-md-9 col-sm-12')
+            ->setRequired(isRequired: false)
+            ->onlyOnForms();
+
+        // Utilisation d'un TextField pour l'affichage sans lien
+        yield TextField::new(propertyName: 'service', label: 'Service')
+            ->formatValue(callable: function ($value, $entity) {
+                return $entity->getService() ? $entity->getService()->getName() : null;
+            })
+            ->onlyOnIndex();
+
+        // Utilisation d'un AssociationField pour le formulaire
+        yield AssociationField::new(propertyName: 'service', label: 'Service')
             ->setColumns(cols: 'col-md-3 col-sm-12')
-        ;
+            ->setQueryBuilder(function ($queryBuilder) {
+                return $queryBuilder
+                    ->orderBy('entity.name', 'ASC');
+            })
+            ->onlyOnForms();
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
         yield ChoiceField::new(propertyName: 'job', label: 'Métier')
@@ -101,8 +138,7 @@ class UserCrudController extends AbstractCrudController
             ])
             ->onlyWhenCreating()
             ->setColumns(cols: 'col-md-6 col-sm-12')
-            ->onlyOnForms()
-        ;
+            ->onlyOnForms();
 
         yield TextField::new(propertyName: 'specialityLabel', label: 'Spécialité')->hideOnForm();
         yield ChoiceField::new(propertyName: 'speciality', label: 'Spécialité')
@@ -115,13 +151,7 @@ class UserCrudController extends AbstractCrudController
                 'Examen Non Destructif' => SpecialityEnum::END,
             ])
             ->onlyOnForms()
-            ->setColumns(cols: 'col-md-6 col-sm-12')
-        ;
-
-        yield AssociationField::new(propertyName: 'mentor', label: 'Tuteur')
-            ->setRequired(isRequired: false)
-            ->setColumns(cols: 'col-md-6 col-sm-12')
-        ;
+            ->setColumns(cols: 'col-md-6 col-sm-12');
 
         yield AssociationField::new(propertyName: 'logbooks', label: 'Carnets')
             ->onlyOnIndex()
@@ -129,19 +159,18 @@ class UserCrudController extends AbstractCrudController
             ->setFormTypeOptions([
                 'by_reference' => false,
             ])
-            ->formatValue(fn ($value, $entity) => '<span style="display: inline-block" class="badge bg-'.
-                ($entity->getLogbooks()->count() > 0 ? 'success-subtle' : 'danger-subtle').'">'.
-                ($entity->getLogbooks()->count() > 0 ? 'Oui' : 'Non').
-                '</span>'
+            ->formatValue(
+                fn ($value, $entity) => '<span style="display: inline-block" class="badge bg-'.
+                    ($entity->getLogbooks()->count() > 0 ? 'success-subtle' : 'danger-subtle').'">'.
+                    ($entity->getLogbooks()->count() > 0 ? 'Oui' : 'Non').
+                    '</span>'
             )
-            ->setTemplatePath(path: 'admin/field/badge.html.twig')
-        ;
+            ->setTemplatePath(path: 'admin/field/badge.html.twig');
 
         yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
             ->hideOnIndex()
             ->setColumns(cols: 'col-md-6 col-sm-12')
-            ->setFormType(formTypeFqcn: DateType::class)
-        ;
+            ->setFormType(formTypeFqcn: DateType::class);
 
         yield DateTimeField::new(propertyName: 'lastLoginAt', label: 'Dernière connexion')->hideOnIndex()->hideOnForm();
     }
@@ -222,16 +251,29 @@ class UserCrudController extends AbstractCrudController
 
     public function deleteUserOnly(
         AdminContext $context,
-        AdminUrlGenerator $adminUrlGenerator
+        AdminUrlGenerator $adminUrlGenerator,
+        EntityManagerInterface $entityManager
     ): Response {
-        /** @var User $user */
-        $user = $context->getEntity()->getInstance();
-
         try {
+            // Récupérer l'ID de l'utilisateur à partir de la requête
+            $request = $context->getRequest();
+            $userId = $request->query->get(key: 'entityId');
+
+            if (!$userId) {
+                throw new \RuntimeException(message: 'ID utilisateur manquant');
+            }
+
+            // Récupérer l'utilisateur directement depuis la base de données
+            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
+
+            if (!$user instanceof User) {
+                throw new \RuntimeException(message: 'Utilisateur introuvable');
+            }
+
             $this->userDeletionService->deleteUserOnly($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
-        } catch (\Exception $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
+        } catch (\Throwable $e) {
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
         }
 
         return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
@@ -239,33 +281,59 @@ class UserCrudController extends AbstractCrudController
 
     public function deleteAll(
         AdminContext $context,
-        AdminUrlGenerator $adminUrlGenerator
+        AdminUrlGenerator $adminUrlGenerator,
+        EntityManagerInterface $entityManager
     ): Response {
-        /** @var User $user */
-        $user = $context->getEntity()->getInstance();
-
         try {
+            // Récupérer l'ID de l'utilisateur à partir de la requête
+            $request = $context->getRequest();
+            $userId = $request->query->get(key: 'entityId');
+
+            if (!$userId) {
+                throw new \RuntimeException(message: 'ID utilisateur manquant');
+            }
+
+            // Récupérer l'utilisateur directement depuis la base de données
+            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
+
+            if (!$user instanceof User) {
+                throw new \RuntimeException(message: 'Utilisateur introuvable');
+            }
+
             $this->userDeletionService->deleteUserAndLogbooks($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
-        } catch (\Exception $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
+        } catch (\Throwable $e) {
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
         }
 
-        return $this->redirect($adminUrlGenerator->setAction(Action::INDEX)->generateUrl());
+        return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     public function deleteLogbooksOnly(
         AdminContext $context,
-        AdminUrlGenerator $adminUrlGenerator
+        AdminUrlGenerator $adminUrlGenerator,
+        EntityManagerInterface $entityManager
     ): Response {
-        /** @var User $user */
-        $user = $context->getEntity()->getInstance();
-
         try {
+            // Récupérer l'ID de l'utilisateur à partir de la requête
+            $request = $context->getRequest();
+            $userId = $request->query->get(key: 'entityId');
+
+            if (!$userId) {
+                throw new \RuntimeException(message: 'ID utilisateur manquant');
+            }
+
+            // Récupérer l'utilisateur directement depuis la base de données
+            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
+
+            if (!$user instanceof User) {
+                throw new \RuntimeException(message: 'Utilisateur introuvable');
+            }
+
             $this->userDeletionService->deleteLogbooksOnly($user);
             $this->addFlash(type: 'success', message: sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
-        } catch (\Exception $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression.');
+        } catch (\Throwable $e) {
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
         }
 
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
@@ -284,6 +352,15 @@ class UserCrudController extends AbstractCrudController
             $entityInstance->setPassword($hashedPassword);
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
+        // S'assurer que roles n'est jamais null avant la persistance
+        if ($entityInstance instanceof User) {
+            $roles = $entityInstance->getRoles();
+            // Si les rôles sont vides ou contiennent uniquement ROLE_USER (qui est ajouté par getRoles)
+            if (count($roles) <= 1 && in_array(needle: 'ROLE_USER', haystack: $roles)) {
+                $entityInstance->setRoles(roles: ['ROLE_USER']);
+            }
+        }
+
+        parent::persistEntity(entityManager: $entityManager, entityInstance: $entityInstance);
     }
 }

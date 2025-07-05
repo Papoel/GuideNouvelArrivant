@@ -2,6 +2,16 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        
+    # Définition de la hiérarchie des rôles
+    role_hierarchy:
+        ROLE_SERVICE_HEAD: ROLE_USER
+        ROLE_SERVICE_HEAD_DELEGATE: ROLE_USER
+        ROLE_MANAGER: ROLE_USER
+        ROLE_MANAGER_DELEGATE: ROLE_USER
+        ROLE_MENTOR: ROLE_USER
+        ROLE_NEWCOMER: ROLE_USER
+        ROLE_ADMIN: [ROLE_SERVICE_HEAD, ROLE_MANAGER]
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)

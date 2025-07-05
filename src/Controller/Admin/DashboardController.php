@@ -5,10 +5,12 @@ namespace App\Controller\Admin;
 use App\Controller\Admin\User\UserCrudController;
 use App\Entity\Logbook;
 use App\Entity\Module;
+use App\Entity\Service;
 use App\Entity\Theme;
 use App\Entity\User;
 use App\Repository\LogbookRepository;
 use App\Repository\ModuleRepository;
+use App\Repository\ServiceRepository;
 use App\Repository\ThemeRepository;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -31,6 +33,7 @@ class DashboardController extends AbstractDashboardController
         private readonly LogbookRepository $logbookRepository,
         private readonly ThemeRepository $ThemeRepository,
         private readonly ModuleRepository $ModuleRepository,
+        private readonly ServiceRepository $ServiceRepository,
     ) {
     }
 
@@ -113,6 +116,13 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu(label: 'Modules', icon: 'fas fa-star')->setSubItems(subItems: [
             MenuItem::linkToCrud(label: 'Liste des modules', icon: 'fas fa-list', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_INDEX),
             MenuItem::linkToCrud(label: 'Créer modules', icon: 'fas fa-plus-circle', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_NEW),
+        ]);
+
+        $totalServices = $this->ServiceRepository->count();
+        yield MenuItem::section(label: 'Services')->setBadge(content: $totalServices);
+        yield MenuItem::subMenu(label: 'Services', icon: 'fas fa-box')->setSubItems(subItems: [
+            MenuItem::linkToCrud(label: 'Liste des services', icon: 'fas fa-list', entityFqcn: Service::class)->setAction(actionName: Crud::PAGE_INDEX),
+            MenuItem::linkToCrud(label: 'Créer services', icon: 'fas fa-plus-circle', entityFqcn: Service::class)->setAction(actionName: Crud::PAGE_NEW),
         ]);
 
         // Section Tableau de bord de progression
