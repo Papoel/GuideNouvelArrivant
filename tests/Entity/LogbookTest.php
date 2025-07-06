@@ -127,7 +127,7 @@ class LogbookTest extends EntityTestCase
         $user->setLastname(lastname: 'Wayne');
 
         $this->logbook->setOwner(owner: $user);
-        self::assertEquals(expected: 'Carnet de Bruce Wayne', actual: (string) $this->logbook);
+        self::assertEquals(expected: 'Carnet de Bruce WAYNE', actual: (string) $this->logbook);
     }
 
     #[Test] public function collectionTypes(): void

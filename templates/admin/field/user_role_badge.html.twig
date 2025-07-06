@@ -1,0 +1,13 @@
+{% if field.value is not empty %}
+    {% set highestRole = get_highest_role(field.value) %}
+    {% set roleStyle = get_role_style(highestRole) %}
+    
+    <span class="badge rounded-pill px-2" style="background-color: {{ roleStyle.color }}; color: {{ roleStyle.text }}; font-weight: 500; font-size: 0.85rem;">
+        {{ roleStyle.label }}
+    </span>
+{% else %}
+    {% set roleStyle = get_role_style('ROLE_USER') %}
+    <span class="badge rounded-pill px-2" style="background-color: {{ roleStyle.color }}; color: {{ roleStyle.text }}; font-weight: 500; font-size: 0.85rem;">
+        {{ roleStyle.label }}
+    </span>
+{% endif %}
