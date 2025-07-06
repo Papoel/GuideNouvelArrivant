@@ -30,7 +30,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
             ->setLastname(lastname: 'Wayne')
             ->setEmail(email: 'bruce.wayne@gotham.city')
             ->setRoles(roles: ['ROLE_ADMIN', 'ROLE_USER'])
-            ->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'admin'))
+            ->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'Admin1234'))
             ->setNni(nni: 'H12345')
             ->setJob(job: JobEnum::CHARGE_AFFAIRES)
             ->setSpeciality(speciality: SpecialityEnum::CHA)
@@ -77,10 +77,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                 ->setJob(job: JobEnum::cases()[array_rand($jobs)])
                 ->setNni(nni: sprintf('%s%s', chr(codepoint: 65 + $i), str_pad(string: $i, length: 5, pad_string: '0', pad_type: STR_PAD_LEFT)))
                 ->setSpeciality(speciality: SpecialityEnum::cases()[array_rand(array: SpecialityEnum::cases())])
-                ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-'.random_int(1, 5).' years'));
+                ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-' . random_int(1, 5) . ' years'));
 
             $manager->persist(object: $mentor);
-            $this->addReference(name: 'mentor_'.$i, object: $mentor);
+            $this->addReference(name: 'mentor_' . $i, object: $mentor);
             $mentors[] = $mentor;
         }
 
@@ -99,10 +99,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                 ->setRoles(['ROLE_USER'])
                 ->setNni(nni: sprintf('%s%s', chr(codepoint: 70 + $i), str_pad(string: $i, length: 5, pad_string: '0', pad_type: STR_PAD_LEFT)))
                 ->setMentor(mentor: $mentors[array_rand(array: $mentors)])
-                ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-'.random_int(1, 3).' months'));
+                ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-' . random_int(1, 3) . ' months'));
 
             $manager->persist(object: $user);
-            $this->addReference(name: 'user_'.$i, object: $user);
+            $this->addReference(name: 'user_' . $i, object: $user);
             $users[] = $user;
         }
 
@@ -120,7 +120,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                 ->setDescription(description: $this->faker->paragraph);
 
             $manager->persist($theme);
-            $this->addReference(name: 'theme_'.$i, object: $theme);
+            $this->addReference(name: 'theme_' . $i, object: $theme);
             $themes[] = $theme;
         }
 
@@ -138,7 +138,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                     ->setTheme(theme: $theme);
 
                 $manager->persist($module);
-                $this->addReference(name: 'module_'.$themeIndex.'_'.$i, object: $module);
+                $this->addReference(name: 'module_' . $themeIndex . '_' . $i, object: $module);
                 $modules[] = $module;
             }
         }
@@ -151,7 +151,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
         foreach ($users as $userIndex => $user) {
             $logbook = new Logbook();
             $logbook->setOwner($user);
-            $logbook->setName('Carnet de '.$user->getFirstname().' '.$user->getLastname());
+            $logbook->setName('Carnet de ' . $user->getFirstname() . ' ' . $user->getLastname());
 
             // Ajout de 1 à 3 thèmes aléatoires
             $selectedThemes = array_rand($themes, min(count($themes), rand(1, 3)));
@@ -164,7 +164,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
             }
 
             $manager->persist($logbook);
-            $this->addReference('logbook_'.$userIndex, $logbook);
+            $this->addReference('logbook_' . $userIndex, $logbook);
         }
     }
 
@@ -190,15 +190,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                     ->setModule($modules[array_rand($modules)])
                     ->setLogbook($userLogbook)
                     ->setAgentComment($this->faker->paragraph)
-                    ->setAgentValidatedAt(new \DateTime('-'.rand(1, 30).' days'))
-                    ->setAgentVisa($user->getFirstname().' '.$user->getLastname());
+                    ->setAgentValidatedAt(new \DateTime('-' . rand(1, 30) . ' days'))
+                    ->setAgentVisa($user->getFirstname() . ' ' . $user->getLastname());
 
                 $mentor = $user->getMentor();
                 if ($mentor) {
                     $action->setMentorComment($this->faker->paragraph)
-                        ->setMentorValidatedAt(new \DateTime('-'.rand(1, 15).' days'))
-                        ->setMentorCommentedAt(new \DateTime('-'.rand(1, 15).' days'))
-                        ->setMentorVisa($mentor->getFirstname().' '.$mentor->getLastname());
+                        ->setMentorValidatedAt(new \DateTime('-' . rand(1, 15) . ' days'))
+                        ->setMentorCommentedAt(new \DateTime('-' . rand(1, 15) . ' days'))
+                        ->setMentorVisa($mentor->getFirstname() . ' ' . $mentor->getLastname());
                 }
 
                 $manager->persist($action);
