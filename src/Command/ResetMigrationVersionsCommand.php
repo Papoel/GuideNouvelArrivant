@@ -29,9 +29,11 @@ class ResetMigrationVersionsCommand extends Command
         try {
             $count = $this->connection->executeStatement(sql: "DELETE FROM {$table}");
             $output->writeln(messages: "<info>✅ {$count} version(s) supprimée(s) de la table {$table}.</info>");
+
             return Command::SUCCESS;
         } catch (\Throwable $e) {
             $output->writeln(messages: "<error>❌ Erreur : {$e->getMessage()}</error>");
+
             return Command::FAILURE;
         }
     }

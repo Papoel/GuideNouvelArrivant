@@ -7,7 +7,6 @@ namespace App\Command;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -35,14 +34,16 @@ class CheckMigrationCommand extends Command
 
         if ($count > 0) {
             $output->writeln(messages: '<comment>La table doctrine_migration_versions n\'est pas vide, aucune insertion effectuée.</comment>');
+
             return Command::SUCCESS;
         }
 
         // Récupérer les fichiers de migration dans le dossier (Version*.php)
-        $files = glob($this->migrationDir . '/Version*.php');
+        $files = glob($this->migrationDir.'/Version*.php');
 
         if (empty($files)) {
             $output->writeln(messages: '<error>Aucun fichier de migration trouvé dans le dossier.</error>');
+
             return Command::FAILURE;
         }
 
