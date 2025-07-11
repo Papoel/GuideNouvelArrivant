@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250706170759 extends AbstractMigration
+final class Version20250711090557 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -87,7 +87,7 @@ final class Version20250706170759 extends AbstractMigration
             ALTER TABLE `users` ADD CONSTRAINT FK_1483A5E9DB403044 FOREIGN KEY (mentor_id) REFERENCES `users` (id) ON DELETE SET NULL
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE `users` ADD CONSTRAINT FK_1483A5E9ED5CA9E6 FOREIGN KEY (service_id) REFERENCES service (id)
+            ALTER TABLE `users` ADD CONSTRAINT FK_1483A5E9ED5CA9E6 FOREIGN KEY (service_id) REFERENCES service (id) ON DELETE SET NULL
         SQL);
     }
 
