@@ -137,13 +137,13 @@ class DashboardServiceTest extends WebTestCase
     public function testGetLogbooksByUser(int $size): void
     {
         // Arrange
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbooks = [];
         for ($i = 0; $i < $size; $i++) {
             $logbooks[] = $this->createMockLogbook();
         }
         // Utilisation de method() pour simuler le retour de getLogbooks()
-        $user->method('getLogbooks')->willReturn(value: new ArrayCollection(elements: $logbooks));
+        $user->method(constraint: 'getLogbooks')->willReturn(value: new ArrayCollection(elements: $logbooks));
 
         // Act
         $result = $this->invokePrivateMethod(methodName: 'getLogbooksByUser', parameters: [$user]);
@@ -161,7 +161,7 @@ class DashboardServiceTest extends WebTestCase
         for ($i = 0; $i < $size; $i++) {
             $logbook = $this->createMockLogbook();
             $theme = $this->createMockTheme();
-            $logbook->method('getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
+            $logbook->method(constraint: 'getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
             $logbooks[] = $logbook;
             $themes[] = $theme;
         }
@@ -182,7 +182,7 @@ class DashboardServiceTest extends WebTestCase
         for ($i = 0; $i < $size; $i++) {
             $theme = $this->createMockTheme();
             $module = $this->createMockModule();
-            $theme->method('getModules')->willReturn(new ArrayCollection([$module]));
+            $theme->method(constraint: 'getModules')->willReturn(new ArrayCollection(elements: [$module]));
             $themes[] = $theme;
             $modules[] = $module;
         }
@@ -191,7 +191,7 @@ class DashboardServiceTest extends WebTestCase
         $result = $this->invokePrivateMethod(methodName: 'getModulesByThemes', parameters: [$themes]);
 
         // Assert
-        $this->assertCount($size, $result);
+        $this->assertCount(expectedCount: $size, haystack: $result);
     }
 
     #[DataProvider('provideHiringDates')]
@@ -201,17 +201,17 @@ class DashboardServiceTest extends WebTestCase
         if ($hiringDate !== null) {
             $this->seniorityService
                 ->expects($this->once())
-                ->method('getSeniority')
+                ->method(constraint: 'getSeniority')
                 ->with($hiringDate)
-                ->willReturn($expectedSeniority);
+                ->willReturn(value: $expectedSeniority);
         }
 
         // Act
-        $result = $this->invokePrivateMethod('calculateSeniority', [$hiringDate]);
+        $result = $this->invokePrivateMethod(methodName: 'calculateSeniority', parameters: [$hiringDate]);
 
         // Assert
-        self::assertIsString($result);
-        self::assertEquals($expectedSeniority, $result);
+        self::assertIsString(actual: $result);
+        self::assertEquals(expected: $expectedSeniority, actual: $result);
     }
 
     #[Test] public function testGetSeniority(): void
@@ -273,7 +273,7 @@ class DashboardServiceTest extends WebTestCase
         for ($i = 0; $i < $size; $i++) {
             $module = $this->createMockModule();
             $action = $this->createMockAction($user);
-            $module->method('getActions')->willReturn(new ArrayCollection([$action]));
+            $module->method(constraint: 'getActions')->willReturn(value: new ArrayCollection(elements: [$action]));
             $modules[] = $module;
             $actions[] = $action;
         }
@@ -287,9 +287,9 @@ class DashboardServiceTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->userValidationService = $this->createMock(originalClassName: UserValidationService::class);
-        $this->seniorityService = $this->createMock(originalClassName: UserSeniorityService::class);
-        $this->logbookProgressService = $this->createMock(originalClassName: LogbookProgressService::class);
+        $this->userValidationService = $this->createMock(type: UserValidationService::class);
+        $this->seniorityService = $this->createMock(type: UserSeniorityService::class);
+        $this->logbookProgressService = $this->createMock(type: LogbookProgressService::class);
 
         $this->dashboardService = new DashboardService(
             $this->userValidationService,
@@ -345,24 +345,24 @@ class DashboardServiceTest extends WebTestCase
 
     private function createMockLogbook(): Logbook & MockObject
     {
-        return $this->createMock(originalClassName: Logbook::class);
+        return $this->createMock(type: Logbook::class);
     }
 
     private function createMockTheme(): Theme & MockObject
     {
-        return $this->createMock(Theme::class);
+        return $this->createMock(type: Theme::class);
     }
 
     private function createMockModule(): Module & MockObject
     {
-        return $this->createMock(Module::class);
+        return $this->createMock(type: Module::class);
     }
 
     private function createMockAction($user): Action
     {
-        $action = $this->createMock(Action::class);
-        $action->method('getUser')->willReturn($user);
-        $action->method('getId')->willReturn(Uuid::v7());
+        $action = $this->createMock(type: Action::class);
+        $action->method(constraint: 'getUser')->willReturn(value: $user);
+        $action->method(constraint: 'getId')->willReturn(value: Uuid::v7());
         return $action;
     }
 

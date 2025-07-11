@@ -54,7 +54,7 @@ class TimestampTraitTest extends TestCase
 
     public function testEventTriggering(): void
     {
-        $entity = $this->createMock(originalClassName: get_class(object: $this));
+        $entity = $this->createMock(type: get_class(object: $this));
         $entity->expects($this->once())
             ->method(constraint: 'createdTimestamps');
 

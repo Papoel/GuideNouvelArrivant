@@ -37,9 +37,9 @@ class MentorServiceTest extends TestCase
     protected function setUp(): void
     {
         // Initialisation des mocks
-        $this->userRepository = $this->createMock(originalClassName: UserRepository::class);
-        $this->requestStack = $this->createMock(originalClassName: RequestStack::class);
-        $this->entityManager = $this->createMock(originalClassName: EntityManagerInterface::class);
+        $this->userRepository = $this->createMock(type: UserRepository::class);
+        $this->requestStack = $this->createMock(type: RequestStack::class);
+        $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
     }
 
     #[Test] public function isLogbookNotAccessibleWhenNoOwner(): void
@@ -75,8 +75,8 @@ class MentorServiceTest extends TestCase
         $user->setMentor(mentor: $mentor);
 
         // Créer un Logbook et assigner l'apprenti à ce carnet
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $logbook->method('getOwner')->willReturn(value: $user); // Un seul apprenti
+        $logbook = $this->createMock(type: Logbook::class);
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $user); // Un seul apprenti
 
         // Instancier le service ou la classe qui contient la méthode à tester
         $service = new MentorService(
@@ -102,10 +102,10 @@ class MentorServiceTest extends TestCase
         $mentorNni = $mentor->getNni();  // Utilisation du NNI du mentor créé
 
         // Créez un apprenant fictif (mock)
-        $apprenantMock = $this->createMock(originalClassName: User::class);
+        $apprenantMock = $this->createMock(type: User::class);
 
         // Simulez le comportement du repository pour renvoyer un apprenant associé au mentor
-        $this->userRepository->method('findApprenantByMentorNni')
+        $this->userRepository->method(constraint: 'findApprenantByMentorNni')
             ->with($mentorNni)
             ->willReturn(value: [$apprenantMock]);
 
@@ -130,7 +130,7 @@ class MentorServiceTest extends TestCase
         $mentorNni = $mentor->getNni();
 
         // Simuler le comportement du repository pour renvoyer une liste vide
-        $this->userRepository->method('findApprenantByMentorNni')
+        $this->userRepository->method(constraint: 'findApprenantByMentorNni')
             ->with($mentorNni)
             ->willReturn([]);
 
@@ -140,10 +140,10 @@ class MentorServiceTest extends TestCase
             $this->entityManager
         );
 
-        $apprenants = $mentorService->getApprenantLogbooks($mentorNni);
+        $apprenants = $mentorService->getApprenantLogbooks(mentorNni: $mentorNni);
 
-        self::assertEmpty($apprenants);
-        self::assertIsArray($apprenants);
+        self::assertEmpty(actual: $apprenants);
+        self::assertIsArray(actual: $apprenants);
     }
 
     #[Test] public function isLogbookAccessibleByMentor(): void
@@ -189,14 +189,14 @@ class MentorServiceTest extends TestCase
         $mentorNni = 'E54681';
 
         // Créez un apprenant fictif avec un mentor différent
-        $apprenant = $this->createMock(originalClassName: User::class);
-        $mentor = $this->createMock(originalClassName: User::class);
-        $mentor->method('getNni')->willReturn(value: 'wrongMentorNni');
-        $apprenant->method('getMentor')->willReturn(value: $mentor);
+        $apprenant = $this->createMock(type: User::class);
+        $mentor = $this->createMock(type: User::class);
+        $mentor->method(constraint: 'getNni')->willReturn(value: 'wrongMentorNni');
+        $apprenant->method(constraint: 'getMentor')->willReturn(value: $mentor);
 
         // Créez un carnet fictif
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $logbook->method('getOwner')->willReturn(value: $apprenant);
+        $logbook = $this->createMock(type: Logbook::class);
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $apprenant);
 
         // Instanciation du service
         $mentorService = new MentorService(
@@ -214,25 +214,25 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanData(): void
     {
-        $mentor = $this->createMock(User::class);
-        $logbook = $this->createMock(Logbook::class);
-        $padawan = $this->createMock(User::class);
-        $action = $this->createMock(Action::class);
+        $mentor = $this->createMock(type: User::class);
+        $logbook = $this->createMock(type: Logbook::class);
+        $padawan = $this->createMock(type: User::class);
+        $action = $this->createMock(type: Action::class);
 
         // Simuler que le padawan est associé au carnet
-        $logbook->method('getOwner')->willReturn($padawan);
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $padawan);
 
         // Simuler que le padawan a bien ce mentor
-        $padawan->method('getMentor')->willReturn($mentor);
+        $padawan->method(constraint: 'getMentor')->willReturn(value: $mentor);
 
         // Créer des actions fictives pour le carnet
         $actions = [$action];
-        $logbook->method('getActions')->willReturn(new ArrayCollection($actions));
+        $logbook->method(constraint: 'getActions')->willReturn(value: new ArrayCollection(elements: $actions));
 
         // Simuler la récupération du module et du thème des actions
-        $module = $this->createMock(Module::class);
-        $module->method('getTheme')->willReturn($this->createMock(Theme::class));
-        $action->method('getModule')->willReturn($module);
+        $module = $this->createMock(type: Module::class);
+        $module->method(constraint: 'getTheme')->willReturn(value: $this->createMock(type: Theme::class));
+        $action->method(constraint: 'getModule')->willReturn(value: $module);
 
         // Instanciation du service
         $mentorService = new MentorService(
@@ -255,13 +255,13 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanDataAccessDenied(): void
     {
-        $mentor = $this->createMock(originalClassName: User::class);
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $padawan = $this->createMock(originalClassName: User::class);
+        $mentor = $this->createMock(type: User::class);
+        $logbook = $this->createMock(type: Logbook::class);
+        $padawan = $this->createMock(type: User::class);
 
         // Simuler un padawan sans mentor
-        $logbook->method('getOwner')->willReturn(value: $padawan);
-        $padawan->method('getMentor')->willReturn(value: null);
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $padawan);
+        $padawan->method(constraint: 'getMentor')->willReturn(value: null);
 
         // Instanciation du service
         $mentorService = new MentorService(
@@ -280,11 +280,11 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanDataThrowsAccessDeniedWhenNoPadawan(): void
     {
-        $mentor = $this->createMock(originalClassName: User::class);
-        $logbook = $this->createMock(originalClassName: Logbook::class);
+        $mentor = $this->createMock(type: User::class);
+        $logbook = $this->createMock(type: Logbook::class);
 
         // Simuler un carnet sans propriétaire
-        $logbook->method('getOwner')->willReturn(value: null);
+        $logbook->method(constraint: 'getOwner')->willReturn(value: null);
 
         $mentorService = new MentorService(
             userRepository: $this->userRepository,
@@ -303,28 +303,28 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanDataWithActionsWithoutModuleOrTheme(): void
     {
-        $mentor = $this->createMock(User::class);
-        $mentor->method('getNni')->willReturn('M12345');
+        $mentor = $this->createMock(type: User::class);
+        $mentor->method(constraint: 'getNni')->willReturn(value: 'M12345');
 
-        $logbook = $this->createMock(Logbook::class);
-        $padawan = $this->createMock(User::class);
+        $logbook = $this->createMock(type: Logbook::class);
+        $padawan = $this->createMock(type: User::class);
 
         // Action sans module
-        $actionWithoutModule = $this->createMock(Action::class);
-        $actionWithoutModule->method('getModule')->willReturn(null);
+        $actionWithoutModule = $this->createMock(type: Action::class);
+        $actionWithoutModule->method(constraint: 'getModule')->willReturn(value: null);
 
         // Action avec module, mais sans thème
-        $moduleWithoutTheme = $this->createMock(Module::class);
-        $moduleWithoutTheme->method('getTheme')->willReturn(null);
-        $actionWithModuleWithoutTheme = $this->createMock(Action::class);
-        $actionWithModuleWithoutTheme->method('getModule')->willReturn($moduleWithoutTheme);
+        $moduleWithoutTheme = $this->createMock(type: Module::class);
+        $moduleWithoutTheme->method(constraint: 'getTheme')->willReturn(value: null);
+        $actionWithModuleWithoutTheme = $this->createMock(type: Action::class);
+        $actionWithModuleWithoutTheme->method(constraint: 'getModule')->willReturn(value: $moduleWithoutTheme);
 
         // Configurer le padawan
-        $padawan->method('getMentor')->willReturn($mentor);
+        $padawan->method(constraint: 'getMentor')->willReturn(value: $mentor);
 
         // Configurer le logbook
-        $logbook->method('getOwner')->willReturn($padawan);
-        $logbook->method('getActions')->willReturn(new ArrayCollection([
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $padawan);
+        $logbook->method(constraint: 'getActions')->willReturn(value: new ArrayCollection([
             $actionWithoutModule,
             $actionWithModuleWithoutTheme
         ]));
@@ -337,9 +337,9 @@ class MentorServiceTest extends TestCase
 
         $result = $mentorService->getPadawanData(mentor: $mentor, logbook: $logbook);
 
-        self::assertSame($padawan, $result['padawan']);
-        self::assertSame($logbook, $result['logbook']);
-        self::assertEmpty($result['actionsByTheme']);
+        self::assertSame(expected: $padawan, actual: $result['padawan']);
+        self::assertSame(expected: $logbook, actual: $result['logbook']);
+        self::assertEmpty(actual: $result['actionsByTheme']);
     }
 
     /**
@@ -347,30 +347,30 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanDataWithMixedActions(): void
     {
-        $mentor = $this->createMock(User::class);
-        $mentor->method('getNni')->willReturn('M12345');
+        $mentor = $this->createMock(type: User::class);
+        $mentor->method(constraint: 'getNni')->willReturn(value: 'M12345');
 
-        $logbook = $this->createMock(Logbook::class);
-        $padawan = $this->createMock(User::class);
+        $logbook = $this->createMock(type: Logbook::class);
+        $padawan = $this->createMock(type: User::class);
 
         // Action valide avec module et thème
-        $theme = $this->createMock(Theme::class);
-        $theme->method('getTitle')->willReturn('Theme 1');
-        $module = $this->createMock(Module::class);
-        $module->method('getTheme')->willReturn($theme);
-        $validAction = $this->createMock(Action::class);
-        $validAction->method('getModule')->willReturn($module);
+        $theme = $this->createMock(type: Theme::class);
+        $theme->method(constraint: 'getTitle')->willReturn(value: 'Theme 1');
+        $module = $this->createMock(type: Module::class);
+        $module->method(constraint: 'getTheme')->willReturn(value: $theme);
+        $validAction = $this->createMock(type: Action::class);
+        $validAction->method(constraint: 'getModule')->willReturn($module);
 
         // Action sans module
-        $actionWithoutModule = $this->createMock(Action::class);
-        $actionWithoutModule->method('getModule')->willReturn(null);
+        $actionWithoutModule = $this->createMock(type: Action::class);
+        $actionWithoutModule->method(constraint: 'getModule')->willReturn(value: null);
 
         // Configurer le padawan
-        $padawan->method('getMentor')->willReturn($mentor);
+        $padawan->method(constraint: 'getMentor')->willReturn(value: $mentor);
 
         // Configurer le logbook
-        $logbook->method('getOwner')->willReturn($padawan);
-        $logbook->method('getActions')->willReturn(new ArrayCollection([
+        $logbook->method(constraint: 'getOwner')->willReturn(value: $padawan);
+        $logbook->method(constraint: 'getActions')->willReturn(value: new ArrayCollection([
             $validAction,
             $actionWithoutModule
         ]));
@@ -386,7 +386,7 @@ class MentorServiceTest extends TestCase
         self::assertSame($padawan, $result['padawan']);
         self::assertSame($logbook, $result['logbook']);
         self::assertArrayHasKey('Theme 1', $result['actionsByTheme']);
-        self::assertCount(1, $result['actionsByTheme']['Theme 1']);
+        self::assertCount(expectedCount: 1, haystack: $result['actionsByTheme']['Theme 1']);
         self::assertSame($validAction, $result['actionsByTheme']['Theme 1'][0]);
     }
 
@@ -412,27 +412,27 @@ class MentorServiceTest extends TestCase
         $action->setMentorCommentedAt(mentorCommentedAt: new DateTime()); // Date de commentaire
 
         // Avant la suppression
-        self::assertNotNull($action->getMentorComment()); // Vérifiez que le commentaire existe
-        self::assertNotNull($action->getMentorCommentedAt()); // Vérifiez que la date de commentaire est renseignée
+        self::assertNotNull(actual: $action->getMentorComment()); // Vérifiez que le commentaire existe
+        self::assertNotNull(actual: $action->getMentorCommentedAt()); // Vérifiez que la date de commentaire est renseignée
 
         // Simuler la requête
-        $request = $this->createMock(originalClassName: Request::class);
+        $request = $this->createMock(type: Request::class);
 
         // Créez un mock de ParameterBag pour les attributs de la requête
-        $parameterBag = $this->createMock(originalClassName: ParameterBag::class);
-        $parameterBag->method('get')->with('actionId')->willReturn(value: $action->getId());
+        $parameterBag = $this->createMock(type: ParameterBag::class);
+        $parameterBag->method(constraint: 'get')->with('actionId')->willReturn(value: $action->getId());
 
         // Associez le ParameterBag au mock Request
         $request->attributes = $parameterBag;
 
         // Simuler le comportement de getCurrentRequest()
-        $this->requestStack->method('getCurrentRequest')->willReturn(value: $request);
+        $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $request);
 
         // Simuler l'EntityManager
-        $repositoryMock = $this->createMock(originalClassName: EntityRepository::class);
-        $repositoryMock->method('find')->willReturn(value: $action);
+        $repositoryMock = $this->createMock(type: EntityRepository::class);
+        $repositoryMock->method(constraint: 'find')->willReturn(value: $action);
 
-        $this->entityManager->method('getRepository')->willReturn(value: $repositoryMock);
+        $this->entityManager->method(constraint: 'getRepository')->willReturn(value: $repositoryMock);
 
         // Instanciation du service
         $mentorService = new MentorService(
@@ -444,7 +444,7 @@ class MentorServiceTest extends TestCase
         // Ajoutez des attentes sur la méthode persist
         $this->entityManager->expects($this->once())
             ->method(constraint: 'persist')
-            ->with($this->equalTo($action));  // Vérifie que persist est appelé avec l'action correcte
+            ->with($this->equalTo(value: $action));  // Vérifie que persist est appelé avec l'action correcte
 
         $this->entityManager->expects($this->once())
             ->method(constraint: 'flush');
@@ -453,13 +453,13 @@ class MentorServiceTest extends TestCase
         $mentorService->deleteComment();
 
         // Après la suppression, vérifiez l'état de l'objet Action
-        self::assertNull($action->getMentorComment()); // Vérifiez que le commentaire est supprimé
-        self::assertNull($action->getMentorCommentedAt()); // Vérifiez que la date de commentaire est réinitialisée à null
+        self::assertNull(actual: $action->getMentorComment()); // Vérifiez que le commentaire est supprimé
+        self::assertNull(actual: $action->getMentorCommentedAt()); // Vérifiez que la date de commentaire est réinitialisée à null
     }
 
     #[Test] public function deleteCommentThrowsLogicExceptionWhenNoRequest(): void
     {
-        $this->requestStack->method('getCurrentRequest')->willReturn(value: null); // Simuler une requête nulle
+        $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: null); // Simuler une requête nulle
 
         $mentorService = new MentorService(
             userRepository: $this->userRepository,
@@ -478,23 +478,23 @@ class MentorServiceTest extends TestCase
     #[Test] public function deleteCommentThrowsAccessDeniedWhenActionNotFound(): void
     {
         // Créer un mock pour Request
-        $requestMock = $this->createMock(originalClassName: Request::class);
+        $requestMock = $this->createMock(type: Request::class);
 
         // Simuler un attribut 'actionId' dans la requête
-        $parameterBagMock = $this->createMock(originalClassName: ParameterBag::class);
-        $parameterBagMock->method('get')->willReturn(value: null);  // Simuler l'absence de 'actionId'
+        $parameterBagMock = $this->createMock(type: ParameterBag::class);
+        $parameterBagMock->method(constraint: 'get')->willReturn(value: null);  // Simuler l'absence de 'actionId'
 
         // Assigner les attributs simulés à la requête
         $requestMock->attributes = $parameterBagMock;
 
         // Simuler le comportement de getCurrentRequest
-        $this->requestStack->method('getCurrentRequest')->willReturn(value: $requestMock);
+        $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $requestMock);
 
         // Simuler l'EntityManager et le repository retournant null pour find()
-        $repositoryMock = $this->createMock(originalClassName: EntityRepository::class);
-        $repositoryMock->method('find')->willReturn(value: null); // Simuler une action introuvable
+        $repositoryMock = $this->createMock(type: EntityRepository::class);
+        $repositoryMock->method(constraint: 'find')->willReturn(value: null); // Simuler une action introuvable
 
-        $this->entityManager->method('getRepository')->willReturn(value: $repositoryMock);
+        $this->entityManager->method(constraint: 'getRepository')->willReturn(value: $repositoryMock);
 
         // Instancier le service
         $mentorService = new MentorService(

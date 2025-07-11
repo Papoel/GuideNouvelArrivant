@@ -196,7 +196,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        // Si l'utilisateur a un email, on le retourne
+        if ($this->email) {
+            return $this->email;
+        }
+
+        // Sinon, on retourne un identifiant temporaire
+        $id = $this->getId();
+
+        return $id ? 'user_'.$id : 'user_temp_'.spl_object_hash($this);
     }
 
     /**

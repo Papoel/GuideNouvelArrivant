@@ -2,7 +2,7 @@
 import './bootstrap.js';
 
 // Bootstrap Icons CSS
-import './vendor/bootstrap-icons/bootstrap-icons.css';
+import './vendor/bootstrap-icons/font/bootstrap-icons.min.css';
 
 // Bootstrap CSS
 import './vendor/bootstrap/dist/css/bootstrap.min.css';
