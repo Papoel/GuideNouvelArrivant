@@ -9,7 +9,6 @@ doctrine:
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
-        auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
         report_fields_where_declared: true
         validate_xml_mapping: true
@@ -32,12 +31,14 @@ when@test:
         dbal:
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        orm:
+            enable_lazy_ghost_objects: true
 
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            enable_lazy_ghost_objects: true
+            # proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies' # Déprécié, commenté pour éviter les avertissements
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool
