@@ -49,7 +49,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $event = new BeforeEntityUpdatedEvent(entityInstance: $user);
 
         // Simulation de l'originalData
-        $unitOfWork = $this->createMock(originalClassName: UnitOfWork::class);
+        $unitOfWork = $this->createMock(type: UnitOfWork::class);
         $unitOfWork->method('getOriginalEntityData')->willReturn(value: ['mentor' => null]);
         $this->entityManager->method('getUnitOfWork')->willReturn(value: $unitOfWork);
 
@@ -63,9 +63,9 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
     #[Test] public function itRemovesRoleMentorFromPreviousMentorAndAddsToNewOne(): void
     {
         // Créer les utilisateurs nécessaires
-        $user = $this->createMock(originalClassName: User::class);
-        $previousMentor = $this->createMock(originalClassName: User::class);
-        $newMentor = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
+        $previousMentor = $this->createMock(type: User::class);
+        $newMentor = $this->createMock(type: User::class);
 
         // Configuration du comportement de l'utilisateur
         $user->expects($this->once())
@@ -73,7 +73,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
             ->willReturn(value: $newMentor);
 
         // Configuration du UnitOfWork
-        $unitOfWork = $this->createMock(originalClassName: UnitOfWork::class);
+        $unitOfWork = $this->createMock(type: UnitOfWork::class);
         $unitOfWork->expects($this->once())
             ->method(constraint: 'getOriginalEntityData')
             ->with(value: $user)
@@ -129,8 +129,8 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
     public function itRemovesRoleMentorIfMentorIsRemoved(): void
     {
         // Arrange
-        $user = $this->createMock(originalClassName: User::class);
-        $previousMentor = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
+        $previousMentor = $this->createMock(type: User::class);
 
         // Configuration du User pour simuler qu'il n'a plus de mentor
         $user->expects($this->once())
@@ -138,7 +138,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
             ->willReturn(value: null);
 
         // Configuration du UnitOfWork pour simuler que l'utilisateur avait un mentor avant
-        $unitOfWork = $this->createMock(originalClassName: UnitOfWork::class);
+        $unitOfWork = $this->createMock(type: UnitOfWork::class);
         $unitOfWork->expects($this->once())
             ->method(constraint: 'getOriginalEntityData')
             ->with(value: $user)

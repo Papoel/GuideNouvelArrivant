@@ -20,8 +20,8 @@ class UserValidationServiceTest extends TestCase
     protected function setUp(): void
     {
         // Initialisation des mocks et du service pour éviter la répétition de code
-        $this->userRepository = $this->createMock(originalClassName: UserRepository::class);
-        $this->security = $this->createMock(originalClassName: Security::class);
+        $this->userRepository = $this->createMock(type: UserRepository::class);
+        $this->security = $this->createMock(type: Security::class);
         $this->service = new UserValidationService(userRepository: $this->userRepository, security: $this->security);
     }
 

@@ -59,8 +59,8 @@ class LogbookCreationSubscriberTest extends TestCase
 
     #[Test] public function itHandlesExistingLogbookIfAlreadyExists(): void
     {
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $existingLogbook = $this->createMock(originalClassName: Logbook::class);
+        $logbook = $this->createMock(type: Logbook::class);
+        $existingLogbook = $this->createMock(type: Logbook::class);
 
         // Simulation du carnet déjà existant
         $this->logbookReplacementService

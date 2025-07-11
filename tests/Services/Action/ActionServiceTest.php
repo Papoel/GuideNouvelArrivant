@@ -31,10 +31,10 @@ class ActionServiceTest extends TestCase
     protected function setUp(): void
     {
         // Mocks des dépendances
-        $this->actionRepository = $this->createMock(ActionRepository::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->security = $this->createMock(Security::class);
-        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->actionRepository = $this->createMock(type: ActionRepository::class);
+        $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
+        $this->security = $this->createMock(type: Security::class);
+        $this->requestStack = $this->createMock(type: RequestStack::class);
 
         // Création du service à tester
         $this->actionService = new ActionService(
@@ -47,21 +47,21 @@ class ActionServiceTest extends TestCase
 
     private function createUser(): User
     {
-        $user = $this->createMock(User::class);
-        $user->method('getFullName')->willReturn(value: 'John Doe');
+        $user = $this->createMock(type: User::class);
+        $user->method(constraint: 'getFullName')->willReturn(value: 'John Doe');
         return $user;
     }
 
     private function createModule(): Module
     {
-        return $this->createMock(Module::class);
+        return $this->createMock(type: Module::class);
     }
 
     private function createAction(User $user, Module $module): Action
     {
-        $action = $this->createMock(Action::class);
-        $action->method('getModule')->willReturn($module);
-        $action->method('getUser')->willReturn($user);
+        $action = $this->createMock(type: Action::class);
+        $action->method(constraint: 'getModule')->willReturn(value: $module);
+        $action->method(constraint: 'getUser')->willReturn(value: $user);
         return $action;
     }
 
@@ -71,11 +71,11 @@ class ActionServiceTest extends TestCase
         $module = $this->createModule();
 
         // Simuler un utilisateur valide dans Security
-        $this->security->method('getUser')->willReturn(value: $user);
+        $this->security->method(constraint: 'getUser')->willReturn(value: $user);
 
         // Simuler la recherche d'une action existante
         $existingAction = $this->createAction(user: $user, module: $module);
-        $this->actionRepository->method('findOneBy')
+        $this->actionRepository->method(constraint: 'findOneBy')
             ->with(['module' => $module, 'user' => $user])
             ->willReturn(value: $existingAction);
 
@@ -92,17 +92,17 @@ class ActionServiceTest extends TestCase
         $module = $this->createModule();
 
         // Simuler un utilisateur valide dans Security
-        $this->security->method('getUser')->willReturn($user);
+        $this->security->method(constraint: 'getUser')->willReturn($user);
 
         // Simuler l'absence d'une action existante
-        $this->actionRepository->method('findOneBy')
+        $this->actionRepository->method(constraint: 'findOneBy')
             ->with(['module' => $module, 'user' => $user])
             ->willReturn(null);
 
         // Créer une nouvelle action
-        $newAction = $this->createMock(Action::class);
-        $newAction->method('setModule')->with($module);
-        $newAction->method('setUser')->with($user);
+        $newAction = $this->createMock(type: Action::class);
+        $newAction->method(constraint: 'setModule')->with($module);
+        $newAction->method(constraint: 'setUser')->with($user);
 
         // Appel à la méthode
         $action = $this->actionService->findOrCreateAction(module: $module);
@@ -114,7 +114,7 @@ class ActionServiceTest extends TestCase
     #[Test] public function findOrCreateActionThrowsExceptionWhenUserIsInvalid()
     {
         // Simuler un utilisateur invalide (non instance de User)
-        $this->security->method('getUser')->willReturn(value: null); // ou un objet non-User si nécessaire
+        $this->security->method(constraint: 'getUser')->willReturn(value: null); // ou un objet non-User si nécessaire
 
         $module = new Module(); // Utiliser un module factice pour le test
 
@@ -130,9 +130,9 @@ class ActionServiceTest extends TestCase
         $this->expectExceptionMessage("L'utilisateur actuel n'est pas valide.");
 
         // Simuler un utilisateur non valide
-        $this->security->method('getUser')->willReturn(value: null);
+        $this->security->method(constraint: 'getUser')->willReturn(value: null);
 
-        $action = $this->createMock(Action::class);
+        $action = $this->createMock(type: Action::class);
 
         $this->actionService->validateAction(action: $action);
     }
@@ -140,10 +140,10 @@ class ActionServiceTest extends TestCase
     #[Test] public function validateActionSetsAgentVisaAndDate(): void
     {
         $user = $this->createUser();
-        $action = $this->createMock(originalClassName: Action::class);
+        $action = $this->createMock(type: Action::class);
 
         // Simuler un utilisateur valide
-        $this->security->method('getUser')->willReturn(value: $user);
+        $this->security->method(constraint: 'getUser')->willReturn(value: $user);
 
         // Créer la date actuelle
         $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
@@ -185,22 +185,22 @@ class ActionServiceTest extends TestCase
     #[Test] public function saveActionSetsAgentVisaAndLogbook(): void
     {
         $user = $this->createUser();
-        $action = $this->createMock(originalClassName: Action::class);
+        $action = $this->createMock(type: Action::class);
         $module = $this->createModule();
         $logbookId = 'logbook123';
 
         // Simuler un utilisateur valide
-        $this->security->method('getUser')->willReturn(value: $user);
+        $this->security->method(constraint: 'getUser')->willReturn(value: $user);
 
         // Simuler la requête actuelle
-        $request = $this->createMock(originalClassName: Request::class);
-        $request->method('get')->with('logbookId')->willReturn(value: $logbookId);
-        $this->requestStack->method('getCurrentRequest')->willReturn(value: $request);
+        $request = $this->createMock(type: Request::class);
+        $request->method(constraint: 'get')->with('logbookId')->willReturn(value: $logbookId);
+        $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $request);
 
         // Simuler la récupération du carnet
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $this->entityManager->method('getRepository')
-            ->willReturn($this->createMock(originalClassName: EntityRepository::class));
+        $logbook = $this->createMock(type: Logbook::class);
+        $this->entityManager->method(constraint: 'getRepository')
+            ->willReturn($this->createMock(type: EntityRepository::class));
         $this->entityManager->getRepository(className: Logbook::class)->method('find')
             ->with($logbookId)
             ->willReturn($logbook);

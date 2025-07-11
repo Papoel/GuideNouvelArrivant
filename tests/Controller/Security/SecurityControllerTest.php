@@ -223,7 +223,7 @@ class SecurityControllerTest extends WebTestCase
         $initialLoginAt = $user->getLastLoginAt();
         self::assertNull(actual: $initialLoginAt);
 
-        $token = $this->createMock(originalClassName: TokenInterface::class);
+        $token = $this->createMock(type: TokenInterface::class);
         $token->method('getUser')->willReturn(value: $user);
 
         // Création de la request avec une session valide
@@ -253,9 +253,9 @@ class SecurityControllerTest extends WebTestCase
     {
         // Arrange
         // Création d'un mock d'utilisateur qui implémente UserInterface mais n'est pas un User
-        $invalidUser = $this->createMock(originalClassName: UserInterface::class);
+        $invalidUser = $this->createMock(type: UserInterface::class);
 
-        $token = $this->createMock(originalClassName: TokenInterface::class);
+        $token = $this->createMock(type: TokenInterface::class);
         $token->method('getUser')->willReturn(value: $invalidUser);
 
         $request = Request::create(uri: '/connexion');
@@ -275,7 +275,7 @@ class SecurityControllerTest extends WebTestCase
         $user = new User();
         $user->setNni(nni: 'J12345');
 
-        $token = $this->createMock(originalClassName: TokenInterface::class);
+        $token = $this->createMock(type: TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
         // Création de la request avec une session valide
@@ -323,8 +323,8 @@ class SecurityControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->entityManager = $this->createMock(originalClassName: EntityManagerInterface::class);
-        $this->urlGenerator = $this->createMock(originalClassName: UrlGeneratorInterface::class);
+        $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
+        $this->urlGenerator = $this->createMock(type: UrlGeneratorInterface::class);
         $this->session = new Session(new MockArraySessionStorage());
         $this->authenticator = new MainAuthenticator($this->urlGenerator, $this->entityManager);
     }

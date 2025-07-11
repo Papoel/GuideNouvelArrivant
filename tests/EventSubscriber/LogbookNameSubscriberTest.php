@@ -42,7 +42,7 @@ class LogbookNameSubscriberTest extends TestCase
         $specialityAbreviation = $user->getSpecialityAbreviation();
 
         // Création d'un Logbook avec un propriétaire
-        $logbook = $this->createMock(originalClassName: Logbook::class);
+        $logbook = $this->createMock(type: Logbook::class);
         $logbook->method('getOwner')->willReturn(value: $user);
 
         // On s’assure que setName est bien appelé avec les bons arguments
@@ -106,7 +106,7 @@ class LogbookNameSubscriberTest extends TestCase
         $user = UserTestHelper::createUser();
 
         // Création d'un Logbook avec un propriétaire et un nom nul
-        $logbook = $this->createMock(originalClassName: Logbook::class);
+        $logbook = $this->createMock(type: Logbook::class);
         $logbook->method('getOwner')->willReturn(value: $user);
         $logbook->method('getName')->willReturn(value: null);
 
@@ -135,7 +135,7 @@ class LogbookNameSubscriberTest extends TestCase
         $user = UserTestHelper::createUser();
 
         // Création d'un Logbook avec un propriétaire et un nom déjà défini
-        $logbook = $this->createMock(originalClassName: Logbook::class);
+        $logbook = $this->createMock(type: Logbook::class);
         $logbook->method('getOwner')->willReturn(value: $user);
         $logbook->method('getName')->willReturn(value: 'Carnet de '.$user->getFullname());
 

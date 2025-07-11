@@ -22,19 +22,19 @@ class UserActionType extends AbstractType
                     'attr' => ['rows' => 5],
                     'required' => false,
                     'constraints' => [
-                        new Assert\Length([
-                            'min' => 2,
-                            'max' => 1000,
-                            'minMessage' => 'Le commentaire doit faire au moins {{ limit }} caractères',
-                            'maxMessage' => 'Le commentaire ne peut pas dépasser {{ limit }} caractères',
-                        ]),
-                        new Assert\Type([
-                            'type' => 'string',
-                            'message' => 'Le commentaire doit être une chaîne de caractères',
-                        ]),
-                        new Assert\NotBlank([
-                            'message' => 'Un commentaire est requis, merci de laissé un petit mot à ton tuteur.',
-                        ]),
+                        new Assert\Length(
+                            min: 2,
+                            max: 1000,
+                            minMessage: 'Le commentaire doit faire au moins {{ limit }} caractères',
+                            maxMessage: 'Le commentaire ne peut pas dépasser {{ limit }} caractères',
+                        ),
+                        new Assert\Type(
+                            type: 'string',
+                            message: 'Le commentaire doit être une chaîne de caractères',
+                        ),
+                        new Assert\NotBlank(
+                            message: 'Un commentaire est requis, merci de laissé un petit mot à ton tuteur.',
+                        ),
                     ],
                 ]
             );

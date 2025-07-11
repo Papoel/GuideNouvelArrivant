@@ -198,17 +198,17 @@ class UserCrudControllerTest extends TestCase
      */
     #[Test] public function configureLogbooksFieldConfiguration(): void
     {
-        $emptyLogbooks = $this->createMock(originalClassName: Collection::class);
-        $emptyLogbooks->method('count')->willReturn(value: 0);
+        $emptyLogbooks = $this->createMock(type: Collection::class);
+        $emptyLogbooks->method(constraint: 'count')->willReturn(value: 0);
 
-        $filledLogbooks = $this->createMock(originalClassName: Collection::class);
-        $filledLogbooks->method('count')->willReturn(value: 1);
+        $filledLogbooks = $this->createMock(type: Collection::class);
+        $filledLogbooks->method(constraint: 'count')->willReturn(value: 1);
 
-        $userWithEmptyLogbooks = $this->createMock(originalClassName: User::class);
-        $userWithEmptyLogbooks->method('getLogbooks')->willReturn(value: $emptyLogbooks);
+        $userWithEmptyLogbooks = $this->createMock(type: User::class);
+        $userWithEmptyLogbooks->method(constraint: 'getLogbooks')->willReturn(value: $emptyLogbooks);
 
-        $userWithFilledLogbooks = $this->createMock(originalClassName: User::class);
-        $userWithFilledLogbooks->method('getLogbooks')->willReturn(value: $filledLogbooks);
+        $userWithFilledLogbooks = $this->createMock(type: User::class);
+        $userWithFilledLogbooks->method(constraint: 'getLogbooks')->willReturn(value: $filledLogbooks);
 
         $formatValueClosure = static function($value, $entity) {
             return '<span style="display: inline-block" class="badge bg-'.

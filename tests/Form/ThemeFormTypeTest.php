@@ -28,25 +28,25 @@ class ThemeFormTypeTest extends TypeTestCase
     protected function setUp(): void
     {
         // Mock du EntityRepository pour simuler la réponse avec des entités Logbook
-        $this->repository = $this->createMock(originalClassName: EntityRepository::class);
-        $this->repository->method('findAll')->willReturn([new Logbook()]);  // Exemple d'un logbook mocké
+        $this->repository = $this->createMock(type: EntityRepository::class);
+        $this->repository->method(constraint: 'findAll')->willReturn(value: [new Logbook()]);  // Exemple d'un logbook mocké
 
         // Mock du EntityManager et configuration pour retourner le repository mocké
-        $this->entityManager = $this->createMock(originalClassName: EntityManagerInterface::class);
-        $this->entityManager->method('getRepository')->with(Logbook::class)->willReturn($this->repository);
+        $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
+        $this->entityManager->method(constraint: 'getRepository')->with(Logbook::class)->willReturn(value: $this->repository);
 
         // Mock du ManagerRegistry et configuration pour retourner le EntityManager mocké
-        $this->registry = $this->createMock(originalClassName: ManagerRegistry::class);
-        $this->registry->method('getManagerForClass')->with(Logbook::class)->willReturn($this->entityManager);
+        $this->registry = $this->createMock(type: ManagerRegistry::class);
+        $this->registry->method(constraint: 'getManagerForClass')->with(Logbook::class)->willReturn(value: $this->entityManager);
 
         // Mock du ClassMetadata pour que Doctrine reconnaisse Logbook comme entité mappée
-        $metadata = $this->createMock(originalClassName: ClassMetadata::class);
-        $metadata->method('getName')->willReturn(value: Logbook::class);
-        $this->entityManager->method('getClassMetadata')->with(Logbook::class)->willReturn($metadata);
+        $metadata = $this->createMock(type: ClassMetadata::class);
+        $metadata->method(constraint: 'getName')->willReturn(value: Logbook::class);
+        $this->entityManager->method(constraint: 'getClassMetadata')->with(Logbook::class)->willReturn(value: $metadata);
 
         // Crée le formFactory avec l'extension Doctrine
         $this->formFactory = Forms::createFormFactoryBuilder()
-            ->addExtensions([new PreloadedExtension([new EntityType($this->registry)], [])])
+            ->addExtensions(extensions: [new PreloadedExtension(types: [new EntityType(registry: $this->registry)], typeExtensions: [])])
             ->getFormFactory();
 
         // Appelez le parent `setUp` après l'initialisation des propriétés
@@ -72,9 +72,9 @@ class ThemeFormTypeTest extends TypeTestCase
 
     #[Test] public function testConfigureOptions(): void
     {
-        $form = $this->factory->create(ThemeFormType::class);
+        $form = $this->factory->create(type: ThemeFormType::class);
         $options = $form->getConfig()->getOptions();
 
-        $this->assertEquals(Theme::class, $options['data_class']);
+        $this->assertEquals(expected: Theme::class, actual: $options['data_class']);
     }
 }

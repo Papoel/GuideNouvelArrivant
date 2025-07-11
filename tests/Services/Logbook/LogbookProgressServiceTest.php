@@ -26,14 +26,14 @@ class LogbookProgressServiceTest extends TestCase
 
     private function createLogbookWithModules(array $modules, array $actions = [], ?User $user = null): Logbook
     {
-        $logbook = $this->createMock(originalClassName: Logbook::class);
-        $theme = $this->createMock(originalClassName: Theme::class);
-        $logbook->method('getThemes')->willReturn(value: new ArrayCollection([$theme]));
-        $theme->method('getModules')->willReturn(value: new ArrayCollection($modules));
+        $logbook = $this->createMock(type: Logbook::class);
+        $theme = $this->createMock(type: Theme::class);
+        $logbook->method(constraint: 'getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
+        $theme->method(constraint: 'getModules')->willReturn(value: new ArrayCollection(elements: $modules));
 
         if ($user) {
-            $logbook->method('getOwner')->willReturn(value: $user);
-            $user->method('getActions')->willReturn(value: new ArrayCollection($actions));
+            $logbook->method(constraint: 'getOwner')->willReturn(value: $user);
+            $user->method('getActions')->willReturn(value: new ArrayCollection(elements: $actions));
         }
 
         return $logbook;
@@ -41,10 +41,10 @@ class LogbookProgressServiceTest extends TestCase
 
     private function createAction(Module $module, ?DateTime $agentValidatedAt = null, ?DateTime $mentorValidatedAt = null): Action
     {
-        $action = $this->createMock(originalClassName: Action::class);
-        $action->method('getModule')->willReturn(value: $module);
-        $action->method('getAgentValidatedAt')->willReturn(value: $agentValidatedAt);
-        $action->method('getMentorValidatedAt')->willReturn(value: $mentorValidatedAt);
+        $action = $this->createMock(type: Action::class);
+        $action->method(constraint: 'getModule')->willReturn(value: $module);
+        $action->method(constraint: 'getAgentValidatedAt')->willReturn(value: $agentValidatedAt);
+        $action->method(constraint: 'getMentorValidatedAt')->willReturn(value: $mentorValidatedAt);
 
         return $action;
     }
@@ -69,9 +69,9 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressWithCompletedActions(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
+        $module = $this->createMock(type: Module::class);
         $action = $this->createAction($module, new DateTime(), new DateTime());
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -91,9 +91,9 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressWithAgentValidatedButMentorNot(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
+        $module = $this->createMock(type: Module::class);
         $action = $this->createAction(module: $module, agentValidatedAt: new DateTime());
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -113,9 +113,9 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressWithoutAnyValidation(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
+        $module = $this->createMock(type: Module::class);
         $action = $this->createAction($module);
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -135,9 +135,9 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressClassBelow50Percent(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
+        $module = $this->createMock(type: Module::class);
         $action = $this->createAction($module);
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -148,11 +148,11 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressClassBetween50And75Percent(): void
     {
-        $module1 = $this->createMock(originalClassName: Module::class);
-        $module2 = $this->createMock(originalClassName: Module::class);
+        $module1 = $this->createMock(type: Module::class);
+        $module2 = $this->createMock(type: Module::class);
         $action1 = $this->createAction(module: $module1, agentValidatedAt: new DateTime(), mentorValidatedAt: new DateTime());
         $action2 = $this->createAction(module: $module2);
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module1, $module2], actions: [$action1, $action2], user: $user);
 
         $result = $this->service->calculateLogbookProgress($logbook);
@@ -163,9 +163,9 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressClassAbove75Percent(): void
     {
-        $modules = [$this->createMock(originalClassName: Module::class), $this->createMock(originalClassName: Module::class), $this->createMock(originalClassName: Module::class)];
+        $modules = [$this->createMock(type: Module::class), $this->createMock(type: Module::class), $this->createMock(type: Module::class)];
         $actions = array_map(fn($module) => $this->createAction($module, new DateTime(), new DateTime()), $modules);
-        $user = $this->createMock(originalClassName: User::class);
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: $modules, actions: $actions, user: $user);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -176,8 +176,8 @@ class LogbookProgressServiceTest extends TestCase
 
     #[Test] public function calculateLogbookProgressWithNullAction(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
-        $user = $this->createMock(originalClassName: User::class);
+        $module = $this->createMock(type: Module::class);
+        $user = $this->createMock(type: User::class);
 
         // Création d'un logbook avec un module et aucun action associée
         $logbook = $this->createLogbookWithModules(modules: [$module], user: $user);
@@ -200,7 +200,7 @@ class LogbookProgressServiceTest extends TestCase
     #[Test]
     public function calculateLogbookProgressWithNullOwner(): void
     {
-        $module = $this->createMock(originalClassName: Module::class);
+        $module = $this->createMock(type: Module::class);
         $logbook = $this->createLogbookWithModules(modules: [$module]);
 
         $result = $this->service->calculateLogbookProgress(logbook: $logbook);
@@ -221,17 +221,17 @@ class LogbookProgressServiceTest extends TestCase
     #[Test]
     public function calculateLogbookProgressWithMultipleThemes(): void
     {
-        $module1 = $this->createMock(originalClassName: Module::class);
-        $module2 = $this->createMock(originalClassName: Module::class);
-        $module3 = $this->createMock(originalClassName: Module::class);
-        
+        $module1 = $this->createMock(type: Module::class);
+        $module2 = $this->createMock(type: Module::class);
+        $module3 = $this->createMock(type: Module::class);
+
         $actions = [
-            $this->createAction($module1, new DateTime(), new DateTime()),
-            $this->createAction($module2, new DateTime(), null),
-            $this->createAction($module3)
+            $this->createAction(module: $module1, agentValidatedAt: new DateTime(), mentorValidatedAt: new DateTime()),
+            $this->createAction(module: $module2, agentValidatedAt: new DateTime(), mentorValidatedAt: null),
+            $this->createAction(module: $module3)
         ];
-        
-        $user = $this->createMock(originalClassName: User::class);
+
+        $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(
             modules: [$module1, $module2, $module3],
             actions: $actions,

@@ -51,7 +51,7 @@ class UserRepositoryTest extends KernelTestCase
     {
         // Créer un mock d'un utilisateur qui implémente PasswordAuthenticatedUserInterface
         // mais qui n'est pas une instance de User
-        $unsupportedUser = $this->createMock(originalClassName: PasswordAuthenticatedUserInterface::class);
+        $unsupportedUser = $this->createMock(type: PasswordAuthenticatedUserInterface::class);
 
         // Asserter que l'exception UnsupportedUserException est lancée
         $this->expectException(UnsupportedUserException::class);
