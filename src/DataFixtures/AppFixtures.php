@@ -30,7 +30,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
             ->setLastname(lastname: 'Wayne')
             ->setEmail(email: 'bruce.wayne@gotham.city')
             ->setRoles(roles: ['ROLE_ADMIN', 'ROLE_USER'])
-            ->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'admin'))
+            ->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'Admin1234'))
             ->setNni(nni: 'H12345')
             ->setJob(job: JobEnum::CHARGE_AFFAIRES)
             ->setSpeciality(speciality: SpecialityEnum::CHA)

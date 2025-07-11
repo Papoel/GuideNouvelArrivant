@@ -1,16 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Feedback;
+use App\Repository\Interfaces\FeedbackRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Repository pour l'entité Feedback.
+ * Gère les opérations de requêtage liées aux retours d'expérience des utilisateurs.
+ *
  * @extends ServiceEntityRepository<Feedback>
  */
-class FeedbackRepository extends ServiceEntityRepository
+class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -38,8 +44,25 @@ class FeedbackRepository extends ServiceEntityRepository
 
         // Appliquer les critères de filtrage
         foreach ($criteria as $field => $value) {
-            $qb->andWhere("f.$field = :$field")
-                ->setParameter($field, $value);
+            if ('serviceId' === $field) {
+                // Utiliser l'ID du service pour filtrer les feedbacks par auteur
+                // On utilise déjà l'alias 'a' pour author plus haut dans la requête
+                $qb->leftJoin('a.service', 'authorService')
+                   ->andWhere('authorService.id = :serviceId')
+                   ->setParameter('serviceId', $value);
+            } elseif ('serviceName' === $field) {
+                // Cas où on filtre par nom de service
+                $qb->leftJoin('a.service', 's')
+                   ->andWhere('LOWER(s.name) = LOWER(:serviceName)')
+                   ->setParameter('serviceName', $value);
+            } elseif ('service' === $field) {
+                // Cas où on passe directement l'objet Service
+                $qb->andWhere('a.service = :service')
+                   ->setParameter('service', $value);
+            } else {
+                $qb->andWhere("f.$field = :$field")
+                   ->setParameter($field, $value);
+            }
         }
 
         // Recherche par terme
@@ -63,5 +86,77 @@ class FeedbackRepository extends ServiceEntityRepository
             'totalItems' => $totalItems,
             'totalPages' => $totalPages,
         ];
+    }
+
+    /**
+     * Compte le nombre de feedbacks correspondant aux critères donnés.
+     *
+     * @param array<string, bool|int|string|null> $criteria Critères de filtrage (ex: ['isReviewed' => true])
+     *
+     * @return int Nombre de feedbacks correspondant aux critères
+     */
+    public function countByCriteria(array $criteria = []): int
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->select('COUNT(f.id)');
+
+        // Appliquer les critères de filtrage
+        foreach ($criteria as $field => $value) {
+            if ('serviceId' === $field) {
+                $qb->leftJoin('f.author', 'a')
+                   ->leftJoin('a.service', 'authorService')
+                   ->andWhere('authorService.id = :serviceId')
+                   ->setParameter('serviceId', $value);
+            } elseif ('serviceName' === $field) {
+                // Cas où on filtre par nom de service
+                $qb->leftJoin('f.author', 'a')
+                   ->leftJoin('a.service', 's')
+                   ->andWhere('LOWER(s.name) = LOWER(:serviceName)')
+                   ->setParameter('serviceName', $value);
+            } elseif ('service' === $field) {
+                // Cas où on passe directement l'objet Service
+                $qb->leftJoin('f.author', 'a')
+                   ->andWhere('a.service = :service')
+                   ->setParameter('service', $value);
+            } else {
+                $qb->andWhere("f.$field = :$field")
+                   ->setParameter($field, $value);
+            }
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Récupère les feedbacks des utilisateurs d'un service spécifique par son nom.
+     *
+     * @param string $serviceName Nom du service
+     * @param int    $limit       Nombre maximum de résultats
+     * @param int    $offset      Position de départ
+     *
+     * @return array<int, array<string, mixed>> Les feedbacks avec les informations utilisateur
+     */
+    public function findFeedbacksByServiceName(string $serviceName, int $limit = 25, int $offset = 0): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT u.*, f.*
+            FROM users u
+            JOIN service s ON u.service_id = s.id
+            JOIN feedbacks f ON f.author_id = u.id
+            WHERE s.name = :serviceName
+            ORDER BY f.created_at DESC
+            LIMIT :offset, :limit
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('serviceName', $serviceName);
+        $stmt->bindValue('offset', $offset, \PDO::PARAM_INT);
+        $stmt->bindValue('limit', $limit, \PDO::PARAM_INT);
+
+        $resultSet = $stmt->executeQuery();
+
+        return $resultSet->fetchAllAssociative();
     }
 }
