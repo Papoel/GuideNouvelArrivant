@@ -132,6 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $feedbacks;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Service $service = null;
 
     public function __construct()

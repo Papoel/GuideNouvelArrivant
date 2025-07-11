@@ -21,9 +21,9 @@ class FeedbackController extends AbstractController
     public function index(string $nni, FeedbackRepository $feedbackRepository): Response
     {
         $user = $this->getUser();
-        $feedbacks = $feedbackRepository->findBy(['author' => $user], ['createdAt' => 'DESC']);
+        $feedbacks = $feedbackRepository->findBy(criteria: ['author' => $user], orderBy: ['createdAt' => 'DESC']);
 
-        return $this->render('app/dashboard/feedback/my_feedbacks.html.twig', [
+        return $this->render(view: 'app/dashboard/feedback/my_feedbacks.html.twig', parameters: [
             'feedbacks' => $feedbacks,
             'nni' => $nni,
         ]);
@@ -34,10 +34,10 @@ class FeedbackController extends AbstractController
     {
         // Vérifier que l'utilisateur est bien l'auteur du feedback
         if ($feedback->getAuthor() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à accéder à ce retour d\'expérience.');
+            throw $this->createAccessDeniedException(message: 'Vous n\'êtes pas autorisé à accéder à ce retour d\'expérience.');
         }
 
-        return $this->render('app/dashboard/feedback/my_feedback_detail.html.twig', [
+        return $this->render(view: 'app/dashboard/feedback/my_feedback_detail.html.twig', parameters: [
             'feedback' => $feedback,
             'nni' => $nni,
         ]);
@@ -47,24 +47,24 @@ class FeedbackController extends AbstractController
     public function new(string $nni, Request $request, EntityManagerInterface $entityManager): Response
     {
         $feedback = new Feedback();
-        $form = $this->createForm(FeedbackType::class, $feedback);
-        $form->handleRequest($request);
+        $form = $this->createForm(type: FeedbackType::class, data: $feedback);
+        $form->handleRequest(request: $request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
 
-            $feedback->setAuthor($user instanceof User ? $user : null);
-            $feedback->setIsReviewed(false);
+            $feedback->setAuthor(author: $user instanceof User ? $user : null);
+            $feedback->setIsReviewed(isReviewed: false);
 
-            $entityManager->persist($feedback);
+            $entityManager->persist(object: $feedback);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre retour d\'expérience a été enregistré avec succès.');
+            $this->addFlash(type: 'success', message: 'Votre retour d\'expérience a été enregistré avec succès.');
 
-            return $this->redirectToRoute('dashboard_index', ['nni' => $nni]);
+            return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $nni]);
         }
 
-        return $this->render('app/dashboard/feedback/new.html.twig', [
+        return $this->render(view: 'app/dashboard/feedback/new.html.twig', parameters: [
             'form' => $form,
         ]);
     }
@@ -75,7 +75,7 @@ class FeedbackController extends AbstractController
     {
         $feedbacks = $feedbackRepository->findBy([], ['createdAt' => 'DESC']);
 
-        return $this->render('app/dashboard/feedback/list.html.twig', [
+        return $this->render(view: 'app/dashboard/feedback/list.html.twig', parameters: [
             'feedbacks' => $feedbacks,
         ]);
     }
@@ -84,26 +84,26 @@ class FeedbackController extends AbstractController
     #[Route('/{id}/review', name: 'review', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function review(Feedback $feedback, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod(method: 'POST')) {
             // $comment = $request->request->get('managerComment');
 
-            $rawComment = $request->request->get('managerComment');
-            $comment = is_scalar($rawComment) ? (string) $rawComment : null;
+            $rawComment = $request->request->get(key: 'managerComment');
+            $comment = is_scalar(value: $rawComment) ? (string) $rawComment : null;
             $user = $this->getUser();
 
             $feedback->setManagerComment($comment);
-            $feedback->setReviewedBy($user instanceof User ? $user : null);
-            $feedback->setIsReviewed(true);
-            $feedback->setReviewAt(new \DateTimeImmutable());
+            $feedback->setReviewedBy(reviewedBy: $user instanceof User ? $user : null);
+            $feedback->setIsReviewed(isReviewed: true);
+            $feedback->setReviewAt(reviewAt: new \DateTimeImmutable());
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'Le retour d\'expérience a été traité avec succès.');
+            $this->addFlash(type: 'success', message: 'Le retour d\'expérience a été traité avec succès.');
 
-            return $this->redirectToRoute('my_feedbacks_list');
+            return $this->redirectToRoute(route: 'my_feedbacks_list');
         }
 
-        return $this->render('app/dashboard/feedback/review.html.twig', [
+        return $this->render(view: 'app/dashboard/feedback/review.html.twig', parameters: [
             'feedback' => $feedback,
         ]);
     }

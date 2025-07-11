@@ -6,7 +6,6 @@ use App\Controller\Admin\DashboardController;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Locale;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\LocaleDto;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

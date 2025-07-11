@@ -2,14 +2,14 @@
 
 namespace App\Tests\Services\User;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Services\User\UserValidationService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use App\Repository\UserRepository;
-use App\Entity\User;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserValidationServiceTest extends TestCase
 {

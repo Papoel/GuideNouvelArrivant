@@ -3,60 +3,388 @@
 {% block title %}Retours d'expérience - Administration{% endblock %}
 
 {% block body %}
-<div class="container-fluid py-4">
-        <div class="dashboard-header d-flex justify-content-between align-items-center">
+<style>
+    /* Variables pour l'accessibilité et la cohérence */
+    :root {
+        --primary-color: #3d5f9e;
+        --primary-dark: #2d4a7d; /* Version plus foncée pour meilleur contraste */
+        --primary-light: rgba(61, 95, 158, 0.15); /* Fond plus opaque pour meilleur contraste */
+        --text-dark: #2c384e;
+        --text-muted: #5d6778; /* Plus foncé que #6c757d pour meilleur contraste */
+        --bg-light: #f8f9fa;
+        --border-color: #d1d7e0; /* Plus foncé que #e9ecef pour meilleur contraste */
+        --success-color: #2e7d32; /* Vert plus foncé pour meilleur contraste */
+        --warning-color: #e65100; /* Orange plus foncé pour meilleur contraste */
+        --info-color: #0277bd; /* Bleu info plus foncé */
+        --danger-color: #c62828; /* Rouge plus foncé */
+        --card-radius: 0.75rem;
+        --transition-speed: 0.2s;
+        --focus-ring-color: rgba(61, 95, 158, 0.5);
+    }
+    
+    /* Styles de base et accessibilité */
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+    
+    /* Focus styles pour l'accessibilité */
+    a:focus, button:focus, input:focus, select:focus, textarea:focus {
+        outline: 3px solid var(--focus-ring-color) !important;
+        outline-offset: 2px !important;
+        box-shadow: none !important;
+    }
+    
+    /* Classe pour les éléments visibles uniquement par les lecteurs d'écran */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+    
+    /* Mobile-first approach */
+    .dashboard-header {
+        border-left: 5px solid var(--primary-color);
+        padding-left: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    @media (min-width: 768px) {
+        .dashboard-header {
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2rem;
+        }
+    }
+    
+    /* Désactiver les animations pour les personnes qui préfèrent réduire le mouvement */
+    @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+    
+    /* Cartes de contenu */
+    .content-card {
+        border-radius: var(--card-radius);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        background-color: #fff;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: all var(--transition-speed) ease-in-out;
+    }
+    
+    .content-card .card-header {
+        background-color: var(--bg-light);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+    }
+    
+    /* Cartes de statistiques */
+    .stat-card {
+        border-radius: var(--card-radius);
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        transition: all var(--transition-speed) ease-in-out;
+        height: 100%; /* Pour égaliser la hauteur des cartes */
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+    
+    @media (min-width: 768px) {
+        .stat-value {
+            font-size: 2.5rem;
+        }
+    }
+    
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+    
+    @media (min-width: 768px) {
+        .empty-state {
+            padding: 3rem 1rem;
+        }
+    }
+    
+    /* Tableau responsive et accessible */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table th {
+        font-weight: 600;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+    }
+    
+    .data-table td {
+        vertical-align: middle;
+        color: var(--text-dark);
+    }
+    
+    /* Pagination */
+    .pagination .page-link {
+        color: var(--primary-color);
+        border-color: var(--border-color);
+        min-width: 2rem;
+        text-align: center;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .pagination .page-item.disabled .page-link {
+        color: var(--text-muted);
+    }
+    
+    /* Badges */
+    .badge {
+        padding: 0.4em 0.8em;
+        font-weight: 500;
+    }
+    
+    /* Boutons */
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover, .btn-outline-primary:focus {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+    
+    /* Formulaire de recherche */
+    .search-form .form-control {
+        border-radius: 50rem 0 0 50rem;
+        border-right: none;
+        padding: 0.6rem 0.75rem;
+        color: var(--text-dark);
+    }
+    
+    .search-form .btn {
+        border-radius: 0 50rem 50rem 0;
+        border-left: none;
+        background-color: #fff;
+        color: var(--primary-color);
+        border-color: #ced4da;
+    }
+    
+    .search-form .btn:hover, .search-form .btn:focus {
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+    }
+    
+    /* Adaptations mobiles */
+    @media (max-width: 767.98px) {
+        .content-card .card-header {
+            padding: 0.75rem 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .table td, .table th {
+            padding: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+        }
+    }
+    
+    .table thead th {
+        background-color: var(--bg-light);
+        font-weight: 600;
+        color: var(--text-dark);
+        border-bottom-width: 1px;
+        white-space: nowrap;
+    }
+    
+    /* Formulaire de recherche accessible */
+    .search-form .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        height: auto;
+    }
+    
+    .search-form .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    
+    /* Badges avec contraste amélioré */
+    .badge {
+        font-weight: 500;
+        padding: 0.4em 0.8em;
+    }
+    
+    /* Boutons accessibles */
+    .btn {
+        font-weight: 500;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover, .btn-outline-primary:focus {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    /* Classes d'accessibilité */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+</style>
+
+<div class="container-fluid py-3 py-md-4">
+        <div class="dashboard-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
             <div>
-                <h1><i class="fas fa-comment-dots me-3"></i>Capitalisation des retours d'expérience</h1>
-                <p class="text-muted mb-0 mt-2">Consultez et traitez les retours d'expérience des utilisateurs</p>
+                <h1 class="text-dark" id="page-title"><i class="bi bi-chat-dots me-2 me-md-3" aria-hidden="true"></i>Capitalisation des retours d'expérience</h1>
+                <p class="mb-3 mb-md-0 mt-2" style="color: var(--text-muted);">Consultez et traitez les retours d'expérience des utilisateurs</p>
             </div>
-            <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
-                <i class="fas fa-arrow-left me-2"></i>Tableau de bord
-            </a>
+            <div>
+                <a 
+                    href="{{ path('admin_progress_dashboard') }}" 
+                    class="btn btn-outline-secondary rounded-pill shadow-sm" 
+                    style="padding: 0.6rem 1.2rem;"
+                    aria-label="Retour au tableau de bord"
+                >
+                    <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Tableau de bord
+                </a>
+            </div>
         </div>
 
-        {# Statistiques des feedbacks #}
-        <div class="content-card mb-4">
+        {# Statistiques #}
+        <div class="content-card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Statistiques des retours</h5>
+                <h2 class="h5 mb-0 fw-bold"><i class="bi bi-pie-chart me-2 text-primary" aria-hidden="true"></i>Statistiques des retours</h2>
             </div>
-            <div class="card-body p-4">
-                <div class="row g-4 align-items-stretch">
-                    <div class="col-md-4">
-                        <div class="stat-card shadow-sm">
-                            <div class="card-body text-center">
-                                <div class="d-flex align-items-center justify-content-center mb-3">
-                                    <div class="rounded-circle bg-primary bg-opacity-10 p-3">
-                                        <i class="fas fa-comment-dots fa-lg text-primary"></i>
-                                    </div>
+            <div class="card-body p-3 p-md-4">
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <div class="stat-card p-3 p-md-4 shadow-sm">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3" aria-hidden="true">
+                                    <i class="bi bi-chat-dots" style="color: var(--primary-color); font-size: 1.5rem;"></i>
                                 </div>
-                                <div class="stat-value">{{ stats.total }}</div>
-                                <div class="stat-label">Total des retours</div>
+                                <div>
+                                    <div class="stat-value">{{ stats.total }}</div>
+                                    <div class="stat-label">Total des retours</div>
+                                </div>
+                            </div>
+                            <div class="progress" aria-label="Progression totale des retours">
+                                <div class="progress-bar" role="progressbar" style="width: 100%; background-color: var(--primary-color);" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="sr-only">100% des retours</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-card shadow-sm">
-                            <div class="card-body text-center">
-                                <div class="d-flex align-items-center justify-content-center mb-3">
-                                    <div class="rounded-circle bg-warning bg-opacity-10 p-3">
-                                        <i class="fas fa-clock fa-lg text-warning"></i>
-                                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="stat-card p-3 p-md-4 shadow-sm">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3" aria-hidden="true">
+                                    <i class="bi bi-check-circle" style="color: var(--success-color); font-size: 1.5rem;"></i>
                                 </div>
-                                <div class="stat-value">{{ stats.pending }}</div>
-                                <div class="stat-label">En attente de traitement</div>
+                                <div>
+                                    <div class="stat-value">{{ stats.reviewed }}</div>
+                                    <div class="stat-label">Retours traités</div>
+                                </div>
+                            </div>
+                            <div class="progress" aria-label="Progression des retours traités">
+                                {% set reviewed_percent = stats.total > 0 ? (stats.reviewed / stats.total * 100)|round : 0 %}
+                                <div class="progress-bar" role="progressbar" style="width: {{ reviewed_percent }}%; background-color: var(--success-color);" aria-valuenow="{{ reviewed_percent }}" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="sr-only">{{ reviewed_percent }}% des retours sont traités</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-card shadow-sm">
-                            <div class="card-body text-center">
-                                <div class="d-flex align-items-center justify-content-center mb-3">
-                                    <div class="rounded-circle bg-success bg-opacity-10 p-3">
-                                        <i class="fas fa-check-circle fa-lg text-success"></i>
-                                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="stat-card p-3 p-md-4 shadow-sm">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3" aria-hidden="true">
+                                    <i class="bi bi-clock" style="color: var(--warning-color); font-size: 1.5rem;"></i>
                                 </div>
-                                <div class="stat-value">{{ stats.reviewed }}</div>
-                                <div class="stat-label">Traités</div>
+                                <div>
+                                    <div class="stat-value">{{ stats.pending }}</div>
+                                    <div class="stat-label">En attente</div>
+                                </div>
+                            </div>
+                            <div class="progress" aria-label="Progression des retours en attente">
+                                {% set pending_percent = stats.total > 0 ? (stats.pending / stats.total * 100)|round : 0 %}
+                                <div class="progress-bar" role="progressbar" style="width: {{ pending_percent }}%; background-color: var(--warning-color);" aria-valuenow="{{ pending_percent }}" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="sr-only">{{ pending_percent }}% des retours sont en attente</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -65,30 +393,69 @@
         </div>
 
         {# Filtres et recherche #}
-        <div class="content-card mb-4">
-            <div class="card-body p-4">
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="h5 mb-0 fw-bold">
+                    <i class="bi bi-search me-2 text-primary" aria-hidden="true"></i>
+                    Filtres et recherche
+                </h2>
+            </div>
+            <div class="card-body p-3 p-md-4">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <form action="{{ path('admin_progress_feedbacks') }}" method="get" class="search-form">
-                            <div class="input-group">
-                                <input type="text" name="search" class="form-control" placeholder="Rechercher..." value="{{ search_term }}">
-                                <button type="submit" class="btn btn-outline-primary">
-                                    <i class="bi bi-search"></i>
+                            <label for="search-input" class="sr-only">Rechercher par titre ou auteur</label>
+                            <div class="input-group shadow-sm">
+                                <input 
+                                    type="text" 
+                                    id="search-input"
+                                    name="search" 
+                                    class="form-control" 
+                                    placeholder="Rechercher par titre ou auteur..." 
+                                    value="{{ search_term }}"
+                                    aria-label="Rechercher par titre ou auteur"
+                                >
+                                <button type="submit" class="btn btn-outline-secondary" aria-label="Lancer la recherche">
+                                    <i class="bi bi-search" aria-hidden="true"></i>
+                                    <span class="sr-only">Rechercher</span>
                                 </button>
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <div class="btn-group" role="group">
-                            <a href="{{ path('admin_progress_feedbacks') }}" class="btn btn-outline-secondary {{ current_status == 'all' ? 'active' : '' }}">
-                                Tous
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex flex-wrap gap-2" role="group" aria-label="Filtres par statut">
+                            <a 
+                                href="{{ path('admin_progress_feedbacks') }}" 
+                                class="btn btn-sm {{ current_status is null ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill"
+                                aria-current="{{ current_status is null ? 'page' : 'false' }}"
+                            >
+                                <i class="bi bi-list-ul me-1" aria-hidden="true"></i> Tous
                             </a>
-                            <a href="{{ path('admin_progress_feedbacks', {'status': 'pending'}) }}" class="btn btn-outline-warning {{ current_status == 'pending' ? 'active' : '' }}">
-                                En attente
+                            <a 
+                                href="{{ path('admin_progress_feedbacks', {'status': 'pending'}) }}" 
+                                class="btn btn-sm rounded-pill {{ current_status == 'pending' ? '' : 'btn-outline-' }}warning"
+                                style="{{ current_status == 'pending' ? 'background-color: var(--warning-color); border-color: var(--warning-color);' : 'color: var(--warning-color); border-color: var(--warning-color);' }}"
+                                aria-current="{{ current_status == 'pending' ? 'page' : 'false' }}"
+                            >
+                                <i class="bi bi-clock me-1" aria-hidden="true"></i> En attente
                             </a>
-                            <a href="{{ path('admin_progress_feedbacks', {'status': 'reviewed'}) }}" class="btn btn-outline-success {{ current_status == 'reviewed' ? 'active' : '' }}">
-                                Traités
+                            <a 
+                                href="{{ path('admin_progress_feedbacks', {'status': 'reviewed'}) }}" 
+                                class="btn btn-sm rounded-pill {{ current_status == 'reviewed' ? '' : 'btn-outline-' }}success"
+                                style="{{ current_status == 'reviewed' ? 'background-color: var(--success-color); border-color: var(--success-color);' : 'color: var(--success-color); border-color: var(--success-color);' }}"
+                                aria-current="{{ current_status == 'reviewed' ? 'page' : 'false' }}"
+                            >
+                                <i class="bi bi-check-circle me-1" aria-hidden="true"></i> Traités
                             </a>
+                            {% if user_service %}
+                                <a 
+                                    href="{{ path('admin_progress_service_feedbacks', {'name': user_service.name}) }}" 
+                                    class="btn btn-sm btn-outline-primary rounded-pill"
+                                    aria-label="Voir les retours d'expérience du service {{ user_service.name }}"
+                                >
+                                    <i class="bi bi-filter me-1" aria-hidden="true"></i> REX {{ user_service.name }}
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -98,15 +465,17 @@
         {# Liste des feedbacks #}
         <div class="content-card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des retours d'expérience</h5>
+                <h2 class="h5 mb-0 fw-bold"><i class="bi bi-list me-2 text-primary" aria-hidden="true"></i>Liste des retours d'expérience</h2>
             </div>
             <div class="card-body p-0">
                 {% if feedbacks is empty %}
-                    <div class="p-4 text-center">
+                    <div class="p-4 p-md-5 text-center">
                         <div class="empty-state">
-                            <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
-                            <h5>Aucun retour d'expérience trouvé</h5>
-                            <p class="text-muted">
+                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center p-4 mb-4" style="width: 100px; height: 100px;" aria-hidden="true">
+                                <i class="bi bi-hourglass display-6" style="color: var(--text-muted);"></i>
+                            </div>
+                            <h3 class="h4 text-dark mb-3">Aucun retour d'expérience trouvé</h3>
+                            <p class="mb-4" style="max-width: 500px; margin: 0 auto; color: var(--text-muted);">
                                 {% if search_term %}
                                     Aucun résultat ne correspond à votre recherche "{{ search_term }}".
                                 {% elseif current_status == 'pending' %}
@@ -117,19 +486,23 @@
                                     Aucun retour d'expérience n'a été soumis pour le moment.
                                 {% endif %}
                             </p>
+                            <a href="{{ path('admin_progress_feedbacks') }}" class="btn btn-outline-primary rounded-pill px-4" aria-label="Rafraîchir la liste des retours">
+                                <i class="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>Rafraîchir
+                            </a>
                         </div>
                     </div>
                 {% else %}
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                    <div class="d-none d-lg-block table-responsive">
+                        <table class="table table-hover align-middle data-table" aria-describedby="page-title">
+                            <caption class="sr-only">Liste des retours d'expérience</caption>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Auteur</th>
-                                    <th>Titre</th>
-                                    <th>Catégorie</th>
-                                    <th>Statut</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col" class="py-3">Date</th>
+                                    <th scope="col" class="py-3">Auteur</th>
+                                    <th scope="col" class="py-3">Titre</th>
+                                    <th scope="col" class="py-3">Catégorie</th>
+                                    <th scope="col" class="py-3">Statut</th>
+                                    <th scope="col" class="text-end py-3">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -139,15 +512,6 @@
                                         <td>{{ feedback.author.firstname }} {{ feedback.author.lastname }}</td>
                                         <td>{{ feedback.title }}</td>
                                         <td>
-                                            {% set badge_class = {
-                                                'integration_process': 'bg-primary',
-                                                'training': 'bg-success',
-                                                'documentation': 'bg-info',
-                                                'tools': 'bg-warning',
-                                                'communication': 'bg-secondary',
-                                                'other': 'bg-dark'
-                                            } %}
-                                            
                                             {% set category_labels = {
                                                 'integration_process': 'Processus d\'intégration',
                                                 'training': 'Formation',
@@ -157,23 +521,50 @@
                                                 'other': 'Autre'
                                             } %}
                                             
-                                            <span class="badge {{ badge_class[feedback.category] }}">
+                                            {% set badge_class = {
+                                                'integration_process': 'bg-primary bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                                'training': 'bg-success bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                                'documentation': 'bg-info bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                                'tools': 'bg-warning bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                                'communication': 'bg-secondary bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                                'other': 'bg-dark bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill'
+                                            } %}
+                                            
+                                            {% set badge_text_class = {
+                                                'integration_process': 'text-primary',
+                                                'training': 'text-success',
+                                                'documentation': 'text-info',
+                                                'tools': 'text-warning',
+                                                'communication': 'text-secondary',
+                                                'other': 'text-dark'
+                                            } %}
+                                            
+                                            <span class="badge {{ badge_class[feedback.category] }} {{ badge_text_class[feedback.category] }}" style="font-size: 0.75rem;">
                                                 {{ category_labels[feedback.category] }}
                                             </span>
                                         </td>
                                         <td>
                                             {% if feedback.isReviewed %}
-                                                <span class="badge bg-success">Traité</span>
+                                                <span class="badge bg-success bg-opacity-10 text-success fw-medium rounded-pill px-3 py-2" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-check-circle me-1" aria-hidden="true"></i> Traité
+                                                </span>
                                             {% else %}
-                                                <span class="badge bg-warning text-dark">En attente</span>
+                                                <span class="badge bg-warning bg-opacity-10 fw-medium rounded-pill px-3 py-2" style="color: var(--warning-color); font-size: 0.75rem;">
+                                                    <i class="bi bi-clock me-1" aria-hidden="true"></i> En attente
+                                                </span>
                                             {% endif %}
                                         </td>
                                         <td class="text-end">
-                                            <a href="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary">
+                                            <a 
+                                                href="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}" 
+                                                class="btn btn-sm btn-outline-primary rounded-pill shadow-sm" 
+                                                style="padding: 0.4rem 1rem;"
+                                                aria-label="{% if feedback.isReviewed %}Voir le retour d'expérience de {{ feedback.author.firstname }} {{ feedback.author.lastname }}{% else %}Traiter le retour d'expérience de {{ feedback.author.firstname }} {{ feedback.author.lastname }}{% endif %}"
+                                            >
                                                 {% if feedback.isReviewed %}
-                                                    <i class="fas fa-eye"></i> Voir
+                                                    <i class="bi bi-eye me-1" aria-hidden="true"></i> Voir
                                                 {% else %}
-                                                    <i class="fas fa-check-circle"></i> Traiter
+                                                    <i class="bi bi-pencil me-1" aria-hidden="true"></i> Traiter
                                                 {% endif %}
                                             </a>
                                         </td>
@@ -182,19 +573,105 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    {# Vue cartes pour mobile et tablette (cachée sur desktop) #}
+                    <div class="d-lg-none">
+                        <div class="row g-3">
+                            {% for feedback in feedbacks %}
+                                {% set category_labels = {
+                                    'integration_process': 'Processus d\'intégration',
+                                    'training': 'Formation',
+                                    'documentation': 'Documentation',
+                                    'tools': 'Outils',
+                                    'communication': 'Communication',
+                                    'other': 'Autre'
+                                } %}
+                                
+                                {% set badge_class = {
+                                    'integration_process': 'bg-primary bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                    'training': 'bg-success bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                    'documentation': 'bg-info bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                    'tools': 'bg-warning bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                    'communication': 'bg-secondary bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill',
+                                    'other': 'bg-dark bg-opacity-10 fw-medium text-uppercase ls-1 rounded-pill'
+                                } %}
+                                
+                                {% set badge_text_class = {
+                                    'integration_process': 'text-primary',
+                                    'training': 'text-success',
+                                    'documentation': 'text-info',
+                                    'tools': 'text-warning',
+                                    'communication': 'text-secondary',
+                                    'other': 'text-dark'
+                                } %}
+                                
+                                <div class="col-12">
+                                    <div class="card shadow-sm h-100 border-0" style="border-radius: var(--card-radius);">
+                                        <div class="card-body p-3 p-md-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <h3 class="h6 fw-bold mb-0 text-truncate" style="max-width: 80%;">{{ feedback.title }}</h3>
+                                                {% if feedback.isReviewed %}
+                                                    <span class="badge bg-success bg-opacity-10 text-success fw-medium rounded-pill px-3 py-2" style="font-size: 0.75rem;">
+                                                        <i class="bi bi-check-circle me-1" aria-hidden="true"></i> Traité
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-warning bg-opacity-10 fw-medium rounded-pill px-3 py-2" style="color: var(--warning-color); font-size: 0.75rem;">
+                                                        <i class="bi bi-clock me-1" aria-hidden="true"></i> En attente
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                                    <div class="text-muted small">
+                                                        <i class="bi bi-person me-1" aria-hidden="true"></i>
+                                                        {{ feedback.author.firstname }} {{ feedback.author.lastname }}
+                                                    </div>
+                                                    <div class="text-muted small">
+                                                        <i class="bi bi-calendar-check me-1" aria-hidden="true"></i>
+                                                        {{ feedback.createdAt|date('d/m/Y') }}
+                                                    </div>
+                                                </div>
+                                                
+                                                <span class="badge {{ badge_class[feedback.category] }} {{ badge_text_class[feedback.category] }}" style="font-size: 0.75rem;">
+                                                    {{ category_labels[feedback.category] }}
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="text-end mt-3">
+                                                <a 
+                                                    href="{{ path('admin_progress_feedback_detail', {'id': feedback.id}) }}" 
+                                                    class="btn btn-sm btn-outline-primary rounded-pill shadow-sm" 
+                                                    style="padding: 0.4rem 1rem;"
+                                                    aria-label="{% if feedback.isReviewed %}Voir le retour d'expérience de {{ feedback.author.firstname }} {{ feedback.author.lastname }}{% else %}Traiter le retour d'expérience de {{ feedback.author.firstname }} {{ feedback.author.lastname }}{% endif %}"
+                                                >
+                                                    {% if feedback.isReviewed %}
+                                                        <i class="bi bi-eye me-1" aria-hidden="true"></i> Voir
+                                                    {% else %}
+                                                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Traiter
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
                     {# Pagination #}
                     {% if pagination.totalPages > 1 %}
-                        <div class="p-3 border-top">
-                            <nav>
-                                <ul class="pagination justify-content-center mb-0">
+                        <div class="p-3 p-md-4 border-top">
+                            <nav aria-label="Pagination des retours d'expérience">
+                                <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0 gap-1">
                                     {% set queryParams = app.request.query.all %}
                                     
                                     {# Bouton précédent #}
                                     <li class="page-item {{ pagination.currentPage == 1 ? 'disabled' : '' }}">
                                         {% set queryParams = queryParams|merge({'page': pagination.currentPage - 1}) %}
-                                        <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Précédent">
-                                            <span aria-hidden="true">&laquo;</span>
+                                        <a class="page-link rounded shadow-sm" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Page précédente">
+                                            <i class="bi bi-chevron-left small" aria-hidden="true"></i>
+                                            <span class="sr-only">Page précédente</span>
                                         </a>
                                     </li>
                                     
@@ -202,15 +679,25 @@
                                     {% for i in 1..pagination.totalPages %}
                                         {% set queryParams = app.request.query.all|merge({'page': i}) %}
                                         <li class="page-item {{ pagination.currentPage == i ? 'active' : '' }}">
-                                            <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}">{{ i }}</a>
+                                            <a 
+                                                class="page-link rounded shadow-sm" 
+                                                href="{{ path('admin_progress_feedbacks', queryParams) }}"
+                                                {% if pagination.currentPage == i %}
+                                                    aria-current="page"
+                                                    aria-label="Page actuelle, page {{ i }}"
+                                                {% else %}
+                                                    aria-label="Aller à la page {{ i }}"
+                                                {% endif %}
+                                            >{{ i }}</a>
                                         </li>
                                     {% endfor %}
                                     
                                     {# Bouton suivant #}
                                     <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'disabled' : '' }}">
                                         {% set queryParams = app.request.query.all|merge({'page': pagination.currentPage + 1}) %}
-                                        <a class="page-link" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Suivant">
-                                            <span aria-hidden="true">&raquo;</span>
+                                        <a class="page-link rounded shadow-sm" href="{{ path('admin_progress_feedbacks', queryParams) }}" aria-label="Page suivante">
+                                            <i class="bi bi-chevron-right small" aria-hidden="true"></i>
+                                            <span class="sr-only">Page suivante</span>
                                         </a>
                                     </li>
                                 </ul>
