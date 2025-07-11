@@ -25,6 +25,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * @extends AbstractCrudController<User>
+ */
 #[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {

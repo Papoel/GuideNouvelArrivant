@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Service;
 
 use App\Entity\Service;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -11,6 +11,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Service>
+ */
 class ServiceCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

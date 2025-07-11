@@ -10,6 +10,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<Action>
+ */
 class ActionCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
