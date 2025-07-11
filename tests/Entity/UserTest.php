@@ -411,14 +411,21 @@ class UserTest extends EntityTestCase
         );
     }
 
+    /**
+     * Ce test vérifie que la classe User implémente correctement l'interface UserInterface
+     * Note: Nous ne testons plus directement eraseCredentials() car elle est dépréciée
+     */
     #[Test]
-    public function eraseCredentialsDoesNotThrowException(): void
+    public function userImplementsUserInterface(): void
     {
-        // On ne peut pas tester l'effacement puisque rien n'est stocké
-        // L'objectif ici est de s'assurer que la méthode s'exécute sans lancer d'exception.
-        $this->entity->eraseCredentials();
-
-        $this->assertTrue(condition: true); // Juste pour valider que tout se passe bien
+        // Vérifie que l'entité User implémente correctement l'interface UserInterface
+        // sans appeler directement la méthode dépréciée eraseCredentials()
+        $this->assertInstanceOf(
+            \Symfony\Component\Security\Core\User\UserInterface::class,
+            $this->entity
+        );
+        
+        $this->assertTrue(true); // Le test passe si l'assertion ci-dessus ne lève pas d'exception
     }
 
     /************************************************ COLLECTIONS  ***********************************************/

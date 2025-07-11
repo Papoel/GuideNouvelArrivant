@@ -14,6 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Tests pour le DashboardController
+ * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ */
 class DashboardControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
@@ -29,10 +34,18 @@ class DashboardControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(id: UserRepository::class);
     }
 
-    #[Test] public function adminRouteRequiresAuthentication(): void
+    /**
+     * Test que la route admin redirige vers la page de connexion quand l'utilisateur n'est pas authentifié
+     * 
+     * Note: Ce test déclenche des dépréciations liées à LazyGhost et ProxyHelper, mais elles sont
+     * ignorées car elles proviennent de composants internes de Symfony qui seront mis à jour à l'avenir.
+     */
+    #[Test]
+    #[\PHPUnit\Framework\Attributes\IgnoreDeprecations]
+    public function adminRouteRequiresAuthentication(): void
     {
+        // Test simple et direct de la redirection
         $this->client->request(method: Request::METHOD_GET, uri: '/admin');
-
         self::assertResponseRedirects(expectedLocation: '/connexion');
     }
 
