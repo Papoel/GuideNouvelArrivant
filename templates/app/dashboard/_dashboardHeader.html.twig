@@ -63,8 +63,9 @@
                             <a class="dropdown-item d-flex align-items-center" href="{{ path('my_feedbacks_index', {'nni': app.user.nni}) }}">
                                 <i class="bi bi-chat-quote"></i>
                                 <span>Mes retours d'expérience</span>
-                                {% if app.user.feedback|length > 0 %}
-                                    <span class="badge rounded-pill bg-success ms-auto">{{ app.user.feedback|length }}</span>
+                                {% set feedbackCount = app.user.feedbacks|default([])|length %}
+                                {% if feedbackCount > 0 %}
+                                    <span class="badge rounded-pill bg-success ms-auto">{{ feedbackCount }}</span>
                                 {% endif %}
                             </a>
                         </li>
