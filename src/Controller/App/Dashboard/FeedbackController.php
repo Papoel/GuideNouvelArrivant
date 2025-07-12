@@ -23,8 +23,14 @@ class FeedbackController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Récupérer directement les feedbacks depuis le repository sans utiliser de requête personnalisée
-        $feedbacks = $entityManager->getRepository(Feedback::class)->findBy(['author' => $user->getId()], ['createdAt' => 'DESC']);
+        // Récupérer les feedbacks en utilisant le NNI comme identifiant unique
+        $feedbacks = $feedbackRepository->createQueryBuilder('f')
+            ->join('f.author', 'u')
+            ->where('u.nni = :nni')
+            ->setParameter('nni', $user->getNni())
+            ->orderBy('f.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
         // Si aucun feedback n'est trouvé, essayons une autre approche
         if (empty($feedbacks)) {
             // Approche alternative: récupérer tous les feedbacks et filtrer manuellement
