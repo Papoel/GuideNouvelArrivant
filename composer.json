@@ -89,7 +89,7 @@
     },
     "scripts": {
         "before-commit": [
-            "castor before-commit"
+            "make before-commit"
             ],
         "db-reset": [
             "php bin/console doctrine:database:drop --force --if-exists",
