@@ -16,7 +16,12 @@
             --card-shadow: 0 0 15px rgba(0, 0, 0, 0.03);
             --card-shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
-        
+
+        /* Espacement lettrages badges */
+        .ls-1 {
+            letter-spacing: 1px;
+        }
+
         /* Styles personnalisés */
         .dashboard-header {
             background-color: var(--bg-light);
@@ -26,14 +31,14 @@
             margin-bottom: 1.5rem;
             box-shadow: var(--card-shadow);
         }
-        
+
         .dashboard-header h1 {
             color: var(--text-dark);
             font-weight: 600;
             margin: 0;
             font-size: 1.75rem;
         }
-        
+
         .stat-card {
             border-radius: 0.75rem;
             overflow: hidden;
@@ -44,16 +49,16 @@
             border-top: 3px solid var(--primary-color);
             box-shadow: var(--card-shadow);
         }
-        
+
         .stat-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--card-shadow-hover);
         }
-        
+
         .stat-card .card-body {
             padding: 1.5rem;
         }
-        
+
         .stat-card .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
@@ -61,37 +66,37 @@
             line-height: 1.2;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-card .stat-label {
             color: var(--text-muted);
             font-size: 0.95rem;
             font-weight: 500;
         }
-        
+
         .data-table {
             border-radius: 0.5rem;
             overflow: hidden;
         }
-        
+
         .data-table thead th {
             background-color: var(--bg-light);
             color: var(--text-dark);
             font-weight: 600;
             border-bottom: 2px solid var(--border-color);
         }
-        
+
         .progress {
             height: 0.8rem;
             border-radius: 1rem;
             background-color: var(--border-color);
         }
-        
+
         .action-btn {
             padding: 0.4rem 0.8rem;
             font-size: 0.85rem;
             border-radius: 0.5rem;
         }
-        
+
         .content-card {
             border-radius: 0.75rem;
             overflow: hidden;
@@ -99,32 +104,32 @@
             border: none;
             margin-bottom: 1.5rem;
         }
-        
+
         .content-card .card-header {
             background-color: var(--primary-color);
             color: white;
             padding: 1rem 1.5rem;
             font-weight: 600;
         }
-        
+
         .user-info-row {
             padding: 0.5rem 0;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .user-info-row:last-child {
             border-bottom: none;
         }
-        
+
         .user-info-label {
             font-weight: 500;
             color: var(--text-dark);
         }
-        
+
         .user-info-value {
             color: var(--text-dark);
         }
-        
+
         .progress-circle {
             transition: all 0.3s ease;
             width: 150px;
@@ -133,7 +138,7 @@
             background-color: #f2f2f2;
             border-radius: 50%;
         }
-        
+
         .progress-circle-left, .progress-circle-right {
             width: 100%;
             height: 100%;
@@ -143,7 +148,7 @@
             border-radius: 50%;
             clip: rect(0px, 75px, 150px, 0px);
         }
-        
+
         .progress-circle-bar {
             width: 100%;
             height: 100%;
@@ -156,15 +161,15 @@
             transform: rotate(0deg);
             transition: transform 0.5s;
         }
-        
+
         .progress-circle-left .progress-circle-bar {
             clip: rect(0px, 75px, 150px, 0px);
         }
-        
+
         .progress-circle-right .progress-circle-bar {
             clip: rect(0px, 150px, 150px, 75px);
         }
-        
+
         .progress-circle-value {
             position: absolute;
             top: 0;
@@ -179,11 +184,11 @@
 <div class="container-fluid py-4">
     <div class="dashboard-header d-flex justify-content-between align-items-center">
         <div>
-            <h1><i class="fas fa-user-chart me-3"></i>Progression de {{ user.fullName }}</h1>
+            <h1><i class="bi bi-person-bounding-box me-3"></i>Progression de {{ user.fullName }}</h1>
             <p class="text-muted mb-0 mt-2">Détails de progression et validation des modules</p>
         </div>
         <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="fas fa-arrow-left me-2"></i>Tableau de bord
+            <i class="bi bi-arrow-left me-2"></i>Tableau de bord
         </a>
     </div>
 
@@ -193,7 +198,7 @@
         <div class="col-md-6">
             <div class="content-card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Informations de l'apprenant</h5>
+                    <h5 class="mb-0"><i class="bi bi-person-fill me-2 text-warning"></i>Informations de l'apprenant</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="user-info-row">
@@ -233,7 +238,7 @@
                                 {% if user.mentor %}
                                     {{ user.mentor.fullName }}
                                 {% else %}
-                                    <span class="badge bg-warning text-dark rounded-pill">Non assigné</span>
+                                    <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -268,7 +273,7 @@
         <div class="col-md-6">
             <div class="content-card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Résumé de progression</h5>
+                    <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Résumé de progression</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
@@ -303,14 +308,14 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row g-3 text-center mt-2">
                         <div class="col-md-4">
                             <div class="stat-card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
                                         <div class="rounded-circle bg-primary bg-opacity-10 p-2">
-                                            <i class="fas fa-list fa-lg text-primary"></i>
+                                            <i class="bi bi-list-ol text-primary" style="font-size: x-large"></i>
                                         </div>
                                     </div>
                                     <div class="stat-value">{{ progress.total_modules }}</div>
@@ -323,7 +328,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
                                         <div class="rounded-circle bg-success bg-opacity-10 p-2">
-                                            <i class="fas fa-user-check fa-lg text-success"></i>
+                                            <i class="bi bi-person-check text-success" style="font-size: x-large"></i>
                                         </div>
                                     </div>
                                     <div class="stat-value">{{ progress.completed_by_agent }}</div>
@@ -335,8 +340,8 @@
                             <div class="stat-card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
-                                        <div class="rounded-circle bg-info bg-opacity-10 p-2">
-                                            <i class="fas fa-award fa-lg text-info"></i>
+                                        <div class="rounded-circle bg-warning bg-opacity-10 p-2">
+                                            <i class="bi bi-award text-warning-emphasis" style="font-size: x-large"></i>
                                         </div>
                                     </div>
                                     <div class="stat-value">{{ progress.validated_by_mentor }}</div>
@@ -349,12 +354,12 @@
             </div>
         </div>
     </div>
-    
+
     {# Détail du carnet #}
     <div class="content-card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-book me-2"></i>Détail du carnet: {{ logbook.name }}</h5>
-            <span class="badge bg-light text-primary rounded-pill">{{ logbook.themes|length }} thèmes</span>
+            <h5 class="mb-0"><i class="bi bi-book-fill me-2 text-warning"></i>Détail du carnet: {{ logbook.name }}</h5>
+            <span class="badge bg-light text-primary rounded-pill fw-medium ls-1">{{ logbook.themes|length }} thèmes</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -373,7 +378,7 @@
                         {% for theme in logbook.themes %}
                             {% set first_theme_row = true %}
                             {% set theme_rowspan = theme.modules|length %}
-                            
+
                             {% for module in theme.modules %}
                                 {% set action = null %}
                                 {% for a in user.actions %}
@@ -381,7 +386,7 @@
                                         {% set action = a %}
                                     {% endif %}
                                 {% endfor %}
-                                
+
                                 <tr>
                                     {% if first_theme_row %}
                                         <td rowspan="{{ theme_rowspan }}" class="align-middle ps-4">
@@ -389,47 +394,47 @@
                                         </td>
                                         {% set first_theme_row = false %}
                                     {% endif %}
-                                    
+
                                     <td>
                                         <span class="fw-medium">{{ module.title }}</span>
                                     </td>
-                                    
+
                                     <td>
                                         {% if action and action.agentValidatedAt %}
-                                            <span class="badge bg-success rounded-pill px-3 py-2">
-                                                <i class="fas fa-check me-1"></i>
+                                            <span class="badge bg-success rounded-pill px-2 py-2 fw-light ls-1">
+                                                <i class="bi bi-check-circle me-1"></i>
                                                 {{ action.agentValidatedAt|date('d/m/Y') }}
                                             </span>
                                         {% else %}
-                                            <span class="badge bg-secondary rounded-pill px-3 py-2">Non validé</span>
+                                            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
                                         {% endif %}
                                     </td>
-                                    
+
                                     <td>
                                         {% if action and action.mentorValidatedAt %}
-                                            <span class="badge bg-success rounded-pill px-3 py-2">
-                                                <i class="fas fa-check me-1"></i>
+                                            <span class="badge bg-success rounded-pill px-3 py-2 fw-light ls-1">
+                                                <i class="bi bi-check-circle me-1"></i>
                                                 {{ action.mentorValidatedAt|date('d/m/Y') }}
                                             </span>
                                         {% else %}
-                                            <span class="badge bg-secondary rounded-pill px-3 py-2">Non validé</span>
+                                            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
                                         {% endif %}
                                     </td>
-                                    
+
                                     <td>
                                         {% if action and action.agentComment %}
                                             <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.agentComment }}" data-bs-trigger="focus" title="Commentaire de l'agent">
-                                                <i class="fas fa-comment-dots me-1"></i> Voir commentaire
+                                                <i class="bi bi-chat-dots me-1"></i> Voir commentaire
                                             </button>
                                         {% else %}
                                             <span class="text-muted fst-italic">Aucun commentaire</span>
                                         {% endif %}
                                     </td>
-                                    
+
                                     <td>
                                         {% if action and action.mentorComment %}
                                             <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.mentorComment }}" data-bs-trigger="focus" title="Commentaire du tuteur">
-                                                <i class="fas fa-comment-dots me-1"></i> Voir commentaire
+                                                <i class="bi bi-chat-dots me-1"></i> Voir commentaire
                                             </button>
                                         {% else %}
                                             <span class="text-muted fst-italic">Aucun commentaire</span>
@@ -458,7 +463,7 @@
                     el._popover.dispose();
                 }
             });
-            
+
             // Initialiser les popovers Bootstrap pour les commentaires
             var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
             popoverTriggerList.forEach(function(popoverTriggerEl) {
@@ -475,9 +480,9 @@
                         }
                         return 'left';
                     }
-                });
+                }});
             });
-            
+
             // Initialiser les tooltips Bootstrap (pour d'autres éléments éventuels)
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(function(tooltipTriggerEl) {
@@ -487,19 +492,19 @@
                 });
             });
         }
-        
+
         // Initialiser les composants lors du chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
             // Initialiser les composants Bootstrap
             initializeBootstrapComponents();
-            
+
             // Animation des cercles de progression
             const circles = document.querySelectorAll('.progress-circle');
             circles.forEach(circle => {
                 const value = parseInt(circle.getAttribute('data-value'));
                 const left = circle.querySelector('.progress-circle-left .progress-circle-bar');
                 const right = circle.querySelector('.progress-circle-right .progress-circle-bar');
-                
+
                 if (value <= 50) {
                     right.style.transform = `rotate(${value * 3.6}deg)`;
                 } else {
@@ -507,7 +512,7 @@
                     left.style.transform = `rotate(${(value - 50) * 3.6}deg)`;
                 }
             });
-            
+
             // Ajouter des effets de transition sur les éléments de la page
             const statCards = document.querySelectorAll('.stat-card');
             setTimeout(() => {
@@ -518,7 +523,7 @@
                 });
             }, 300);
         });
-        
+
         // S'assurer que les composants sont initialisés même après une redirection
         window.addEventListener('load', function() {
             // Réinitialiser après un court délai pour s'assurer que tout est chargé
@@ -526,18 +531,18 @@
                 initializeBootstrapComponents();
             }, 500);
         });
-        
+
         // Réinitialiser lors du changement d'état de l'historique (navigation)
         window.addEventListener('popstate', function() {
             setTimeout(function() {
                 initializeBootstrapComponents();
             }, 500);
         });
-        
+
         // Fermer tous les popovers quand on clique ailleurs sur la page
         document.addEventListener('click', function(event) {
             const target = event.target;
-            
+
             // Si on clique sur un bouton popover, on le gère normalement
             if (target.closest('[data-bs-toggle="popover"]')) {
                 // Fermer tous les autres popovers d'abord
@@ -551,7 +556,7 @@
                 });
                 return;
             }
-            
+
             // Si on clique ailleurs, fermer tous les popovers ouverts
             // Mais pas si on clique sur un popover ouvert
             if (!target.closest('.popover')) {

@@ -17,6 +17,11 @@
             --card-shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
 
+        /* Espacement lettrages badges */
+        .ls-1 {
+            letter-spacing: 1px;
+        }
+
         /* Styles personnalisés pour le tableau de bord */
         .dashboard-header {
             background-color: var(--bg-light);
@@ -139,18 +144,18 @@
 <div class="container-fluid py-4">
     <div class="dashboard-header d-flex justify-content-between align-items-center">
         <div>
-            <h1><i class="fas fa-chart-line me-3"></i>Tableau de bord de progression</h1>
+            <h1><i class="bi bi-bar-chart-line me-3"></i>Tableau de bord de progression</h1>
             <p class="text-muted mb-0 mt-2">Suivez en temps réel l'avancement des apprenants et la validation des tuteurs</p>
         </div>
         <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="fas fa-arrow-left me-2"></i>Administration
+            <i class="bi bi-arrow-left me-2"></i>Administration
         </a>
     </div>
 
     {% if user_has_no_service is defined and user_has_no_service %}
         <div class="alert alert-warning mb-4" role="alert">
             <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                <i class="bi bi-exclamation-triangle fs-4 me-3"></i>
                 <div>
                     <h5 class="alert-heading mb-1">Service non assigné</h5>
                     <p class="mb-0">Bonjour <strong>{{ app.user.fullname }}</strong>, Pour consulter les carnets de bord et les retours d'expérience spécifiques à votre service, veuillez vous assigner un service dans la <a href="{{ path('admin_user_index') }}" class="alert-link">gestion des utilisateurs</a>.</p>
@@ -162,7 +167,7 @@
     {# Statistiques globales #}
     <div class="content-card mb-4">
         <div class="card-header">
-            <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Statistiques globales</h5>
+            <h5 class="mb-0"><i class="bi bi-bar-chart-line-fill me-2 text-warning"></i>Statistiques globales</h5>
         </div>
         <div class="card-body p-4">
             <div class="row g-4 align-items-stretch justify-content-around">
@@ -171,7 +176,7 @@
                         <div class="card-body text-center">
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <div class="rounded-circle bg-primary bg-opacity-10 p-3">
-                                    <i class="fas fa-users fa-lg text-primary"></i>
+                                    <i class="bi bi-people text-primary" style="font-size: x-large"></i>
                                 </div>
                             </div>
                             <div class="stat-value">{{ global_stats.total_users }}</div>
@@ -184,7 +189,7 @@
                         <div class="card-body text-center">
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <div class="rounded-circle bg-success bg-opacity-10 p-3">
-                                    <i class="fas fa-book fa-lg text-success"></i>
+                                    <i class="bi bi-book text-success" style="font-size: x-large"></i>
                                 </div>
                             </div>
                             <div class="stat-value">{{ global_stats.users_with_logbook }}</div>
@@ -197,7 +202,7 @@
                         <div class="card-body text-center">
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <div class="rounded-circle bg-info bg-opacity-10 p-3">
-                                    <i class="fas fa-comment-dots fa-lg text-info"></i>
+                                    <i class="bi bi-chat-dots text-info" style="font-size: x-large"></i>
                                 </div>
                             </div>
                             <div class="stat-value">{{ global_stats.total_feedbacks }}</div>
@@ -215,7 +220,7 @@
                         <div class="card-body text-center">
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <div class="rounded-circle bg-info bg-opacity-10 p-3">
-                                    <i class="fas fa-user-check fa-lg text-info"></i>
+                                    <i class="bi bi-person-check text-info" style="font-size: x-large"></i>
                                 </div>
                             </div>
                             <div class="stat-value">{{ global_stats.average_agent_progress }}<small>%</small></div>
@@ -228,7 +233,7 @@
                         <div class="card-body text-center">
                             <div class="d-flex align-items-center justify-content-center mb-3">
                                 <div class="rounded-circle bg-warning bg-opacity-10 p-3">
-                                    <i class="fas fa-award fa-lg text-warning"></i>
+                                    <i class="bi bi-award text-warning-emphasis" style="font-size: x-large"></i>
                                 </div>
                             </div>
                             <div class="stat-value">{{ global_stats.average_mentor_progress }}<small>%</small></div>
@@ -241,9 +246,9 @@
         {# Gestion des retours d'expérience #}
         <div class="card-footer text-end">
             <a href="{{ path('admin_progress_feedbacks') }}" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-comment-dots me-2"></i>Gérer les retours d'expérience
+                <i class="bi bi-chat-dots me-2"></i>Gérer les retours d'expérience
                 {% if global_stats.pending_feedbacks > 0 %}
-                    <span class="badge bg-warning text-dark ms-2">{{ global_stats.pending_feedbacks }}</span>
+                    <span class="badge bg-warning text-dark ms-2 fw-light">{{ global_stats.pending_feedbacks }}</span>
                 {% endif %}
             </a>
         </div>
@@ -252,7 +257,7 @@
     {# Tableau des apprenants #}
     <div class="content-card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-users me-2"></i>Progression des apprenants</h5>
+            <h5 class="mb-0"><i class="bi bi-person-workspace me-2 text-warning"></i>Progression des apprenants</h5>
             <span class="badge bg-light text-primary rounded-pill">{{ pagination.totalItems }} apprenants</span>
         </div>
 
@@ -271,7 +276,7 @@
                     {% if search_term %}
                         <div class="col-auto">
                             <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill" style="padding: 0.6rem 1.2rem;">
-                                <i class="fas fa-times me-2"></i>Effacer la recherche
+                                <i class="bi bi-x-circle me-2"></i>Effacer la recherche
                             </a>
                         </div>
                     {% endif %}
@@ -286,7 +291,6 @@
                             <th class="ps-4">Apprenant</th>
                             <th>Tuteur</th>
                             <th>Date d'embauche</th>
-                            <th>Jours en poste</th>
                             <th>Auto-validation</th>
                             <th>Validation tuteur</th>
                             <th>Dernière action</th>
@@ -296,7 +300,7 @@
                     </thead>
                     <tbody>
                         {% for user_data in users_data %}
-                            <tr>
+                            <tr class="align-middle">
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
@@ -317,23 +321,16 @@
                                             <span>{{ user_data.mentor.fullName }}</span>
                                         </div>
                                     {% else %}
-                                        <span class="badge bg-warning text-dark">Non assigné</span>
+                                        <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if user_data.hiring_date %}
-                                        <span class="badge bg-light text-dark border p-2">
-                                            <i class="far fa-calendar-alt me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
+                                        <span class="text-dark" style="font-size: .9rem">
+                                            <i class="bi bi-calendar me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
                                         </span>
                                     {% else %}
                                         <span class="text-muted">Non renseigné</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if user_data.days_since_hiring %}
-                                        <span class="fw-medium">{{ user_data.days_since_hiring }}</span> jours
-                                    {% else %}
-                                        <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -379,7 +376,7 @@
                                 <td class="text-center">
                                     {% if user_data.logbook %}
                                         <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;">
-                                            <i class="fas fa-eye me-1"></i> Détails
+                                            <i class="bi bi-eye me-1"></i> Détails
                                         </a>
                                     {% else %}
                                         <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
@@ -389,7 +386,7 @@
                                 <td class="text-center">
                                     {% if user_data.logbook %}
                                         <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
-                                            <i class="fas fa-file-pdf me-1"></i> PDF
+                                            <i class="bi bi-file-pdf me-1"></i> PDF
                                         </a>
                                     {% else %}
                                         <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
