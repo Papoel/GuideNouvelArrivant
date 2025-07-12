@@ -14,11 +14,15 @@ class MentorActionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(child: 'mentorComment', type: TextareaType::class, options: [
+            ->add(
+                child: 'mentorComment',
+                type: TextareaType::class,
+                options: [
                 'label' => 'Commentaires',
                 'attr' => ['rows' => 5],
                 'required' => false,
-            ])
+                ]
+            )
             ->add(
                 child: 'submit',
                 type: SubmitType::class,
@@ -26,15 +30,16 @@ class MentorActionType extends AbstractType
                     'label' => 'Sauvegarder',
                     'attr' => ['class' => 'btn btn-sm btn-primary me-2'],
                 ]
-            )
-        ;
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => Action::class,
             'attr' => ['novalidate' => 'novalidate'],
-        ]);
+            ]
+        );
     }
 }

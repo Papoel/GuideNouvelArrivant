@@ -8,9 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-/**
- * @extends AbstractCrudController<Logbook>
- */
+/** @extends AbstractCrudController<Logbook> */
 class LogbookCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -25,9 +23,11 @@ class LogbookCrudController extends AbstractCrudController
             TextField::new(propertyName: 'name')->setLabel(label: 'Nom du carnet')->onlyOnIndex(),
             AssociationField::new(propertyName: 'owner', label: 'Propriétaire du carnet'),
             AssociationField::new(propertyName: 'themes', label: 'index' === $pageName ? 'Nb de thèmes' : 'Thèmes associés')
-                ->setFormTypeOptions([
+                ->setFormTypeOptions(
+                    [
                     'by_reference' => false,
-                ]),
+                    ]
+                ),
         ];
     }
 }

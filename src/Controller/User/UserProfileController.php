@@ -31,14 +31,20 @@ class UserProfileController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash(type: 'success', message: 'Vos informations ont été mises à jour avec succès.');
 
-            return $this->redirectToRoute(route: 'dashboard_index', parameters: [
+            return $this->redirectToRoute(
+                route: 'dashboard_index',
+                parameters: [
                 'nni' => $user->getNni(),
-            ]);
+                ]
+            );
         }
 
-        return $this->render(view: 'app/profile/settings.html.twig', parameters: [
+        return $this->render(
+            view: 'app/profile/settings.html.twig',
+            parameters: [
             'user' => $user,
             'form' => $form->createView(),
-        ]);
+            ]
+        );
     }
 }

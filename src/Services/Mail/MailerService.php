@@ -15,9 +15,7 @@ class MailerService
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $context
-     */
+    /** @param array<string, mixed> $context */
     public function sendEmail(
         string $from,
         string $to,
@@ -35,7 +33,7 @@ class MailerService
         try {
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            throw new \RuntimeException(message: 'Erreur survenue lors de l\'envoi du mail : '.$e->getMessage());
+            throw new \RuntimeException(message: 'Erreur survenue lors de l\'envoi du mail : ' . $e->getMessage());
         }
     }
 }

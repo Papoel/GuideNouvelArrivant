@@ -78,10 +78,6 @@ class ActionForm extends AbstractController
         /** @var Action $action */
         $action = $this->getForm()->getData();
 
-        if (!$action instanceof Action) {
-            throw new \LogicException(message: 'Une erreur est survenue lors de la sauvegarde de l\'action.');
-        }
-
         // Définir le module sur l'action si $this->module est défini
         if (null !== $this->module) {
             $action->setModule($this->module);
@@ -94,8 +90,11 @@ class ActionForm extends AbstractController
         $currentUser = $this->getUser();
         $nni = $currentUser->getNni();
 
-        return $this->redirectToRoute(route: 'dashboard_index', parameters: [
+        return $this->redirectToRoute(
+            route: 'dashboard_index',
+            parameters: [
             'nni' => $nni,
-        ]);
+            ]
+        );
     }
 }

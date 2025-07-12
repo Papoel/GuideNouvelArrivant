@@ -11,9 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-/**
- * @implements UserProviderInterface<User>
- */
+/** @implements UserProviderInterface<User> */
 readonly class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     public function __construct(
@@ -33,7 +31,10 @@ readonly class UserProvider implements UserProviderInterface, PasswordUpgraderIn
             ->getQuery()
             ->getOneOrNullResult();
 
-        if (!$user instanceof User) {
+        // PHPStan sait que $user est de type User grâce à l'annotation @var,
+        // mais getOneOrNullResult() peut réellement retourner null
+        /** @phpstan-ignore-next-line */
+        if (null === $user) {
             throw new UserNotFoundException();
         }
 

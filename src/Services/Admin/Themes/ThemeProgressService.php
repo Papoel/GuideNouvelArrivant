@@ -10,10 +10,8 @@ use App\Repository\ThemeRepository;
 use App\Repository\UserRepository;
 use App\Services\Admin\interfaces\ThemeProgressServiceInterface;
 
-/**
- * Service responsable du calcul de la progression par thème.
- * Implémente l'interface ThemeProgressServiceInterface pour respecter le principe d'inversion de dépendance.
- */
+/** Service responsable du calcul de la progression par thème.
+ * Implémente l'interface ThemeProgressServiceInterface pour respecter le principe d'inversion de dépendance. */
 readonly class ThemeProgressService implements ThemeProgressServiceInterface
 {
     public function __construct(
@@ -23,8 +21,7 @@ readonly class ThemeProgressService implements ThemeProgressServiceInterface
     ) {
     }
 
-    /**
-     * Récupère les données de progression par thème.
+    /** Récupère les données de progression par thème.
      * Cette méthode calcule pour chaque thème:
      * - Le nombre total de modules
      * - Le nombre de modules complétés par les agents
@@ -41,8 +38,7 @@ readonly class ThemeProgressService implements ThemeProgressServiceInterface
      *     modules_validated_by_mentor: int,
      *     agent_progress: float,
      *     mentor_progress: float
-     * }> Structure de données contenant les informations de progression par thème
-     */
+     * }> Structure de données contenant les informations de progression par thème */
     public function getThemeProgressData(array $accessCriteria = []): array
     {
         $themes = $this->themeRepository->findAll();

@@ -55,7 +55,7 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
             $userNni = $user->getNni();
         } else {
             // Gérer le cas où l'utilisateur est null ou n'est pas de la classe attendue
-            throw new \LogicException(message: 'L\'utilisateur doit être une instance de '.User::class);
+            throw new \LogicException(message: 'L\'utilisateur doit être une instance de ' . User::class);
         }
 
         // Mise à jour du lastLoginAt

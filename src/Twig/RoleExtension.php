@@ -7,9 +7,7 @@ use Twig\TwigFunction;
 
 class RoleExtension extends AbstractExtension
 {
-    /**
-     * @var array<string, array{label: string, color: string, text: string}>
-     */
+    /** @var array<string, array{label: string, color: string, text: string}> */
     private array $roleStyles = [
         'ROLE_ADMIN' => [
             'label' => 'Administrateur',
@@ -61,17 +59,13 @@ class RoleExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return array{label: string, color: string, text: string}
-     */
+    /** @return array{label: string, color: string, text: string} */
     public function getRoleStyle(string $role): array
     {
         return $this->roleStyles[$role] ?? $this->roleStyles['ROLE_USER'];
     }
 
-    /**
-     * @param string[] $roles
-     */
+    /** @param string[] $roles */
     public function getHighestRole(array $roles): string
     {
         // Ordre de priorité des rôles (du plus élevé au plus bas)

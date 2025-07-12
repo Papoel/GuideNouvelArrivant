@@ -16,18 +16,23 @@ class ThemeFormType extends AbstractType
         $builder
             ->add(child: 'title')
             ->add(child: 'description')
-            ->add(child: 'logbooks', type: EntityType::class, options: [
+            ->add(
+                child: 'logbooks',
+                type: EntityType::class,
+                options: [
                 'class' => Logbook::class,
                 'choice_label' => 'id',
                 'multiple' => true,
-            ])
-        ;
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => Theme::class,
-        ]);
+            ]
+        );
     }
 }

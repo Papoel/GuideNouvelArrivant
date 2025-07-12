@@ -30,9 +30,7 @@ class DeleteUserCommand extends Command
         $this->io = new SymfonyStyle(input: $input, output: $output);
     }
 
-    /**
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $lastname = $this->io->ask(question: 'Quel est le nom de l\'utilisateur ?');

@@ -8,13 +8,10 @@ use App\Entity\Logbook;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Interface définissant les méthodes pour la gestion de la progression des utilisateurs.
- */
+/** Interface définissant les méthodes pour la gestion de la progression des utilisateurs. */
 interface UserProgressServiceInterface
 {
-    /**
-     * Récupère les détails de progression d'un utilisateur.
+    /** Récupère les détails de progression d'un utilisateur.
      *
      * @param User $user L'utilisateur dont on veut récupérer les détails de progression
      *
@@ -35,27 +32,22 @@ interface UserProgressServiceInterface
      *      }
      *  }
      * /
-     * @throws \RuntimeException Si l'utilisateur n'a pas de carnet de progression
-     */
+     * @throws \RuntimeException Si l'utilisateur n'a pas de carnet de progression */
     public function getUserProgressDetails(User $user): array;
 
-    /**
-     * Vérifie si l'utilisateur a accès aux données d'un autre utilisateur.
+    /** Vérifie si l'utilisateur a accès aux données d'un autre utilisateur.
      *
      * @param User $targetUser L'utilisateur cible dont on veut consulter les données
      *
-     * @return bool True si l'accès est autorisé, false sinon
-     */
+     * @return bool True si l'accès est autorisé, false sinon */
     public function canAccessUserData(User $targetUser): bool;
 
-    /**
-     * Génère un PDF du carnet de progression d'un utilisateur.
+    /** Génère un PDF du carnet de progression d'un utilisateur.
      *
      * @param User $user L'utilisateur dont on veut générer le carnet de progression
      *
      * @return Response Réponse HTTP contenant le PDF
      *
-     * @throws \RuntimeException Si l'utilisateur n'a pas de carnet de progression
-     */
+     * @throws \RuntimeException Si l'utilisateur n'a pas de carnet de progression */
     public function generateUserWorkbookPdf(User $user): Response;
 }

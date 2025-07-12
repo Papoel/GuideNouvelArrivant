@@ -39,7 +39,7 @@ class CheckMigrationCommand extends Command
         }
 
         // Récupérer les fichiers de migration dans le dossier (Version*.php)
-        $files = glob($this->migrationDir.'/Version*.php');
+        $files = glob($this->migrationDir . '/Version*.php');
 
         if (empty($files)) {
             $output->writeln(messages: '<error>Aucun fichier de migration trouvé dans le dossier.</error>');
@@ -58,11 +58,14 @@ class CheckMigrationCommand extends Command
 
         // Insérer dans la table doctrine_migration_versions
         $now = (new \DateTime())->format(format: 'Y-m-d H:i:s');
-        $this->connection->insert(table: 'doctrine_migration_versions', data: [
+        $this->connection->insert(
+            table: 'doctrine_migration_versions',
+            data: [
             'version' => $version,
             'executed_at' => $now,
             'execution_time' => 777,
-        ]);
+            ]
+        );
 
         $output->writeln(sprintf('<info>La table était vide, migration "%s" insérée avec succès.</info>', $version));
 

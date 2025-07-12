@@ -15,9 +15,7 @@ readonly class DataLoader
     ) {
     }
 
-    /**
-     * @return Theme[]
-     */
+    /** @return Theme[] */
     public function loadThemes(): array
     {
         $themeTitles = [
@@ -39,9 +37,7 @@ readonly class DataLoader
         return $themes;
     }
 
-    /**
-     * @param Theme[] $themes
-     */
+    /** @param Theme[] $themes */
     public function loadModules(array $themes): void
     {
         if (count($themes) < 3) {

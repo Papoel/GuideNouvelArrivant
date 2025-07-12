@@ -30,9 +30,7 @@ class CreateUserCommand extends Command
         $this->io = new SymfonyStyle(input: $input, output: $output);
     }
 
-    /**
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $firstname = $this->io->ask(question: 'Quel est le prénom de l\'utilisateur ?');

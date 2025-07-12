@@ -53,9 +53,12 @@ class MentorDashboardController extends AbstractController
             }
         }
 
-        return $this->render(view: 'app/dashboard/mentor/index.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/mentor/index.html.twig',
+            parameters: [
             'apprenants' => $apprenants,
             'apprenantsProgress' => $apprenantsProgress,
-        ]);
+            ]
+        );
     }
 }

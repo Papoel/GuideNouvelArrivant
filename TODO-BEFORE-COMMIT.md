@@ -1,0 +1,114 @@
+# TODO avant de commit
+
+Ce fichier a été généré automatiquement par `make before-commit` le 12-07-2025 à 23h25.
+
+## Liste des problèmes à corriger
+
+### Problèmes de style de code (PSR-12)
+
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  24 | [33mWARNING[0m | Line exceeds 120 characters; contains 161 characters
+- [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
+- [ ]  13 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
+- [ ]  19 | [33mWARNING[0m | Line exceeds 120 characters; contains 133 characters
+- [ ]  23 | [33mWARNING[0m | Line exceeds 120 characters; contains 133 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]  32 | [33mWARNING[0m | Line exceeds 120 characters; contains 132 characters
+- [ ]  66 | [33mWARNING[0m | Line exceeds 120 characters; contains 130 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  69 | [33mWARNING[0m | Line exceeds 120 characters; contains 129 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  61 | [33mWARNING[0m | Line exceeds 120 characters; contains 131 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  98 | [33mWARNING[0m | Line exceeds 120 characters; contains 130 characters
+- [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
+- [ ]   83 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]   86 | [33mWARNING[0m | Line exceeds 120 characters; contains 144 characters
+- [ ]  108 | [33mWARNING[0m | Line exceeds 120 characters; contains 144 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  40 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  23 | [33mWARNING[0m | Line exceeds 120 characters; contains 172 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  36 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ] [1mFOUND 0 ERRORS AND 8 WARNINGS AFFECTING 8 LINES[0m
+- [ ]   66 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
+- [ ]   70 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ]  118 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  125 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]  169 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
+- [ ]  173 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ]  206 | [33mWARNING[0m | Line exceeds 120 characters; contains 143 characters
+- [ ]  210 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  76 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]  29 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ]  44 | [33mWARNING[0m | Line exceeds 120 characters; contains 130 characters
+- [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
+- [ ]   81 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
+- [ ]  105 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
+- [ ]  169 | [33mWARNING[0m | Line exceeds 120 characters; contains 147 characters
+- [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
+- [ ]  143 | [33mWARNING[0m | Line exceeds 120 characters; contains 129 characters
+- [ ]  240 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]  247 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  25 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ] [1mFOUND 0 ERRORS AND 10 WARNINGS AFFECTING 10 LINES[0m
+- [ ]   96 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ]   97 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ]  105 | [33mWARNING[0m | Line exceeds 120 characters; contains 151 characters
+- [ ]  106 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
+- [ ]  114 | [33mWARNING[0m | Line exceeds 120 characters; contains 148 characters
+- [ ]  115 | [33mWARNING[0m | Line exceeds 120 characters; contains 149 characters
+- [ ]  123 | [33mWARNING[0m | Line exceeds 120 characters; contains 150 characters
+- [ ]  124 | [33mWARNING[0m | Line exceeds 120 characters; contains 151 characters
+- [ ]  132 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
+- [ ]  133 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ] [1mFOUND 0 ERRORS AND 6 WARNINGS AFFECTING 6 LINES[0m
+- [ ]  313 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]  315 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  343 | [33mWARNING[0m | Line exceeds 120 characters; contains 140 characters
+- [ ]  345 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  373 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
+- [ ]  375 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]  28 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
+- [ ]  36 | [33mWARNING[0m | Line exceeds 120 characters; contains 143 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  60 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  89 | [33mWARNING[0m | Line exceeds 120 characters; contains 140 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  55 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  45 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  31 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  21 | [33mWARNING[0m | Line exceeds 120 characters; contains 136 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  26 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
+- [ ] [1mFOUND 0 ERRORS AND 14 WARNINGS AFFECTING 14 LINES[0m
+- [ ]   53 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
+- [ ]   56 | [33mWARNING[0m | Line exceeds 120 characters; contains 161 characters
+- [ ]   57 | [33mWARNING[0m | Line exceeds 120 characters; contains 184 characters
+- [ ]   58 | [33mWARNING[0m | Line exceeds 120 characters; contains 163 characters
+- [ ]   59 | [33mWARNING[0m | Line exceeds 120 characters; contains 180 characters
+- [ ]   60 | [33mWARNING[0m | Line exceeds 120 characters; contains 196 characters
+- [ ]   61 | [33mWARNING[0m | Line exceeds 120 characters; contains 231 characters
+- [ ]   87 | [33mWARNING[0m | Line exceeds 120 characters; contains 146 characters
+- [ ]   89 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]   90 | [33mWARNING[0m | Line exceeds 120 characters; contains 130 characters
+- [ ]  115 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
+- [ ]  165 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
+- [ ]  187 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
+- [ ]  216 | [33mWARNING[0m | Line exceeds 120 characters; contains 170 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  74 | [33mWARNING[0m | Line exceeds 120 characters; contains 134 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]  61 | [33mWARNING[0m | Line exceeds 120 characters; contains 132 characters
+- [ ]  88 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
+
+

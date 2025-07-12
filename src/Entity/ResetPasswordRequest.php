@@ -15,10 +15,12 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /** @phpstan-ignore-next-line */
     private ?int $id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    /** @phpstan-ignore-next-line */
     private ?User $user;
 
     public function __construct(User $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
@@ -34,7 +36,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function getUser(): User
     {
-        /**@phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line */
         return $this->user;
     }
 }

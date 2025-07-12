@@ -15,15 +15,22 @@ class FeedbackType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class, [
+            ->add(
+                'title',
+                TextType::class,
+                [
                 'label' => 'Titre',
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Titre de votre retour d\'expérience',
                 ],
                 'required' => true,
-            ])
-            ->add('category', ChoiceType::class, [
+                ]
+            )
+            ->add(
+                'category',
+                ChoiceType::class,
+                [
                 'label' => 'Catégorie',
                 'choices' => [
                     'Processus d\'intégration' => 'integration_process',
@@ -37,8 +44,12 @@ class FeedbackType extends AbstractType
                     'class' => 'form-select',
                 ],
                 'required' => true,
-            ])
-            ->add('content', TextareaType::class, [
+                ]
+            )
+            ->add(
+                'content',
+                TextareaType::class,
+                [
                 'label' => 'Contenu',
                 'attr' => [
                     'class' => 'form-control',
@@ -46,14 +57,16 @@ class FeedbackType extends AbstractType
                     'placeholder' => 'Détaillez votre retour d\'expérience...',
                 ],
                 'required' => true,
-            ])
-        ;
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => Feedback::class,
-        ]);
+            ]
+        );
     }
 }

@@ -25,9 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @extends AbstractCrudController<User>
- */
+/** @extends AbstractCrudController<User> */
 #[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {
@@ -89,7 +87,8 @@ class UserCrudController extends AbstractCrudController
 
         // Champ pour l'édition des rôles dans le formulaire
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
-            ->setChoices(choiceGenerator: [
+            ->setChoices(
+                choiceGenerator: [
                 'Utilisateur' => 'ROLE_USER',
                 'Administrateur' => 'ROLE_ADMIN',
                 'Chef de service' => 'ROLE_SERVICE_HEAD',
@@ -98,10 +97,12 @@ class UserCrudController extends AbstractCrudController
                 'Manager délégué' => 'ROLE_MANAGER_DELEGATE',
                 'Tuteur' => 'ROLE_MENTOR',
                 'Nouvel arrivant' => 'ROLE_NEWCOMER',
-            ])
+                ]
+            )
             ->allowMultipleChoices()
             ->renderExpanded(expanded: false)
-            ->renderAsBadges([
+            ->renderAsBadges(
+                [
                 'ROLE_ADMIN' => 'danger',
                 'ROLE_SERVICE_HEAD' => 'primary',
                 'ROLE_SERVICE_HEAD_DELEGATE' => 'primary',
@@ -109,64 +110,91 @@ class UserCrudController extends AbstractCrudController
                 'ROLE_MANAGER_DELEGATE' => 'info',
                 'ROLE_MENTOR' => 'success',
                 'ROLE_NEWCOMER' => 'warning',
-            ])
+                ]
+            )
             ->setColumns(cols: 'col-md-9 col-sm-12')
             ->setRequired(isRequired: false)
             ->onlyOnForms();
 
         // Utilisation d'un TextField pour l'affichage sans lien
         yield TextField::new(propertyName: 'service', label: 'Service')
-            ->formatValue(callable: function ($value, $entity) {
-                return $entity->getService() ? $entity->getService()->getName() : null;
-            })
+            ->formatValue(
+                callable: function ($value, $entity): ?string {
+                    if (!$entity instanceof User) {
+                        return null;
+                    }
+                    $service = $entity->getService();
+                    return $service ? $service->getName() : null;
+                }
+            )
             ->onlyOnIndex();
 
         // Utilisation d'un AssociationField pour le formulaire
         yield AssociationField::new(propertyName: 'service', label: 'Service')
             ->setColumns(cols: 'col-md-3 col-sm-12')
-            ->setQueryBuilder(function ($queryBuilder) {
-                return $queryBuilder
-                    ->orderBy('entity.name', 'ASC');
-            })
+            ->setQueryBuilder(
+                function ($queryBuilder) {
+                    // Ensure we're working with a QueryBuilder object
+                    if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
+                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                    }
+                    return $queryBuilder;
+                }
+            )
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
         yield ChoiceField::new(propertyName: 'job', label: 'Métier')
-            ->setChoices(choiceGenerator: [
+            ->setChoices(
+                choiceGenerator: [
                 'Technicien' => JobEnum::TECHNICIEN,
                 'Ingénieur' => JobEnum::INGENIEUR,
                 "Chargé d'affaires" => JobEnum::CHARGE_AFFAIRES,
                 "Chargé d'affaires projet" => JobEnum::CHARGE_AFFAIRES_PROJET,
                 'Chargé de surveillance' => JobEnum::CHARGE_SURVEILLANCE,
-            ])
+                ]
+            )
             ->onlyWhenCreating()
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'specialityLabel', label: 'Spécialité')->hideOnForm();
         yield ChoiceField::new(propertyName: 'speciality', label: 'Spécialité')
-            ->setChoices(choiceGenerator: [
+            ->setChoices(
+                choiceGenerator: [
                 'Chaudronnerie' => SpecialityEnum::CHA,
                 'Levage' => SpecialityEnum::LEV,
                 'Mécanique' => SpecialityEnum::MEC,
                 'Robinetterie' => SpecialityEnum::ROB,
                 'Soudage' => SpecialityEnum::SOU,
                 'Examen Non Destructif' => SpecialityEnum::END,
-            ])
+                ]
+            )
             ->onlyOnForms()
             ->setColumns(cols: 'col-md-6 col-sm-12');
 
         yield AssociationField::new(propertyName: 'logbooks', label: 'Carnets')
             ->onlyOnIndex()
             ->setColumns(cols: 'col-md-6 col-sm-12')
-            ->setFormTypeOptions([
+            ->setFormTypeOptions(
+                [
                 'by_reference' => false,
-            ])
+                ]
+            )
             ->formatValue(
-                fn ($value, $entity) => '<span style="display: inline-block" class="badge bg-'.
-                    ($entity->getLogbooks()->count() > 0 ? 'success-subtle' : 'danger-subtle').'">'.
-                    ($entity->getLogbooks()->count() > 0 ? 'Oui' : 'Non').
-                    '</span>'
+                function ($value, $entity): string {
+                    if (!$entity instanceof User) {
+                        return '<span style="display: inline-block" class="badge bg-danger-subtle">Non</span>';
+                    }
+
+                    $logbooks = $entity->getLogbooks();
+                    $hasLogbooks = $logbooks->count() > 0;
+
+                    return '<span style="display: inline-block" class="badge bg-' .
+                        ($hasLogbooks ? 'success-subtle' : 'danger-subtle') . '">' .
+                        ($hasLogbooks ? 'Oui' : 'Non') .
+                        '</span>';
+                }
             )
             ->setTemplatePath(path: 'admin/field/badge.html.twig');
 
@@ -187,11 +215,11 @@ class UserCrudController extends AbstractCrudController
             ->setPaginatorPageSize(maxResultsPerPage: 20)
             ->setPageTitle(
                 pageName: 'detail',
-                title: fn (User $user) => '👁️ Détails - '.$user->getFullName()
+                title: fn (User $user) => '👁️ Détails - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'edit',
-                title: fn (User $user) => '🧑‍💻 Modifier - '.$user->getFullName()
+                title: fn (User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'new',
@@ -202,8 +230,7 @@ class UserCrudController extends AbstractCrudController
                 timeFormat: DateTimeField::FORMAT_SHORT
             )
 
-            ->addFormTheme(themePath: 'admin/crud/delete_confirmation_modal.html.twig')
-        ;
+            ->addFormTheme(themePath: 'admin/crud/delete_confirmation_modal.html.twig');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -215,36 +242,45 @@ class UserCrudController extends AbstractCrudController
             ->disable(Action::DELETE);
 
         // Mettre à jour l'action de modification existante
-        $actions = $actions->update(pageName: Crud::PAGE_INDEX, actionName: Action::EDIT, callable: function (Action $action) {
-            return $action
-                ->setIcon(icon: 'fa fa-edit text-primary')
-                ->setLabel(label: 'Modifier')
-                ->addCssClass(cssClass: 'btn btn-sm btn-outline-primary')
-            ;
-        });
+        $actions = $actions->update(
+            pageName: Crud::PAGE_INDEX,
+            actionName: Action::EDIT,
+            callable: function (Action $action) {
+                return $action
+                    ->setIcon(icon: 'fa fa-edit text-primary')
+                    ->setLabel(label: 'Modifier')
+                    ->addCssClass(cssClass: 'btn btn-sm btn-outline-primary');
+            }
+        );
 
         // Add custom actions
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
             ->setIcon(icon: 'fa fa-user-times text-danger')
             ->linkToCrudAction(crudActionName: 'deleteUserOnly')
             ->setCssClass(cssClass: 'text-danger')
-            ->displayIf(static function ($user) {
-                return true;
-            });
+            ->displayIf(
+                static function ($user) {
+                    return true;
+                }
+            );
 
         $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
             ->setIcon(icon: 'fa fa-trash-alt')
             ->linkToCrudAction(crudActionName: 'deleteAll')
-            ->displayIf(static function ($user) {
-                return $user instanceof User && $user->hasLogbooks();
-            });
+            ->displayIf(
+                static function ($user) {
+                    return $user instanceof User && $user->hasLogbooks();
+                }
+            );
 
         $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer les carnets')
             ->setIcon(icon: 'fa fa-book')
             ->linkToCrudAction(crudActionName: 'deleteLogbooksOnly')
-            ->displayIf(static function ($user) {
-                return $user instanceof User && $user->hasLogbooks();
-            });
+            ->displayIf(
+                static function ($user) {
+                    return $user instanceof User && $user->hasLogbooks();
+                }
+            );
 
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
@@ -276,7 +312,7 @@ class UserCrudController extends AbstractCrudController
             $this->userDeletionService->deleteUserOnly($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
         } catch (\Throwable $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
 
         return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
@@ -306,7 +342,7 @@ class UserCrudController extends AbstractCrudController
             $this->userDeletionService->deleteUserAndLogbooks($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
         } catch (\Throwable $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
 
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
@@ -336,18 +372,17 @@ class UserCrudController extends AbstractCrudController
             $this->userDeletionService->deleteLogbooksOnly($user);
             $this->addFlash(type: 'success', message: sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
         } catch (\Throwable $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: '.$e->getMessage());
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
 
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
-    /**
-     * @param User $entityInstance
-     */
+    /** @param User $entityInstance */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User && $entityInstance->getPassword()) {
+
+        if ($entityInstance->getPassword()) {
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $entityInstance,
                 $entityInstance->getPassword()
@@ -356,14 +391,12 @@ class UserCrudController extends AbstractCrudController
         }
 
         // S'assurer que roles n'est jamais null avant la persistance
-        if ($entityInstance instanceof User) {
-            $roles = $entityInstance->getRoles();
-            // Si les rôles sont vides ou contiennent uniquement ROLE_USER (qui est ajouté par getRoles)
-            if (count($roles) <= 1 && in_array(needle: 'ROLE_USER', haystack: $roles)) {
-                $entityInstance->setRoles(roles: ['ROLE_USER']);
-            }
+        $roles = $entityInstance->getRoles();
+        // Si les rôles sont vides ou contiennent uniquement ROLE_USER (qui est ajouté par getRoles)
+        if (count($roles) <= 1 && in_array(needle: 'ROLE_USER', haystack: $roles)) {
+            $entityInstance->setRoles(roles: ['ROLE_USER']);
         }
 
-        parent::persistEntity(entityManager: $entityManager, entityInstance: $entityInstance);
+        parent::persistEntity($entityManager, $entityInstance);
     }
 }

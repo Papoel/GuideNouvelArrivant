@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Uid\Uuid;
+use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\TimestampTrait;
 use App\Repository\FeedbackRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FeedbackRepository::class)]
@@ -16,9 +17,12 @@ class Feedback
     use TimestampTrait;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: 'Veuillez saisir un titre pour votre retour d\'expérience.')]
@@ -58,7 +62,7 @@ class Feedback
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $reviewAt = null;
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

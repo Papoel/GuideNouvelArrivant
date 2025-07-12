@@ -24,10 +24,14 @@ class DashboardController extends AbstractController
     {
         // Création du formulaire de feedback pour la sidebar
         $feedback = new Feedback();
-        $feedbackForm = $this->createForm(FeedbackType::class, $feedback, [
+        $feedbackForm = $this->createForm(
+            FeedbackType::class,
+            $feedback,
+            [
             'action' => $this->generateUrl('my_feedbacks_new', ['nni' => $nni]),
             'method' => 'POST',
-        ]);
+            ]
+        );
 
         // Appel au DashboardService pour obtenir les données en fonction du NNI
         $dashboardData = $dashboardService->getDashboardData($nni);

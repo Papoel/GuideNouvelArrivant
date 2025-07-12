@@ -42,9 +42,11 @@ class UserActionType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
             'data_class' => Action::class,
             'attr' => ['novalidate' => 'novalidate'],
-        ]);
+            ]
+        );
     }
 }

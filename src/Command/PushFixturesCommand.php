@@ -95,7 +95,7 @@ class PushFixturesCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $io->error('Une erreur est survenue lors du chargement des données: '.$e->getMessage());
+            $io->error('Une erreur est survenue lors du chargement des données: ' . $e->getMessage());
             $io->error(message: $e->getTraceAsString());
 
             return Command::FAILURE;

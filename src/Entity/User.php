@@ -31,6 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 50)]
@@ -66,15 +67,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email;
 
-    /**
-     * @var list<string> The user roles
-     */
+    /** @var list<string> The user roles */
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
+    /** @var string The hashed password */
     #[ORM\Column(type: Types::STRING)]
     #[Assert\NotBlank(message: 'Veuillez saisir un mot de passe.')]
     #[Assert\Regex(
@@ -113,21 +110,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?self $mentor = null;
 
-    /**
-     * @var Collection<int, Logbook>
-     */
+    /** @var Collection<int, Logbook> */
     #[ORM\OneToMany(targetEntity: Logbook::class, mappedBy: 'owner', cascade: ['remove'])]
     private Collection $logbooks;
 
-    /**
-     * @var Collection<int, Action>
-     */
+    /** @var Collection<int, Action> */
     #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'user')]
     private Collection $actions;
 
-    /**
-     * @var Collection<int, Feedback>
-     */
+    /** @var Collection<int, Feedback> */
     #[ORM\OneToMany(targetEntity: Feedback::class, mappedBy: 'author', cascade: ['remove'])]
     private Collection $feedbacks;
 
@@ -189,11 +180,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
+    /** A visual identifier that represents this user.
      *
-     * @see UserInterface
-     */
+     * @see UserInterface */
     public function getUserIdentifier(): string
     {
         // Si l'utilisateur a un email, on le retourne
@@ -204,26 +193,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // Sinon, on retourne un identifiant temporaire
         $id = $this->getId();
 
-        return $id ? 'user_'.$id : 'user_temp_'.spl_object_hash($this);
+        return $id ? 'user_' . $id : 'user_temp_' . spl_object_hash($this);
     }
 
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
+    /** @see    UserInterface
+     * @return list<string> */
     public function getRoles(): array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_values(array_unique($roles));
     }
 
-    /**
-     * @param list<string> $roles
-     */
+    /** @param list<string> $roles */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -231,9 +215,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
+    /** @see PasswordAuthenticatedUserInterface */
     public function getPassword(): string
     {
         return $this->password;
@@ -246,9 +228,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    /** @see UserInterface */
     #[\Deprecated]
     public function eraseCredentials(): void
     {
@@ -273,7 +253,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $firstname = ucfirst($this->firstname);
         $lastname = strtoupper($this->lastname);
 
-        return $firstname.' '.$lastname;
+        return $firstname . ' ' . $lastname;
     }
 
     public function getJob(): ?JobEnum
@@ -356,9 +336,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return \in_array(needle: 'ROLE_ADMIN', haystack: $this->roles, strict: true);
     }
 
-    /**
-     * @return Collection<int, Logbook>
-     */
+    /** @return Collection<int, Logbook> */
     public function getLogbooks(): Collection
     {
         return $this->logbooks;
@@ -391,9 +369,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return !$this->logbooks->isEmpty();
     }
 
-    /**
-     * @return Collection<int, Action>
-     */
+    /** @return Collection<int, Action> */
     public function getActions(): Collection
     {
         return $this->actions;
@@ -437,21 +413,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $parts = [];
         if ($years > 0) {
-            $parts[] = "$years an".($years > 1 ? 's' : '');
+            $parts[] = "$years an" . ($years > 1 ? 's' : '');
         }
         if ($months > 0) {
             $parts[] = "$months mois";
         }
         if ($days > 0) {
-            $parts[] = "$days jour".($days > 1 ? 's' : '');
+            $parts[] = "$days jour" . ($days > 1 ? 's' : '');
         }
 
         return implode(' ', $parts);
     }
 
-    /**
-     * @return Collection<int, Feedback>
-     */
+    /** @return Collection<int, Feedback> */
     public function getFeedback(): Collection
     {
         return $this->feedbacks;

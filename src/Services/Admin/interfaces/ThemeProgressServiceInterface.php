@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Admin\interfaces;
 
-/**
- * Interface définissant les services de suivi de progression par thème.
+/** Interface définissant les services de suivi de progression par thème.
  * Permet de suivre l'avancement global des utilisateurs par thématique.
  * Récupère les données de progression par thème.
  *
@@ -19,12 +18,10 @@ namespace App\Services\Admin\interfaces;
  *     completed: int,
  *     totalUsers: int,
  *     validatedUsers: int
- * }>
- */
+ * }> */
 interface ThemeProgressServiceInterface
 {
-    /**
-     * Récupère les données de progression par thème.
+    /** Récupère les données de progression par thème.
      *
      * @param array<string, string|array<string>> $accessCriteria Critères d'accès pour filtrer les données (ex: service)
      *
@@ -35,7 +32,6 @@ interface ThemeProgressServiceInterface
      *     modules_validated_by_mentor: int,
      *     agent_progress: float,
      *     mentor_progress: float
-     * }> Structure de données contenant les informations de progression par thème
-     */
+     * }> Structure de données contenant les informations de progression par thème */
     public function getThemeProgressData(array $accessCriteria = []): array;
 }

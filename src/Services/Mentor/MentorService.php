@@ -21,9 +21,7 @@ readonly class MentorService
     ) {
     }
 
-    /**
-     * @return array<User>
-     */
+    /** @return array<User> */
     public function getApprenantLogbooks(string $mentorNni): array
     {
         return $this->userRepository->findApprenantByMentorNni($mentorNni);
@@ -39,25 +37,15 @@ readonly class MentorService
             return false;
         }
 
-        // Si getOwner() retourne un seul utilisateur
-        if ($apprentices instanceof User) {
-            $apprentice = $apprentices;
-
-            return $apprentice->getMentor() && $apprentice->getMentor()->getNni() === $mentorNni;
-        }
-
-        // Si aucun apprenant n'a le mentor correspondant, retourne false
-        /* @phpstan-ignore-next-line */
-        return false;
+        // Vérifier si l'apprenant a un mentor et si c'est le bon mentor
+        return $apprentices->getMentor() && $apprentices->getMentor()->getNni() === $mentorNni;
     }
 
-    /**
-     * @return array{
+    /** @return array{
      *     padawan: User,
      *     logbook: Logbook,
      *     actionsByTheme: array<string, array<Action>>
-     * }
-     */
+     * } */
     public function getPadawanData(User $mentor, Logbook $logbook): array
     {
         // 1. Récupérer le Padawan associé au carnet

@@ -18,6 +18,7 @@ class Service
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 10)]
@@ -33,9 +34,7 @@ class Service
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, User>
-     */
+    /** @var Collection<int, User> */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'service')]
     private Collection $users;
 
@@ -81,9 +80,7 @@ class Service
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
+    /** @return Collection<int, User> */
     public function getUsers(): Collection
     {
         return $this->users;

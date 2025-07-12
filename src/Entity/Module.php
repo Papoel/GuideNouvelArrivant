@@ -19,6 +19,7 @@ class Module
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 100, nullable: true)]
@@ -33,9 +34,7 @@ class Module
     #[ORM\JoinColumn(name: 'theme_id', referencedColumnName: 'id', nullable: false)]
     private ?Theme $theme = null;
 
-    /**
-     * @var Collection<int, Action>
-     */
+    /** @var Collection<int, Action> */
     #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'module', cascade: ['remove'], orphanRemoval: true)]
     private Collection $actions;
 
@@ -50,7 +49,7 @@ class Module
         $themeTitle = $theme ? $theme->getTitle() : '';
         $firstCharactersOfTheme = $themeTitle ? substr($themeTitle, offset: 0, length: 3) : '';
 
-        return $firstCharactersOfTheme.' | '.($this->title ?: '');
+        return $firstCharactersOfTheme . ' | ' . ($this->title ?: '');
     }
 
     public function getId(): ?Uuid
@@ -94,9 +93,7 @@ class Module
         return $this;
     }
 
-    /**
-     * @return Collection<int, Action>
-     */
+    /** @return Collection<int, Action> */
     public function getActions(): Collection
     {
         return $this->actions;
@@ -124,9 +121,7 @@ class Module
         return $this;
     }
 
-    /**
-     * Get an action by module ID.
-     */
+    /** Get an action by module ID. */
     /*public function getActionByModuleId(int $moduleId): ?Action
     {
         // Convertir le moduleId en chaîne pour la comparaison

@@ -14,10 +14,8 @@ use Dompdf\Options;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-/**
- * Service responsable de la gestion de la progression des utilisateurs.
- * Implémente l'interface UserProgressServiceInterface pour respecter le principe d'inversion de dépendance.
- */
+/** Service responsable de la gestion de la progression des utilisateurs.
+ * Implémente l'interface UserProgressServiceInterface pour respecter le principe d'inversion de dépendance. */
 class UserProgressService implements UserProgressServiceInterface
 {
     public function __construct(
@@ -70,12 +68,15 @@ class UserProgressService implements UserProgressServiceInterface
         $dompdf = new Dompdf($options);
 
         // Génération du HTML avec un template dédié à l'impression PDF
-        $html = $this->twig->render('pdf/workbook.html.twig', [
+        $html = $this->twig->render(
+            'pdf/workbook.html.twig',
+            [
             'user' => $user,
             'logbook' => $progressData['logbook'],
             'progress' => $progressData['progress'],
             'date_generation' => new \DateTime(),
-        ]);
+            ]
+        );
 
         $dompdf->loadHtml($html);
 

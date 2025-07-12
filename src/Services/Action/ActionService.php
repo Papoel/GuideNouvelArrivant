@@ -33,10 +33,12 @@ readonly class ActionService
         }
 
         // Rechercher une action par module en fonction de l'utilisateur connecté
-        $action = $this->actionRepository->findOneBy([
+        $action = $this->actionRepository->findOneBy(
+            [
             'module' => $module,
             'user' => $currentUser,
-        ]);
+            ]
+        );
 
         // Si aucune action n'est trouvée, créer une nouvelle action
         if (!$action) {
@@ -56,7 +58,7 @@ readonly class ActionService
             throw new \LogicException(message: 'L\'utilisateur actuel n\'est pas valide.');
         }
 
-        $agentVisa = 'Validation numérique de '.$currentUser->getFullName().' le '.(new \DateTime())->format(format: 'd/m/Y');
+        $agentVisa = 'Validation numérique de ' . $currentUser->getFullName() . ' le ' . (new \DateTime())->format(format: 'd/m/Y');
         $action->setAgentVisa($agentVisa);
 
         $date = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
@@ -83,7 +85,7 @@ readonly class ActionService
         $userLogbook = $this->entityManager->getRepository(Logbook::class)->find($logbookId);
 
         if ($agentName) {
-            $action->setAgentVisa(agentVisa: 'Visa numérique de '.$agentName.' le '.$currentDate->format(format: 'd/m/Y à H:i'));
+            $action->setAgentVisa(agentVisa: 'Visa numérique de ' . $agentName . ' le ' . $currentDate->format(format: 'd/m/Y à H:i'));
         }
 
         // Vérifier si le carnet est déjà assigné à l'action

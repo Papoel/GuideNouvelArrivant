@@ -25,17 +25,17 @@ class UserSeniorityService
 
         // Ajouter les années si elles existent
         if ($years > 0) {
-            $seniority .= $years.' année'.($years > 1 ? 's' : '').' ';
+            $seniority .= $years . ' année' . ($years > 1 ? 's' : '') . ' ';
         }
 
         // Ajouter les mois seulement s'il y a des années ou si les mois ne sont pas nuls
         if ($months > 0 || (0 === $years && 0 === $months && 0 === $days)) {
-            $seniority .= $months.' mois ';
+            $seniority .= $months . ' mois ';
         }
 
         // Ajouter les jours si c'est la seule information, ou s'ils sont non nuls
         if ($days > 0 || (0 === $years && 0 === $months)) {
-            $seniority .= $days.' jour'.($days > 1 ? 's' : '').' ';
+            $seniority .= $days . ' jour' . ($days > 1 ? 's' : '') . ' ';
         }
 
         // Retirer l'espace en fin de chaîne

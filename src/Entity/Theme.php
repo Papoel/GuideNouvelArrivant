@@ -19,6 +19,7 @@ class Theme
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 100)]
@@ -29,15 +30,11 @@ class Theme
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, Logbook>
-     */
+    /** @var Collection<int, Logbook> */
     #[ORM\ManyToMany(targetEntity: Logbook::class, inversedBy: 'themes', cascade: ['persist'])]
     private Collection $logbooks;
 
-    /**
-     * @var Collection<int, Module>
-     */
+    /** @var Collection<int, Module> */
     #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'theme', cascade: ['remove'])]
     private Collection $modules;
 
@@ -81,9 +78,7 @@ class Theme
         return $this;
     }
 
-    /**
-     * @return Collection<int, Logbook>
-     */
+    /** @return Collection<int, Logbook> */
     public function getLogbooks(): Collection
     {
         return $this->logbooks;
@@ -108,9 +103,7 @@ class Theme
         return $this;
     }
 
-    /**
-     * @return Collection<int, Module>
-     */
+    /** @return Collection<int, Module> */
     public function getModules(): Collection
     {
         return $this->modules;

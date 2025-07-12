@@ -29,9 +29,7 @@ class ProgressController extends AbstractController
     ) {
     }
 
-    /**
-     * Affiche le tableau de bord global de progression.
-     */
+    /** Affiche le tableau de bord global de progression. */
     #[Route('/', name: 'dashboard', methods: ['GET'])]
     public function dashboard(Request $request): Response
     {
@@ -84,9 +82,7 @@ class ProgressController extends AbstractController
         return $this->render('admin/progress/dashboard.html.twig', $data);
     }
 
-    /**
-     * Affiche les détails de progression d'un utilisateur spécifique.
-     */
+    /** Affiche les détails de progression d'un utilisateur spécifique. */
     #[Route('/user/{id}', name: 'user_details', methods: ['GET'])]
     public function userProgressDetails(string $id, UserRepository $userRepository): Response
     {
@@ -116,9 +112,7 @@ class ProgressController extends AbstractController
         }
     }
 
-    /**
-     * Affiche et gère les retours d'expérience (feedbacks).
-     */
+    /** Affiche et gère les retours d'expérience (feedbacks). */
     #[Route('/feedbacks', name: 'feedbacks', methods: ['GET', 'POST'])]
     public function feedbacks(Request $request): Response
     {
@@ -160,27 +154,28 @@ class ProgressController extends AbstractController
         // Statistiques des feedbacks via le service dédié
         $stats = $this->feedbackService->getFeedbackStatistics($criteria);
 
-        return $this->render('admin/progress/feedbacks.html.twig', [
-            'feedbacks' => $feedbacks['items'],
-            'pagination' => [
-                'currentPage' => $page,
-                'totalPages' => $feedbacks['totalPages'],
-                'totalItems' => $feedbacks['totalItems'],
-                'itemsPerPage' => $limit,
-            ],
-            'stats' => $stats,
-            'search_term' => $searchTerm,
-            'current_status' => $status,
-            'is_super_admin' => $this->progressAccessService->isSuperAdmin(),
-            'user_service' => $userService,
-        ]);
+        return $this->render(
+            'admin/progress/feedbacks.html.twig',
+            [
+                'feedbacks' => $feedbacks['items'],
+                'pagination' => [
+                    'currentPage' => $page,
+                    'totalPages' => $feedbacks['totalPages'],
+                    'totalItems' => $feedbacks['totalItems'],
+                    'itemsPerPage' => $limit,
+                ],
+                'stats' => $stats,
+                'search_term' => $searchTerm,
+                'current_status' => $status,
+                'is_super_admin' => $this->progressAccessService->isSuperAdmin(),
+                'user_service' => $userService,
+            ]
+        );
     }
 
-    /**
-     * Affiche et traite un feedback spécifique.
-     */
+    /** Affiche et traite un feedback spécifique. */
     #[Route('/feedback/{id}', name: 'feedback_detail', methods: ['GET', 'POST'])]
-    public function feedbackDetail(int $id, Request $request, FeedbackRepository $feedbackRepository): Response
+    public function feedbackDetail(string $id, Request $request, FeedbackRepository $feedbackRepository): Response
     {
         $feedback = $feedbackRepository->find($id);
 
@@ -226,14 +221,15 @@ class ProgressController extends AbstractController
             }
         }
 
-        return $this->render('admin/progress/feedback_detail.html.twig', [
-            'feedback' => $feedback,
-        ]);
+        return $this->render(
+            'admin/progress/feedback_detail.html.twig',
+            [
+                'feedback' => $feedback,
+            ]
+        );
     }
 
-    /**
-     * Affiche les retours d'expérience par service.
-     */
+    /** Affiche les retours d'expérience par service. */
     #[Route('/feedbacks/service/{name}', name: 'service_feedbacks', methods: ['GET'])]
     public function serviceFeedbacks(string $name, Request $request): Response
     {
@@ -268,22 +264,23 @@ class ProgressController extends AbstractController
         $totalItems = $stats['total'];
         $totalPages = (int) ceil($totalItems / $limit);
 
-        return $this->render('admin/progress/service_feedbacks.html.twig', [
-            'feedbacks' => $feedbacks,
-            'service_name' => $name,
-            'pagination' => [
-                'currentPage' => $page,
-                'totalPages' => $totalPages,
-                'totalItems' => $totalItems,
-                'itemsPerPage' => $limit,
-            ],
-            'is_super_admin' => $this->progressAccessService->isSuperAdmin(),
-        ]);
+        return $this->render(
+            'admin/progress/service_feedbacks.html.twig',
+            [
+                'feedbacks' => $feedbacks,
+                'service_name' => $name,
+                'pagination' => [
+                    'currentPage' => $page,
+                    'totalPages' => $totalPages,
+                    'totalItems' => $totalItems,
+                    'itemsPerPage' => $limit,
+                ],
+                'is_super_admin' => $this->progressAccessService->isSuperAdmin(),
+            ]
+        );
     }
 
-    /**
-     * Génère un PDF du carnet de compagnonnage de l'utilisateur.
-     */
+    /** Génère un PDF du carnet de compagnonnage de l'utilisateur. */
     #[Route('/user/{id}/workbook/pdf', name: 'generate_workbook', methods: ['GET'])]
     public function generateWorkbook(string $id, UserRepository $userRepository): Response
     {

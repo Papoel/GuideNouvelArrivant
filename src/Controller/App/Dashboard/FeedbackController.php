@@ -23,10 +23,13 @@ class FeedbackController extends AbstractController
         $user = $this->getUser();
         $feedbacks = $feedbackRepository->findBy(criteria: ['author' => $user], orderBy: ['createdAt' => 'DESC']);
 
-        return $this->render(view: 'app/dashboard/feedback/my_feedbacks.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/feedback/my_feedbacks.html.twig',
+            parameters: [
             'feedbacks' => $feedbacks,
             'nni' => $nni,
-        ]);
+            ]
+        );
     }
 
     #[Route('/my-feedbacks/{id}', name: 'detail', methods: [Request::METHOD_GET])]
@@ -37,10 +40,13 @@ class FeedbackController extends AbstractController
             throw $this->createAccessDeniedException(message: 'Vous n\'êtes pas autorisé à accéder à ce retour d\'expérience.');
         }
 
-        return $this->render(view: 'app/dashboard/feedback/my_feedback_detail.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/feedback/my_feedback_detail.html.twig',
+            parameters: [
             'feedback' => $feedback,
             'nni' => $nni,
-        ]);
+            ]
+        );
     }
 
     #[Route('/new', name: 'new', methods: [Request::METHOD_GET, Request::METHOD_POST])]
@@ -64,9 +70,12 @@ class FeedbackController extends AbstractController
             return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $nni]);
         }
 
-        return $this->render(view: 'app/dashboard/feedback/new.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/feedback/new.html.twig',
+            parameters: [
             'form' => $form,
-        ]);
+            ]
+        );
     }
 
     #[IsGranted('ROLE_ADMIN')]
@@ -75,9 +84,12 @@ class FeedbackController extends AbstractController
     {
         $feedbacks = $feedbackRepository->findBy([], ['createdAt' => 'DESC']);
 
-        return $this->render(view: 'app/dashboard/feedback/list.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/feedback/list.html.twig',
+            parameters: [
             'feedbacks' => $feedbacks,
-        ]);
+            ]
+        );
     }
 
     #[IsGranted('ROLE_ADMIN')]
@@ -103,8 +115,11 @@ class FeedbackController extends AbstractController
             return $this->redirectToRoute(route: 'my_feedbacks_list');
         }
 
-        return $this->render(view: 'app/dashboard/feedback/review.html.twig', parameters: [
+        return $this->render(
+            view: 'app/dashboard/feedback/review.html.twig',
+            parameters: [
             'feedback' => $feedback,
-        ]);
+            ]
+        );
     }
 }

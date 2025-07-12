@@ -23,8 +23,7 @@ class LogbooksProgressExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param Logbook[] $logbooks
+    /** @param Logbook[] $logbooks
      *
      * @return array<array{
      *     agent_progress: float,
@@ -35,8 +34,7 @@ class LogbooksProgressExtension extends AbstractExtension
      *     modules_awaiting_validation: int,
      *     progress_class_agent: string,
      *     progress_class_mentor: string
-     * }>
-     */
+     * }> */
     public function getLogbooksProgress($logbooks): array
     {
         $logbooksProgress = [];

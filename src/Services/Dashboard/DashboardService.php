@@ -22,8 +22,7 @@ readonly class DashboardService
     ) {
     }
 
-    /**
-     * @return array{
+    /** @return array{
      *     user: User,
      *     logbooks: array<Logbook>,
      *     themes: array<Theme>,
@@ -31,8 +30,7 @@ readonly class DashboardService
      *     actions: array<Action>,
      *     userSeniority: string,
      *     mentorSeniority: ?string
-     * }
-     */
+     * } */
     public function getDashboardData(string $nni): array
     {
         // Validation et récupération de l'utilisateur par NNI
@@ -61,9 +59,7 @@ readonly class DashboardService
         ];
     }
 
-    /**
-     * @return array<Logbook>
-     */
+    /** @return array<Logbook> */
     private function getLogbooksByUser(User $user): array
     {
         return $user->getLogbooks()->toArray();
@@ -83,11 +79,9 @@ readonly class DashboardService
         return $logbooksProgress;
     }
 
-    /**
-     * @param array<Logbook> $logbooks
+    /** @param array<Logbook> $logbooks
      *
-     * @return array<Theme>
-     */
+     * @return array<Theme> */
     private function getThemesByLogbooks(array $logbooks): array
     {
         $themes = [];
@@ -100,11 +94,9 @@ readonly class DashboardService
         return $themes;
     }
 
-    /**
-     * @param array<Theme> $themes
+    /** @param array<Theme> $themes
      *
-     * @return array<Module>
-     */
+     * @return array<Module> */
     private function getModulesByThemes(array $themes): array
     {
         $modules = [];
@@ -122,11 +114,9 @@ readonly class DashboardService
         return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
     }
 
-    /**
-     * @param array<Module> $modules
+    /** @param array<Module> $modules
      *
-     * @return array<Action>
-     */
+     * @return array<Action> */
     private function getActionsByModulesForUser(array $modules, User $user): array
     {
         $actions = [];

@@ -10,9 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-/**
- * @extends AbstractCrudController<Module>
- */
+/** @extends AbstractCrudController<Module> */
 class ModuleCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -24,8 +22,7 @@ class ModuleCrudController extends AbstractCrudController
     {
         yield IdField::new(propertyName: 'id')
             ->hideOnForm()
-            ->hideOnIndex()
-        ;
+            ->hideOnIndex();
 
         yield TextField::new(propertyName: 'title', label: 'Titre');
 

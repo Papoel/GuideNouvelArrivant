@@ -52,7 +52,8 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
     {
         $roles = $mentor->getRoles();
         $roles[] = 'ROLE_MENTOR';
-        $mentor->setRoles(array_unique(array: $roles));
+        // Utiliser array_values pour garantir que le tableau est une liste (indices numériques consécutifs)
+        $mentor->setRoles(array_values(array_unique(array: $roles)));
         $this->entityManager->persist(object: $mentor);
         $this->entityManager->flush();
     }
@@ -61,7 +62,8 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
     {
         $roles = $mentor->getRoles();
         $updatedRoles = array_diff($roles, ['ROLE_MENTOR']);
-        $mentor->setRoles(roles: $updatedRoles);
+        // Utiliser array_values pour garantir que le tableau est une liste (indices numériques consécutifs)
+        $mentor->setRoles(roles: array_values($updatedRoles));
         $this->entityManager->persist(object: $mentor);
         $this->entityManager->flush();
     }

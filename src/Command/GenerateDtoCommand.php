@@ -83,18 +83,18 @@ class GenerateDtoCommand extends Command
         $entityName = (new UnicodeString(basename(str_replace(search: '\\', replace: '/', subject: $entityClass))))
             ->toString();
         $dtoNamespace = str_replace(search: 'Entity', replace: 'Dto', subject: $metadata->namespace);
-        $dtoClassName = $entityName.'Dto';
+        $dtoClassName = $entityName . 'Dto';
 
         // Génération du code du DTO
         $dtoCode = $this->generateDtoCode(namespace: $dtoNamespace, className: $dtoClassName, properties: $properties, metadata: $metadata);
 
         // Création du fichier
-        $dtoDir = $this->projectDir.'/src/Dto';
+        $dtoDir = $this->projectDir . '/src/Dto';
         if (!is_dir(filename: $dtoDir) && !mkdir(directory: $dtoDir, recursive: true) && !is_dir($dtoDir)) {
             throw new \RuntimeException(message: sprintf('Directory "%s" was not created', $dtoDir));
         }
 
-        $filePath = $dtoDir.'/'.$dtoClassName.'.php';
+        $filePath = $dtoDir . '/' . $dtoClassName . '.php';
         file_put_contents(filename: $filePath, data: $dtoCode);
 
         $io->success(message: "DTO généré avec succès : $filePath");
@@ -132,7 +132,7 @@ class GenerateDtoCommand extends Command
         // Getters
         foreach ($properties as $property) {
             $type = $this->getPropertyType(metadata: $metadata, property: $property);
-            $getter = 'get'.ucfirst(string: $property);
+            $getter = 'get' . ucfirst(string: $property);
             $code .= "    public function $getter(): $type\n";
             $code .= "    {\n";
             $code .= "        return \$this->$property;\n";
@@ -144,7 +144,7 @@ class GenerateDtoCommand extends Command
         $code .= "    {\n";
         $code .= "        return new self(\n";
         foreach ($properties as $property) {
-            $getter = 'get'.ucfirst($property);
+            $getter = 'get' . ucfirst($property);
             $code .= "            \$entity->$getter(),\n";
         }
         $code .= "        );\n";

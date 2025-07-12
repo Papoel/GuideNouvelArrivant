@@ -10,11 +10,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @param User|null $currentUser
+/** @param User|null $currentUser
  *
- * @phpstan-assert User $currentUser
- */
+ * @phpstan-assert User $currentUser */
 readonly class UserValidationService
 {
     public function __construct(

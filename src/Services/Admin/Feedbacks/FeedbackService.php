@@ -10,10 +10,8 @@ use App\Repository\Interfaces\FeedbackRepositoryInterface;
 use App\Services\Admin\interfaces\FeedbackServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Service responsable de la gestion des retours d'expérience (feedbacks).
- * Implémente l'interface FeedbackServiceInterface pour respecter le principe d'inversion de dépendance.
- */
+/** Service responsable de la gestion des retours d'expérience (feedbacks).
+ * Implémente l'interface FeedbackServiceInterface pour respecter le principe d'inversion de dépendance. */
 readonly class FeedbackService implements FeedbackServiceInterface
 {
     public function __construct(
@@ -22,28 +20,24 @@ readonly class FeedbackService implements FeedbackServiceInterface
     ) {
     }
 
-    /**
-     * Récupère les feedbacks avec pagination.
+    /** Récupère les feedbacks avec pagination.
      *
      * @param array<string, bool|int|string|null> $criteria   Critères de filtrage
      * @param string|null                         $searchTerm Terme de recherche
      * @param int                                 $page       Page courante
      * @param int                                 $limit      Nombre d'éléments par page
      *
-     * @return array{items: array<Feedback>, totalItems: int, totalPages: int}
-     */
+     * @return array{items: array<Feedback>, totalItems: int, totalPages: int} */
     public function getFeedbacksWithPagination(array $criteria = [], ?string $searchTerm = null, int $page = 1, int $limit = 10): array
     {
         return $this->feedbackRepository->findByCriteriaPaginated($criteria, $searchTerm, $page, $limit);
     }
 
-    /**
-     * Récupère les statistiques des feedbacks.
+    /** Récupère les statistiques des feedbacks.
      *
      * @param array<string, bool|int|string|null> $criteria Critères de filtrage
      *
-     * @return array<string, int> Statistiques sur les feedbacks
-     */
+     * @return array<string, int> Statistiques sur les feedbacks */
     public function getFeedbackStatistics(array $criteria = []): array
     {
         // Convertir serviceId en serviceName si nécessaire pour assurer la compatibilité
@@ -78,15 +72,13 @@ readonly class FeedbackService implements FeedbackServiceInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * Récupère les feedbacks par nom de service.
+    /** Récupère les feedbacks par nom de service.
      *
      * @param string $serviceName Nom du service
      * @param int    $limit       Nombre maximum de résultats
      * @param int    $offset      Position de départ
      *
-     * @return array<int, array<string, mixed>> Les feedbacks avec les informations utilisateur
-     */
+     * @return array<int, Feedback> Les feedbacks avec les informations utilisateur */
     public function getFeedbacksByServiceName(string $serviceName, int $limit = 25, int $offset = 0): array
     {
         return $this->feedbackRepository->findFeedbacksByServiceName($serviceName, $limit, $offset);

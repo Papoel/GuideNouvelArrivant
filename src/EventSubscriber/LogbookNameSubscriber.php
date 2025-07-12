@@ -17,9 +17,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * @return array<class-string, array<int, string>>
-     */
+    /** @return array<class-string, array<int, string>> */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -44,7 +42,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
         $owner = $entity->getOwner();
 
         if (null !== $owner) {
-            $entity->setName(name: 'Carnet de '.$owner->getFullname().' ('.$owner->getSpecialityAbreviation().')');
+            $entity->setName(name: 'Carnet de ' . $owner->getFullname() . ' (' . $owner->getSpecialityAbreviation() . ')');
 
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
@@ -65,7 +63,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
             $logbookName = $entity->getName();
 
             if (null === $logbookName) {
-                $entity->setName(name: 'Carnet de '.$owner->getFullname());
+                $entity->setName(name: 'Carnet de ' . $owner->getFullname());
 
                 $this->entityManager->persist($entity);
                 $this->entityManager->flush();

@@ -51,13 +51,16 @@ class MentorLogbookController extends AbstractController
         $padawanData = $this->mentorService->getPadawanData($mentor, $logbook);
         $logbookProgress = $this->logbookProgressService->calculateLogbookProgress($logbook);
 
-        return $this->render(view: 'app/dashboard/mentor/logbook_details.html.twig', parameters: [
-            'padawan' => $padawanData['padawan'],
-            'logbook' => $padawanData['logbook'],
-            'actionsByTheme' => $padawanData['actionsByTheme'],
-            'logbookProgress' => $logbookProgress,
-            // 'padawanData' => $padawanData
-        ]);
+        return $this->render(
+            view: 'app/dashboard/mentor/logbook_details.html.twig',
+            parameters: [
+                'padawan' => $padawanData['padawan'],
+                'logbook' => $padawanData['logbook'],
+                'actionsByTheme' => $padawanData['actionsByTheme'],
+                'logbookProgress' => $logbookProgress,
+                // 'padawanData' => $padawanData
+            ]
+        );
     }
 
     #[Route('/{logbookId}/module/{moduleId}/action/{actionId}/comments/edit', name: 'action_edit', methods: ['GET', 'POST'])]
@@ -92,18 +95,24 @@ class MentorLogbookController extends AbstractController
 
             $this->addFlash(type: 'success', message: 'Les commentaires ont été enregistrés avec succès.');
 
-            return $this->redirectToRoute(route: 'mentor_logbook_details', parameters: [
-                'padawanNni' => $request->attributes->get(key: 'padawanNni'),
-                'nni' => $request->attributes->get(key: 'nni'),
-                'id' => $logbookId,
-            ]);
+            return $this->redirectToRoute(
+                route: 'mentor_logbook_details',
+                parameters: [
+                    'padawanNni' => $request->attributes->get(key: 'padawanNni'),
+                    'nni' => $request->attributes->get(key: 'nni'),
+                    'id' => $logbookId,
+                ]
+            );
         }
 
         // Render de la vue
-        return $this->render(view: 'action/edit.html.twig', parameters: [
-            'form' => $form->createView(),
-            'action' => $action,
-        ]);
+        return $this->render(
+            view: 'action/edit.html.twig',
+            parameters: [
+                'form' => $form->createView(),
+                'action' => $action,
+            ]
+        );
     }
 
     #[Route('/{logbookId}/module/{moduleId}/action/{actionId}/validate', name: 'action_validate', methods: ['GET', 'POST'])]
@@ -129,7 +138,11 @@ class MentorLogbookController extends AbstractController
         }
 
         // Créer le visa numérique
-        $mentorVisa = 'Validation numérique de '.$mentor->getFullName().' le '.(new \DateTime())->format(format: 'd/m/Y');
+        $fullName = $mentor->getFullName();
+        if (!is_string($fullName)) {
+            $fullName = 'Utilisateur'; // Valeur par défaut si getFullName() ne retourne pas une chaîne
+        }
+        $mentorVisa = 'Validation numérique de ' . $fullName . ' le ' . (new \DateTime())->format(format: 'd/m/Y');
         $action->setMentorVisa($mentorVisa);
 
         // Récupérer la date actuelle et la définir pour l'action
@@ -143,11 +156,14 @@ class MentorLogbookController extends AbstractController
         $this->addFlash(type: 'success', message: 'L\'action a été validée avec succès.');
 
         // Utiliser le carnet associé pour la redirection
-        return $this->redirectToRoute(route: 'mentor_logbook_details', parameters: [
-            'padawanNni' => $request->attributes->get(key: 'padawanNni'),
-            'nni' => $request->attributes->get(key: 'nni'),
-            'id' => $logbook->getId(),
-        ]);
+        return $this->redirectToRoute(
+            route: 'mentor_logbook_details',
+            parameters: [
+                'padawanNni' => $request->attributes->get(key: 'padawanNni'),
+                'nni' => $request->attributes->get(key: 'nni'),
+                'id' => $logbook->getId(),
+            ]
+        );
     }
 
     #[Route('/{logbookId}/module/{moduleId}/action/{actionId}/invalidate', name: 'action_invalidate', methods: ['GET', 'POST'])]
@@ -177,11 +193,14 @@ class MentorLogbookController extends AbstractController
 
         $this->addFlash(type: 'danger', message: 'Vous avez retiré votre validation de l\'action.');
 
-        return $this->redirectToRoute(route: 'mentor_logbook_details', parameters: [
-            'padawanNni' => $request->attributes->get(key: 'padawanNni'),
-            'nni' => $request->attributes->get(key: 'nni'),
-            'id' => $logbook->getId(),
-        ]);
+        return $this->redirectToRoute(
+            route: 'mentor_logbook_details',
+            parameters: [
+                'padawanNni' => $request->attributes->get(key: 'padawanNni'),
+                'nni' => $request->attributes->get(key: 'nni'),
+                'id' => $logbook->getId(),
+            ]
+        );
     }
 
     #[Route('/{logbookId}/module/{moduleId}/action/{actionId}/delete-mentor-comment', name: 'action_delete_comment', methods: ['GET', 'POST'])]
@@ -197,21 +216,23 @@ class MentorLogbookController extends AbstractController
         $logbook = $action->getLogbook();
         if (!$logbook) {
             // Ajout d'un log pour débogage
-            error_log(message: 'Action ID: '.$action->getId().' n\'a pas de carnet associé.');
+            error_log(message: 'Action ID: ' . $action->getId() . ' n\'a pas de carnet associé.');
             throw $this->createNotFoundException('Aucun carnet associé à cette action.');
         }
 
-        // Assure-toi que $logbook n'est pas null
-        assert(assertion: null !== $logbook);
+        // Nous avons déjà vérifié que $logbook n'est pas null à la ligne 212
 
         // Suppression du commentaire
         $this->mentorService->deleteComment();
         $this->addFlash(type: 'success', message: 'Votre commentaire a été supprimé avec succès.');
 
-        return $this->redirectToRoute(route: 'mentor_logbook_details', parameters: [
-            'padawanNni' => $request->attributes->get(key: 'padawanNni'),
-            'nni' => $request->attributes->get(key: 'nni'),
-            'id' => $logbook->getId(),
-        ]);
+        return $this->redirectToRoute(
+            route: 'mentor_logbook_details',
+            parameters: [
+                'padawanNni' => $request->attributes->get(key: 'padawanNni'),
+                'nni' => $request->attributes->get(key: 'nni'),
+                'id' => $logbook->getId(),
+            ]
+        );
     }
 }

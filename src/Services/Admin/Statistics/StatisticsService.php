@@ -12,10 +12,8 @@ use App\Services\Admin\interfaces\StatisticsServiceInterface;
 use App\Services\Logbook\LogbookProgressService;
 use Symfony\Bundle\SecurityBundle\Security;
 
-/**
- * Service responsable du calcul des statistiques globales de l'application.
- * Implémente l'interface StatisticsServiceInterface pour respecter le principe d'inversion de dépendance.
- */
+/** Service responsable du calcul des statistiques globales de l'application.
+ * Implémente l'interface StatisticsServiceInterface pour respecter le principe d'inversion de dépendance. */
 readonly class StatisticsService implements StatisticsServiceInterface
 {
     public function __construct(
@@ -27,13 +25,11 @@ readonly class StatisticsService implements StatisticsServiceInterface
     ) {
     }
 
-    /**
-     * Récupère les statistiques globales basées sur les critères d'accès.
+    /** Récupère les statistiques globales basées sur les critères d'accès.
      *
      * @param array<string, mixed> $accessCriteria Critères d'accès pour filtrer les statistiques (ex: service)
      *
-     * @return array<string, mixed> Structure de données contenant les statistiques globales
-     */
+     * @return array<string, mixed> Structure de données contenant les statistiques globales */
     public function getGlobalStatistics(array $accessCriteria = []): array
     {
         $allUsers = $this->getAllUsers(accessCriteria: $accessCriteria);
@@ -49,20 +45,17 @@ readonly class StatisticsService implements StatisticsServiceInterface
         );
     }
 
-    /**
-     * Récupère tous les utilisateurs selon les critères d'accès.
+    /** Récupère tous les utilisateurs selon les critères d'accès.
      *
      * @param array<string, mixed> $accessCriteria
      *
-     * @return array<User>
-     */
+     * @return array<User> */
     private function getAllUsers(array $accessCriteria): array
     {
         return $this->userRepository->findByRoleWithCriteria(role: 'ROLE_USER', criteria: $accessCriteria);
     }
 
-    /**
-     * Calcule les statistiques liées aux carnets de bord.
+    /** Calcule les statistiques liées aux carnets de bord.
      *
      * @param array<User> $users
      *
@@ -71,8 +64,7 @@ readonly class StatisticsService implements StatisticsServiceInterface
      *     usersWithMentorValidation: int,
      *     averageAgentProgress: float,
      *     averageMentorProgress: float
-     * }
-     */
+     * } */
     private function calculateLogbookStatistics(array $users): array
     {
         $totalAgentProgress = 0.0;
@@ -105,11 +97,9 @@ readonly class StatisticsService implements StatisticsServiceInterface
         ];
     }
 
-    /**
-     * Met à jour les compteurs de progression.
+    /** Met à jour les compteurs de progression.
      *
-     * @param array<string, mixed> $progress
-     */
+     * @param array<string, mixed> $progress */
     private function updateProgressCounters(
         array $progress,
         float &$totalAgentProgress,
@@ -117,8 +107,12 @@ readonly class StatisticsService implements StatisticsServiceInterface
         int &$usersWithLogbook,
         int &$usersWithMentorValidation
     ): void {
-        $totalAgentProgress += $progress['agent_progress'];
-        $totalMentorProgress += $progress['mentor_progress'];
+        // Utiliser is_numeric pour vérifier que la valeur peut être convertie en float
+        $agentProgress = $progress['agent_progress'] ?? 0;
+        $mentorProgress = $progress['mentor_progress'] ?? 0;
+
+        $totalAgentProgress += is_numeric($agentProgress) ? (float)$agentProgress : 0;
+        $totalMentorProgress += is_numeric($mentorProgress) ? (float)$mentorProgress : 0;
         ++$usersWithLogbook;
 
         if ($progress['mentor_progress'] > 0) {
@@ -126,19 +120,15 @@ readonly class StatisticsService implements StatisticsServiceInterface
         }
     }
 
-    /**
-     * Calcule la moyenne en évitant la division par zéro.
-     */
+    /** Calcule la moyenne en évitant la division par zéro. */
     private function calculateAverage(float $total, int $count): float
     {
         return $count > 0 ? $total / $count : 0.0;
     }
 
-    /**
-     * Calcule les statistiques liées aux feedbacks.
+    /** Calcule les statistiques liées aux feedbacks.
      *
-     * @return array{totalFeedbacks: int, pendingFeedbacks: int}
-     */
+     * @return array{totalFeedbacks: int, pendingFeedbacks: int} */
     private function calculateFeedbackStatistics(): array
     {
         $feedbackCriteria = $this->getFeedbackCriteria();
@@ -152,11 +142,9 @@ readonly class StatisticsService implements StatisticsServiceInterface
         ];
     }
 
-    /**
-     * Détermine les critères de filtrage des feedbacks selon les permissions.
+    /** Détermine les critères de filtrage des feedbacks selon les permissions.
      *
-     * @return array<string, bool|int|string|null>
-     */
+     * @return array<string, bool|int|string|null> */
     private function getFeedbackCriteria(): array
     {
         if ($this->isSuperAdmin()) {
@@ -166,14 +154,12 @@ readonly class StatisticsService implements StatisticsServiceInterface
         return ['serviceName' => $this->getCurrentUserService()];
     }
 
-    /**
-     * Construit le tableau final des statistiques.
+    /** Construit le tableau final des statistiques.
      *
      * @param array<string, mixed> $logbookStats
      * @param array<string, mixed> $feedbackStats
      *
-     * @return array<string, mixed>
-     */
+     * @return array<string, mixed> */
     private function buildStatisticsArray(
         array $logbookStats,
         array $feedbackStats,
@@ -202,22 +188,18 @@ readonly class StatisticsService implements StatisticsServiceInterface
         ];
     }
 
-    /**
-     * Vérifie si l'utilisateur actuel est un SUPER_ADMIN.
-     */
+    /** Vérifie si l'utilisateur actuel est un SUPER_ADMIN. */
     public function isSuperAdmin(): bool
     {
         return $this->security->isGranted(attributes: 'ROLE_SUPER_ADMIN');
     }
 
-    /**
-     * Récupère le service de l'utilisateur connecté.
-     */
+    /** Récupère le service de l'utilisateur connecté. */
     private function getCurrentUserService(): string
     {
         $user = $this->security->getUser();
 
-        if (!$user || !method_exists(object_or_class: $user, method: 'getService')) {
+        if (!$user instanceof User) {
             return 'Non assigné';
         }
 
@@ -226,6 +208,6 @@ readonly class StatisticsService implements StatisticsServiceInterface
             return 'Non assigné';
         }
 
-        return $service->getName();
+        return $service->getName() ?? 'Non assigné';
     }
 }

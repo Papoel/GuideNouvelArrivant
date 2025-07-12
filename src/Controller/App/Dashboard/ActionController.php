@@ -61,12 +61,15 @@ class ActionController extends AbstractController
         }
 
         // Render de la vue
-        return $this->render(view: 'action/edit.html.twig', parameters: [
+        return $this->render(
+            view: 'action/edit.html.twig',
+            parameters: [
             'form' => $form,
             'action' => $action,
             'module' => $module,
             'logbook' => $logbook,
-        ]);
+            ]
+        );
     }
 
     #[Route('/{id}', name: 'action_delete', methods: ['POST'])]
@@ -75,7 +78,7 @@ class ActionController extends AbstractController
         $datas = $this->dashboardService->getDashboardData($nni);
         $user = $datas['user'];
 
-        if ($this->isCsrfTokenValid('delete'.$action->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $action->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($action);
             $entityManager->flush();
         }
@@ -103,11 +106,14 @@ class ActionController extends AbstractController
 
         $this->addFlash('success', 'Le commentaire a été supprimé avec succès.');
 
-        return $this->redirectToRoute(route: 'action_edit', parameters: [
+        return $this->redirectToRoute(
+            route: 'action_edit',
+            parameters: [
             'id' => $action->getId(),
             'nni' => $user->getNni(),
             'moduleId' => $module->getId(),
             'logbookId' => $logbook->getId(),
-        ]);
+            ]
+        );
     }
 }

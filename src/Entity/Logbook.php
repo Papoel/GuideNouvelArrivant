@@ -18,15 +18,14 @@ class Logbook
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /* @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(max: 100, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $name = null;
 
-    /**
-     * @var Collection<int, Theme>
-     */
+    /** @var Collection<int, Theme> */
     #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbooks')]
     private Collection $themes;
 
@@ -34,9 +33,7 @@ class Logbook
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?User $owner = null;
 
-    /**
-     * @var Collection<int, Action>
-     */
+    /** @var Collection<int, Action> */
     #[ORM\OneToMany(targetEntity: Action::class, mappedBy: 'logbook', cascade: ['remove'])]
     private Collection $actions;
 
@@ -48,7 +45,7 @@ class Logbook
 
     public function __toString(): string
     {
-        return $this->owner ? 'Carnet de '.$this->owner->getFullName() : 'Carnet sans propriétaire';
+        return $this->owner ? 'Carnet de ' . $this->owner->getFullName() : 'Carnet sans propriétaire';
     }
 
     public function getId(): ?Uuid
@@ -66,9 +63,7 @@ class Logbook
         $this->name = $name;
     }
 
-    /**
-     * @return Collection<int, Theme>
-     */
+    /** @return Collection<int, Theme> */
     public function getThemes(): Collection
     {
         return $this->themes;
@@ -105,9 +100,7 @@ class Logbook
         return $this;
     }
 
-    /**
-     * @return Collection<int, Action>
-     */
+    /** @return Collection<int, Action> */
     public function getActions(): Collection
     {
         return $this->actions;

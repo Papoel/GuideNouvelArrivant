@@ -11,8 +11,7 @@ use App\Entity\User;
 
 class LogbookProgressService
 {
-    /**
-     * @return array{
+    /** @return array{
      *     agent_progress: float,
      *     mentor_progress: float,
      *     total_modules: int,
@@ -21,8 +20,7 @@ class LogbookProgressService
      *     modules_awaiting_validation: int,
      *     progress_class_agent: string,
      *     progress_class_mentor: string
-     * }
-     */
+     * } */
     public function calculateLogbookProgress(Logbook $logbook): array
     {
         $totalModules = 0;

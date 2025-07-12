@@ -17,6 +17,7 @@ class Action
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /** @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -56,7 +57,7 @@ class Action
 
     public function __toString(): string
     {
-        return 'Action #'.$this->id;
+        return 'Action #' . ($this->id ? $this->id->__toString() : '');
     }
 
     public function getId(): ?Uuid
