@@ -20,8 +20,16 @@ class FeedbackController extends AbstractController
     #[Route('/my-feedbacks', name: 'index', methods: [Request::METHOD_GET])]
     public function index(string $nni, FeedbackRepository $feedbackRepository): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        $feedbacks = $feedbackRepository->findBy(criteria: ['author' => $user], orderBy: ['createdAt' => 'DESC']);
+        
+        // Utilisation d'une requête personnalisée pour éviter les problèmes de conversion UUID
+        $qb = $feedbackRepository->createQueryBuilder('f')
+            ->where('f.author = :author')
+            ->setParameter('author', $user)
+            ->orderBy('f.createdAt', 'DESC');
+            
+        $feedbacks = $qb->getQuery()->getResult();
 
         return $this->render(
             view: 'app/dashboard/feedback/my_feedbacks.html.twig',
