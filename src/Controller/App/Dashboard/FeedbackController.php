@@ -18,24 +18,33 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class FeedbackController extends AbstractController
 {
     #[Route('/my-feedbacks', name: 'index', methods: [Request::METHOD_GET])]
-    public function index(string $nni, FeedbackRepository $feedbackRepository): Response
+    public function index(string $nni, FeedbackRepository $feedbackRepository, EntityManagerInterface $entityManager): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        
-        // Utilisation d'une requête personnalisée pour éviter les problèmes de conversion UUID
-        $qb = $feedbackRepository->createQueryBuilder('f')
-            ->where('f.author = :author')
-            ->setParameter('author', $user)
-            ->orderBy('f.createdAt', 'DESC');
-            
-        $feedbacks = $qb->getQuery()->getResult();
+
+        // Récupérer directement les feedbacks depuis le repository sans utiliser de requête personnalisée
+        $feedbacks = $entityManager->getRepository(Feedback::class)->findBy(['author' => $user->getId()], ['createdAt' => 'DESC']);
+        // Si aucun feedback n'est trouvé, essayons une autre approche
+        if (empty($feedbacks)) {
+            // Approche alternative: récupérer tous les feedbacks et filtrer manuellement
+            $allFeedbacks = $entityManager->getRepository(Feedback::class)->findAll();
+            $userFeedbacks = [];
+
+            foreach ($allFeedbacks as $feedback) {
+                if ($feedback->getAuthor() && $feedback->getAuthor()->getId() == $user->getId()) {
+                    $userFeedbacks[] = $feedback;
+                }
+            }
+
+            $feedbacks = $userFeedbacks;
+        }
 
         return $this->render(
             view: 'app/dashboard/feedback/my_feedbacks.html.twig',
             parameters: [
-            'feedbacks' => $feedbacks,
-            'nni' => $nni,
+                'feedbacks' => $feedbacks,
+                'nni' => $nni,
             ]
         );
     }
@@ -51,8 +60,8 @@ class FeedbackController extends AbstractController
         return $this->render(
             view: 'app/dashboard/feedback/my_feedback_detail.html.twig',
             parameters: [
-            'feedback' => $feedback,
-            'nni' => $nni,
+                'feedback' => $feedback,
+                'nni' => $nni,
             ]
         );
     }
@@ -75,13 +84,13 @@ class FeedbackController extends AbstractController
 
             $this->addFlash(type: 'success', message: 'Votre retour d\'expérience a été enregistré avec succès.');
 
-            return $this->redirectToRoute(route: 'dashboard_index', parameters: ['nni' => $nni]);
+            return $this->redirectToRoute(route: 'my_feedbacks_index', parameters: ['nni' => $nni]);
         }
 
         return $this->render(
             view: 'app/dashboard/feedback/new.html.twig',
             parameters: [
-            'form' => $form,
+                'form' => $form,
             ]
         );
     }
@@ -95,7 +104,7 @@ class FeedbackController extends AbstractController
         return $this->render(
             view: 'app/dashboard/feedback/list.html.twig',
             parameters: [
-            'feedbacks' => $feedbacks,
+                'feedbacks' => $feedbacks,
             ]
         );
     }
@@ -126,7 +135,7 @@ class FeedbackController extends AbstractController
         return $this->render(
             view: 'app/dashboard/feedback/review.html.twig',
             parameters: [
-            'feedback' => $feedback,
+                'feedback' => $feedback,
             ]
         );
     }
