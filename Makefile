@@ -1,6 +1,6 @@
 
 # eCommerce - Makefile
-.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull
+.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull fix-doc-comments
 
 # Définition des variables
 ENABLE_PSALM := 0  # Définissez à 0 pour désactiver l'analyse Psalm
@@ -184,7 +184,11 @@ phpcs: ## Vérifie le style du code avec PHP_CodeSniffer
 
 phpcbf: ## Corrige le style du code avec PHP_CodeSniffer
 	@echo "$(GREEN)Correction du style du code avec PHP_CodeSniffer...$(NC)"
-	$(PHPQA_RUN) phpcbf src
+	$(PHPQA_RUN) phpcbf --standard=phpcs.xml src
+
+fix-doc-comments: ## Corrige le format des commentaires de documentation sur une seule ligne
+	@echo "$(GREEN)Correction des commentaires de documentation...$(NC)"
+	@find src -name "*.php" -type f -exec sed -i '' -E 's|/\*\*\n[[:space:]]*\*[[:space:]]*(.*?)\n[[:space:]]*\*/|/** \1 */|g' {} \;
 
 phpstan: ## Analyse statique du code avec PHPStan
 	@echo "$(GREEN)Analyse statique du code avec PHPStan...$(NC)"
@@ -212,7 +216,7 @@ php-metrics: ## Génère des métriques de qualité de code avec PHP Metrics
 
 lint: phpcs phpstan ## Exécute les vérifications de qualité de code principales
 
-fix-cs: phpcbf ## Corrige les problèmes de style de code
+fix-cs: phpcbf fix-doc-comments ## Corrige les problèmes de style de code
 
 qa-all: phpcs phpstan phpmd phpcpd psalm php-metrics ## Exécute toutes les analyses de qualité
 
@@ -232,10 +236,10 @@ before-commit: ## Exécute toutes les vérifications avant de commit
 	@$(PHPQA_RUN) parallel-lint --exclude vendor --exclude var .
 
 	@echo "$(YELLOW)Correction automatique du style de code...$(NC)"
-	@$(PHPQA_RUN) phpcbf src || true
+	@$(PHPQA_RUN) phpcbf --standard=phpcs.xml src || true
 
 	@echo "$(YELLOW)Vérification du style de code...$(NC)"
-	@$(PHPQA_RUN) phpcs src > phpcs-output.tmp 2>&1 || true
+	@$(PHPQA_RUN) phpcs --standard=phpcs.xml src > phpcs-output.tmp 2>&1 || true
 	@if grep -q "ERROR\|WARNING" phpcs-output.tmp; then \
 		echo "### Problèmes de style de code (PSR-12)\n" >> TODO-BEFORE-COMMIT.md; \
 		grep -E "ERROR|WARNING" phpcs-output.tmp | sed 's/^/- [ ] /' >> TODO-BEFORE-COMMIT.md; \
@@ -353,7 +357,7 @@ db-migrate: ## Exécute les migrations
 
 db-fixtures: ## Charge les fixtures
 	@if $(CONSOLE) list | grep -q "doctrine:fixtures:load"; then \
-		if [ -d "src/DataFixtures" ] && [ "$$(find src/DataFixtures -name "*Fixture.php" | wc -l)" -gt 0 ]; then \
+		if [ -d "src/DataFixtures" ] && [ "$$(find src/DataFixtures -name "*Fixture*.php" | wc -l)" -gt 0 ]; then \
 			echo "$(GREEN)🌱 Chargement des fixtures...$(NC)"; \
 			$(CONSOLE) doctrine:fixtures:load --no-interaction; \
 		else \
@@ -370,9 +374,11 @@ db-reset: db-drop db-create db-migrate ## Réinitialise la base de données
 	@$(MAKE) db-fixtures
 
 db-test: ## Crée la base de données pour les tests
-	@echo "$(GREEN)🌱 Crée la base de données pour les tests...$(NC)"
+	@echo "$(YELLOW)🌱 Suppression de la base de données pour les tests...$(NC)"
+	$(CONSOLE) doctrine:database:drop --force --if-exists --env=test
+	@echo "$(YELLOW)🌱 Crée la base de données pour les tests...$(NC)"
 	$(CONSOLE) doctrine:database:create --if-not-exists --env=test
-	@echo "$(GREEN)🌱 Exécution des migrations pour les tests...$(NC)"
+	@echo "$(YELLOW)🌱 Exécution des migrations pour les tests...$(NC)"
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction --env=test
 
 table-count: ## Affiche le nombre d'enregistrements dans une table

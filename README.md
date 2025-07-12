@@ -1,6 +1,12 @@
 # 📘 GNU - Guide du Nouvel Arrivant
 
-**GNU - Guide du Nouvel Arrivant** est une application conçue pour faciliter l'intégration des nouveaux arrivants au sein de la société en leur proposant un livret de compagnonnage interactif. Ce livret permet aux tuteurs de suivre, valider et commenter les actions des nouveaux membres, tout en offrant une expérience utilisateur optimisée.
+![Version](https://img.shields.io/badge/version-1.0.5-blue.svg)
+![PHP](https://img.shields.io/badge/PHP-8.3-purple.svg)
+![Symfony](https://img.shields.io/badge/Symfony-7.3-black.svg)
+![License](https://img.shields.io/badge/license-proprietary-red.svg)
+[![Quality Analysis](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/quality.yaml/badge.svg)](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/quality.yaml) [![Security Audit](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/audit.yml/badge.svg)](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/audit.yml)
+
+**GNU - Guide du Nouvel Arrivant** est une application web conçue pour faciliter l'intégration des nouveaux arrivants au sein d'une entreprise en leur proposant un livret de compagnonnage interactif. Ce livret permet aux tuteurs (mentors) de suivre, valider et commenter les actions des nouveaux membres, tout en offrant une expérience utilisateur optimisée et moderne.
 
 ---
 
@@ -9,122 +15,111 @@
 - [✨ Vision du Projet](#-vision-du-projet)
 - [🎯 Objectifs](#-objectifs)
 - [⚙️ Fonctionnalités](#️-fonctionnalités)
+- [🏗️ Architecture Technique](#️-architecture-technique)
 - [🚀 Installation](#-installation)
+- [🖥️ Configuration](#️-configuration)
+- [🧪 Tests](#-tests)
+- [📊 Capitalisation du REX](#-capitalisation-du-rex)
 - [📄 Documentation](#-documentation)
 - [👥 Contributeurs](#-contributeurs)
-- [🔗 Ressources](#-ressources)
 
 ---
 
 ## ✨ Vision du Projet
 
-# Guide Nouvel Arrivant
-
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![PHP](https://img.shields.io/badge/PHP-8.2-purple.svg)
-![Symfony](https://img.shields.io/badge/Symfony-7.1-black.svg)
-![License](https://img.shields.io/badge/license-proprietary-red.svg)
-![CI/CD](https://github.com/Papoel/GuideNouvelArrivant/workflows/Quality%20Analysis/badge.svg)
-
 Application de livret de compagnonnage moderne, intuitive et collaborative, qui sert de référence pour l'intégration des nouveaux arrivants et améliore leur expérience dès leur arrivée dans l'entreprise.
 
-## 📑 Table des matières
+## 🎯 Objectifs
 
-- [Présentation](#-présentation)
-- [Fonctionnalités](#-fonctionnalités)
-- [Architecture technique](#-architecture-technique)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Utilisation](#-utilisation)
-- [Tests](#-tests)
-- [Déploiement](#-déploiement)
-- [Maintenance](#-maintenance)
-- [Contribution](#-contribution)
-- [Licence](#-licence)
+Le projet GNA vise à :
 
-## 🌟 Présentation
-
-L'application **Guide Nouvel Arrivant** est une plateforme de gestion du compagnonnage conçue pour faciliter l'intégration des nouveaux collaborateurs. Elle permet de structurer le parcours d'apprentissage, de suivre la progression et de valider les compétences acquises.
-
-### 🎯 Objectifs
-
-1. Fournir un livret structuré avec des actions adaptées aux besoins des nouveaux arrivants
-2. Permettre aux tuteurs de suivre le progrès, valider ou commenter les actions des compagnons
-3. Offrir une interface utilisateur moderne, simple et conviviale
-4. Garantir une intégration fluide dans l'écosystème existant grâce à des technologies robustes
+- Faciliter l'intégration des nouveaux collaborateurs
+- Structurer le processus d'onboarding avec un suivi précis
+- Permettre aux tuteurs de suivre et valider les progrès des nouveaux arrivants
+- Offrir une plateforme collaborative entre apprenants et mentors
+- Capitaliser sur les retours d'expérience pour améliorer continuellement le processus
 
 ## ⚙️ Fonctionnalités
 
-### Pour les nouveaux arrivants
+### Interface utilisateur moderne
 
-- 📋 **Livret d'intégration personnalisé** : Accès à un carnet de compagnonnage adapté à leur profil
-- ✍️ **Suivi des actions** : Possibilité de documenter les actions réalisées
-- 📊 **Visualisation des progrès** : Tableau de bord avec indicateurs de progression
-- 🖨️ **Export PDF** : Génération d'un document PDF du carnet de compagnonnage
+- Design responsive avec une palette de couleurs professionnelle
+- Tableaux de bord personnalisés selon les rôles (apprenant, mentor, administrateur)
+- Visualisation des progrès avec des graphiques et indicateurs
+- Interface optimisée pour l'impression PDF
 
-### Pour les tuteurs/mentors
+### Gestion des utilisateurs
 
-- ✅ **Validation des actions** : Interface pour valider ou commenter les actions des compagnons
-- 📝 **Commentaires** : Possibilité d'ajouter des commentaires et recommandations
-- 👁️ **Vue d'ensemble** : Visualisation de la progression de tous les compagnons suivis
+- Système d'authentification sécurisé
+- Gestion des rôles (apprenant, mentor, administrateur)
+- Profils utilisateurs détaillés
+- Organisation hiérarchique des services avec pôles et délégués
 
-### Pour les administrateurs
+### Livret de compagnonnage
 
-- 👥 **Gestion des utilisateurs** : Création, modification et suppression des comptes
-- 📚 **Gestion des thèmes et modules** : Configuration des contenus du livret
-- 📈 **Statistiques globales** : Tableau de bord de progression de l'ensemble des utilisateurs
-- 🔄 **Administration simplifiée** : Interface intuitive basée sur EasyAdmin
+- Structure hiérarchique : Thèmes > Modules > Actions
+- Suivi des actions à accomplir par les nouveaux arrivants
+- Validation et commentaires par les mentors
+- Génération de rapports de progression
 
-## 🏗️ Architecture technique
+### Capitalisation du REX
+
+- Système de retour d'expérience (feedback)
+- Catégorisation des retours pour analyse
+- Workflow de revue par les managers
+- Synthèse des REX pour amélioration continue
+
+## 🏗️ Architecture Technique
 
 ### Technologies utilisées
 
-- **Backend** : PHP 8.2, Symfony 7.1
-- **Base de données** : Doctrine ORM avec support PostgreSQL/MySQL
+- **Backend** : PHP 8.3, Symfony 7.3
 - **Frontend** : Twig, Bootstrap, JavaScript
-- **Authentification** : Symfony Security Bundle
-- **Administration** : EasyAdmin Bundle
-- **Notifications** : Flasher Bundle
-- **PDF** : DomPDF
+- **Base de données** : Doctrine ORM
+- **Sécurité** : Symfony Security Bundle
+- **Tests** : PHPUnit
+- **Qualité de code** : PHP-CS-Fixer, PHPStan
 
 ### Structure du projet
 
 ```text
-├── assets/            # Ressources frontend (JS, CSS)
-├── bin/               # Exécutables (console)
-├── config/            # Configuration de l'application
-├── migrations/        # Migrations de base de données
-├── public/            # Fichiers publics
-├── src/               # Code source de l'application
-│   ├── Command/       # Commandes console
-│   ├── Controller/    # Contrôleurs
-│   ├── DataFixtures/  # Fixtures pour les données de test
-│   ├── Entity/        # Entités Doctrine
-│   ├── Enum/          # Énumérations PHP
-│   ├── EventSubscriber/ # Abonnés aux événements
-│   ├── Form/          # Formulaires
-│   ├── Repository/    # Repositories Doctrine
-│   ├── Security/      # Classes liées à la sécurité
-│   ├── Services/      # Services métier
-│   └── Twig/          # Extensions Twig
-├── templates/         # Templates Twig
-├── tests/             # Tests automatisés
-└── translations/      # Fichiers de traduction
+GuideNouvelArrivant/
+├── assets/           # Fichiers frontend (JS, CSS)
+├── bin/             # Commandes Symfony
+├── config/          # Configuration de l'application
+├── migrations/       # Migrations de base de données
+├── public/          # Point d'entrée web
+├── src/             # Code source PHP
+│   ├── Command/      # Commandes personnalisées
+│   ├── Controller/   # Contrôleurs de l'application
+│   ├── Entity/       # Entités Doctrine
+│   ├── Form/         # Formulaires
+│   ├── Repository/   # Repositories Doctrine
+│   ├── Security/     # Classes liées à la sécurité
+│   ├── Services/     # Services métier
+│   └── Twig/         # Extensions Twig
+├── templates/       # Templates Twig
+├── tests/           # Tests automatiques
+└── translations/    # Fichiers de traduction
 ```
 
 ### Modèle de données
 
-- **User** : Utilisateurs de l'application (compagnons, tuteurs, administrateurs)
-- **Logbook** : Carnets de compagnonnage associés aux utilisateurs
+Le modèle de données s'articule autour des entités principales suivantes :
+
+- **User** : Utilisateurs du système (apprenants, mentors, administrateurs)
+- **Service** : Structure organisationnelle avec gestion de pôles et délégués
+- **Logbook** : Carnet de compagnonnage associé à un utilisateur
 - **Theme** : Thèmes regroupant des modules
 - **Module** : Modules contenant des actions à réaliser
 - **Action** : Actions à accomplir par les compagnons
+- **Feedback** : Retours d'expérience (REX) des utilisateurs
 
 ## 🚀 Installation
 
 ### Prérequis
 
-- PHP 8.2 ou supérieur
+- PHP 8.3 ou supérieur
 - Composer
 - Symfony CLI
 - Node.js et npm
@@ -149,22 +144,88 @@ composer install
 
 ```bash
 npm install
-npm run build
 ```
 
-1. Configurer les variables d'environnement
+1. Configurer l'environnement
 
 ```bash
 cp .env .env.local
-# Modifier .env.local avec vos paramètres
+# Modifier les variables d'environnement dans .env.local
 ```
 
-1. Créer la base de données et exécuter les migrations
+1. Créer la base de données
 
 ```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
+
+1. Charger les fixtures (données de démo)
+
+```bash
+php bin/console doctrine:fixtures:load
+```
+
+1. Lancer le serveur de développement
+
+```bash
+symfony server:start
+```
+
+## 🖥️ Configuration
+
+### Configuration de la base de données
+
+Modifier le fichier `.env.local` pour configurer la connexion à la base de données :
+
+```env
+DATABASE_URL="mysql://user:password@127.0.0.1:3306/gna_db"
+```
+
+### Configuration des emails
+
+Pour configurer l'envoi d'emails :
+
+```env
+MAILER_DSN=smtp://user:pass@smtp.example.com:port
+```
+
+## 🧪 Tests
+
+Le projet utilise PHPUnit pour les tests. Pour exécuter les tests :
+
+```bash
+php bin/phpunit
+```
+
+Pour exécuter les tests avec couverture de code :
+
+```bash
+php bin/phpunit --coverage-html coverage
+```
+
+## 📊 Capitalisation du REX
+
+La fonctionnalité "Capitalisation du REX" (Retour d'Expérience) permet :
+
+- Aux utilisateurs de soumettre des retours d'expérience catégorisés
+- Aux managers de consulter, traiter et commenter ces retours
+- De générer des synthèses pour l'amélioration continue
+
+Le workflow est le suivant :
+1. Soumission d'un REX par un utilisateur
+2. Revue et commentaire par un manager
+3. Synthèse et analyse des REX
+
+## 📄 Documentation
+
+La documentation complète du projet est disponible dans le répertoire `docs/`.
+
+## 👥 Contributeurs
+
+- [Papoel](https://github.com/Papoel) - Créateur et mainteneur principal
+
+
 
 1. Charger les données initiales (optionnel)
 
