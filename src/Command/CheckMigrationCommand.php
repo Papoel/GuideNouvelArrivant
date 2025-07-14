@@ -61,9 +61,9 @@ class CheckMigrationCommand extends Command
         $this->connection->insert(
             table: 'doctrine_migration_versions',
             data: [
-            'version' => $version,
-            'executed_at' => $now,
-            'execution_time' => 777,
+                'version' => 'DoctrineMigrations\\' . $version,
+                'executed_at' => $now,
+                'execution_time' => 777,
             ]
         );
 

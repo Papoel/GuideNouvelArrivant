@@ -6,21 +6,19 @@ namespace App\Controller\App\Dashboard;
 
 use App\Entity\Feedback;
 use App\Form\FeedbackType;
-use App\Repository\LogbookRepository;
-use App\Repository\UserRepository;
 use App\Services\Dashboard\DashboardService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/dashboard/{nni}', name: 'dashboard_')]
 class DashboardController extends AbstractController
 {
     #[Route('/', name: 'index', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function index(string $nni, Request $request, DashboardService $dashboardService, LogbookRepository $logbookRepository, UserRepository $userRepository): Response
+    public function index(string $nni, DashboardService $dashboardService): Response
     {
         // Création du formulaire de feedback pour la sidebar
         $feedback = new Feedback();
@@ -28,8 +26,8 @@ class DashboardController extends AbstractController
             FeedbackType::class,
             $feedback,
             [
-            'action' => $this->generateUrl('my_feedbacks_new', ['nni' => $nni]),
-            'method' => 'POST',
+                'action' => $this->generateUrl('my_feedbacks_new', ['nni' => $nni]),
+                'method' => 'POST',
             ]
         );
 
