@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Assigner un modèle de carnet à {{ user.fullName }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="mb-4">Assigner un modèle de carnet à {{ user.fullName }}</h1>
+    
+    <div class="content-card p-4 shadow-sm">
+        <div class="mb-4">
+            <h2 class="text-dark">Informations utilisateur</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nom :</strong> {{ user.fullName }}</p>
+                    <p><strong>Email :</strong> {{ user.email }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Métier :</strong> {{ user.job ? user.job.name : 'Non défini' }}</p>
+                    <p><strong>Service :</strong> {{ user.service ? user.service.name : 'Non défini' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h2 class="text-dark">Modèles de carnet compatibles</h2>
+            {% if templates|length > 0 %}
+                <form method="post" action="{{ path('admin_user_assign_template', {'id': user.id}) }}">
+                    <div class="form-group mb-3">
+                        <label for="template" class="form-label">Sélectionnez un modèle :</label>
+                        <select name="template" id="template" class="form-select" required>
+                            <option value="">-- Choisir un modèle --</option>
+                            {% for template in templates %}
+                                <option value="{{ template.id }}" {% if template.isDefault %}class="fw-bold"{% endif %}>
+                                    {{ template.name }} {% if template.isDefault %}(Par défaut){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="replace_existing" id="replace_existing" value="1">
+                        <label class="form-check-label" for="replace_existing">
+                            Remplacer le carnet existant (si présent)
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i> Assigner ce modèle
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-warning">
+                    Aucun modèle compatible avec le métier de cet utilisateur n'a été trouvé.
+                </div>
+                <a href="{{ path('admin') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Retour
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

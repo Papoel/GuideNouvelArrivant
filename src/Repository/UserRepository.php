@@ -49,6 +49,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return array_values($result);
     }
 
+    /**
+     * Trouve tous les utilisateurs qui n'ont pas de carnet associé
+     *
+     * @return array<int, User> Tableau d'utilisateurs sans carnet
+     */
+    public function findUsersWithoutLogbook(): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        return $qb->leftJoin('App\\Entity\\Logbook', 'l', 'WITH', 'l.owner = u.id')
+            ->where($qb->expr()->isNull('l.id'))
+            ->orderBy('u.lastname', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     /** Trouve tous les utilisateurs qui ont un rôle spécifique
      * Cette méthode utilise une approche simple qui récupère tous les utilisateurs
      * et filtre en PHP plutôt qu'en SQL pour éviter les problèmes de compatibilité
