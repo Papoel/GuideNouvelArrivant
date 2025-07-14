@@ -26,14 +26,21 @@ class UserLogbookController extends AbstractController
     #[Route('/admin/users/{id}/assign-template', name: 'admin_user_assign_template', methods: ['GET', 'POST'])]
     public function assignTemplate(Request $request, User $user): Response
     {
+        // Vérifier que l'utilisateur appartient au même service que l'administrateur
+        $currentAdmin = $this->getUser();
+        if (!$currentAdmin instanceof User || $currentAdmin->getService() !== $user->getService()) {
+            $this->addFlash('danger', 'Vous ne pouvez assigner des modèles qu\'aux utilisateurs de votre service.');
+            return $this->redirectToRoute('admin');
+        }
+
         // Si l'utilisateur n'a pas de métier défini
         if (!$user->getJob()) {
             $this->addFlash('danger', 'L\'utilisateur doit avoir un métier défini pour lui assigner un modèle de carnet.');
             return $this->redirectToRoute('admin');
         }
 
-        // Récupérer les modèles compatibles avec le métier de l'utilisateur
-        $compatibleTemplates = $this->logbookTemplateService->findTemplatesForJob($user->getJob());
+        // Récupérer les modèles compatibles avec le métier et le service de l'utilisateur
+        $compatibleTemplates = $this->logbookTemplateService->findTemplatesForJob($user->getJob(), $user->getService());
 
         if (empty($compatibleTemplates)) {
             $this->addFlash('warning', 'Aucun modèle de carnet n\'est compatible avec le métier de cet utilisateur.');
@@ -72,8 +79,15 @@ class UserLogbookController extends AbstractController
     #[Route('/admin/users/batch-assign-templates', name: 'admin_batch_assign_templates', methods: ['GET', 'POST'])]
     public function batchAssignTemplates(Request $request): Response
     {
-        // Récupérer tous les utilisateurs sans carnet
-        $usersWithoutLogbook = $this->userRepository->findUsersWithoutLogbook();
+        // Récupérer l'administrateur actuel
+        $currentAdmin = $this->getUser();
+        if (!$currentAdmin instanceof User || !$currentAdmin->getService()) {
+            $this->addFlash('danger', 'Vous devez être associé à un service pour effectuer cette opération.');
+            return $this->redirectToRoute('admin');
+        }
+
+        // Récupérer tous les utilisateurs sans carnet du même service que l'administrateur
+        $usersWithoutLogbook = $this->userRepository->findUsersWithoutLogbookByService($currentAdmin->getService());
 
         // Traitement du formulaire
         if ($request->isMethod('POST')) {
@@ -89,7 +103,11 @@ class UserLogbookController extends AbstractController
                 }
             }
 
-            $this->addFlash('success', $count . ' carnets ont été créés avec succès.');
+            match ($count) {
+                0 => $this->addFlash('warning', 'Aucun carnet modéle n\'a été assigné car il n\'y a pas de modèle compatible avec le métier de l\'utilisateur.'),
+                1 => $this->addFlash('success', 'Un carnet modéle a été assigné avec succès.'),
+                default => $this->addFlash('success', $count . ' carnets ont été assignés avec succès.'),
+            };
 
             return $this->redirectToRoute('admin_batch_assign_templates');
         }

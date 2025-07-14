@@ -6,6 +6,7 @@ namespace App\Services\Logbook;
 
 use App\Entity\Logbook;
 use App\Entity\LogbookTemplate;
+use App\Entity\Service;
 use App\Entity\User;
 use App\Enum\JobEnum;
 use App\Services\Logbook\LogbookReplacementService;
@@ -56,52 +57,91 @@ readonly class LogbookTemplateService
     }
 
     /**
-     * Trouve le modèle de carnet par défaut pour un métier donné
+     * Trouve le modèle de carnet par défaut pour un métier donné et optionnellement un service
      *
      * @param JobEnum $job Le métier de l'utilisateur
+     * @param Service|null $service Le service de l'utilisateur (optionnel)
      *
      * @return LogbookTemplate|null Le modèle par défaut ou null si aucun n'est trouvé
      */
-    public function findDefaultTemplateForJob(JobEnum $job): ?LogbookTemplate
+    public function findDefaultTemplateForJob(JobEnum $job, ?Service $service = null): ?LogbookTemplate
     {
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
 
         // Rechercher tous les modèles par défaut
         $defaultTemplates = $repository->findBy(['isDefault' => true]);
 
-        // Filtrer pour trouver ceux qui correspondent au métier
+        // Filtrer les modèles par métier et service
+        $compatibleTemplates = [];
+
         foreach ($defaultTemplates as $template) {
-            // Vérifier si le modèle est compatible avec le métier
-            // Essayer d'abord avec le nom de l'enum (INGENIEUR)
-            if ($template->hasJob($job->name) || $template->hasJob($job)) {
-                return $template;
+            // Vérifier d'abord la compatibilité avec le métier
+            $jobMatch = $template->hasJob($job->name) || $template->hasJob($job);
+
+            if (!$jobMatch) {
+                continue;
             }
+
+            // Vérifier la compatibilité avec le service si spécifié
+            if ($service !== null) {
+                $templateService = $template->getService();
+
+                // Si le modèle a un service spécifié, il doit correspondre
+                if ($templateService !== null && $templateService !== $service) {
+                    continue;
+                }
+
+                // Priorité aux modèles avec service spécifié correspondant
+                if ($templateService === $service) {
+                    return $template; // Retourner immédiatement un modèle qui correspond exactement au service
+                }
+            }
+
+            // Ajouter à la liste des modèles compatibles
+            $compatibleTemplates[] = $template;
         }
 
-        return null;
+        // Retourner le premier modèle compatible trouvé, ou null si aucun
+        return $compatibleTemplates[0] ?? null;
     }
 
     /**
-     * Trouve tous les modèles de carnet compatibles avec un métier donné
+     * Trouve tous les modèles de carnet compatibles avec un métier donné et optionnellement un service
      *
      * @param JobEnum $job Le métier de l'utilisateur
+     * @param Service|null $service Le service de l'utilisateur (optionnel)
      *
      * @return array<LogbookTemplate> Les modèles compatibles
      */
-    public function findTemplatesForJob(JobEnum $job): array
+    public function findTemplatesForJob(JobEnum $job, ?Service $service = null): array
     {
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
         $allTemplates = $repository->findAll();
 
-        // Filtrer pour ne garder que les modèles compatibles avec le métier
-        return array_filter($allTemplates, function (LogbookTemplate $template) use ($job) {
-            // Vérifier la compatibilité avec le nom de l'enum ou l'objet JobEnum
-            return $template->hasJob($job->name) || $template->hasJob($job);
+        // Filtrer pour ne garder que les modèles compatibles avec le métier et le service
+        return array_filter($allTemplates, function (LogbookTemplate $template) use ($job, $service) {
+            // Vérifier d'abord la compatibilité avec le métier
+            $jobMatch = $template->hasJob($job->name) || $template->hasJob($job);
+
+            // Si pas de correspondance de métier, rejeter immédiatement
+            if (!$jobMatch) {
+                return false;
+            }
+
+            // Si un service est spécifié, vérifier la correspondance
+            if ($service !== null) {
+                // Si le modèle a un service spécifié, il doit correspondre
+                if ($template->getService() !== null && $template->getService() !== $service) {
+                    return false;
+                }
+            }
+
+            return true;
         });
     }
 
     /**
-     * Crée automatiquement un carnet pour un utilisateur en fonction de son métier
+     * Crée automatiquement un carnet pour un utilisateur en fonction de son métier et de son service
      *
      * @param User $user L'utilisateur pour lequel créer le carnet
      * @param bool $replaceExisting Si true, remplace un carnet existant
@@ -116,8 +156,11 @@ readonly class LogbookTemplateService
             return null;
         }
 
-        // Chercher un modèle par défaut pour ce métier
-        $template = $this->findDefaultTemplateForJob($job);
+        // Récupérer le service de l'utilisateur
+        $service = $user->getService();
+
+        // Chercher un modèle par défaut pour ce métier et ce service
+        $template = $this->findDefaultTemplateForJob($job, $service);
         if (!$template) {
             return null;
         }

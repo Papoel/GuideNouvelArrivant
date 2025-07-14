@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Service;
 use App\Enum\JobEnum;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Uid\Uuid;
@@ -24,6 +25,7 @@ class LogbookTemplate
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Assert\Uuid]
+    /** @phpstan-ignore-next-line */
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 100)]
@@ -42,7 +44,7 @@ class LogbookTemplate
     #[ORM\Column]
     private ?bool $isDefault = null;
 
-    /** @var array<int, string> */
+    /** @var array<string> */
     #[ORM\Column(type: Types::JSON)]
     private array $jobs = [];
 
@@ -51,6 +53,10 @@ class LogbookTemplate
      */
     #[ORM\ManyToMany(targetEntity: Theme::class)]
     private Collection $themes;
+
+    #[ORM\ManyToOne(targetEntity: Service::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Service $service = null;
 
     public function __construct()
     {
@@ -175,7 +181,7 @@ class LogbookTemplate
         foreach ($this->jobs as $jobValue) {
             try {
                 $job = JobEnum::from($jobValue);
-                $jobLabels[] = $job->name;
+                $jobLabels[] = $job->value;
             } catch (\ValueError $e) {
                 // Ignorer les valeurs invalides
                 $jobLabels[] = $jobValue;
@@ -183,6 +189,18 @@ class LogbookTemplate
         }
 
         return implode(', ', $jobLabels);
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
+
+        return $this;
     }
 
     /**

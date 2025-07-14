@@ -1,6 +1,6 @@
 # TODO avant de commit
 
-Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2025 à 17h54.
+Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2025 à 23h07.
 
 ## Liste des problèmes à corriger
 
@@ -75,8 +75,9 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  345 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
 - [ ]  373 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
 - [ ]  375 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
-- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
-- [ ]  31 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]   38 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ]  107 | [33mWARNING[0m | Line exceeds 120 characters; contains 161 characters
 - [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
 - [ ]  28 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
 - [ ]  36 | [33mWARNING[0m | Line exceeds 120 characters; contains 143 characters
@@ -89,7 +90,7 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  45 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
-- [ ]  34 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  35 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  31 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
@@ -117,44 +118,4 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  61 | [33mWARNING[0m | Line exceeds 120 characters; contains 132 characters
 - [ ]  88 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
 
-
-### Problèmes détectés par PHPStan
-
-
-#### [Controller/Admin/Logbook_Models/LogbookTemplateCrudController.php](src/Controller/Admin/Logbook_Models/LogbookTemplateCrudController.php)
-
-- [ ] [**Ligne 19**](src/Controller/Admin/Logbook_Models/LogbookTemplateCrudController.php#L19): Class                                                                        
-
-
-#### [Entity/LogbookTemplate.php](src/Entity/LogbookTemplate.php)
-
-- [ ] [**Ligne 27**](src/Entity/LogbookTemplate.php#L27): Property App\Entity\LogbookTemplate::$id                              
-
-- [ ] [**Ligne 119**](src/Entity/LogbookTemplate.php#L119): Property App\Entity\LogbookTemplate::$jobs (array<int, string>) does  
-
-
-#### [Form/DataTransformer/JobsArrayTransformer.php](src/Form/DataTransformer/JobsArrayTransformer.php)
-
-- [ ] [**Ligne 11**](src/Form/DataTransformer/JobsArrayTransformer.php#L11): Class App\Form\DataTransformer\JobsArrayTransformer implements                        
-
-- [ ] [**Ligne 19**](src/Form/DataTransformer/JobsArrayTransformer.php#L19): Method App\Form\DataTransformer\JobsArrayTransformer::transform() has                 
-
-- [ ] [**Ligne 19**](src/Form/DataTransformer/JobsArrayTransformer.php#L19): Method App\Form\DataTransformer\JobsArrayTransformer::transform() has                 
-
-- [ ] [**Ligne 19**](src/Form/DataTransformer/JobsArrayTransformer.php#L19): Method App\Form\DataTransformer\JobsArrayTransformer::transform()                     
-
-- [ ] [**Ligne 35**](src/Form/DataTransformer/JobsArrayTransformer.php#L35): Call to function is_array() with array will always evaluate to true.                  
-
-- [ ] [**Ligne 39**](src/Form/DataTransformer/JobsArrayTransformer.php#L39): Unreachable statement - code above always terminates.                                 
-
-- [ ] [**Ligne 49**](src/Form/DataTransformer/JobsArrayTransformer.php#L49): Method                                                                                
-
-- [ ] [**Ligne 49**](src/Form/DataTransformer/JobsArrayTransformer.php#L49): Method                                                                                
-
-- [ ] [**Ligne 55**](src/Form/DataTransformer/JobsArrayTransformer.php#L55): Call to function is_array() with array will always evaluate to true.                  
-
-
-#### [Repository/UserRepository.php](src/Repository/UserRepository.php)
-
-- [ ] [**Ligne 61**](src/Repository/UserRepository.php#L61): Method App\Repository\UserRepository::findUsersWithoutLogbook()  
 

@@ -2,20 +2,19 @@
 
 namespace App\Controller\Admin\Logbook_Models;
 
-use App\Enum\JobEnum;
 use App\Entity\LogbookTemplate;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use App\Form\DataTransformer\JobsArrayTransformer;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * @template-extends AbstractCrudController<LogbookTemplate>
+ */
 class LogbookTemplateCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -37,6 +36,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
         yield TextField::new('name');
         yield TextEditorField::new('description');
         yield AssociationField::new('themes');
+        yield AssociationField::new('service', 'Service')->setRequired(false);
         yield BooleanField::new('isDefault', 'Modèle par défaut');
 
         // Affichage des métiers dans la liste

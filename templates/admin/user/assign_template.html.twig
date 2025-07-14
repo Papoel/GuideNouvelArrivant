@@ -3,63 +3,165 @@
 {% block title %}Assigner un modèle de carnet à {{ user.fullName }}{% endblock %}
 
 {% block body %}
-<div class="container py-4">
-    <h1 class="mb-4">Assigner un modèle de carnet à {{ user.fullName }}</h1>
+    <style>
+        :root {
+            --primary-color: #3d5f9e;
+            --primary-dark: #2d4a7d; /* Version plus foncée pour meilleur contraste */
+            --primary-light: rgba(61, 95, 158, 0.15); /* Fond plus opaque pour meilleur contraste */
+            --text-dark: #2c384e;
+            --text-muted: #5d6778; /* Plus foncé que #6c757d pour meilleur contraste */
+            --bg-light: #f8f9fa;
+            --border-color: #d1d7e0; /* Plus foncé que #e9ecef pour meilleur contraste */
+            --success-color: #2e7d32; /* Vert plus foncé pour meilleur contraste */
+            --warning-color: #e65100; /* Orange plus foncé pour meilleur contraste */
+            --info-color: #0277bd; /* Bleu info plus foncé */
+            --danger-color: #c62828; /* Rouge plus foncé */
+            --card-radius: 0.75rem;
+            --transition-speed: 0.2s;
+            --focus-ring-color: rgba(61, 95, 158, 0.5);
+        }
+        
+        /* Boutons */
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #fff;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        
+        /* Adaptations mobiles */
+        @media (max-width: 767.98px) {
+            .content-card .card-header {
+                padding: 0.75rem 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .table td, .table th {
+                padding: 0.5rem;
+            }
+            
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            
+            .badge {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+
+<div class="container-fluid py-3 py-md-4">
+    <div class="dashboard-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <div>
+            <h1 class="text-dark" id="page-title"><i class="bi bi-book me-2 me-md-3" aria-hidden="true"></i>Assigner un modèle de carnet</h1>
+            <p class="mb-3 mb-md-0 mt-2" style="color: var(--text-muted);">Attribuez un carnet à {{ user.fullName }} en fonction de son métier</p>
+        </div>
+        <div>
+            <a 
+                href="{{ path('admin') }}" 
+                class="btn btn-outline-secondary rounded-pill shadow-sm" 
+                style="padding: 0.6rem 1.2rem;"
+                aria-label="Retour au tableau de bord"
+            >
+                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Tableau de bord
+            </a>
+        </div>
+    </div>
     
-    <div class="content-card p-4 shadow-sm">
-        <div class="mb-4">
-            <h2 class="text-dark">Informations utilisateur</h2>
-            <div class="row">
+    <div class="content-card">
+        <div class="card-header">
+            <h2 class="h5 mb-0 fw-bold"><i class="bi bi-person-vcard me-2" aria-hidden="true"></i>Informations utilisateur</h2>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <p><strong>Nom :</strong> {{ user.fullName }}</p>
-                    <p><strong>Email :</strong> {{ user.email }}</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Métier :</strong> {{ user.job ? user.job.name : 'Non défini' }}</p>
-                    <p><strong>Service :</strong> {{ user.service ? user.service.name : 'Non défini' }}</p>
+                    <div class="user-info-card p-3 border rounded bg-light">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center p-3 me-3" style="width: 50px; height: 50px;">
+                                <i class="bi bi-person" style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <h3 class="h5 mb-0 fw-bold">{{ user.fullName }}</h3>
+                                <p class="mb-0 text-muted">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-briefcase me-2 text-muted"></i>
+                                    <span><strong>Métier:</strong> {{ user.job ? user.job.name : 'Non défini' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-building me-2 text-muted"></i>
+                                    <span><strong>Service:</strong> {{ user.service ? user.service.name : 'Non défini' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="mb-4">
-            <h2 class="text-dark">Modèles de carnet compatibles</h2>
+    </div>
+    
+    <div class="content-card mt-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0 fw-bold"><i class="bi bi-journal-bookmark me-2" aria-hidden="true"></i>Modèles de carnet compatibles</h2>
+        </div>
+        <div class="card-body p-4">
             {% if templates|length > 0 %}
                 <form method="post" action="{{ path('admin_user_assign_template', {'id': user.id}) }}">
-                    <div class="form-group mb-3">
-                        <label for="template" class="form-label">Sélectionnez un modèle :</label>
-                        <select name="template" id="template" class="form-select" required>
+                    <div class="form-group mb-4">
+                        <label for="template" class="form-label fw-bold">Sélectionnez un modèle :</label>
+                        <select name="template" id="template" class="form-select form-select-lg shadow-sm" required>
                             <option value="">-- Choisir un modèle --</option>
                             {% for template in templates %}
                                 <option value="{{ template.id }}" {% if template.isDefault %}class="fw-bold"{% endif %}>
-                                    {{ template.name }} {% if template.isDefault %}(Par défaut){% endif %}
+                                    {{ template.name }} {% if template.isDefault %}<span class="text-success">(Par défaut)</span>{% endif %}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="replace_existing" id="replace_existing" value="1">
-                        <label class="form-check-label" for="replace_existing">
-                            Remplacer le carnet existant (si présent)
-                        </label>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ path('admin') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-1"></i> Retour
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill shadow-sm" style="padding: 0.6rem 1.2rem;">
+                            <i class="bi bi-x-circle me-2"></i> Annuler
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-check me-1"></i> Assigner ce modèle
+                        <button type="submit" class="btn btn-primary rounded-pill shadow-sm" style="padding: 0.6rem 1.2rem;">
+                            <i class="bi bi-check-circle me-2"></i> Assigner ce modèle
                         </button>
                     </div>
                 </form>
             {% else %}
-                <div class="alert alert-warning">
-                    Aucun modèle compatible avec le métier de cet utilisateur n'a été trouvé.
+                <div class="empty-state text-center p-4">
+                    <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center p-4 mb-4" style="width: 100px; height: 100px;" aria-hidden="true">
+                        <i class="bi bi-exclamation-triangle" style="color: var(--warning-color); font-size: 2.5rem;"></i>
+                    </div>
+                    <h3 class="h4 mb-3 fw-bold">Aucun modèle compatible</h3>
+                    <p class="text-muted mb-4">Aucun modèle compatible avec le métier de cet utilisateur n'a été trouvé.</p>
+                    <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill shadow-sm" style="padding: 0.6rem 1.2rem;">
+                        <i class="bi bi-arrow-left me-2"></i> Retour au tableau de bord
+                    </a>
                 </div>
-                <a href="{{ path('admin') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i> Retour
-                </a>
             {% endif %}
         </div>
     </div>
