@@ -36,8 +36,7 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-    ) {
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -89,27 +88,27 @@ class UserCrudController extends AbstractCrudController
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
             ->setChoices(
                 choiceGenerator: [
-                'Utilisateur' => 'ROLE_USER',
-                'Administrateur' => 'ROLE_ADMIN',
-                'Chef de service' => 'ROLE_SERVICE_HEAD',
-                'Chef de service délégué' => 'ROLE_SERVICE_HEAD_DELEGATE',
-                'Manager' => 'ROLE_MANAGER',
-                'Manager délégué' => 'ROLE_MANAGER_DELEGATE',
-                'Tuteur' => 'ROLE_MENTOR',
-                'Nouvel arrivant' => 'ROLE_NEWCOMER',
+                    'Utilisateur' => 'ROLE_USER',
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Chef de service' => 'ROLE_SERVICE_HEAD',
+                    'Chef de service délégué' => 'ROLE_SERVICE_HEAD_DELEGATE',
+                    'Manager' => 'ROLE_MANAGER',
+                    'Manager délégué' => 'ROLE_MANAGER_DELEGATE',
+                    'Tuteur' => 'ROLE_MENTOR',
+                    'Nouvel arrivant' => 'ROLE_NEWCOMER',
                 ]
             )
             ->allowMultipleChoices()
             ->renderExpanded(expanded: false)
             ->renderAsBadges(
                 [
-                'ROLE_ADMIN' => 'danger',
-                'ROLE_SERVICE_HEAD' => 'primary',
-                'ROLE_SERVICE_HEAD_DELEGATE' => 'primary',
-                'ROLE_MANAGER' => 'info',
-                'ROLE_MANAGER_DELEGATE' => 'info',
-                'ROLE_MENTOR' => 'success',
-                'ROLE_NEWCOMER' => 'warning',
+                    'ROLE_ADMIN' => 'danger',
+                    'ROLE_SERVICE_HEAD' => 'primary',
+                    'ROLE_SERVICE_HEAD_DELEGATE' => 'primary',
+                    'ROLE_MANAGER' => 'info',
+                    'ROLE_MANAGER_DELEGATE' => 'info',
+                    'ROLE_MENTOR' => 'success',
+                    'ROLE_NEWCOMER' => 'warning',
                 ]
             )
             ->setColumns(cols: 'col-md-9 col-sm-12')
@@ -147,11 +146,11 @@ class UserCrudController extends AbstractCrudController
         yield ChoiceField::new(propertyName: 'job', label: 'Métier')
             ->setChoices(
                 choiceGenerator: [
-                'Technicien' => JobEnum::TECHNICIEN,
-                'Ingénieur' => JobEnum::INGENIEUR,
-                "Chargé d'affaires" => JobEnum::CHARGE_AFFAIRES,
-                "Chargé d'affaires projet" => JobEnum::CHARGE_AFFAIRES_PROJET,
-                'Chargé de surveillance' => JobEnum::CHARGE_SURVEILLANCE,
+                    'Technicien' => JobEnum::TECHNICIEN,
+                    'Ingénieur' => JobEnum::INGENIEUR,
+                    "Chargé d'affaires" => JobEnum::CHARGE_AFFAIRES,
+                    "Chargé d'affaires projet" => JobEnum::CHARGE_AFFAIRES_PROJET,
+                    'Chargé de surveillance' => JobEnum::CHARGE_SURVEILLANCE,
                 ]
             )
             ->onlyWhenCreating()
@@ -162,12 +161,12 @@ class UserCrudController extends AbstractCrudController
         yield ChoiceField::new(propertyName: 'speciality', label: 'Spécialité')
             ->setChoices(
                 choiceGenerator: [
-                'Chaudronnerie' => SpecialityEnum::CHA,
-                'Levage' => SpecialityEnum::LEV,
-                'Mécanique' => SpecialityEnum::MEC,
-                'Robinetterie' => SpecialityEnum::ROB,
-                'Soudage' => SpecialityEnum::SOU,
-                'Examen Non Destructif' => SpecialityEnum::END,
+                    'Chaudronnerie' => SpecialityEnum::CHA,
+                    'Levage' => SpecialityEnum::LEV,
+                    'Mécanique' => SpecialityEnum::MEC,
+                    'Robinetterie' => SpecialityEnum::ROB,
+                    'Soudage' => SpecialityEnum::SOU,
+                    'Examen Non Destructif' => SpecialityEnum::END,
                 ]
             )
             ->onlyOnForms()
@@ -178,7 +177,7 @@ class UserCrudController extends AbstractCrudController
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->setFormTypeOptions(
                 [
-                'by_reference' => false,
+                    'by_reference' => false,
                 ]
             )
             ->formatValue(
@@ -215,11 +214,11 @@ class UserCrudController extends AbstractCrudController
             ->setPaginatorPageSize(maxResultsPerPage: 20)
             ->setPageTitle(
                 pageName: 'detail',
-                title: fn (User $user) => '👁️ Détails - ' . $user->getFullName()
+                title: fn(User $user) => '👁️ Détails - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'edit',
-                title: fn (User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
+                title: fn(User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'new',
@@ -273,7 +272,7 @@ class UserCrudController extends AbstractCrudController
                 }
             );
 
-        $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer les carnets')
+        $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer le carnet')
             ->setIcon(icon: 'fa fa-book')
             ->linkToCrudAction(crudActionName: 'deleteLogbooksOnly')
             ->displayIf(
