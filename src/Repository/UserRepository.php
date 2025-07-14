@@ -49,6 +49,58 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return array_values($result);
     }
 
+    /**
+     * Trouve tous les utilisateurs qui n'ont pas de carnet associé
+     *
+     * @return array<int, User> Tableau d'utilisateurs sans carnet
+     */
+    public function findUsersWithoutLogbook(): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        /** @var array<int, User> $result */
+        $result = $qb->leftJoin('App\\Entity\\Logbook', 'l', 'WITH', 'l.owner = u.id')
+            ->where($qb->expr()->isNull('l.id'))
+            ->orderBy('u.lastname', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    /**
+     * Trouve tous les utilisateurs d'un service spécifique qui n'ont pas de carnet associé
+     *
+     * @param Service $service Le service pour lequel filtrer les utilisateurs
+     * @return array<int, User> Tableau d'utilisateurs sans carnet du service spécifié
+     */
+    public function findUsersWithoutLogbookByService(Service $service): array
+    {
+        // Approche simple en deux étapes :
+        // 1. Récupérer tous les utilisateurs sans carnet
+        $usersWithoutLogbook = $this->findUsersWithoutLogbook();
+
+        // 2. Filtrer manuellement par service
+        $serviceId = $service->getId();
+        if ($serviceId === null) {
+            return [];
+        }
+
+        $serviceIdString = $serviceId->__toString();
+        $filteredUsers = [];
+
+        foreach ($usersWithoutLogbook as $user) {
+            $userService = $user->getService();
+            $userServiceId = $userService ? $userService->getId() : null;
+
+            if ($userServiceId !== null && $userServiceId->__toString() === $serviceIdString) {
+                $filteredUsers[] = $user;
+            }
+        }
+
+        return $filteredUsers;
+    }
+
     /** Trouve tous les utilisateurs qui ont un rôle spécifique
      * Cette méthode utilise une approche simple qui récupère tous les utilisateurs
      * et filtre en PHP plutôt qu'en SQL pour éviter les problèmes de compatibilité

@@ -1,6 +1,6 @@
 # TODO avant de commit
 
-Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2025 à 11h01.
+Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2025 à 23h12.
 
 ## Liste des problèmes à corriger
 
@@ -54,17 +54,20 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  247 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  25 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
-- [ ] [1mFOUND 0 ERRORS AND 10 WARNINGS AFFECTING 10 LINES[0m
-- [ ]   96 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
-- [ ]   97 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
-- [ ]  105 | [33mWARNING[0m | Line exceeds 120 characters; contains 151 characters
-- [ ]  106 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
-- [ ]  114 | [33mWARNING[0m | Line exceeds 120 characters; contains 148 characters
-- [ ]  115 | [33mWARNING[0m | Line exceeds 120 characters; contains 149 characters
-- [ ]  123 | [33mWARNING[0m | Line exceeds 120 characters; contains 150 characters
-- [ ]  124 | [33mWARNING[0m | Line exceeds 120 characters; contains 151 characters
-- [ ]  132 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
-- [ ]  133 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ] [1mFOUND 0 ERRORS AND 13 WARNINGS AFFECTING 13 LINES[0m
+- [ ]   99 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
+- [ ]  100 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
+- [ ]  109 | [33mWARNING[0m | Line exceeds 120 characters; contains 163 characters
+- [ ]  110 | [33mWARNING[0m | Line exceeds 120 characters; contains 166 characters
+- [ ]  111 | [33mWARNING[0m | Line exceeds 120 characters; contains 141 characters
+- [ ]  119 | [33mWARNING[0m | Line exceeds 120 characters; contains 155 characters
+- [ ]  120 | [33mWARNING[0m | Line exceeds 120 characters; contains 158 characters
+- [ ]  128 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
+- [ ]  129 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ]  137 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
+- [ ]  138 | [33mWARNING[0m | Line exceeds 120 characters; contains 155 characters
+- [ ]  146 | [33mWARNING[0m | Line exceeds 120 characters; contains 156 characters
+- [ ]  147 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
 - [ ] [1mFOUND 0 ERRORS AND 6 WARNINGS AFFECTING 6 LINES[0m
 - [ ]  313 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
 - [ ]  315 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
@@ -72,6 +75,9 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  345 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
 - [ ]  373 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
 - [ ]  375 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]   38 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ]  107 | [33mWARNING[0m | Line exceeds 120 characters; contains 161 characters
 - [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
 - [ ]  28 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
 - [ ]  36 | [33mWARNING[0m | Line exceeds 120 characters; contains 143 characters
@@ -83,6 +89,8 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  55 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  45 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
+- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
+- [ ]  35 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  31 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m

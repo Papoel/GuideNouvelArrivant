@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace App\Controller\Admin\Progress;
 
 use App\Entity\User;
 use App\Repository\FeedbackRepository;
