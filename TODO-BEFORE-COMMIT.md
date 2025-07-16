@@ -1,6 +1,6 @@
 # TODO avant de commit
 
-Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2025 à 23h12.
+Ce fichier a été généré automatiquement par `make before-commit` le 16-07-2025 à 20h55.
 
 ## Liste des problèmes à corriger
 
@@ -52,8 +52,10 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  143 | [33mWARNING[0m | Line exceeds 120 characters; contains 129 characters
 - [ ]  240 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
 - [ ]  247 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
-- [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
-- [ ]  25 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
+- [ ]   50 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  207 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
+- [ ]  248 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
 - [ ] [1mFOUND 0 ERRORS AND 13 WARNINGS AFFECTING 13 LINES[0m
 - [ ]   99 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
 - [ ]  100 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
@@ -91,6 +93,9 @@ Ce fichier a été généré automatiquement par `make before-commit` le 14-07-2
 - [ ]  45 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  35 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+- [ ]  46 | [33mWARNING[0m | Line exceeds 120 characters; contains 129 characters
+- [ ]  68 | [33mWARNING[0m | Line exceeds 120 characters; contains 130 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m
 - [ ]  31 | [33mWARNING[0m | Line exceeds 120 characters; contains 135 characters
 - [ ] [1mFOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE[0m

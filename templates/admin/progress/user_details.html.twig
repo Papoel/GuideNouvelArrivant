@@ -5,58 +5,126 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Couleurs adoucies */
+        /* Couleurs adoucies et variables globales */
         :root {
-            --primary-color: #3d5f9e;
+            --primary-color: #3d5f9e; /* Bleu plus doux que #4154f1 */
             --primary-light: rgba(61, 95, 158, 0.08);
-            --text-dark:#2c384e;
+            --primary-hover: #3556a0;
+            --secondary-color: #6c757d;
+            --success-color: #2dce89;
+            --warning-color: #ffc107;
+            --danger-color: #f5365c;
+            --info-color: #11cdef;
+            
+            --text-dark: #2c384e;
             --text-muted: #6c757d;
+            --text-light: #8898aa;
+            
             --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
             --border-color: #e9ecef;
+            
+            --card-radius: 0.75rem;
+            --btn-radius: 0.5rem;
             --card-shadow: 0 0 15px rgba(0, 0, 0, 0.03);
             --card-shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.05);
+            --section-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            
+            --transition-time: 0.2s;
+            --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Espacement lettrages badges */
-        .ls-1 {
-            letter-spacing: 1px;
+        /* Styles globaux améliorés */
+        body {
+            background-color: #f7fafc;
+            color: var(--text-dark);
+        }
+        
+        /* Espacement lettrages et typographie */
+        .ls-1 { letter-spacing: 1px; }
+        .fs-sm { font-size: 0.875rem; }
+        .fw-medium { font-weight: 500; }
+        .fw-semibold { font-weight: 600; }
+        .text-gradient { 
+            background: linear-gradient(45deg, var(--primary-color), #5e7fb9); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Styles personnalisés */
+        /* En-tête du tableau de bord amélioré */
         .dashboard-header {
-            background-color: var(--bg-light);
-            border-radius: 0.5rem;
+            background-color: var(--bg-white);
+            border-radius: var(--card-radius);
             padding: 1.5rem;
             border-left: 5px solid var(--primary-color);
             margin-bottom: 1.5rem;
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--section-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(61, 95, 158, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: 0;
         }
 
         .dashboard-header h1 {
             color: var(--text-dark);
-            font-weight: 600;
+            font-weight: 700;
             margin: 0;
             font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard-header p {
+            position: relative;
+            z-index: 1;
         }
 
+        /* Cartes de statistiques améliorées */
         .stat-card {
-            border-radius: 0.75rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            transition: all var(--transition-time) var(--transition-curve);
             height: 100%;
             border: none;
-            background-color: white;
+            background-color: var(--bg-white);
             border-top: 3px solid var(--primary-color);
             box-shadow: var(--card-shadow);
+            position: relative;
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--card-shadow-hover);
         }
+        
+        .stat-card:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--primary-color), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-time) var(--transition-curve);
+        }
+        
+        .stat-card:hover:after {
+            opacity: 1;
+        }
 
         .stat-card .card-body {
             padding: 1.5rem;
+            background: linear-gradient(to bottom right, var(--bg-white) 70%, rgba(61, 95, 158, 0.02) 100%);
         }
 
         .stat-card .stat-value {
@@ -71,72 +139,274 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             font-weight: 500;
+            position: relative;
         }
 
+        /* Table de données améliorée */
         .data-table {
-            border-radius: 0.5rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
 
         .data-table thead th {
-            background-color: var(--bg-light);
+            background: linear-gradient(to right, var(--bg-light), rgba(248, 249, 250, 0.7));
             color: var(--text-dark);
             font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid var(--border-color);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .data-table tbody tr {
+            transition: background-color var(--transition-time) var(--transition-curve);
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: rgba(248, 249, 250, 0.7);
+        }
+        
+        .data-table td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
         }
 
+        /* Barre de progression stylisée */
         .progress {
-            height: 0.8rem;
+            height: 0.65rem;
             border-radius: 1rem;
-            background-color: var(--border-color);
+            background-color: rgba(233, 236, 239, 0.5);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            opacity: 0.1;
         }
 
+        /* Boutons d'action raffinés */
         .action-btn {
             padding: 0.4rem 0.8rem;
             font-size: 0.85rem;
-            border-radius: 0.5rem;
+            border-radius: var(--btn-radius);
+            transition: all var(--transition-time) ease;
+            box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+            border-width: 1px !important;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
+        /* Cartes de contenu améliorées */
         .content-card {
-            border-radius: 0.75rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            box-shadow: var(--section-shadow);
             border: none;
             margin-bottom: 1.5rem;
+            background-color: var(--bg-white);
+            transition: all var(--transition-time) var(--transition-curve);
+        }
+        
+        .content-card:hover {
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
         }
 
         .content-card .card-header {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color), #526fa8);
             color: white;
             padding: 1rem 1.5rem;
             font-weight: 600;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .content-card .card-header i {
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+        }
+        
+        .content-card .card-header:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .content-card .card-footer {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-top: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
         }
 
+        /* Lignes d'information utilisateur améliorées */
         .user-info-row {
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
             border-bottom: 1px solid var(--border-color);
+            transition: background-color var(--transition-time) var(--transition-curve);
         }
 
         .user-info-row:last-child {
             border-bottom: none;
         }
+        
+        .user-info-row:hover {
+            background-color: rgba(248, 249, 250, 0.7);
+        }
 
         .user-info-label {
             font-weight: 500;
             color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info-label i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .user-info-value {
             color: var(--text-dark);
+            font-weight: 500;
         }
 
+        /* Cercles de progression améliorés */
         .progress-circle {
             transition: all 0.3s ease;
             width: 150px;
             height: 150px;
             position: relative;
-            background-color: #f2f2f2;
+            background-color: rgba(248, 249, 250, 0.7);
             border-radius: 50%;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Réduction de taille des cercles de progression sur mobile/tablette */
+        @media (max-width: 991px) {
+            .progress-circle {
+                width: 110px;
+                height: 110px;
+                font-size: 1.5rem;
+            }
+            
+            .progress-circle-left .progress-circle-bar,
+            .progress-circle-right .progress-circle-bar,
+            .progress-circle-left,
+            .progress-circle-right {
+                clip: rect(0px, 55px, 110px, 0px);
+            }
+            
+            .progress-circle-right .progress-circle-bar {
+                clip: rect(0px, 110px, 110px, 55px);
+            }
+            
+            .stat-card .card-body {
+                padding: 0.75rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+            
+            .stat-card .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            /* Styles pour la liste des informations utilisateur sur mobile */
+            .user-info-mobile .list-group-item {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            
+            .user-info-mobile-label {
+                color: #6c757d;
+                font-size: 0.85rem;
+                margin-bottom: 0.25rem;
+                display: flex;
+                align-items: center;
+            }
+            
+            .user-info-mobile-value {
+                color: #2c384e;
+                font-size: 0.95rem;
+                word-break: break-word;
+            }
+            
+            .user-info-mobile .badge {
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Styles pour les cartes de thème sur mobile/tablette */
+        .theme-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .theme-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .module-card {
+            transition: background-color 0.2s ease;
+        }
+        
+        .module-card:hover {
+            background-color: rgba(248, 249, 250, 0.7) !important;
+        }
+        
+        .fs-sm {
+            font-size: 0.875rem;
+        }
+        
+        .comment-content {
+            font-size: 0.85rem;
+            background-color: rgba(248, 249, 250, 0.5);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        
+        .progress-circle:hover {
+            transform: scale(1.02);
         }
 
         .progress-circle-left, .progress-circle-right {
@@ -153,13 +423,14 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            border-width: 6px;
+            border-width: 8px;
             border-style: solid;
             border-color: transparent;
             border-radius: 50%;
             clip: rect(0px, 75px, 150px, 0px);
             transform: rotate(0deg);
-            transition: transform 0.5s;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
         }
 
         .progress-circle-left .progress-circle-bar {
@@ -176,20 +447,38 @@
             left: 0;
             background-color: white;
             font-family: sans-serif;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid py-4">
-    <div class="dashboard-header d-flex justify-content-between align-items-center">
-        <div>
-            <h1><i class="bi bi-person-bounding-box me-3"></i>Progression de {{ user.fullName }}</h1>
-            <p class="text-muted mb-0 mt-2">Détails de progression et validation des modules</p>
+    <div class="dashboard-header">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="d-flex align-items-center">
+                    <span class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3" style="width: 48px; height: 48px">
+                        <i class="bi bi-person-bounding-box fs-4"></i>
+                    </span>
+                    Progression de {{ user.fullName }}
+                </h1>
+                <p class="text-muted mt-2 mb-3 fs-sm">Détails de progression et validation des modules</p>
+                
+                <!-- Bouton de retour vers le tableau de bord - s'affiche sous le paragraphe sur mobile/tablette et à droite sur desktop -->
+                <div class="d-flex d-lg-none mb-2">
+                    <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center w-100 justify-content-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+                        <i class="bi bi-arrow-left me-2"></i>Tableau de bord
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 d-none d-lg-flex justify-content-end">
+                <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+                    <i class="bi bi-arrow-left me-2"></i>Tableau de bord
+                </a>
+            </div>
         </div>
-        <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="bi bi-arrow-left me-2"></i>Tableau de bord
-        </a>
     </div>
 
 
@@ -198,72 +487,138 @@
         <div class="col-md-6">
             <div class="content-card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-person-fill me-2 text-warning"></i>Informations de l'apprenant</h5>
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-person-fill me-2 text-warning"></i>Informations de l'apprenant
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1">
+                        <i class="bi bi-info-circle me-1"></i>Profil
+                    </span>
                 </div>
-                <div class="card-body p-4">
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Nom complet:</div>
-                            <div class="col-md-8 user-info-value">{{ user.fullName }}</div>
-                        </div>
+                <div class="card-body p-4 p-sm-3">
+                    <!-- Version mobile optimisée avec disposition en liste verticale -->
+                    <div class="d-block d-md-none">
+                        <ul class="list-group list-group-flush user-info-mobile">
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-person me-2"></i>Nom complet</div>
+                                <div class="user-info-mobile-value fw-medium">{{ user.fullName }}</div>
+                            </li>
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-envelope me-2"></i>Email</div>
+                                <div class="user-info-mobile-value">{{ user.email }}</div>
+                            </li>
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-credit-card me-2"></i>NNI</div>
+                                <div class="user-info-mobile-value">{{ user.nni }}</div>
+                            </li>
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-calendar-event me-2"></i>Date d'embauche</div>
+                                <div class="user-info-mobile-value">
+                                    {% if user.hiringAt %}
+                                        {{ user.hiringAt|date('d/m/Y') }}
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-person-check me-2"></i>Tuteur</div>
+                                <div class="user-info-mobile-value">
+                                    {% if user.mentor %}
+                                        {{ user.mentor.fullName }}
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0 py-2 border-bottom">
+                                <div class="user-info-mobile-label"><i class="bi bi-briefcase me-2"></i>Poste</div>
+                                <div class="user-info-mobile-value">
+                                    {% if user.job %}
+                                        {{ user.job.value }}
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="list-group-item px-0 py-2">
+                                <div class="user-info-mobile-label"><i class="bi bi-award me-2"></i>Spécialité</div>
+                                <div class="user-info-mobile-value">
+                                    {% if user.speciality %}
+                                        {{ user.speciality.value }}
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Email:</div>
-                            <div class="col-md-8 user-info-value">{{ user.email }}</div>
-                        </div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">NNI:</div>
-                            <div class="col-md-8 user-info-value">{{ user.nni }}</div>
-                        </div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Date d'embauche:</div>
-                            <div class="col-md-8 user-info-value">
-                                {% if user.hiringAt %}
-                                    {{ user.hiringAt|date('d/m/Y') }}
-                                {% else %}
-                                    <span class="text-muted">Non renseigné</span>
-                                {% endif %}
+                    
+                    <!-- Version desktop avec disposition en grille -->
+                    <div class="d-none d-md-block">
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-person"></i>Nom complet:</div>
+                                <div class="col-md-8 user-info-value">{{ user.fullName }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Tuteur:</div>
-                            <div class="col-md-8 user-info-value">
-                                {% if user.mentor %}
-                                    {{ user.mentor.fullName }}
-                                {% else %}
-                                    <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
-                                {% endif %}
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-envelope"></i>Email:</div>
+                                <div class="col-md-8 user-info-value">{{ user.email }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Poste:</div>
-                            <div class="col-md-8 user-info-value">
-                                {% if user.job %}
-                                    {{ user.job.value }}
-                                {% else %}
-                                    <span class="text-muted">Non renseigné</span>
-                                {% endif %}
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-credit-card"></i>NNI:</div>
+                                <div class="col-md-8 user-info-value">{{ user.nni }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="row">
-                            <div class="col-md-4 user-info-label">Spécialité:</div>
-                            <div class="col-md-8 user-info-value">
-                                {% if user.speciality %}
-                                    {{ user.speciality.value }}
-                                {% else %}
-                                    <span class="text-muted">Non renseigné</span>
-                                {% endif %}
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-calendar-event"></i>Date d'embauche:</div>
+                                <div class="col-md-8 user-info-value">
+                                    {% if user.hiringAt %}
+                                        {{ user.hiringAt|date('d/m/Y') }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-person-check"></i>Tuteur:</div>
+                                <div class="col-md-8 user-info-value">
+                                    {% if user.mentor %}
+                                        {{ user.mentor.fullName }}
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-briefcase"></i>Poste:</div>
+                                <div class="col-md-8 user-info-value">
+                                    {% if user.job %}
+                                        {{ user.job.value }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-info-row">
+                            <div class="row">
+                                <div class="col-md-4 user-info-label"><i class="bi bi-award"></i>Spécialité:</div>
+                                <div class="col-md-8 user-info-value">
+                                    {% if user.speciality %}
+                                        {{ user.speciality.value }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -273,44 +628,55 @@
         <div class="col-md-6">
             <div class="content-card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Résumé de progression</h5>
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-graph-up-arrow me-2 text-warning"></i>Résumé de progression
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1">
+                        <i class="bi bi-lightning-charge-fill me-1"></i>Temps réel
+                    </span>
                 </div>
                 <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Auto-validation</h6>
-                                <div class="progress-circle mx-auto" data-value="{{ progress.agent_progress }}">
-                                    <span class="progress-circle-left">
-                                        <span class="progress-circle-bar border-primary"></span>
-                                    </span>
-                                    <span class="progress-circle-right">
-                                        <span class="progress-circle-bar border-primary"></span>
-                                    </span>
-                                    <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                                        <div class="h2 font-weight-bold">{{ progress.agent_progress }}<sup class="small">%</sup></div>
+                    <div class="text-center mb-3">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="progress-circle-container">
+                                    <h6 class="text-muted mb-2 fs-sm">Auto-validation</h6>
+                                    <div class="progress-circle mx-auto" data-value="{{ progress.agent_progress }}">
+                                        <span class="progress-circle-left">
+                                            <span class="progress-circle-bar border-primary"></span>
+                                        </span>
+                                        <span class="progress-circle-right">
+                                            <span class="progress-circle-bar border-primary"></span>
+                                        </span>
+                                        <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                            <div class="h2 font-weight-bold">{{ progress.agent_progress }}<sup class="small">%</sup></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Validation tuteur</h6>
-                                <div class="progress-circle mx-auto" data-value="{{ progress.mentor_progress }}">
-                                    <span class="progress-circle-left">
-                                        <span class="progress-circle-bar border-success"></span>
-                                    </span>
-                                    <span class="progress-circle-right">
-                                        <span class="progress-circle-bar border-success"></span>
-                                    </span>
-                                    <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                                        <div class="h2 font-weight-bold">{{ progress.mentor_progress }}<sup class="small">%</sup></div>
+                            <div class="col-6">
+                                <div class="progress-circle-container">
+                                    <h6 class="text-muted mb-2 fs-sm">Validation tuteur</h6>
+                                    <div class="progress-circle mx-auto" data-value="{{ progress.mentor_progress }}">
+                                        <span class="progress-circle-left">
+                                            <span class="progress-circle-bar border-success"></span>
+                                        </span>
+                                        <span class="progress-circle-right">
+                                            <span class="progress-circle-bar border-success"></span>
+                                        </span>
+                                        <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                            <div class="h2 font-weight-bold">{{ progress.mentor_progress }}<sup class="small">%</sup></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row g-3 text-center mt-2">
-                        <div class="col-md-4">
+                    <!-- Cartes statistiques avec disposition adaptative -->                    
+                    <div class="row g-2 g-md-3 text-center mt-2">
+                        <!-- Sur mobile: 3 colonnes plus compactes, sur tablette/desktop: disposition normale -->
+                        <div class="col-4 col-md-4">
                             <div class="stat-card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
@@ -319,11 +685,11 @@
                                         </div>
                                     </div>
                                     <div class="stat-value">{{ progress.total_modules }}</div>
-                                    <div class="stat-label">Modules totaux</div>
+                                    <div class="stat-label">Modules</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-4 col-md-4">
                             <div class="stat-card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
@@ -336,7 +702,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-4 col-md-4">
                             <div class="stat-card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-center mb-2">
@@ -345,7 +711,7 @@
                                         </div>
                                     </div>
                                     <div class="stat-value">{{ progress.validated_by_mentor }}</div>
-                                    <div class="stat-label">Validés tuteur</div>
+                                    <div class="stat-label">Validés</div>
                                 </div>
                             </div>
                         </div>
@@ -358,93 +724,209 @@
     {# Détail du carnet #}
     <div class="content-card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-book-fill me-2 text-warning"></i>Détail du carnet: {{ logbook.name }}</h5>
-            <span class="badge bg-light text-primary rounded-pill fw-medium ls-1">{{ logbook.themes|length }} thèmes</span>
+            <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-book-fill me-2 text-warning"></i>Détail du carnet: {{ logbook.name }}
+            </h5>
+            <div>
+                <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1 me-2">
+                    <i class="bi bi-bookmark-fill me-1"></i>{{ logbook.themes|length }} thèmes
+                </span>
+                <span class="badge bg-light text-primary rounded-pill fw-medium ls-1">
+                    <i class="bi bi-list-check me-1"></i>{{ progress.total_modules }} modules
+                </span>
+            </div>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover data-table mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">Thème</th>
-                            <th>Module</th>
-                            <th>Auto-validation</th>
-                            <th>Validation tuteur</th>
-                            <th>Commentaire agent</th>
-                            <th>Commentaire tuteur</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for theme in logbook.themes %}
-                            {% set first_theme_row = true %}
-                            {% set theme_rowspan = theme.modules|length %}
+            {# Vue desktop - tableau traditionnel #}
+            <div class="d-none d-lg-block">
+                <div class="table-responsive">
+                    <table class="table table-hover data-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Thème</th>
+                                <th>Module</th>
+                                <th>Auto-validation</th>
+                                <th>Validation tuteur</th>
+                                <th>Commentaire agent</th>
+                                <th>Commentaire tuteur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for theme in logbook.themes %}
+                                {% set first_theme_row = true %}
+                                {% set theme_rowspan = theme.modules|length %}
 
-                            {% for module in theme.modules %}
-                                {% set action = null %}
-                                {% for a in user.actions %}
-                                    {% if a.module.id == module.id %}
-                                        {% set action = a %}
-                                    {% endif %}
-                                {% endfor %}
+                                {% for module in theme.modules %}
+                                    {% set action = null %}
+                                    {% for a in user.actions %}
+                                        {% if a.module.id == module.id %}
+                                            {% set action = a %}
+                                        {% endif %}
+                                    {% endfor %}
 
-                                <tr>
-                                    {% if first_theme_row %}
-                                        <td rowspan="{{ theme_rowspan }}" class="align-middle ps-4">
-                                            <strong class="text-dark">{{ theme.title }}</strong>
+                                    <tr>
+                                        {% if first_theme_row %}
+                                            <td rowspan="{{ theme_rowspan }}" class="align-middle ps-4">
+                                                <strong class="text-dark">{{ theme.title }}</strong>
+                                            </td>
+                                            {% set first_theme_row = false %}
+                                        {% endif %}
+
+                                        <td>
+                                            <span class="fw-medium">{{ module.title }}</span>
                                         </td>
-                                        {% set first_theme_row = false %}
-                                    {% endif %}
 
-                                    <td>
-                                        <span class="fw-medium">{{ module.title }}</span>
-                                    </td>
+                                        <td>
+                                            {% if action and action.agentValidatedAt %}
+                                                <span class="badge bg-success rounded-pill px-2 py-2 fw-light ls-1">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    {{ action.agentValidatedAt|date('d/m/Y') }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
+                                            {% endif %}
+                                        </td>
 
-                                    <td>
-                                        {% if action and action.agentValidatedAt %}
-                                            <span class="badge bg-success rounded-pill px-2 py-2 fw-light ls-1">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                {{ action.agentValidatedAt|date('d/m/Y') }}
-                                            </span>
-                                        {% else %}
-                                            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
-                                        {% endif %}
-                                    </td>
+                                        <td>
+                                            {% if action and action.mentorValidatedAt %}
+                                                <span class="badge bg-success rounded-pill px-3 py-2 fw-light ls-1">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    {{ action.mentorValidatedAt|date('d/m/Y') }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
+                                            {% endif %}
+                                        </td>
 
-                                    <td>
-                                        {% if action and action.mentorValidatedAt %}
-                                            <span class="badge bg-success rounded-pill px-3 py-2 fw-light ls-1">
-                                                <i class="bi bi-check-circle me-1"></i>
-                                                {{ action.mentorValidatedAt|date('d/m/Y') }}
-                                            </span>
-                                        {% else %}
-                                            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
-                                        {% endif %}
-                                    </td>
+                                        <td>
+                                            {% if action and action.agentComment %}
+                                                <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.agentComment }}" data-bs-trigger="focus" title="Commentaire de l'agent">
+                                                    <i class="bi bi-chat-dots me-1"></i> Voir commentaire
+                                                </button>
+                                            {% else %}
+                                                <span class="text-muted fst-italic">Aucun commentaire</span>
+                                            {% endif %}
+                                        </td>
 
-                                    <td>
-                                        {% if action and action.agentComment %}
-                                            <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.agentComment }}" data-bs-trigger="focus" title="Commentaire de l'agent">
-                                                <i class="bi bi-chat-dots me-1"></i> Voir commentaire
-                                            </button>
-                                        {% else %}
-                                            <span class="text-muted fst-italic">Aucun commentaire</span>
-                                        {% endif %}
-                                    </td>
-
-                                    <td>
-                                        {% if action and action.mentorComment %}
-                                            <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.mentorComment }}" data-bs-trigger="focus" title="Commentaire du tuteur">
-                                                <i class="bi bi-chat-dots me-1"></i> Voir commentaire
-                                            </button>
-                                        {% else %}
-                                            <span class="text-muted fst-italic">Aucun commentaire</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
+                                        <td>
+                                            {% if action and action.mentorComment %}
+                                                <button type="button" class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ action.mentorComment }}" data-bs-trigger="focus" title="Commentaire du tuteur">
+                                                    <i class="bi bi-chat-dots me-1"></i> Voir commentaire
+                                                </button>
+                                            {% else %}
+                                                <span class="text-muted fst-italic">Aucun commentaire</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             {% endfor %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            {# Vue mobile/tablette - cartes par thème #}
+            <div class="d-block d-lg-none p-3">
+                <div class="theme-cards">
+                    {% for theme in logbook.themes %}
+                        <div class="theme-card mb-4">
+                            <div class="theme-header p-3 rounded-top" style="background: linear-gradient(to right, var(--primary-light), rgba(248, 249, 250, 0.7)); border-left: 4px solid var(--primary-color);">
+                                <h6 class="mb-0 fw-bold">
+                                    <i class="bi bi-bookmark-fill me-2 text-primary"></i>{{ theme.title }}
+                                </h6>
+                            </div>
+                            
+                            <div class="theme-modules">
+                                {% for module in theme.modules %}
+                                    {% set action = null %}
+                                    {% for a in user.actions %}
+                                        {% if a.module.id == module.id %}
+                                            {% set action = a %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    <div class="module-card p-3 border-bottom" style="background-color: #fff;">
+                                        <h6 class="module-title fs-6 mb-2">
+                                            <i class="bi bi-list-check me-2 text-primary"></i>{{ module.title }}
+                                        </h6>
+                                        
+                                        <div class="row g-2 fs-sm">
+                                            <div class="col-6">
+                                                <div class="validation-item">
+                                                    <span class="text-muted fw-medium">Auto-validation:</span><br>
+                                                    {% if action and action.agentValidatedAt %}
+                                                        <span class="badge bg-success rounded-pill px-2 py-1 fw-light ls-1">
+                                                            <i class="bi bi-check-circle me-1"></i>
+                                                            {{ action.agentValidatedAt|date('d/m/Y') }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary rounded-pill px-2 py-1 fw-light ls-1">Non validé</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="validation-item">
+                                                    <span class="text-muted fw-medium">Validation tuteur:</span><br>
+                                                    {% if action and action.mentorValidatedAt %}
+                                                        <span class="badge bg-success rounded-pill px-2 py-1 fw-light ls-1">
+                                                            <i class="bi bi-check-circle me-1"></i>
+                                                            {{ action.mentorValidatedAt|date('d/m/Y') }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary rounded-pill px-2 py-1 fw-light ls-1">Non validé</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-12 mt-2">
+                                                <div class="comments-section">
+                                                    <div class="accordion accordion-flush" id="comments-{{ module.id }}">
+                                                        {% if (action and action.agentComment) or (action and action.mentorComment) %}
+                                                            <div class="accordion-item border-0">
+                                                                <h2 class="accordion-header" id="heading-{{ module.id }}">
+                                                                    <button class="accordion-button collapsed p-2 fs-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ module.id }}" aria-expanded="false" aria-controls="collapse-{{ module.id }}" style="background-color: rgba(248, 249, 250, 0.7);">
+                                                                        <i class="bi bi-chat-dots me-2"></i>Voir les commentaires
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapse-{{ module.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ module.id }}" data-bs-parent="#comments-{{ module.id }}">
+                                                                    <div class="accordion-body p-2 fs-sm">
+                                                                        {% if action and action.agentComment %}
+                                                                            <div class="comment-item mb-2">
+                                                                                <div class="comment-header fw-medium text-primary">
+                                                                                    <i class="bi bi-person me-1"></i>Commentaire agent:
+                                                                                </div>
+                                                                                <div class="comment-content ps-3 pt-1">
+                                                                                    {{ action.agentComment }}
+                                                                                </div>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                        
+                                                                        {% if action and action.mentorComment %}
+                                                                            <div class="comment-item">
+                                                                                <div class="comment-header fw-medium text-primary">
+                                                                                    <i class="bi bi-person-check me-1"></i>Commentaire tuteur:
+                                                                                </div>
+                                                                                <div class="comment-content ps-3 pt-1">
+                                                                                    {{ action.mentorComment }}
+                                                                                </div>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="text-muted fst-italic fs-sm"><i class="bi bi-chat-dots me-1"></i>Aucun commentaire</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
