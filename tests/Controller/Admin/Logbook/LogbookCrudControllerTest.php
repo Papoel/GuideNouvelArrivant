@@ -4,6 +4,9 @@ namespace App\Tests\Controller\Admin\Logbook;
 
 use App\Controller\Admin\Logbook\LogbookCrudController;
 use App\Entity\Logbook;
+use App\Repository\ActionRepository;
+use App\Services\Logbook\LogbookThemeService;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -16,7 +19,17 @@ class LogbookCrudControllerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->controller = new LogbookCrudController();
+        $container = static::getContainer();
+
+        $logbookThemeService = $container->get(LogbookThemeService::class);
+        $entityManager = $container->get(EntityManagerInterface::class);
+        $actionRepository = $container->get(ActionRepository::class);
+
+        $this->controller = new LogbookCrudController(
+            $logbookThemeService,
+            $entityManager,
+            $actionRepository
+        );
     }
 
     public function testGetEntityFqcn(): void

@@ -5,58 +5,180 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Couleurs adoucies */
+        /* Couleurs adoucies et variables globales */
         :root {
-            --primary-color:#3d5f9e; /* Bleu plus doux que #4154f1 */
-            --primary-light: #5b6fe6; /* Version plus claire pour les fonds */
+            --primary-color: #3d5f9e; /* Bleu plus doux que #4154f1 */
+            --primary-light: rgba(61, 95, 158, 0.08);
+            --primary-hover: #3556a0;
+            --secondary-color: #6c757d;
+            --success-color: #2dce89;
+            --warning-color: #ffc107;
+            --danger-color: #f5365c;
+            --info-color: #11cdef;
+            
             --text-dark: #2c384e;
             --text-muted: #6c757d;
+            --text-light: #8898aa;
+            
             --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
             --border-color: #e9ecef;
+            
+            --card-radius: 0.75rem;
+            --btn-radius: 0.5rem;
             --card-shadow: 0 0 15px rgba(0, 0, 0, 0.03);
             --card-shadow-hover: 0 5px 20px rgba(0, 0, 0, 0.05);
+            --section-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            
+            --transition-time: 0.2s;
+            --transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Espacement lettrages badges */
-        .ls-1 {
-            letter-spacing: 1px;
+        
+        /* Styles pour les cartes d'apprenants en version mobile */
+        #apprenants-cards .content-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+            margin-bottom: 1.5rem;
+            border-top: 3px solid var(--primary-color);
+            background-color: white;
         }
-
-        /* Styles personnalisés pour le tableau de bord */
-        .dashboard-header {
+        
+        #apprenants-cards .content-card:hover {
+            transform: translateY(-3px);
+            box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 32px;
+        }
+        
+        #apprenants-cards .card-header-custom {
             background-color: var(--bg-light);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #apprenants-cards .card-body-custom {
+            padding: 1.25rem;
+            background: linear-gradient(to bottom, #ffffff, #fdfdfd);
+        }
+        
+        #apprenants-cards .avatar-container {
+            margin-right: 0.75rem;
+            border: 2px solid rgba(61, 95, 158, 0.2);
+            padding: 2px;
+            border-radius: 50%;
+        }
+        
+        #apprenants-cards .progress {
+            height: 0.65rem;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        #apprenants-cards .progress-section {
+            background-color: rgba(248, 249, 250, 0.5);
+            padding: 0.85rem;
             border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        #apprenants-cards .action-buttons {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        /* Styles globaux améliorés */
+        body {
+            background-color: #f7fafc;
+            color: var(--text-dark);
+        }
+        
+        /* Espacement lettrages et typographie */
+        .ls-1 { letter-spacing: 1px; }
+        .fs-sm { font-size: 0.875rem; }
+        .fw-medium { font-weight: 500; }
+        .fw-semibold { font-weight: 600; }
+        .text-gradient { 
+            background: linear-gradient(45deg, var(--primary-color), #5e7fb9); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* En-tête du tableau de bord amélioré */
+        .dashboard-header {
+            background-color: var(--bg-white);
+            border-radius: var(--card-radius);
             padding: 1.5rem;
             border-left: 5px solid var(--primary-color);
             margin-bottom: 1.5rem;
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--section-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(61, 95, 158, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: 0;
         }
 
         .dashboard-header h1 {
             color: var(--text-dark);
-            font-weight: 600;
+            font-weight: 700;
             margin: 0;
             font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard-header p {
+            position: relative;
+            z-index: 1;
         }
 
+        /* Cartes de statistiques améliorées */
         .stat-card {
-            border-radius: 0.75rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            transition: all var(--transition-time) var(--transition-curve);
             height: 100%;
             border: none;
-            background-color: white;
+            background-color: var(--bg-white);
             border-top: 3px solid var(--primary-color);
             box-shadow: var(--card-shadow);
+            position: relative;
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--card-shadow-hover);
         }
+        
+        .stat-card:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--primary-color), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-time) var(--transition-curve);
+        }
+        
+        .stat-card:hover:after {
+            opacity: 1;
+        }
 
         .stat-card .card-body {
             padding: 1.5rem;
+            background: linear-gradient(to bottom right, var(--bg-white) 70%, rgba(61, 95, 158, 0.02) 100%);
         }
 
         .stat-card .stat-value {
@@ -71,48 +193,135 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             font-weight: 500;
+            position: relative;
         }
 
+        /* Table de données améliorée */
         .data-table {
-            border-radius: 0.5rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
 
         .data-table thead th {
-            background-color: var(--bg-light);
+            background: linear-gradient(to right, var(--bg-light), rgba(248, 249, 250, 0.7));
             color: var(--text-dark);
             font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid var(--border-color);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .data-table tbody tr {
+            transition: background-color var(--transition-time) var(--transition-curve);
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: rgba(248, 249, 250, 0.7);
+        }
+        
+        .data-table td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
         }
 
+        /* Barre de progression stylisée */
         .progress {
-            height: 0.8rem;
+            height: 0.65rem;
             border-radius: 1rem;
-            background-color: var(--border-color);
+            background-color: rgba(233, 236, 239, 0.5);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            opacity: 0.1;
         }
 
+        /* Boutons d'action raffinés */
         .action-btn {
             padding: 0.4rem 0.8rem;
             font-size: 0.85rem;
-            border-radius: 0.5rem;
+            border-radius: var(--btn-radius);
+            transition: all var(--transition-time) ease;
+            box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+            border-width: 1px !important;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
+        /* Cartes de contenu améliorées */
         .content-card {
-            border-radius: 0.75rem;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            box-shadow: var(--section-shadow);
             border: none;
             margin-bottom: 1.5rem;
+            background-color: var(--bg-white);
+            transition: all var(--transition-time) var(--transition-curve);
+        }
+        
+        .content-card:hover {
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
         }
 
         .content-card .card-header {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color), #526fa8);
             color: white;
             padding: 1rem 1.5rem;
             font-weight: 600;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .content-card .card-header i {
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+        }
+        
+        .content-card .card-header:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .content-card .card-footer {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-top: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
         }
 
-        /* Styles pour la pagination Bootstrap */
+        /* Pagination améliorée */
         .pagination {
             --bs-pagination-active-bg: var(--primary-color);
             --bs-pagination-active-border-color: var(--primary-color);
@@ -121,35 +330,67 @@
             --bs-pagination-hover-bg: var(--primary-light);
             --bs-pagination-focus-color: var(--primary-color);
             --bs-pagination-focus-bg: var(--primary-light);
+            box-shadow: 0 2px 5px rgba(50, 50, 93, 0.1);
+            border-radius: 2rem;
+            overflow: hidden;
         }
 
         .pagination .page-link {
-            transition: all 0.2s ease;
+            transition: all var(--transition-time) ease;
             font-weight: 500;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            min-width: 2.2rem;
+            text-align: center;
+            margin: 0 2px;
         }
 
         .pagination .page-item.active .page-link {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-color), #526fa8);
             border-color: var(--primary-color);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            font-weight: 600;
         }
 
         .pagination .page-item.disabled .page-link {
             color: var(--text-muted);
-            opacity: 0.6;
+            opacity: 0.5;
+            background: none;
+        }
+        
+        .pagination .page-item:first-child .page-link,
+        .pagination .page-item:last-child .page-link {
+            padding: 0.5rem 0.85rem;
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid py-4">
-    <div class="dashboard-header d-flex justify-content-between align-items-center">
-        <div>
-            <h1><i class="bi bi-bar-chart-line me-3"></i>Tableau de bord de progression</h1>
-            <p class="text-muted mb-0 mt-2">Suivez en temps réel l'avancement des apprenants et la validation des tuteurs</p>
+    <div class="dashboard-header">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="d-flex align-items-center">
+                    <span class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3" style="width: 48px; height: 48px">
+                        <i class="bi bi-bar-chart-line fs-4"></i>
+                    </span>
+                    Tableau de bord de progression
+                </h1>
+                <p class="text-muted mt-2 mb-3 fs-sm">Suivez en temps réel l'avancement des apprenants et la validation des tuteurs</p>
+                
+                <!-- Bouton de retour vers l'administration - s'affiche sous le paragraphe sur mobile/tablette et à droite sur desktop -->
+                <div class="d-flex d-lg-none mb-2">
+                    <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center w-100 justify-content-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+                        <i class="bi bi-arrow-left me-2"></i>Administration
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 d-none d-lg-flex justify-content-end">
+                <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
+                    <i class="bi bi-arrow-left me-2"></i>Administration
+                </a>
+            </div>
         </div>
-        <a href="{{ path('admin') }}" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="bi bi-arrow-left me-2"></i>Administration
-        </a>
     </div>
 
     {% if user_has_no_service is defined and user_has_no_service %}
@@ -165,9 +406,14 @@
     {% endif %}
 
     {# Statistiques globales #}
-    <div class="content-card mb-4">
+    <div id="global-stats" class="content-card mb-4">
         <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-bar-chart-line-fill me-2 text-warning"></i>Statistiques globales</h5>
+            <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-bar-chart-line-fill me-2 text-warning"></i>Statistiques globales
+            </h5>
+            <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1">
+                <i class="bi bi-lightning-charge-fill me-1"></i>Temps réel
+            </span>
         </div>
         <div class="card-body p-4">
             <div class="row g-4 align-items-stretch justify-content-around">
@@ -267,136 +513,234 @@
                 <div class="row g-3 align-items-center">
                     <div class="col-md-6 col-lg-4">
                         <div class="search-box position-relative">
-                            <input type="text" name="search" value="{{ search_term }}" class="form-control form-control-lg rounded-pill ps-4 pe-5" placeholder="Rechercher un apprenant..." style="padding: 0.6rem 0.75rem;">
-                            <button type="submit" class="btn position-absolute end-0 top-0 h-100 px-3 bg-transparent border-0">
-                                <i class="bi bi-search text-primary"></i>
-                            </button>
+                            <div class="input-group input-group-merge shadow-sm rounded-pill overflow-hidden" style="border-radius: var(--btn-radius)">
+                                <span class="input-group-text bg-white border-0 ps-3">
+                                    <i class="bi bi-search text-primary"></i>
+                                </span>
+                                <input type="text" name="search" value="{{ search_term }}" 
+                                    class="form-control border-0 ps-1 pe-3" 
+                                    placeholder="Rechercher un apprenant..." 
+                                    style="padding: 0.65rem 0.75rem; box-shadow: none;">
+                            </div>
                         </div>
                     </div>
                     {% if search_term %}
                         <div class="col-auto">
-                            <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill" style="padding: 0.6rem 1.2rem;">
+                            <a href="{{ path('admin_progress_dashboard') }}" 
+                                class="btn btn-outline-secondary rounded-pill d-flex align-items-center" 
+                                style="padding: 0.6rem 1.2rem; transition: all 0.2s ease;">
                                 <i class="bi bi-x-circle me-2"></i>Effacer la recherche
                             </a>
                         </div>
                     {% endif %}
+                    
+                    <div class="col-auto ms-auto">
+                        <div class="badge bg-light text-primary rounded-pill py-2 px-3 fs-sm">
+                            <i class="bi bi-info-circle me-1"></i>
+                            {{ pagination.totalItems }} apprenants au total
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover data-table mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">Apprenant</th>
-                            <th>Tuteur</th>
-                            <th>Date d'embauche</th>
-                            <th>Auto-validation</th>
-                            <th>Validation tuteur</th>
-                            <th>Dernière action</th>
-                            <th class="text-center">Actions</th>
-                            <th class="text-center">PDF</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user_data in users_data %}
-                            <tr class="align-middle">
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0">{{ user_data.user.fullName }}</h6>
-                                            <small class="text-muted">{{ user_data.user.email }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
+
+        <div class="card-body">
+            <!-- Vue mobile/tablette (cartes) - Visible uniquement sur les petits écrans -->
+        <div id="apprenants-cards" class="d-block d-lg-none">
+            {% for user_data in users_data %}
+            <div class="content-card">
+                <!-- En-tête de la carte avec informations principales -->
+                <div class="card-header-custom">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-container">
+                            <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-weight: 600;">
+                                {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-semibold text-dark">{{ user_data.user.fullName }}</h5>
+                            <small class="text-muted">{{ user_data.user.email }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-check text-primary me-2"></i>
+                                <div>
+                                    <small class="text-muted d-block">Tuteur</small>
                                     {% if user_data.mentor %}
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-placeholder bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                {{ user_data.mentor.firstname|first }}{{ user_data.mentor.lastname|first }}
-                                            </div>
-                                            <span>{{ user_data.mentor.fullName }}</span>
-                                        </div>
+                                        <span class="fw-medium">{{ user_data.mentor.fullName }}</span>
                                     {% else %}
                                         <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
                                     {% endif %}
-                                </td>
-                                <td>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar-event text-primary me-2"></i>
+                                <div>
+                                    <small class="text-muted d-block">Date d'embauche</small>
                                     {% if user_data.hiring_date %}
-                                        <span class="text-dark" style="font-size: .9rem">
-                                            <i class="bi bi-calendar me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
-                                        </span>
+                                        <span class="fw-medium">{{ user_data.hiring_date|date('d/m/Y') }}</span>
                                     {% else %}
                                         <span class="text-muted">Non renseigné</span>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column gap-1">
-                                        <div class="progress">
-                                            <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.85;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }}</small>
-                                            <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column gap-1">
-                                        <div class="progress">
-                                            <div class="progress-bar {{ user_data.progress.progress_class_mentor }}"
-                                                role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.85;"
-                                                aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }}</small>
-                                            <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if user_data.last_action_date %}
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded bg-light p-2 me-2 text-primary">
-                                                <i class="far fa-clock"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-medium">{{ user_data.last_action_date|date('d/m/Y') }}</div>
-                                                <small class="text-muted">{{ user_data.last_action_date|date('H:i') }}</small>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <span class="badge bg-light text-muted border border-secondary" style="font-weight: 500;">Aucune action</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                    {% if user_data.logbook %}
-                                        <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;">
-                                            <i class="bi bi-eye me-1"></i> Détails
-                                        </a>
-                                    {% else %}
-                                        <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
-                                    {% endif %}
-                                </td>
-                                {# Bouton pour générer le carnet de compagnonnage en PDF #}
-                                <td class="text-center">
-                                    {% if user_data.logbook %}
-                                        <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
-                                            <i class="bi bi-file-pdf me-1"></i> PDF
-                                        </a>
-                                    {% else %}
-                                        <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Corps de la carte avec progression -->
+                <div class="card-body-custom">
+                    <div class="progress-section">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
+                                <i class="bi bi-person text-primary me-2"></i>Auto-validation
+                            </label>
+                            <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }} modules</small>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
+                                <i class="bi bi-award text-warning me-2"></i>Validation tuteur
+                            </label>
+                            <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar {{ user_data.progress.progress_class_mentor }}" role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }} modules</small>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="action-buttons">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            {% if user_data.logbook %}
+                                <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-primary rounded-pill action-btn" style="font-weight: 500;">
+                                    <i class="bi bi-eye me-1"></i> Détails
+                                </a>
+                                <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank">
+                                    <i class="bi bi-file-pdf me-1"></i> PDF
+                                </a>
+                            {% else %}
+                                <span class="badge bg-light text-danger border border-danger" style="font-weight: 500; padding: 0.5rem 1rem;">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Pas de carnet
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Vue desktop (tableau) - Visible uniquement sur grands écrans -->
+        <div id="apprenants-table" class="table-responsive d-none d-lg-block">
+            <table class="table table-hover data-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Apprenant</th>
+                        <th>Tuteur</th>
+                        <th>Date d'embauche</th>
+                        <th>Auto-validation</th>
+                        <th>Validation tuteur</th>
+                        <th class="text-center">Actions</th>
+                        <th class="text-center">PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_data in users_data %}
+                        <tr class="align-middle">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ user_data.user.fullName }}</h6>
+                                        <small class="text-muted">{{ user_data.user.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if user_data.mentor %}
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                            {{ user_data.mentor.firstname|first }}{{ user_data.mentor.lastname|first }}
+                                        </div>
+                                        <span>{{ user_data.mentor.fullName }}</span>
+                                    </div>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user_data.hiring_date %}
+                                    <span class="text-dark" style="font-size: .9rem">
+                                        <i class="bi bi-calendar me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Non renseigné</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <div class="progress">
+                                        <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.85;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }}</small>
+                                        <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    <div class="progress">
+                                        <div class="progress-bar {{ user_data.progress.progress_class_mentor }}"
+                                            role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.85;"
+                                            aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }}</small>
+                                        <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                {% if user_data.logbook %}
+                                    <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;">
+                                        <i class="bi bi-eye me-1"></i> Détails
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
+                                {% endif %}
+                            </td>
+                            {# Bouton pour générer le carnet de compagnonnage en PDF #}
+                            <td class="text-center">
+                                {% if user_data.logbook %}
+                                    <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
+                                        <i class="bi bi-file-pdf me-1"></i> PDF
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
             {# Pagination #}
             {% if pagination.totalPages > 1 %}
@@ -456,22 +800,22 @@
         </div>
     </div>
 </div>
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialisation de DataTables pour le tableau des utilisateurs
+                if (typeof $.fn !== 'undefined' && $.fn.DataTable) {
+                    $('.table').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+                        },
+                        order: [[4, 'desc']], // Tri par défaut sur la colonne de progression (auto-validation)
+                        responsive: true
+                    });
+                }
+            });
+        </script>
+    {% endblock %}
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation de DataTables pour le tableau des utilisateurs
-            if (typeof $.fn !== 'undefined' && $.fn.DataTable) {
-                $('.table').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
-                    },
-                    order: [[4, 'desc']], // Tri par défaut sur la colonne de progression (auto-validation)
-                    responsive: true
-                });
-            }
-        });
-    </script>
-{% endblock %}

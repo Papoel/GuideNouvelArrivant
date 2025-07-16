@@ -806,7 +806,8 @@ aside.sidebar div {
     background: linear-gradient(45deg, #4a6fa5, #166088);
     border-radius: 10px;
     padding: 15px 20px;
-    color: #ffffff;
+    /*color: #ffffff;*/
+    color: #3D5F9E;
     cursor: pointer;
     display: flex;
     justify-content: space-between;

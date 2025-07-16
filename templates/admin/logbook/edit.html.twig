@@ -1,0 +1,731 @@
+{% extends '@!EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Variables de couleur */
+        :root {
+            --primary-color: #3d5f9e;
+            --primary-light: rgba(61, 95, 158, 0.1);
+            --primary-dark: #2c4878;
+            --gray-200: #eaecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --body-bg: #f8f9fa;
+        }
+
+        .ls-1 {
+            letter-spacing: 1px;
+        }
+        
+        /* Card styles */
+        .content-card {
+            overflow: hidden;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        /* Styles des modals de confirmation */
+        .modal-confirm {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .modal-confirm .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+            position: relative;
+        }
+        
+        .modal-confirm .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .modal-confirm .modal-header .close {
+            color: white;
+            opacity: 0.8;
+        }
+        
+        .modal-confirm .modal-title {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-confirm .modal-body {
+            padding: 1.75rem;
+            font-size: 0.95rem;
+            color: var(--gray-800);
+            background-color: #fff;
+        }
+        
+        .modal-confirm .warning-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(231, 76, 60, 0.1);
+            font-size: 2.5rem;
+            color: #e74c3c;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-confirm .warning-icon i {
+            transform: scale(1);
+            animation: pulseWarning 1s infinite alternate;
+        }
+        
+        @keyframes pulseWarning {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+        
+        .modal-confirm .warning-text {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            color: #e74c3c;
+        }
+        
+        .modal-confirm .theme-title {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            margin: 0.5rem 0 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .modal-confirm .theme-stats {
+            display: inline-block;
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            font-weight: 500;
+            padding: 0.2rem 0.7rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .modal-confirm .danger-box {
+            background-color: rgba(231, 76, 60, 0.07);
+            border-left: 3px solid #e74c3c;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .modal-confirm .modal-footer {
+            border-top: none;
+            padding: 0.5rem 1.5rem 1.5rem;
+            justify-content: center;
+            gap: 1rem;
+            background-color: #f8f9fa;
+        }
+        
+        .modal-confirm .btn-outline-secondary {
+            border-color: var(--gray-400);
+            color: var(--gray-700);
+            padding: 0.5rem 1.25rem;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-confirm .btn-outline-secondary:hover {
+            background-color: var(--gray-200);
+        }
+        
+        .modal-confirm .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .modal-confirm .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .header-bordered {
+            position: relative;
+            border-bottom: 1px solid var(--gray-300);
+        }
+        
+        .header-bordered::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--primary-color);
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* Badge styles */
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.8em;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+        
+        .stat-badge {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Table styles */
+        .data-table {
+            margin-bottom: 0;
+        }
+        
+        .data-table thead th {
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom-width: 1px;
+        }
+        
+        .data-table tbody tr {
+            transition: background-color 0.15s;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: var(--primary-light);
+        }
+        
+        /* Form styles */
+        .select-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            border: 1px solid var(--gray-300);
+        }
+        
+        .select-container::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            pointer-events: none;
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+        
+        .select-container:focus-within::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+        
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 12px 40px 12px 15px;
+            background-color: #fff;
+            border: none;
+            width: 100%;
+            font-size: 1rem;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .form-select:focus {
+            box-shadow: none;
+            border: none;
+            outline: none;
+        }
+        
+        .form-select option {
+            padding: 10px;
+            font-size: 0.95rem;
+        }
+        
+        /* Button styles */
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(61, 95, 158, 0.25);
+        }
+        
+        .btn-outline-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.25);
+            color: var(--gray-200) !important;
+        }
+        
+        /* Form label styles */
+        .form-label {
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .form-label::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--gray-600) !important;
+        .stat-badge i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block page_content %}
+
+    <div class="content-header mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center mb-3">
+            <div class="flex-grow-1">
+            <h1 class="fs-2 text-dark mb-0" style="position: relative; padding-left: 15px;">
+                <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background-color: var(--primary-color); border-radius: 3px;"></span>
+                <i class="fas fa-book-open me-2" style="color: var(--primary-color);"></i>
+                Édition du carnet de {{ logbook.owner ? logbook.owner.fullName : 'Sans propriétaire' }}
+            </h1>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-outline-secondary px-3 py-2" href="{{ path('admin_logbook_index', {'crudControllerFqcn': 'App\\Controller\\Admin\\Logbook\\LogbookCrudController'}) }}">
+                <i class="fas fa-arrow-left me-2"></i> 
+                Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    {# Informations propriétaire du carnet #}
+    <div class="content-card card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light py-3 header-bordered">
+            <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2" style="color: var(--primary-color);"></i>
+                Informations générales
+            </h5>
+        </div>
+        <div class="card-body py-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="d-flex flex-column">
+                        <div class="mb-2">
+                            <span class="text-muted fw-medium">Propriétaire :</span>
+                            <span class="ms-1">{{ logbook.owner ? logbook.owner.fullName : 'Non assigné' }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted fw-medium">NNI :</span>
+                            <span class="ms-1">{{ logbook.owner ? logbook.owner.nni : 'N/A' }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted fw-medium">Métier :</span>
+                            <span class="ms-1">{{ logbook.owner.job.value }}</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-muted fw-medium">Service :</span>
+                            <span class="ms-1">{{ logbook.owner.service.name }}</span>
+                        </div>
+                        <div>
+                            <span class="text-muted fw-medium">Date d'entrée :</span>
+                            <span class="ms-1">{{ logbook.owner.hiringAt|date('d/m/Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center h-100">
+                        <div class="stat-badge">
+                            <i class="fas fa-layer-group"></i>
+                            {% if logbook.themes|length < 2 %}
+                                <span class="fw-medium">{{ logbook.themes|length }}</span> thème associé au carnet.
+                            {% else %}
+                                <span class="fw-medium">{{ logbook.themes|length }}</span> thèmes associés au carnet.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Thèmes associés au carnet #}
+    <div class="content-card card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center header-bordered">
+            <h5 class="mb-0">
+                <i class="fas fa-list-ul me-2" style="color: var(--primary-color);"></i>
+                Thèmes associés
+            </h5>
+            {% if logbook.themes|length < 2 %}
+                <span class="badge fw-light text-white ls-1" style="background-color: var(--primary-color);">{{ logbook.themes|length }} thème</span>
+            {% else %}
+                <span class="badge fw-light text-white ls-1" style="background-color: var(--primary-color);">{{ logbook.themes|length }} thèmes</span>
+            {% endif %}
+        </div>
+        <div class="card-body py-4">
+            {% if logbook.themes|length > 0 %}
+                {# Vue mobile (cartes) #}
+                <div class="d-block d-lg-none">
+                    <div class="row row-cols-1 g-4">
+                        {% for theme in logbook.themes %}
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm theme-card">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h5 class="card-title text-dark mb-0">{{ theme.title }}</h5>
+                                            <span class="badge" style="background-color: #17a2b8;">
+                                                <i class="fas fa-th-large me-1"></i>
+                                                {{ theme.modules|length }} module(s)
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="card-text mb-3" style="font-size: 0.95rem; color: #2c384e;">
+                                            {{ theme.description|striptags|length > 100 ? theme.description|striptags|slice(0, 100) ~ '...' : theme.description|striptags }}
+                                        </p>
+                                        
+                                        {% set hasActions = analyses.analyse_actions[theme.id.toString].has_actions|default(false) %}
+                                        
+                                        <div class="mb-4">
+                                            <span class="badge {{ hasActions ? 'bg-warning' : 'bg-secondary' }}">
+                                                <i class="fas {{ hasActions ? 'fa-exclamation-triangle' : 'fa-times-circle' }} me-1"></i>
+                                                {{ hasActions ? 'Actions utilisateur présentes' : 'Aucune action utilisateur' }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-end">
+                                             <form method="post" id="deleteTheme_{{ theme.id | replace({'-': '_'}) }}" action="{{ path('admin_logbook_remove_theme', {'id': logbook.id, 'themeId': theme.id}) }}">
+                                                 <input type="hidden" name="_token" value="{{ csrf_token('remove_theme' ~ logbook.id ~ theme.id) }}">
+                                                 <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmModal{{ loop.index }}">
+                                                     <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                                 </button>
+                                             </form>
+                                             
+                                             <!-- Modal de confirmation -->
+                                             <div class="modal fade" id="confirmModal{{ loop.index }}" tabindex="-1" aria-labelledby="confirmModalLabel{{ loop.index }}" aria-hidden="true">
+                                                 <div class="modal-dialog modal-dialog-centered">
+                                                     <div class="modal-content modal-confirm">
+                                                         <div class="modal-header">
+                                                             <h5 class="modal-title text-white" id="confirmModalLabel{{ loop.index }}">
+                                                                 <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                                                 Confirmation de suppression
+                                                             </h5>
+                                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                         </div>
+                                                         <div class="modal-body text-center">
+                                                             <div class="warning-icon">
+                                                                 <i class="fas fa-trash-alt"></i>
+                                                             </div>
+                                                             {% if hasActions %}
+                                                             <div class="warning-text">Suppression définitive</div>
+                                                             <div class="theme-title">
+                                                                 <i class="fas fa-bookmark me-1"></i> {{ theme.title }}
+                                                             </div>
+                                                             
+                                                             <div class="row mb-3">
+                                                                 <div class="col-6">
+                                                                     <div class="theme-stats">
+                                                                         <i class="fas fa-layer-group me-1"></i> {{ theme.modules|length }} modules
+                                                                     </div>
+                                                                 </div>
+                                                                 <div class="col-6">
+                                                                     <div class="theme-stats">
+                                                                         <i class="fas fa-tasks me-1"></i> Complété par {{ logbook.owner.fullname|split(' ')|first }}
+                                                                     </div>
+                                                                 </div>
+                                                             </div>
+                                                             
+                                                             <div class="danger-box">
+                                                                 <p class="mb-0"><i class="fas fa-exclamation-circle me-1"></i> La suppression entraînera la <strong>perte définitive</strong> des données suivantes :</p>
+                                                                 <ul class="text-start mt-2 mb-1">
+                                                                     <li>Tous les modules associés ({{ theme.modules|length }})</li>
+                                                                     <li>Toutes les actions complétées par l'utilisateur</li>
+                                                                     <li>L'historique des modifications</li>
+                                                                 </ul>
+                                                             </div>
+                                                             
+                                                             <p class="mt-3 mb-0 fw-bold">Cette opération ne peut pas être annulée.</p>
+                                                             <p>Êtes-vous absolument certain de vouloir continuer ?</p>
+                                                             {% else %}
+                                                             <div class="warning-text">Suppression de thème</div>
+                                                             <div class="theme-title">
+                                                                 <i class="fas fa-bookmark me-1"></i> {{ theme.title }}
+                                                             </div>
+                                                             
+                                                             <p class="mb-3">Ce thème ne contient aucune donnée utilisateur.</p>
+                                                             
+                                                             <div class="theme-stats mb-3">
+                                                                 <i class="fas fa-layer-group me-1"></i> {{ theme.modules|length }} modules vides
+                                                             </div>
+                                                             
+                                                             <p class="text-muted"><small>Cette action est irréversible mais n'affectera pas les données utilisateur.</small></p>
+                                                             {% endif %}
+                                                         </div>
+                                                         <div class="modal-footer">
+                                                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                 <i class="fas fa-times me-1"></i> Annuler
+                                                             </button>
+                                                             <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteTheme_{{ theme.id | replace({'-': '_'}) }}').submit();">
+                                                                 <i class="fas fa-trash-alt me-1"></i> Confirmer la suppression
+                                                             </button>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {# Vue desktop (tableau) #}
+                <div class="d-none d-lg-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle data-table" style="border-collapse: separate; border-spacing: 0;">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-3">Titre</th>
+                                    <th class="py-3">Description</th>
+                                    <th class="py-3 text-center">Modules</th>
+                                    <th class="py-3">État des actions</th>
+                                    <th class="py-3 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for theme in logbook.themes %}
+                                    <tr>
+                                        <td class="fw-medium">{{ theme.title }}</td>
+                                        <td style="max-width: 300px;">
+                                            <div class="text-truncate" title="{{ theme.description|striptags }}">
+                                                {{ theme.description|striptags|length > 100 ? theme.description|striptags|slice(0, 100) ~ '...' : theme.description|striptags }}
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge text-white" style="background-color: #17a2b8;">
+                                                {{ theme.modules|length }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% set hasActions = analyses.analyse_actions[theme.id.toString].has_actions|default(false) %}
+                                            
+                                            {% if hasActions %}
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Actions renseignées
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger-subtle">
+                                                    <i class="fas fa-times-circle me-1 text-danger opacity-75"></i>
+                                                    Aucune action
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                         <td class="text-end">
+                                            <form method="post" id="deleteThemeTable_{{ theme.id | replace({'-': '_'}) }}" action="{{ path('admin_logbook_remove_theme', {'id': logbook.id, 'themeId': theme.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('remove_theme' ~ logbook.id ~ theme.id) }}">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmModalTable{{ loop.index }}">
+                                                    <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- Modal de confirmation -->
+                                            <div class="modal fade" id="confirmModalTable{{ loop.index }}" tabindex="-1" aria-labelledby="confirmModalTableLabel{{ loop.index }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content modal-confirm">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title text-white" id="confirmModalTableLabel{{ loop.index }}">
+                                                                <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                                                Confirmation de suppression
+                                                            </h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                             <div class="warning-icon">
+                                                                 <i class="fas fa-trash-alt"></i>
+                                                             </div>
+                                                             {% if hasActions %}
+                                                             <div class="warning-text">Suppression définitive</div>
+                                                             <div class="theme-title">
+                                                                <i class="fas fa-bookmark me-1"></i> {{ theme.title }}
+                                                             </div>
+                                                             
+                                                             <div class="row mb-3">
+                                                                <div class="col-6">
+                                                                    <div class="theme-stats">
+                                                                        <i class="fas fa-layer-group me-1"></i> {{ theme.modules|length }} modules
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <div class="theme-stats">
+                                                                        <i class="fas fa-tasks me-1"></i> Complété par {{ logbook.owner.fullname|split(' ')|first }}
+                                                                    </div>
+                                                                </div>
+                                                             </div>
+                                                             
+                                                             <div class="danger-box">
+                                                                <p class="mb-0"><i class="fas fa-exclamation-circle me-1"></i> La suppression entraînera la <strong>perte définitive</strong> des données suivantes :</p>
+                                                                <ul class="text-start mt-2 mb-1">
+                                                                    <li>Tous les modules associés ({{ theme.modules|length }})</li>
+                                                                    <li>Toutes les actions complétées par l'utilisateur</li>
+                                                                    <li>L'historique des modifications</li>
+                                                                </ul>
+                                                             </div>
+                                                             
+                                                             <p class="mt-3 mb-0 fw-bold">Cette opération ne peut pas être annulée.</p>
+                                                             <p>Êtes-vous absolument certain de vouloir continuer ?</p>
+                                                             {% else %}
+                                                             <div class="warning-text">Suppression de thème</div>
+                                                             <div class="theme-title">
+                                                                <i class="fas fa-bookmark me-1"></i> {{ theme.title }}
+                                                             </div>
+                                                             
+                                                             <p class="mb-3">Ce thème ne contient aucune donnée utilisateur.</p>
+                                                             
+                                                             <div class="theme-stats mb-3">
+                                                                <i class="fas fa-layer-group me-1"></i> {{ theme.modules|length }} modules vides
+                                                             </div>
+                                                             
+                                                             <p class="text-muted"><small>Cette action est irréversible mais n'affectera pas les données utilisateur.</small></p>
+                                                             {% endif %}
+                                                         </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                <i class="fas fa-times me-1"></i> Annuler
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteThemeTable_{{ theme.id | replace({'-': '_'}) }}').submit();">
+                                                                <i class="fas fa-trash-alt me-1"></i> Confirmer la suppression
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="alert alert-info d-flex align-items-center p-4" role="alert" style="background-color: var(--primary-light); color: var(--primary-color); border: none; border-left: 4px solid var(--primary-color);">
+                    <i class="fas fa-info-circle fs-5 me-3"></i>
+                    <div>
+                        Aucun thème n'est associé à ce carnet. Utilisez le formulaire ci-dessous pour ajouter des thèmes.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Ajouter un Thème #}
+    <div class="content-card card shadow-sm border-0 mt-4">
+        <div class="card-header bg-light py-3 header-bordered">
+            <h5 class="mb-0">
+                <i class="fas fa-plus-circle me-2" style="color: var(--primary-color);"></i>
+                Ajouter des thèmes
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            {% if hasAvailableThemes %}
+                {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                    {% if form_errors(form)|length > 0 %}
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ form_errors(form) }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label fw-semibold mb-3 ps-1">{{ form_label(form.themes) }}</label>
+                                <div class="select-container">
+                                    {{ form_widget(form.themes, {
+                                        'attr': {
+                                            'class': 'form-select',
+                                            'data-placeholder': 'Sélectionnez les thèmes à ajouter'
+                                        }
+                                    }) }}
+                                </div>
+                                <div class="form-text mt-2 ps-1">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Seuls les thèmes qui ne sont pas encore associés au carnet sont disponibles.
+                                </div>
+                            </div>
+                            {{ form_row(form._token) }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4 py-2 d-flex align-items-center">
+                            <i class="fas fa-plus-circle me-2"></i> Ajouter au carnet
+                        </button>
+                    </div>
+                {{ form_end(form, {render_rest: false}) }}
+            {% else %}
+                <div class="alert d-flex align-items-center p-4" role="alert" 
+                     style="background-color: rgba(25, 135, 84, 0.1); color: #198754; border: none; border-left: 4px solid #198754;">
+                    <i class="fas fa-check-circle fs-4 me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1 fw-bold">Plus aucun thème n'est disponible pour ce carnet</h6>
+                        <p class="mb-0">Tous les thèmes sont déjà associés.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
