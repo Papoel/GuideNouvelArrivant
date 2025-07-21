@@ -129,7 +129,7 @@ class DashboardControllerTest extends WebTestCase
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager);
 
         // Accédez à la page /guide-technique
-        $client->request(method: Request::METHOD_GET, uri: '/dashboard/' . $user->getNni() . '/guide-technique');
+        $client->request(method: Request::METHOD_GET, uri: '/pages/guide-technique');
 
         // Vérifiez que la page est bien accessible (code de statut HTTP 200)
         self::assertResponseIsSuccessful();
@@ -148,7 +148,7 @@ class DashboardControllerTest extends WebTestCase
 
         // Test avec email
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
-        $client->request(Request::METHOD_GET, '/dashboard/' . $user->getNni() . '/guide-technique');
+        $client->request(Request::METHOD_GET, '/pages/guide-technique');
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Guide Technique');
         self::assertSelectorTextContains('.breadcrumb-item a', 'Accueil');
@@ -161,7 +161,7 @@ class DashboardControllerTest extends WebTestCase
 
         // Test avec NNI
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
-        $client->request(Request::METHOD_GET, '/dashboard/' . $user->getNni() . '/guide-technique');
+        $client->request(Request::METHOD_GET, '/pages/guide-technique');
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Guide Technique');
         self::assertSelectorTextContains('.breadcrumb-item a', 'Accueil');

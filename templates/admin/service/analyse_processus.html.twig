@@ -1,0 +1,419 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse de conformité{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Variables pour l'accessibilité et la cohérence */
+        :root {
+            --primary-color: #3d5f9e;
+            --primary-dark: #2d4a7d;
+            --primary-hover: #34508a;
+            --primary-light: rgba(61, 95, 158, 0.08);
+            --text-dark: #2c384e;
+            --text-muted: #5d6778;
+            --bg-light: #f8f9fa;
+            --border-color: #e0e5ee;
+            --success-color: #2e7d32;
+            --warning-color: #e65100;
+            --info-color: #0277bd;
+            --danger-color: #c62828;
+            --card-radius: 0.5rem;
+            --transition-speed: 0.2s;
+            --focus-ring-color: rgba(61, 95, 158, 0.5);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.08);
+            --card-border: 1px solid var(--border-color);
+            --card-header-bg: #fcfcfd;
+            --card-body-bg: #ffffff;
+            --card-footer-bg: #f9fafc;
+        }
+        
+        /* Focus styles pour l'accessibilité */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus {
+            outline: 3px solid var(--focus-ring-color) !important;
+            outline-offset: 2px !important;
+            box-shadow: none !important;
+        }
+        
+        /* Classe pour les éléments visibles uniquement par les lecteurs d'écran */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Styles généraux */
+        .content-card {
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-sm);
+            background-color: var(--card-body-bg);
+            border: var(--card-border);
+            margin-bottom: 1.5rem;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            overflow: hidden; /* Assure que les coins arrondis sont respectés */
+        }
+        
+        .content-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .content-card .card-header {
+            background-color: var(--card-header-bg);
+            border-bottom: var(--card-border);
+            padding: 1rem 1.5rem;
+            border-top-left-radius: var(--card-radius);
+            border-top-right-radius: var(--card-radius);
+            font-weight: 500;
+        }
+        
+        .dashboard-header {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        /* Styles pour les cartes de conformité */
+        .conformity-card {
+            border: var(--card-border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            background-color: var(--card-body-bg);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            height: 100%;
+            overflow: hidden; /* Assure que les coins arrondis sont respectés */
+        }
+        
+        .conformity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(61, 95, 158, 0.2);
+        }
+        
+        .conformity-card .card-header {
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 1rem 1.25rem;
+            background-color: var(--card-header-bg);
+            border-bottom: var(--card-border);
+            border-top-left-radius: var(--card-radius);
+            border-top-right-radius: var(--card-radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .conformity-card .card-body {
+            padding: 1.25rem;
+            background-color: var(--card-body-bg);
+        }
+        
+        .conformity-card .card-footer {
+            background-color: var(--card-footer-bg);
+            border-top: var(--card-border);
+            padding: 0.75rem 1.25rem;
+            border-bottom-left-radius: var(--card-radius);
+            border-bottom-right-radius: var(--card-radius);
+        }
+        
+        .conformity-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .conformity-status-label {
+            flex: 1;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .conformity-status {
+            position: relative;
+        }
+        
+        .conformity-status-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .conformity-status-icon.success {
+            background-color: rgba(46, 125, 50, 0.08);
+            color: var(--success-color);
+        }
+        
+        .conformity-status-icon.warning {
+            background-color: rgba(230, 81, 0, 0.08);
+            color: var(--warning-color);
+        }
+        
+        .conformity-status-icon.danger {
+            background-color: rgba(198, 40, 40, 0.08);
+            color: var(--danger-color);
+        }
+        
+        .conformity-status:hover .conformity-status-icon {
+            transform: scale(1.1);
+        }
+        
+        .todo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            background-color: rgba(230, 81, 0, 0.1);
+            color: var(--warning-color);
+            margin-left: 0.75rem;
+            border: 1px solid rgba(230, 81, 0, 0.2);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.03em;
+        }
+        
+        .conformity-progress {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #f0f2f5;
+            margin: 1rem 0;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .conformity-progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.6s ease;
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+        }
+        
+        .conformity-progress-bar.success {
+            background-color: var(--success-color);
+        }
+        
+        .conformity-progress-bar.warning {
+            background-color: var(--warning-color);
+        }
+        
+        .conformity-progress-bar.danger {
+            background-color: var(--danger-color);
+        }
+        
+        .conformity-badge {
+            font-weight: 500;
+            padding: 0.35em 0.75em;
+            border-radius: 50rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .conformity-meta {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: 0.25rem;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        /* Responsive design */
+        .mobile-view {
+            display: block;
+        }
+        
+        .desktop-view {
+            display: none;
+        }
+
+        .ls-1 {
+            letter-spacing: 0.06em;
+        }
+        
+        @media (min-width: 992px) {
+            .mobile-view {
+                display: none;
+            }
+            
+            .desktop-view {
+                display: block;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="container-fluid my-4">
+        <div class="dashboard-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 mb-md-5">
+            <div>
+                <h1 class="text-dark fw-semibold" id="main-heading">
+                    <i class="bi bi-clipboard-check me-2 me-md-3" aria-hidden="true"></i>
+                    Analyse de conformité
+                </h1>
+                <p class="mb-3 mb-md-0 mt-2" style="color: var(--text-muted);">
+                    Analyse de conformité des carnets de compagnonnage.
+                </p>
+            </div>
+            <div>
+                <a 
+                    href="{{ path('admin') }}"
+                    class="btn btn-outline-secondary rounded-pill shadow-sm" 
+                    style="padding: 0.6rem 1.2rem;"
+                    aria-label="Retour à l'administration"
+                >
+                    <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Retour à l'administration
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for item in check_conformity %}
+            {# Calcul du pourcentage de conformité #}
+            {% set total_items = item|length -1 %}
+            {% set completed_items = 0 %}
+            {% set todo_items = 0 %}
+            
+            {# Vérification de chaque élément #}
+            {% if item.apprenant_first_name == true %}{% set completed_items = completed_items + 1 %}{% endif %}
+            {% if item.apprenant_last_name == true %}{% set completed_items = completed_items + 1 %}{% endif %}
+            {% if item.apprenant_job == true %}{% set completed_items = completed_items + 1 %}{% endif %}
+            {% if item.apprenant_service == true %}{% set completed_items = completed_items + 1 %}{% endif %}
+            {% if item.mentor == true %}{% set completed_items = completed_items + 1 %}{% endif %}
+            
+            {# Traitement spécial pour la mission - utilisation d'une variable temporaire #}
+            {% set mission_status = item.mission %}
+            {% if mission_status is same as(true) %}
+                {% set completed_items = completed_items + 1 %}
+            {% elseif mission_status is same as("TODO") %}
+                {% set todo_items = todo_items + 1 %}
+            {% endif %}
+            
+            {% set conformity_percent = (completed_items / total_items) * 100 %}
+            
+            {# Définition des classes de couleur selon le pourcentage #}
+            {% set progress_class = '' %}
+            {% set status_text = '' %}
+            {% set status_icon = '' %}
+            
+            {% if conformity_percent == 100 %}
+                {% set progress_class = 'success-subtle text-success-emphasis rounded-pill fw-light ls-1' %}
+                {% set status_text = 'Conforme' %}
+                {% set status_icon = 'bi-check-circle-fill' %}
+            {% elseif conformity_percent >= 75 %}
+                {% set progress_class = 'primary-subtle text-primary-emphasis rounded-pill fw-light ls-1' %}
+                {% set status_text = 'Presque conforme' %}
+                {% set status_icon = 'bi-check-circle' %}
+            {% elseif conformity_percent >= 50 %}
+                {% set progress_class = 'warning-subtle text-warning-emphasis rounded-pill fw-light ls-1' %}
+                {% set status_text = 'Partiellement conforme' %}
+                {% set status_icon = 'bi-exclamation-circle' %}
+            {% else %}
+                {% set progress_class = 'danger-subtle text-danger-emphasis rounded-pill fw-light ls-1' %}
+                {% set status_text = 'Non conforme' %}
+                {% set status_icon = 'bi-x-circle' %}
+            {% endif %}
+            {# Vérification du comptage des éléments TODO #}
+            {# {{ dump(item.mission, todo_items) }} #}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                <div class="conformity-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-medium">{{ item.fullname }}</span>
+                        <span class="badge bg-{{ progress_class }} conformity-badge">{{ status_text }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="conformity-progress mb-3">
+                            <div class="conformity-progress-bar {{ progress_class }}" style="width: {{ conformity_percent }}%" 
+                                 aria-valuenow="{{ conformity_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="conformity-meta mb-3">
+                            <strong>{{ completed_items }}/{{ total_items }}</strong> éléments conformes
+                            {% if todo_items > 0 %}
+                                <span class="ms-2 badge bg-warning-subtle text-warning-emphasis">{{ todo_items }} à compléter</span>
+                            {% endif %}
+                        </div>
+                        
+                        <h6 class="mb-3 fw-bold">Détails de conformité</h6>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Prénom</span>
+                            <span class="conformity-status-icon {{ item.apprenant_first_name ? 'success' : 'danger' }}">
+                                <i class="bi {{ item.apprenant_first_name ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Nom</span>
+                            <span class="conformity-status-icon {{ item.apprenant_last_name ? 'success' : 'danger' }}">
+                                <i class="bi {{ item.apprenant_last_name ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Métier</span>
+                            <span class="conformity-status-icon {{ item.apprenant_job ? 'success' : 'danger' }}">
+                                <i class="bi {{ item.apprenant_job ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Service</span>
+                            <span class="conformity-status-icon {{ item.apprenant_service ? 'success' : 'danger' }}">
+                                <i class="bi {{ item.apprenant_service ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Tuteur</span>
+                            <span class="conformity-status-icon {{ item.mentor ? 'success' : 'danger' }}">
+                                <i class="bi {{ item.mentor ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                            </span>
+                        </div>
+                        
+                        <div class="conformity-status">
+                            <span class="conformity-status-label">Mission</span>
+                            {% if item.mission is same as("TODO") %}
+                                <span class="todo-badge">
+                                    <i class="bi bi-pencil-fill me-1" style="font-size: 0.7rem;"></i>
+                                    À compléter
+                                </span>
+                            {% else %}
+                                <span class="conformity-status-icon {{ item.mission ? 'success' : 'danger' }}">
+                                    <i class="bi {{ item.mission ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}
