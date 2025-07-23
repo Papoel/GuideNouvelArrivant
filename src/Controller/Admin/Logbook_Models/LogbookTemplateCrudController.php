@@ -64,8 +64,8 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 $labels = [
                     'TECHNICIEN' => 'Technicien',
                     'INGENIEUR' => 'Ingénieur',
-                    'CHARGE_AFFAIRES' => "Chargé d'affaires",
-                    'CHARGE_AFFAIRES_PROJET' => "CAP",
+                    'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
+                    'CHARGE_AFFAIRES_PROJET' => 'CAP',
                     'CHARGE_SURVEILLANCE' => 'CSI',
                 ];
 
@@ -88,8 +88,8 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 ->setChoices([
                     'Technicien' => 'TECHNICIEN',
                     'Ingénieur' => 'INGENIEUR',
-                    "Chargé d'affaires" => 'CHARGE_AFFAIRES',
-                    "Chargé d'affaires projet" => 'CHARGE_AFFAIRES_PROJET',
+                    'Chargé d\'affaires' => 'CHARGE_AFFAIRES',
+                    'Chargé d\'affaires projet' => 'CHARGE_AFFAIRES_PROJET',
                     'Chargé de surveillance' => 'CHARGE_SURVEILLANCE',
                 ])
                 ->allowMultipleChoices()
