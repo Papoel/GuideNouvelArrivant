@@ -37,7 +37,8 @@ class DashboardController extends AbstractDashboardController
         private readonly ModuleRepository $ModuleRepository,
         private readonly ServiceRepository $ServiceRepository,
         private readonly LogbookTemplateRepository $LogbookTemplateRepository,
-    ) {}
+    ) {
+    }
 
     public function configureAssets(): Assets
     {

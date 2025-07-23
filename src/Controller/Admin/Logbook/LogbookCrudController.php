@@ -44,7 +44,6 @@ class LogbookCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new(propertyName: 'id')->hideOnForm(),
             TextField::new(propertyName: 'name')->setLabel(label: 'Nom du carnet')->onlyOnIndex(),
             AssociationField::new(propertyName: 'owner', label: 'Propriétaire du carnet'),
             AssociationField::new(propertyName: 'themes', label: 'index' === $pageName ? 'Nb de thèmes' : 'Thèmes associés')
@@ -62,7 +61,6 @@ class LogbookCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Carnet')
             ->setEntityLabelInPlural('Carnets')
             ->setPageTitle('index', 'Liste des carnets')
-            ->setPageTitle('new', 'Créer un carnet')
             ->setPageTitle('edit', 'Modifier un carnet')
             ->setPageTitle('detail', 'Détails du carnet')
             ->setDefaultSort(['id' => 'DESC'])

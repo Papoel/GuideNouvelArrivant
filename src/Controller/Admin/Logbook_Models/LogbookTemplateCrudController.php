@@ -4,11 +4,8 @@ namespace App\Controller\Admin\Logbook_Models;
 
 use App\Entity\LogbookTemplate;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -32,15 +29,58 @@ class LogbookTemplateCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
         yield TextField::new('name');
-        yield TextEditorField::new('description');
-        yield AssociationField::new('themes');
+        yield AssociationField::new('themes')->setCssClass('text-center');
         yield AssociationField::new('service', 'Service')->setRequired(false);
-        yield BooleanField::new('isDefault', 'Modèle par défaut');
+        yield TextField::new('jobLabel', 'Métiers')
+            ->onlyOnIndex()
+            ->formatValue(function ($value, $entity) {
+                if (empty($value)) {
+                    return '';
+                }
 
-        // Affichage des métiers dans la liste
-        yield TextField::new(propertyName: 'jobLabel', label: 'Métiers')->onlyOnIndex();
+                // Vérifier que l'entité est bien un LogbookTemplate
+                if (!$entity instanceof LogbookTemplate) {
+                    return is_string($value) ? $value : '';
+                }
+
+                // Traitement des jobs
+                $jobs = $entity->getJobs();
+
+                // Si les jobs sont vides, retourner une chaîne vide
+                if (empty($jobs)) {
+                    return '';
+                }
+
+                $badges = [];
+                $classes = [
+                    'TECHNICIEN' => 'badge-info',
+                    'INGENIEUR' => 'badge-primary',
+                    'CHARGE_AFFAIRES' => 'badge-success',
+                    'CHARGE_AFFAIRES_PROJET' => 'badge-warning',
+                    'CHARGE_SURVEILLANCE' => 'badge-danger',
+                ];
+
+                $labels = [
+                    'TECHNICIEN' => 'Technicien',
+                    'INGENIEUR' => 'Ingénieur',
+                    'CHARGE_AFFAIRES' => "Chargé d'affaires",
+                    'CHARGE_AFFAIRES_PROJET' => "CAP",
+                    'CHARGE_SURVEILLANCE' => 'CSI',
+                ];
+
+                foreach ($jobs as $job) {
+                    $badgeClass = $classes[$job] ?? 'badge-secondary';
+                    $jobLabel = $labels[$job] ?? $job;
+                    $badges[] = sprintf(
+                        '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
+                        $badgeClass,
+                        htmlspecialchars((string) $jobLabel)
+                    );
+                }
+
+                return implode('', $badges);
+            });
 
         // Utilisation d'un ChoiceField simple pour les métiers
         if ($pageName === Crud::PAGE_NEW || $pageName === Crud::PAGE_EDIT) {

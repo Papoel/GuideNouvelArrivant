@@ -1,6 +1,6 @@
 # TODO avant de commit
 
-Ce fichier a été généré automatiquement par `make before-commit` le 16-07-2025 à 20h55.
+Ce fichier a été généré automatiquement par `make before-commit` le 23-07-2025 à 14h16.
 
 ## Liste des problèmes à corriger
 
@@ -53,23 +53,22 @@ Ce fichier a été généré automatiquement par `make before-commit` le 16-07-2
 - [ ]  240 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
 - [ ]  247 | [33mWARNING[0m | Line exceeds 120 characters; contains 125 characters
 - [ ] [1mFOUND 0 ERRORS AND 3 WARNINGS AFFECTING 3 LINES[0m
-- [ ]   50 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
-- [ ]  207 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
-- [ ]  248 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
-- [ ] [1mFOUND 0 ERRORS AND 13 WARNINGS AFFECTING 13 LINES[0m
+- [ ]   49 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
+- [ ]  205 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
+- [ ]  246 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
+- [ ] [1mFOUND 0 ERRORS AND 12 WARNINGS AFFECTING 12 LINES[0m
 - [ ]   99 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
 - [ ]  100 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
 - [ ]  109 | [33mWARNING[0m | Line exceeds 120 characters; contains 163 characters
 - [ ]  110 | [33mWARNING[0m | Line exceeds 120 characters; contains 166 characters
 - [ ]  111 | [33mWARNING[0m | Line exceeds 120 characters; contains 141 characters
 - [ ]  119 | [33mWARNING[0m | Line exceeds 120 characters; contains 155 characters
-- [ ]  120 | [33mWARNING[0m | Line exceeds 120 characters; contains 158 characters
-- [ ]  128 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
-- [ ]  129 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
-- [ ]  137 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
-- [ ]  138 | [33mWARNING[0m | Line exceeds 120 characters; contains 155 characters
-- [ ]  146 | [33mWARNING[0m | Line exceeds 120 characters; contains 156 characters
-- [ ]  147 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
+- [ ]  127 | [33mWARNING[0m | Line exceeds 120 characters; contains 152 characters
+- [ ]  128 | [33mWARNING[0m | Line exceeds 120 characters; contains 153 characters
+- [ ]  136 | [33mWARNING[0m | Line exceeds 120 characters; contains 154 characters
+- [ ]  137 | [33mWARNING[0m | Line exceeds 120 characters; contains 155 characters
+- [ ]  145 | [33mWARNING[0m | Line exceeds 120 characters; contains 156 characters
+- [ ]  146 | [33mWARNING[0m | Line exceeds 120 characters; contains 157 characters
 - [ ] [1mFOUND 0 ERRORS AND 6 WARNINGS AFFECTING 6 LINES[0m
 - [ ]  313 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
 - [ ]  315 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
