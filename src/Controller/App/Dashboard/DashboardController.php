@@ -40,10 +40,4 @@ class DashboardController extends AbstractController
         // Rendu du tableau de bord avec les données obtenues
         return $this->render(view: 'app/dashboard/dashboard.html.twig', parameters: $dashboardData);
     }
-
-    #[Route('/guide-technique', name: 'pages')]
-    public function pages(): Response
-    {
-        return $this->render(view: 'pages/guide_technique.html.twig');
-    }
 }

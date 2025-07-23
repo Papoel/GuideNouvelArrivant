@@ -424,9 +424,9 @@
                                     <div class="card-body p-4">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="card-title text-dark mb-0">{{ theme.title }}</h5>
-                                            <span class="badge" style="background-color: #17a2b8;">
+                                            <span class="badge text-white ls-1 fw-light" style="background-color: #17a2b8;">
                                                 <i class="fas fa-th-large me-1"></i>
-                                                {{ theme.modules|length }} module(s)
+                                                {{ theme.modules|length > 2 ? theme.modules|length ~ ' modules' : theme.modules|length ~ ' module' }}
                                             </span>
                                         </div>
                                         
@@ -437,8 +437,8 @@
                                         {% set hasActions = analyses.analyse_actions[theme.id.toString].has_actions|default(false) %}
                                         
                                         <div class="mb-4">
-                                            <span class="badge {{ hasActions ? 'bg-warning' : 'bg-secondary' }}">
-                                                <i class="fas {{ hasActions ? 'fa-exclamation-triangle' : 'fa-times-circle' }} me-1"></i>
+                                            <span class="badge {{ hasActions ? 'bg-warning-subtle text-warning-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
+                                                <i class="fas {{ hasActions ? 'fa-exclamation-triangle' : 'fa-times-circle' }} me-1 opacity-75"></i>
                                                 {{ hasActions ? 'Actions utilisateur présentes' : 'Aucune action utilisateur' }}
                                             </span>
                                         </div>
@@ -560,17 +560,10 @@
                                         <td>
                                             {% set hasActions = analyses.analyse_actions[theme.id.toString].has_actions|default(false) %}
                                             
-                                            {% if hasActions %}
-                                                <span class="badge bg-warning">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                    Actions renseignées
-                                                </span>
-                                            {% else %}
-                                                <span class="badge bg-danger-subtle">
-                                                    <i class="fas fa-times-circle me-1 text-danger opacity-75"></i>
-                                                    Aucune action
-                                                </span>
-                                            {% endif %}
+                                            <span class="badge {{ hasActions ? 'bg-warning-subtle text-warning-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
+                                                <i class="fas {{ hasActions ? 'fa-exclamation-triangle' : 'fa-times-circle' }} me-1 opacity-75"></i>
+                                                {{ hasActions ? 'Actions utilisateur présentes' : 'Aucune action utilisateur' }}
+                                            </span>
                                         </td>
                                          <td class="text-end">
                                             <form method="post" id="deleteThemeTable_{{ theme.id | replace({'-': '_'}) }}" action="{{ path('admin_logbook_remove_theme', {'id': logbook.id, 'themeId': theme.id}) }}">

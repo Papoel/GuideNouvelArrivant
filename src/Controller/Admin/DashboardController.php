@@ -117,7 +117,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu(label: 'Carnet', icon: 'fas fa-book')->setSubItems(
             subItems: [
                 MenuItem::linkToCrud(label: 'Liste des carnets', icon: 'fas fa-list', entityFqcn: Logbook::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer un carnet', icon: 'fas fa-plus-circle', entityFqcn: Logbook::class)->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 
@@ -154,6 +153,28 @@ class DashboardController extends AbstractDashboardController
             label: 'Tableau de bord de progression',
             icon: 'fas fa-chart-pie',
             routeName: 'admin_progress_dashboard'
+        );
+
+        yield MenuItem::section(label: 'Guides', icon: 'fas fa-folder-open');
+        yield MenuItem::subMenu(label: 'Guides', icon: 'fas fa-folder-open')->setSubItems(
+            subItems: [
+                MenuItem::linkToRoute(
+                    label: 'Processus MCH-03',
+                    icon: 'fas fa-microchip',
+                    routeName: 'pages_processus_elementaire'
+                ),
+                MenuItem::linkToRoute(
+                    label: 'Guide',
+                    icon: 'fas fa-microchip',
+                    routeName: 'pages_guide_technique'
+                ),
+                // Analyse de conformité des carnets de compagnonnage AnalyseProcessusController::index
+                MenuItem::linkToRoute(
+                    label: 'Analyse de conformité',
+                    icon: 'fas fa-magnifying-glass-chart',
+                    routeName: 'service_analyse_processus_index'
+                ),
+            ]
         );
     }
 }
