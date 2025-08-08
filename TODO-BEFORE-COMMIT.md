@@ -1,6 +1,6 @@
 # TODO avant de commit
 
-Ce fichier a été généré automatiquement par `make before-commit` le 23-07-2025 à 14h16.
+Ce fichier a été généré automatiquement par `make before-commit` le 08-08-2025 à 22h55.
 
 ## Liste des problèmes à corriger
 
@@ -79,6 +79,13 @@ Ce fichier a été généré automatiquement par `make before-commit` le 23-07-2
 - [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
 - [ ]   38 | [33mWARNING[0m | Line exceeds 120 characters; contains 123 characters
 - [ ]  107 | [33mWARNING[0m | Line exceeds 120 characters; contains 161 characters
+- [ ] [1mFOUND 0 ERRORS AND 6 WARNINGS AFFECTING 6 LINES[0m
+- [ ]   41 | [33mWARNING[0m | Line exceeds 120 characters; contains 194 characters
+- [ ]   42 | [33mWARNING[0m | Line exceeds 120 characters; contains 141 characters
+- [ ]  100 | [33mWARNING[0m | Line exceeds 120 characters; contains 129 characters
+- [ ]  214 | [33mWARNING[0m | Line exceeds 120 characters; contains 122 characters
+- [ ]  217 | [33mWARNING[0m | Line exceeds 120 characters; contains 121 characters
+- [ ]  220 | [33mWARNING[0m | Line exceeds 120 characters; contains 124 characters
 - [ ] [1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
 - [ ]  28 | [33mWARNING[0m | Line exceeds 120 characters; contains 128 characters
 - [ ]  36 | [33mWARNING[0m | Line exceeds 120 characters; contains 143 characters

@@ -61,6 +61,7 @@ class LogbookTemplate
     public function __construct()
     {
         $this->themes = new ArrayCollection();
+        $this->isDefault = false;
     }
 
     public function __toString(): string
