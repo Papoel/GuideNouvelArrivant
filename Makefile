@@ -224,7 +224,7 @@ qa-all: phpcs phpstan phpmd phpcpd psalm php-metrics ## Exécute toutes les anal
 before-commit: ## Exécute toutes les vérifications avant de commit
 	@echo "$(GREEN)🔍 Exécution des vérifications pré-commit...$(NC)"
 	@echo "$(YELLOW)Préparation du fichier TODO...$(NC)"
-	@echo "# TODO avant de commit\n\nCe fichier a été généré automatiquement par \`make before-commit\` le $(shell date +%d-%m-%Y) à $(shell date +%Hh%M).\n\n## Liste des problèmes à corriger\n" > TODO-BEFORE-COMMIT.md
+#	@echo "# TODO avant de commit\n\nCe fichier a été généré automatiquement par \`make before-commit\` le $(shell date +%d-%m-%Y) à $(shell date +%Hh%M).\n\n## Liste des problèmes à corriger\n" > TODO-BEFORE-COMMIT.md
 
 	@echo "$(YELLOW)Vérification des dépendances vulnérables...$(NC)"
 	@$(COMPOSER) audit
@@ -240,33 +240,33 @@ before-commit: ## Exécute toutes les vérifications avant de commit
 
 	@echo "$(YELLOW)Vérification du style de code...$(NC)"
 	@$(PHPQA_RUN) phpcs --standard=phpcs.xml src > phpcs-output.tmp 2>&1 || true
-	@if grep -q "ERROR\|WARNING" phpcs-output.tmp; then \
-		echo "### Problèmes de style de code (PSR-12)\n" >> TODO-BEFORE-COMMIT.md; \
-		grep -E "ERROR|WARNING" phpcs-output.tmp | sed 's/^/- [ ] /' >> TODO-BEFORE-COMMIT.md; \
-		echo "\n" >> TODO-BEFORE-COMMIT.md; \
-	fi
+#	@if grep -q "ERROR\|WARNING" phpcs-output.tmp; then \
+#		echo "### Problèmes de style de code (PSR-12)\n" >> TODO-BEFORE-COMMIT.md; \
+#		grep -E "ERROR|WARNING" phpcs-output.tmp | sed 's/^/- [ ] /' >> TODO-BEFORE-COMMIT.md; \
+#		echo "\n" >> TODO-BEFORE-COMMIT.md; \
+#	fi
 	@rm phpcs-output.tmp
 
 	@echo "$(YELLOW)Analyse statique du code (PHPStan niveau max)...$(NC)"
 	@$(PHPQA_RUN) phpstan analyse -l max src > phpstan-output.tmp 2>&1 || true
-	@if grep -q "ERROR\|Line" phpstan-output.tmp; then \
-		echo "### Problèmes détectés par PHPStan\n" >> TODO-BEFORE-COMMIT.md; \
-		current_file=""; \
-		while IFS= read -r line; do \
-			if [[ $$line == *"Line   "* ]]; then \
-				current_file=$$(echo "$$line" | awk '{print $$2}'); \
-				echo "\n#### [$$current_file](src/$$current_file)\n" >> TODO-BEFORE-COMMIT.md; \
-			elif [[ $$line =~ ^[[:space:]]*([0-9]+)[[:space:]]+(.*) ]]; then \
-				line_num=$${BASH_REMATCH[1]}; \
-				message=$${BASH_REMATCH[2]}; \
-				echo "- [ ] [**Ligne $$line_num**](src/$$current_file#L$$line_num): $$message" >> TODO-BEFORE-COMMIT.md; \
-				if grep -A 2 "$$line_num " phpstan-output.tmp | grep -q "never read, only written"; then \
-					echo "  💡 [Documentation](https://phpstan.org/developing-extensions/always-read-written-properties)" >> TODO-BEFORE-COMMIT.md; \
-				fi; \
-				echo "" >> TODO-BEFORE-COMMIT.md; \
-			fi; \
-		done < phpstan-output.tmp; \
-	fi
+#	@if grep -q "ERROR\|Line" phpstan-output.tmp; then \
+#		echo "### Problèmes détectés par PHPStan\n" >> TODO-BEFORE-COMMIT.md; \
+#		current_file=""; \
+#		while IFS= read -r line; do \
+#			if [[ $$line == *"Line   "* ]]; then \
+#				current_file=$$(echo "$$line" | awk '{print $$2}'); \
+#				echo "\n#### [$$current_file](src/$$current_file)\n" >> TODO-BEFORE-COMMIT.md; \
+#			elif [[ $$line =~ ^[[:space:]]*([0-9]+)[[:space:]]+(.*) ]]; then \
+#				line_num=$${BASH_REMATCH[1]}; \
+#				message=$${BASH_REMATCH[2]}; \
+#				echo "- [ ] [**Ligne $$line_num**](src/$$current_file#L$$line_num): $$message" >> TODO-BEFORE-COMMIT.md; \
+#				if grep -A 2 "$$line_num " phpstan-output.tmp | grep -q "never read, only written"; then \
+#					echo "  💡 [Documentation](https://phpstan.org/developing-extensions/always-read-written-properties)" >> TODO-BEFORE-COMMIT.md; \
+#				fi; \
+#				echo "" >> TODO-BEFORE-COMMIT.md; \
+#			fi; \
+#		done < phpstan-output.tmp; \
+#	fi
 	@cat phpstan-output.tmp
 	@rm phpstan-output.tmp
 
@@ -277,11 +277,11 @@ ifeq ($(ENABLE_PSALM),1)
 		$(PHPQA_RUN) psalm --init src 3; \
 	fi
 	@$(PHPQA_RUN) psalm --show-info=false > psalm-output.tmp 2>&1 || true
-	@if grep -q "ERROR" psalm-output.tmp; then \
-		echo "### Problèmes détectés par Psalm\n" >> TODO-BEFORE-COMMIT.md; \
-		grep -E "ERROR:" psalm-output.tmp | sed 's/^/- [ ] /' >> TODO-BEFORE-COMMIT.md; \
-		echo "\n" >> TODO-BEFORE-COMMIT.md; \
-	fi
+#	@if grep -q "ERROR" psalm-output.tmp; then \
+#		echo "### Problèmes détectés par Psalm\n" >> TODO-BEFORE-COMMIT.md; \
+#		grep -E "ERROR:" psalm-output.tmp | sed 's/^/- [ ] /' >> TODO-BEFORE-COMMIT.md; \
+#		echo "\n" >> TODO-BEFORE-COMMIT.md; \
+#	fi
 	@cat psalm-output.tmp
 	@rm psalm-output.tmp
 else
@@ -291,25 +291,25 @@ endif
 ifeq ($(ENABLE_PHPMD),1)
 	@echo "$(YELLOW)Vérification des problèmes potentiels (PHPMD)...$(NC)"
 	@$(PHPQA_RUN) phpmd src text cleancode,codesize,controversial,design,naming,unusedcode --ignore-violations-on-exit > phpmd-output.tmp 2>&1 || true
-	@if [ -s phpmd-output.tmp ]; then \
-		echo "### Problèmes détectés par PHPMD\n" >> TODO-BEFORE-COMMIT.md; \
-		grep "/project/src/" phpmd-output.tmp | sed -E 's|/project/src/([^:]+):([0-9]+)[[:space:]]+([^[:space:]]+)[[:space:]]+(.+)|- [ ] [**\1:\2**](src/\1#L\2): \3 - \4|' >> TODO-BEFORE-COMMIT.md; \
-	fi
+#	@if [ -s phpmd-output.tmp ]; then \
+#		echo "### Problèmes détectés par PHPMD\n" >> TODO-BEFORE-COMMIT.md; \
+#		grep "/project/src/" phpmd-output.tmp | sed -E 's|/project/src/([^:]+):([0-9]+)[[:space:]]+([^[:space:]]+)[[:space:]]+(.+)|- [ ] [**\1:\2**](src/\1#L\2): \3 - \4|' >> TODO-BEFORE-COMMIT.md; \
+#	fi
 	@cat phpmd-output.tmp
 	@rm phpmd-output.tmp
 
 	@echo "$(YELLOW)Détection du code dupliqué...$(NC)"
 	@$(PHPQA_RUN) phpcpd src > phpcpd-output.tmp 2>&1 || true
-	@if grep -q "Found" phpcpd-output.tmp; then \
-		echo "### Code dupliqué détecté par PHPCPD\n" >> TODO-BEFORE-COMMIT.md; \
-		echo "- [ ] **Duplication entre fichiers** :\n" >> TODO-BEFORE-COMMIT.md; \
-		echo "  \`\`\`" >> TODO-BEFORE-COMMIT.md; \
-		grep "Found" phpcpd-output.tmp >> TODO-BEFORE-COMMIT.md; \
-		echo "" >> TODO-BEFORE-COMMIT.md; \
-		cat phpcpd-output.tmp | grep "  - " | sed -E 's|  - /project/src/([^:]+):([0-9]+)-([0-9]+) \(([0-9]+) lines\)|  - [src/\1:\2-\3 (\4 lines)](src/\1#L\2-L\3)|' >> TODO-BEFORE-COMMIT.md; \
-		echo "  \`\`\`" >> TODO-BEFORE-COMMIT.md; \
-		echo "\n" >> TODO-BEFORE-COMMIT.md; \
-	fi
+#	@if grep -q "Found" phpcpd-output.tmp; then \
+#		echo "### Code dupliqué détecté par PHPCPD\n" >> TODO-BEFORE-COMMIT.md; \
+#		echo "- [ ] **Duplication entre fichiers** :\n" >> TODO-BEFORE-COMMIT.md; \
+#		echo "  \`\`\`" >> TODO-BEFORE-COMMIT.md; \
+#		grep "Found" phpcpd-output.tmp >> TODO-BEFORE-COMMIT.md; \
+#		echo "" >> TODO-BEFORE-COMMIT.md; \
+#		cat phpcpd-output.tmp | grep "  - " | sed -E 's|  - /project/src/([^:]+):([0-9]+)-([0-9]+) \(([0-9]+) lines\)|  - [src/\1:\2-\3 (\4 lines)](src/\1#L\2-L\3)|' >> TODO-BEFORE-COMMIT.md; \
+#		echo "  \`\`\`" >> TODO-BEFORE-COMMIT.md; \
+#		echo "\n" >> TODO-BEFORE-COMMIT.md; \
+#	fi
 	@cat phpcpd-output.tmp
 	@rm phpcpd-output.tmp
 else
@@ -339,7 +339,7 @@ endif
 	$(CONSOLE) lint:container || true
 
 	@echo "$(GREEN)✅ Toutes les vérifications sont terminées !$(NC)"
-	@echo "$(GREEN)📝   Un fichier TODO-BEFORE-COMMIT.md a été généré avec la liste des problèmes à corriger.$(NC)"
+#	@echo "$(GREEN)📝   Un fichier TODO-BEFORE-COMMIT.md a été généré avec la liste des problèmes à corriger.$(NC)"
 	@echo "$(GREEN)👉   Vous pouvez maintenant corriger ces problèmes avant de commit et push votre code.$(NC)"
 
 ## —— 🗃️ Base de données ————————————————————————————————————
