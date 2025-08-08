@@ -1,65 +1,65 @@
 name: Quality Analysis
 on: [push, pull_request]
 jobs:
-  quality:
-    name: Quality Analysis
-    runs-on: ubuntu-latest
-    container:
-      image: jakzal/phpqa:php8.3
-      options: --user root
-    steps:
-      - name: Set safe directory
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          chown -R $(id -u):$(id -g) "$GITHUB_WORKSPACE"
+    quality:
+        name: Quality Analysis
+        runs-on: ubuntu-latest
+        container:
+            image: jakzal/phpqa:php8.3
+            options: --user root
+        steps:
+            - name: Set safe directory
+              run: |
+                  git config --global --add safe.directory "$GITHUB_WORKSPACE"
+                  chown -R $(id -u):$(id -g) "$GITHUB_WORKSPACE"
 
-      - name: Checkout
-        uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Install XSL extension
-        run: |
-          apt-get update
-          apt-get install -y libxslt-dev
-          docker-php-ext-install xsl
+            - name: Install XSL extension
+              run: |
+                  apt-get update
+                  apt-get install -y libxslt-dev
+                  docker-php-ext-install xsl
 
-      - name: Setup Cache
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
+            - name: Setup Cache
+              run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
-      - name: Caching deps
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.COMPOSER_CACHE_DIR }}
-          key: php8.3-composer-${{ hashfiles('**/composer.json') }}
-          restore-keys: |
-            php8.3-composer-latest-
+            - name: Caching deps
+              uses: actions/cache@v4
+              with:
+                  path: ${{ env.COMPOSER_CACHE_DIR }}
+                  key: php8.3-composer-${{ hashfiles('**/composer.json') }}
+                  restore-keys: |
+                      php8.3-composer-latest-
 
-      - name: Validate composer.json
-        run: composer validate --strict
+            - name: Validate composer.json
+              run: composer validate --strict
 
-      - name: install deps
-        run: |
-          composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+            - name: install deps
+              run: |
+                  composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      - name: PHP-CS-Fixer
-        # Exclusion des règles qui posent problème dans la CI mais pas en local
-        run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline","-concat_space","-array_indentation","-phpdoc_to_comment","-ordered_imports","-phpdoc_summary","-phpdoc_separation","-phpdoc_align","-cast_spaces","-fully_qualified_strict_types","-blank_line_before_statement","-no_extra_blank_lines","-yoda_style","-no_unused_imports","-increment_style","-function_declaration" --verbose --dry-run
+            - name: PHP-CS-Fixer
+                # Exclusion des règles qui posent problème dans la CI mais pas en local
+              run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline","-concat_space","-array_indentation","-phpdoc_to_comment","-ordered_imports","-phpdoc_summary","-phpdoc_separation","-phpdoc_align","-cast_spaces","-fully_qualified_strict_types","-blank_line_before_statement","-no_extra_blank_lines","-yoda_style","-no_unused_imports","-increment_style","-function_declaration","-global_namespace_import" --verbose --dry-run
 
-      - name: PHPStan
-        continue-on-error: true
-        run: |
-          # Afficher la version de PHPStan pour le débogage
-          phpstan --version
-          # Exécuter PHPStan avec les mêmes paramètres qu'en local
-          phpstan analyse --configuration=phpstan.neon --memory-limit=1G
+            - name: PHPStan
+              continue-on-error: true
+              run: |
+                  # Afficher la version de PHPStan pour le débogage
+                  phpstan --version
+                  # Exécuter PHPStan avec les mêmes paramètres qu'en local
+                  phpstan analyse --configuration=phpstan.neon --memory-limit=1G
 
-      - name: PHPCPD
-        run: phpcpd ./src
+            - name: PHPCPD
+              run: phpcpd ./src
 
-      - name: Lint YAML
-        run: php bin/console lint:yaml config
+            - name: Lint YAML
+              run: php bin/console lint:yaml config
 
-      - name: Lint Twig
-        run: php bin/console lint:twig templates
+            - name: Lint Twig
+              run: php bin/console lint:twig templates
 
-      - name: Lint Container
-        run: php bin/console lint:container
+            - name: Lint Container
+              run: php bin/console lint:container
