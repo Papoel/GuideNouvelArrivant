@@ -23,10 +23,10 @@ class DashboardController extends AbstractController
         // Création du formulaire de feedback pour la sidebar
         $feedback = new Feedback();
         $feedbackForm = $this->createForm(
-            FeedbackType::class,
-            $feedback,
-            [
-                'action' => $this->generateUrl('my_feedbacks_new', ['nni' => $nni]),
+            type: FeedbackType::class,
+            data: $feedback,
+            options: [
+                'action' => $this->generateUrl(route: 'my_feedbacks_new', parameters: ['nni' => $nni]),
                 'method' => 'POST',
             ]
         );
