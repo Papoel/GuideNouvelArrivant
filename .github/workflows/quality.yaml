@@ -42,7 +42,7 @@ jobs:
 
       - name: PHP-CS-Fixer
         # Exclusion des règles qui posent problème dans la CI mais pas en local
-        run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline","-concat_space","-array_indentation","-phpdoc_to_comment","-ordered_imports","-phpdoc_summary","-phpdoc_separation","-phpdoc_align","-cast_spaces","-fully_qualified_strict_types","-blank_line_before_statement","-no_extra_blank_lines","-yoda_style","-no_unused_imports","-increment_style","-function_declaration" --verbose --dry-run
+        run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline","-concat_space","-array_indentation","-phpdoc_to_comment","-ordered_imports","-phpdoc_summary","-phpdoc_separation","-phpdoc_align","-cast_spaces","-fully_qualified_strict_types","-blank_line_before_statement","-no_extra_blank_lines","-yoda_style","-no_unused_imports","-increment_style","-function_declaration","-global_namespace_import" --verbose --dry-run
 
       - name: PHPStan
         continue-on-error: true
