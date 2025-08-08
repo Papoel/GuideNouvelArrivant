@@ -4,8 +4,15 @@ namespace App\Controller\Admin\Logbook_Models;
 
 use App\Entity\LogbookTemplate;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -24,77 +31,194 @@ class LogbookTemplateCrudController extends AbstractCrudController
         return $crud
             ->setPageTitle(pageName: Crud::PAGE_INDEX, title: 'Modèles de carnet')
             ->setPageTitle(pageName: Crud::PAGE_NEW, title: 'Créer un modèle de carnet')
-            ->setPageTitle(pageName: Crud::PAGE_EDIT, title: 'Modifier un modèle de carnet');
+            ->setPageTitle(pageName: Crud::PAGE_EDIT, title: 'Modifier un modèle de carnet')
+            ->setPageTitle(pageName: Crud::PAGE_DETAIL, title: 'Détails du modèle de carnet')
+            ->setSearchFields(fieldNames: ['name', 'description', 'service.name'])
+            ->setDefaultSort(sortFieldsAndOrder: ['name' => 'ASC'])
+            ->showEntityActionsInlined()
+            ->setPaginatorPageSize(maxResultsPerPage: 10)
+            ->setPaginatorRangeSize(maxPagesOnEachSide: 3)
+            ->setHelp(pageName: Crud::PAGE_INDEX, helpMessage: 'Les modèles de carnet permettent de définir des structures prédéfinies de carnet d\'accueil pour différents métiers et services.')
+            ->setHelp(pageName: Crud::PAGE_NEW, helpMessage: 'Créez un nouveau modèle de carnet en renseignant les informations ci-dessous.')
+            ->setHelp(pageName: Crud::PAGE_EDIT, helpMessage: 'Modifiez les informations du modèle de carnet.');
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('name');
-        yield AssociationField::new('themes')->setCssClass('text-center');
-        yield AssociationField::new('service', 'Service')->setRequired(false);
-        yield TextField::new('jobLabel', 'Métiers')
-            ->onlyOnIndex()
-            ->formatValue(function ($value, $entity) {
-                if (empty($value)) {
-                    return '';
-                }
+        // Champs communs à toutes les pages
+        if ($pageName === Crud::PAGE_INDEX) {
+            yield IdField::new(propertyName: 'id')->hideOnForm()->setLabel(label: 'ID');
+            yield TextField::new(propertyName: 'name', label: 'Nom du modèle');
+            yield TextField::new(propertyName: 'jobLabel', label: 'Métiers concernés')
+                ->formatValue(callable: function ($value, $entity) {
+                    if (empty($value)) {
+                        return '';
+                    }
 
-                // Vérifier que l'entité est bien un LogbookTemplate
-                if (!$entity instanceof LogbookTemplate) {
-                    return is_string($value) ? $value : '';
-                }
+                    // Vérifier que l'entité est bien un LogbookTemplate
+                    if (!$entity instanceof LogbookTemplate) {
+                        return is_string($value) ? $value : '';
+                    }
 
-                // Traitement des jobs
-                $jobs = $entity->getJobs();
+                    // Traitement des jobs
+                    $jobs = $entity->getJobs();
 
-                // Si les jobs sont vides, retourner une chaîne vide
-                if (empty($jobs)) {
-                    return '';
-                }
+                    // Si les jobs sont vides, retourner une chaîne vide
+                    if (empty($jobs)) {
+                        return '';
+                    }
 
-                $badges = [];
-                $classes = [
-                    'TECHNICIEN' => 'badge-info',
-                    'INGENIEUR' => 'badge-primary',
-                    'CHARGE_AFFAIRES' => 'badge-success',
-                    'CHARGE_AFFAIRES_PROJET' => 'badge-warning',
-                    'CHARGE_SURVEILLANCE' => 'badge-danger',
-                ];
+                    $badges = [];
+                    $classes = [
+                        'TECHNICIEN' => 'badge-info',
+                        'INGENIEUR' => 'badge-primary',
+                        'CHARGE_AFFAIRES' => 'badge-success',
+                        'CHARGE_AFFAIRES_PROJET' => 'badge-warning',
+                        'CHARGE_SURVEILLANCE' => 'badge-danger',
+                    ];
 
-                $labels = [
-                    'TECHNICIEN' => 'Technicien',
-                    'INGENIEUR' => 'Ingénieur',
-                    'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
-                    'CHARGE_AFFAIRES_PROJET' => 'CAP',
-                    'CHARGE_SURVEILLANCE' => 'CSI',
-                ];
+                    $labels = [
+                        'TECHNICIEN' => 'Technicien',
+                        'INGENIEUR' => 'Ingénieur',
+                        'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
+                        'CHARGE_AFFAIRES_PROJET' => 'CAP',
+                        'CHARGE_SURVEILLANCE' => 'CSI',
+                    ];
 
-                foreach ($jobs as $job) {
-                    $badgeClass = $classes[$job] ?? 'badge-secondary';
-                    $jobLabel = $labels[$job] ?? $job;
-                    $badges[] = sprintf(
-                        '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
-                        $badgeClass,
-                        htmlspecialchars((string) $jobLabel)
-                    );
-                }
+                    foreach ($jobs as $job) {
+                        $badgeClass = $classes[$job] ?? 'badge-secondary';
+                        $jobLabel = $labels[$job] ?? $job;
+                        $badges[] = sprintf(
+                            '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
+                            $badgeClass,
+                            htmlspecialchars(string: (string) $jobLabel)
+                        );
+                    }
 
-                return implode('', $badges);
-            });
+                    return implode(separator: '', array: $badges);
+                });
+            yield AssociationField::new(propertyName: 'service', label: 'Service associé')->setCssClass(cssClass: 'text-center');
+            yield BooleanField::new(propertyName: 'isDefault', label: 'Modèle par défaut')->renderAsSwitch(false);
+            yield AssociationField::new(propertyName: 'themes', label: 'Thèmes')->setCssClass(cssClass: 'text-center');
 
-        // Utilisation d'un ChoiceField simple pour les métiers
-        if ($pageName === Crud::PAGE_NEW || $pageName === Crud::PAGE_EDIT) {
-            yield ChoiceField::new('jobs', 'Métiers')
-                ->setChoices([
-                    'Technicien' => 'TECHNICIEN',
-                    'Ingénieur' => 'INGENIEUR',
-                    'Chargé d\'affaires' => 'CHARGE_AFFAIRES',
-                    'Chargé d\'affaires projet' => 'CHARGE_AFFAIRES_PROJET',
-                    'Chargé de surveillance' => 'CHARGE_SURVEILLANCE',
-                ])
-                ->allowMultipleChoices()
-                ->renderExpanded()
-                ->setColumns('col-md-6 col-sm-12');
+            return;
         }
+
+        // Pour les pages de détail
+        if ($pageName === Crud::PAGE_DETAIL) {
+            yield IdField::new(propertyName: 'id')->setLabel(label: 'ID');
+            yield TextField::new(propertyName: 'name', label: 'Nom du modèle');
+            yield TextareaField::new(propertyName: 'description', label: 'Description')
+                ->hideOnIndex();
+            yield AssociationField::new(propertyName: 'service', label: 'Service associé');
+            yield TextField::new(propertyName: 'jobLabel', label: 'Métiers concernés');
+            yield BooleanField::new(propertyName: 'isDefault', label: 'Modèle par défaut')
+                ->renderAsSwitch(isASwitch: false);
+            yield AssociationField::new(propertyName: 'themes', label: 'Thèmes associés');
+
+            return;
+        }
+
+        // Pour les pages d'édition et de création
+        // Panel Informations de base
+        yield FormField::addPanel(label: 'Informations générales')
+            ->setCssClass(cssClass: 'panel panel-info pt-5')
+            ->setIcon(iconCssClass: 'fas fa-info-circle')
+            ->setHelp(help: 'Informations principales du modèle de carnet');
+
+        yield TextField::new(propertyName: 'name', label: 'Nom du modèle')
+            ->setRequired(isRequired: true)
+            ->setHelp(help: 'Le nom qui sera affiché pour ce modèle de carnet (obligatoire)')
+            ->setColumns(cols: 'col-md-6')
+            ->setFormTypeOption(optionName: 'attr', optionValue: [
+                'placeholder' => 'Ex: Modèle standard technicien',
+                'maxlength' => 100
+            ]);
+
+        yield TextareaField::new(propertyName: 'description', label: 'Description')
+            ->setRequired(isRequired: false)
+            ->setHelp(help: 'Une description détaillée de ce modèle de carnet (optionnel)')
+            ->setColumns(cols: 'col-md-6')
+            ->setFormTypeOption(optionName: 'attr', optionValue: [
+                'placeholder' => 'Décrivez ce modèle de carnet et son utilisation...',
+                'rows' => 5
+            ]);
+
+        yield BooleanField::new(propertyName: 'isDefault', label: 'Modèle par défaut')
+            ->setHelp(help: 'Cochez cette case si ce modèle doit être proposé par défaut')
+            ->setColumns(cols: 'col-md-6');
+
+        // Panel Associations
+        yield FormField::addPanel(label: 'Associations')
+            ->setCssClass(cssClass: 'py-3')
+            ->setIcon(iconCssClass: 'fas fa-link')
+            ->setHelp(help: 'Associez ce modèle à un service et/ou à des thèmes');
+
+        yield AssociationField::new(propertyName: 'service', label: 'Service')
+            ->setRequired(isRequired: false)
+            ->setHelp(help: 'Service auquel ce modèle de carnet est associé (optionnel)')
+            ->setColumns(cols: 'col-md-6');
+
+        yield AssociationField::new(propertyName: 'themes', label: 'Thèmes')
+            ->setHelp(help: 'Sélectionnez les thèmes qui seront inclus dans ce modèle')
+            ->setColumns(cols: 'col-md-6')
+            ->setFormTypeOptions(options: [
+                'by_reference' => false,
+                'multiple' => true,
+            ]);
+
+        // Panel Métiers concernés
+        yield FormField::addPanel(label: 'Métiers concernés')
+            ->setIcon(iconCssClass: 'fas fa-user-tie')
+            ->setHelp(help: 'Sélectionnez les métiers pour lesquels ce modèle sera disponible');
+
+        yield ChoiceField::new(propertyName: 'jobs', label: 'Métiers applicables')
+            ->setChoices(choiceGenerator: [
+                'Technicien' => 'TECHNICIEN',
+                'Ingénieur' => 'INGENIEUR',
+                'Chargé d\'affaires' => 'CHARGE_AFFAIRES',
+                'Chargé d\'affaires projet' => 'CHARGE_AFFAIRES_PROJET',
+                'Chargé de surveillance' => 'CHARGE_SURVEILLANCE',
+            ])
+            ->allowMultipleChoices()
+            ->renderExpanded()
+            ->setHelp(help: 'Sélectionnez un ou plusieurs métiers pour lesquels ce modèle sera disponible')
+            ->setColumns(cols: 'col-md-12');
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(propertyNameOrFilter: 'name')
+            ->add(propertyNameOrFilter: 'service')
+            ->add(propertyNameOrFilter: 'isDefault')
+            ->add(propertyNameOrFilter: 'jobs');
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: Action::DETAIL)
+            ->update(pageName: Crud::PAGE_INDEX, actionName: Action::NEW, callable: function (Action $action) {
+                return $action->setIcon(icon: 'fa fa-plus')->setLabel(label: 'Ajouter un modèle');
+            })
+            ->update(pageName: Crud::PAGE_INDEX, actionName: Action::EDIT, callable: function (Action $action) {
+                return $action->setIcon(icon: 'fa fa-edit')->setLabel(label: 'Modifier');
+            })
+            ->update(pageName: Crud::PAGE_INDEX, actionName: Action::DELETE, callable: function (Action $action) {
+                return $action->setIcon(icon: 'fa fa-trash')->setLabel(label: 'Supprimer');
+            })
+            ->update(pageName: Crud::PAGE_INDEX, actionName: Action::DETAIL, callable: function (Action $action) {
+                return $action->setIcon(icon: 'fa fa-eye')->setLabel(label: 'Voir');
+            })
+            ->update(pageName: Crud::PAGE_EDIT, actionName: Action::SAVE_AND_RETURN, callable: function (Action $action) {
+                return $action->setLabel(label: 'Enregistrer les modifications');
+            })
+            ->update(pageName: Crud::PAGE_NEW, actionName: Action::SAVE_AND_RETURN, callable: function (Action $action) {
+                return $action->setLabel(label: 'Créer le modèle');
+            })
+            ->update(pageName: Crud::PAGE_EDIT, actionName: Action::SAVE_AND_CONTINUE, callable: function (Action $action) {
+                return $action->setLabel(label: 'Enregistrer et continuer l\'édition');
+            });
     }
 }
