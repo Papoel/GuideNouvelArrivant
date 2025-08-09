@@ -1,0 +1,301 @@
+/* Variables pour l'accessibilité et la cohérence */
+:root {
+    --primary-color: #3d5f9e; /* Couleur principale */
+    --primary-dark: #2d4a7d; /* Version plus foncée pour meilleur contraste */
+    --primary-light: rgba(61, 95, 158, 0.15); /* Fond plus opaque pour meilleur contraste */
+    --text-dark: #2c384e;
+    --text-muted: #5d6778; /* Plus foncé que #6c757d pour meilleur contraste */
+    --bg-light: #f8f9fa;
+    --border-color: #d1d7e0; /* Plus foncé que #e9ecef pour meilleur contraste */
+    --success-color: #2e7d32; /* Vert plus foncé pour meilleur contraste */
+    --warning-color: #e65100; /* Orange plus foncé pour meilleur contraste */
+    --info-color: #0277bd; /* Bleu info plus foncé */
+    --danger-color: #c62828; /* Rouge plus foncé */
+    --card-radius: 0.75rem;
+    --transition-speed: 0.2s;
+    --focus-ring-color: rgba(61, 95, 158, 0.5);
+}
+
+/* Styles de base et accessibilité */
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+/* Focus styles pour l'accessibilité */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: 3px solid var(--focus-ring-color) !important;
+    outline-offset: 2px !important;
+    box-shadow: none !important;
+}
+
+/* Classe pour les éléments visibles uniquement par les lecteurs d'écran */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Mobile-first approach */
+.dashboard-header {
+    border-left: 5px solid var(--primary-color);
+    padding-left: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.dashboard-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .dashboard-header {
+        padding-left: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Désactiver les animations pour les personnes qui préfèrent réduire le mouvement */
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Cartes de contenu */
+.content-card {
+    border-radius: var(--card-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    background-color: #fff;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: all var(--transition-speed) ease-in-out;
+}
+
+.content-card .card-header {
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* Cartes de statistiques */
+.stat-card {
+    border-radius: var(--card-radius);
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    transition: all var(--transition-speed) ease-in-out;
+    height: 100%; /* Pour égaliser la hauteur des cartes */
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .stat-value {
+        font-size: 2.5rem;
+    }
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.empty-state {
+    padding: 2rem 1rem;
+}
+
+@media (min-width: 768px) {
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+}
+
+/* Tableau responsive et accessible */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.data-table th {
+    font-weight: 600;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.data-table td {
+    vertical-align: middle;
+    color: var(--text-dark);
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: var(--primary-color);
+    border-color: var(--border-color);
+    min-width: 2rem;
+    text-align: center;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--text-muted);
+}
+
+/* Badges */
+.badge {
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+}
+
+/* Boutons */
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Formulaire de recherche */
+.search-form .form-control {
+    border-radius: 50rem 0 0 50rem;
+    border-right: none;
+    padding: 0.6rem 0.75rem;
+    color: var(--text-dark);
+}
+
+.search-form .btn {
+    border-radius: 0 50rem 50rem 0;
+    border-left: none;
+    background-color: #fff;
+    color: var(--primary-color);
+    border-color: #ced4da;
+}
+
+.search-form .btn:hover, .search-form .btn:focus {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Adaptations mobiles */
+@media (max-width: 767.98px) {
+    .content-card .card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .table td, .table th {
+        padding: 0.5rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+    }
+}
+
+.table thead th {
+    background-color: var(--bg-light);
+    font-weight: 600;
+    color: var(--text-dark);
+    border-bottom-width: 1px;
+    white-space: nowrap;
+}
+
+/* Formulaire de recherche accessible */
+.search-form .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    height: auto;
+}
+
+.search-form .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Badges avec contraste amélioré */
+.badge {
+    font-weight: 500;
+    padding: 0.4em 0.8em;
+}
+
+/* Boutons accessibles */
+.btn {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Classes d'accessibilité */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

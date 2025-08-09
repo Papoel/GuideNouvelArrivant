@@ -1,0 +1,65 @@
+{# Template pour l'affichage des thèmes dans la page détail des modèles de carnet #}
+{% if field.value|length > 0 %}
+    <div class="themes-container">
+        {% for theme in field.value %}
+            <div class="theme-item mb-4">
+                <div class="theme-header d-flex align-items-start mb-3">
+                    <div class="theme-icon me-3">
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fas fa-list-alt text-success"></i>
+                        </div>
+                    </div>
+                    <div class="theme-info flex-grow-1">
+                        <h5 class="fw-semibold mb-1">{{ theme.title }}</h5>
+                        {% if theme.modules|length > 0 %}
+                            <div class="text-muted small">
+                                <span class="me-2">{{ theme.modules|length }} module{% if theme.modules|length > 1 %}s{% endif %}</span>
+                                <a href="#" 
+                                   class="text-decoration-none text-secondary small"
+                                   data-bs-toggle="collapse" 
+                                   data-bs-target="#modules-{{ loop.index }}">
+                                    <i class="fas fa-angle-down me-1"></i>Détails
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if theme.description %}
+                    <div class="theme-description ms-5 ps-2 mb-3 border-start border-2 border-light-subtle text-secondary">
+                        {{ theme.description|raw }}
+                    </div>
+                {% endif %}
+                
+                {% if theme.modules|length > 0 %}
+                    <div class="collapse ms-5 ps-2" id="modules-{{ loop.index }}">
+                        <div class="card border-0 bg-light">
+                            <div class="card-header bg-light border-0 py-2">
+                                <span class="text-muted small">Modules inclus</span>
+                            </div>
+                            <div class="list-group list-group-flush rounded-bottom">
+                                {% for module in theme.modules %}
+                                    <div class="list-group-item bg-light border-light-subtle d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success me-2 small"></i>
+                                        <span class="text-dark">{{ module.title }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="ms-5 ps-2">
+                        <span class="text-muted small fst-italic">Aucun module défini</span>
+                    </div>
+                {% endif %}
+                
+                <hr class="my-4 opacity-10">
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state text-center bg-light rounded p-4 mb-4">
+        <i class="fas fa-list text-secondary opacity-50 fa-2x mb-3"></i>
+        <p class="text-secondary mb-0">Aucun thème associé à ce modèle</p>
+    </div>
+{% endif %}

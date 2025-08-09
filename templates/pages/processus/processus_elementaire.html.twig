@@ -3,200 +3,6 @@
 {% block title %}Processus MP6MCH03{% endblock %}
 
 {% block content %}
-    <style>
-        :root {
-            --primary: #3d5f9e;
-            --primary-light: rgba(61, 95, 158, 0.08);
-            --secondary: #1b263b;
-            --accent: #415a77;
-            --background: #f8f9fa;
-            --text: #2c384e;
-            --text-muted: #6c757d;
-            --border-color: #e9ecef;
-        }
-
-        /* Base styles with mobile-first approach */
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--background);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .process-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            border-radius: 0 0 0.75rem 0.75rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .process-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="rgba(255,255,255,0.03)" width="50" height="50" x="0" y="0"/><rect fill="rgba(255,255,255,0.03)" width="50" height="50" x="50" y="50"/></svg>');
-            opacity: 0.3;
-        }
-
-        .process-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .process-header p {
-            margin: 0.5rem 0 0;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.85);
-        }
-
-        .process-header .ref {
-            font-size: 0.8rem;
-            background-color: rgba(255,255,255,0.15);
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            display: inline-block;
-            margin-top: 0.75rem;
-            letter-spacing: 0.5px;
-        }
-
-        .content-card {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .content-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .section-title {
-            color: var(--primary);
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary-light);
-            display: flex;
-            align-items: center;
-        }
-
-        .section-title i {
-            margin-right: 0.5rem;
-            opacity: 0.8;
-        }
-
-        .subsection-title {
-            color: var(--secondary);
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin: 1.5rem 0 0.75rem;
-            padding-left: 0.5rem;
-            border-left: 3px solid var(--primary);
-        }
-
-        ul.process-list {
-            padding-left: 1.25rem;
-            margin: 1rem 0;
-        }
-
-        ul.process-list li {
-            margin-bottom: 0.5rem;
-            position: relative;
-        }
-
-        ul.process-list li::before {
-            content: '•';
-            color: var(--primary);
-            font-weight: bold;
-            position: absolute;
-            left: -1rem;
-        }
-
-        .process-footer {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            padding: 1rem;
-            margin-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Responsive adjustments */
-        @media (min-width: 768px) {
-            .process-header {
-                padding: 2.5rem 2rem;
-                margin-bottom: 2rem;
-            }
-
-            .process-header h1 {
-                font-size: 2.2rem;
-            }
-
-            .content-card {
-                padding: 2rem;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .content-container {
-                max-width: 900px;
-                margin: 0 auto;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            .process-header {
-                background: #fff !important;
-                color: #000 !important;
-                box-shadow: none;
-                text-align: left;
-                padding: 1rem 0;
-            }
-
-            .process-header::before {
-                display: none;
-            }
-
-            .content-card {
-                box-shadow: none;
-                padding: 0;
-                margin-bottom: 1rem;
-                page-break-inside: avoid;
-            }
-
-            .section-title {
-                color: #000;
-                border-bottom-color: #000;
-            }
-
-            .subsection-title {
-                border-left-color: #000;
-            }
-        }
-    </style>
 
     {% set user = app.user %}
     {% include('app/dashboard/_dashboardHeader.html.twig') %}
@@ -214,17 +20,17 @@
                         </ol>
                     </nav>
                 </div>
-                
+
                 <div class="col-12">
                     <div class="process-header">
                         <h1>Carnet de Compagnonnage</h1>
                         <p>Document de référence - CNPE de Penly</p>
                         <span class="ref">Réf. D5039MQMP000320 | Indice 00 | Juin 2023</span>
                     </div>
-                    
+
                     <p>
-                        Cette note a pour objectif de définir les rôles de chacun en matière de tutorat et de compagnonnage à l'égard des 
-                        nouveaux arrivants dans le métier. Elle s'adresse aux managers des services, tuteurs et compagnons pour 
+                        Cette note a pour objectif de définir les rôles de chacun en matière de tutorat et de compagnonnage à l'égard des
+                        nouveaux arrivants dans le métier. Elle s'adresse aux managers des services, tuteurs et compagnons pour
                         l'intégration et la professionnalisation des jeunes embauchés et des nouveaux arrivants au sein du CNPE.
                     </p>
                 </div>
@@ -234,11 +40,11 @@
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-journal-text"></i>1. Objet et domaine d'application</h2>
                         <p>
-                            Cette note présente la déclinaison locale et l'architecture du suivi des activités du Processus Élémentaire 
+                            Cette note présente la déclinaison locale et l'architecture du suivi des activités du Processus Élémentaire
                             « MCH-03 - Réaliser le compagnonnage » sur le CNPE de Penly.
                         </p>
                     </div>
-                    
+
                     {# 2. Référentiels #}
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-journal-text"></i>2. Référentiels</h2>
@@ -265,12 +71,12 @@
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-bullseye"></i>4. Finalité</h2>
                         <p>
-                            Dans un contexte évolutif, il s'agit de définir les compétences voulues à moyen et long terme, d'élaborer, déployer et 
+                            Dans un contexte évolutif, il s'agit de définir les compétences voulues à moyen et long terme, d'élaborer, déployer et
                             rendre visibles les dispositifs de professionnalisation permettant de les anticiper, les sécuriser et les garantir sur le terrain.
                         </p>
 
                         <p>
-                            La transition des connaissances et de l'expérience vers les nouveaux arrivants et la capitalisation des compétences clés des 
+                            La transition des connaissances et de l'expérience vers les nouveaux arrivants et la capitalisation des compétences clés des
                             salariés expérimentés sont des enjeux majeurs plus lorsque le CNPE connaît une période de changement de méthodes et des matériels.
                         </p>
                         <p>
@@ -289,19 +95,19 @@
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-chat-quote"></i>5. Préambule</h2>
                         <p>
-                            Cette note a pour objectif de définir les rôles de chacun en matière de tutorat et de compagnonnage à l'égard des 
-                            nouveaux arrivants dans le métier. 
+                            Cette note a pour objectif de définir les rôles de chacun en matière de tutorat et de compagnonnage à l'égard des
+                            nouveaux arrivants dans le métier.
                         </p>
-                        <p>Elle s'adresse aux managers des services, tuteurs et compagnons pour l' intégration 
+                        <p>Elle s'adresse aux managers des services, tuteurs et compagnons pour l' intégration
                             et la professionnalisation des jeunes embauchés et des nouveaux arrivants au sein d'un CNPE.
                         </p>
                         <p>
-                            Elle intègre des documents permettant d'effectuer le suivi et la traçabilité des actions d'accueil sécurité ainsi que les 
-                            actions de compagnonnage permettant l'habilitation B0, H0, M0 et RP1 nécessaire à l'autonomie dans les locaux industriels de 
+                            Elle intègre des documents permettant d'effectuer le suivi et la traçabilité des actions d'accueil sécurité ainsi que les
+                            actions de compagnonnage permettant l'habilitation B0, H0, M0 et RP1 nécessaire à l'autonomie dans les locaux industriels de
                             l'agent en formation.
                         </p>
                         <p>
-                            Les annexes se veulent opérationnelles pour un usage direct par les services. Elles peuvent si besoin être déclinées dans 
+                            Les annexes se veulent opérationnelles pour un usage direct par les services. Elles peuvent si besoin être déclinées dans
                             les notes des services.
                         </p>
                     </div>
@@ -309,7 +115,7 @@
                     {# 6. Rôles des différents acteurs #}
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-people"></i>6. Rôles des différents acteurs</h2>
-                        
+
                         <h3 class="subsection-title">6.1. L'apprenant</h3>
                         <div class="ps-3">
                             <p>
@@ -326,7 +132,7 @@
                                 et sa hiérarchie
                             </p>
                         </div>
-                        
+
                         <h3 class="subsection-title">6.2. Le compagnon</h3>
                         <div class="ps-3">
                             <p>
@@ -357,7 +163,7 @@
                                 </ul>
                             </p>
                         </div>
-                        
+
                         <h3 class="subsection-title">6.3. Le tuteur (dénommé également maître de professionnalisation)</h3>
                         <div class="ps-3">
                             <p>
@@ -386,8 +192,8 @@
                                 <li>Donne son avis au Chef d'Équipe (ou de Service) sur le professionnalisme et les
                                 compétences de l'apprenant en vue de l'habilitation.</li>
                             </ul>
-                        </div>                        
-                        
+                        </div>
+
                         <h3 class="subsection-title">6.4. Le manager</h3>
                         <div class="ps-3">
                             <p>C'est avant tout un superviseur. Il peut s'agir du Chef de Service ou du Chef d'Équipe. En
@@ -405,7 +211,7 @@
                                 <li>Évalue par des visites sur le terrain l'efficacité de l'action de tutorat -
                                 compagnonnage.
                             </ul>
-                        </div>   
+                        </div>
 
                         <h3 class="subsection-title">6.5. Choix du tuteur</h3>
                         <div class="ps-3">
@@ -501,7 +307,7 @@
                     {# 9. La mise en oeuvre de la professionnalisation #}
                     <div class="content-card">
                         <h2 class="section-title"><i class="bi bi-chat-quote"></i>9. La mise en oeuvre de la professionnalisation</h2>
-                        
+
                         <h3 class="subsection-title fw-bold text-decoration-underline">9.1. Première étape: la définition des compétences à acquérir</h3>
                         <div class="ps-3">
                             <p>L'habilitation repose sur un référentiel de compétences qui comprend des objectifs généraux :</p>
@@ -523,7 +329,7 @@
                                     associés à chaque domaine.
                                 </li>
                                 <li>
-                                    Parmi les domaines d'activité, la hiérarchie met en détermine les domaines prioritaires sur lesquels habiliter 
+                                    Parmi les domaines d'activité, la hiérarchie met en détermine les domaines prioritaires sur lesquels habiliter
                                     le nouvel arrivant lorsque cela est possible.
                                 </li>
                             </ul>
@@ -534,7 +340,7 @@
                                 <ul class="process-list ms-4">
                                     <li>Le hiérarchique balaye avec le tuteur le contenu du carnet de compagnonnage dans le but de partager le même niveau d'exigence.</li>
                                 </ul>
-                            </p>    
+                            </p>
                         </div>
 
                         <h3 class="subsection-title fw-bold text-decoration-underline">9.2. Deuxième étape: Le missionnement des tuteurs et compagnons</h3>

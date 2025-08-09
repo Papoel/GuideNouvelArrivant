@@ -1,0 +1,48 @@
+{# Template pour la sélection des thèmes dans les formulaires de création/édition #}
+{% set ea_vars = ea.crud.vars %}
+{% set field_value = ea_vars.field_value|default('') %}
+
+<div class="themes-selection">
+    {{ form_widget(form, {'attr': {'class': 'form-select-lg theme-select', 'data-controller': 'select2'}}) }}
+
+    <div class="themes-help mt-3">
+        <p class="text-muted small">
+            <i class="fas fa-info-circle me-1"></i>
+            Sélectionnez les thèmes qui seront inclus dans ce modèle de carnet.
+            Chaque thème contient des modules qui seront automatiquement ajoutés au carnet.
+        </p>
+    </div>
+
+    {% if field_value|length > 0 %}
+        <div class="selected-themes mt-3">
+            <div class="themes-header d-flex justify-content-between mb-2">
+                <span class="text-muted small">Thèmes sélectionnés</span>
+                <span class="badge bg-light text-dark small">{{ field_value|length }}</span>
+            </div>
+
+            <div class="themes-list bg-light rounded p-3">
+                <div class="row g-3">
+                    {% for theme in field_value %}
+                        <div class="col-lg-6 col-md-12">
+                            <div class="theme-item d-flex align-items-center">
+                                <div class="theme-icon me-2">
+                                    <div class="rounded-circle bg-white p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="fas fa-list-alt text-success small"></i>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name text-dark">{{ theme.title }}</div>
+                                    {% if theme.modules|length > 0 %}
+                                        <div class="theme-modules small text-muted">
+                                            {{ theme.modules|length }} module{% if theme.modules|length > 1 %}s{% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
