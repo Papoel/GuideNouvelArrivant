@@ -2,7 +2,7 @@
 
 {% block title %}Analyse de conformité{% endblock %}
 
-{% block stylesheets %}
+{#{% block stylesheets %}
     {{ parent() }}
     <style>
         /* Variables pour l'accessibilité et la cohérence */
@@ -29,14 +29,14 @@
             --card-body-bg: #ffffff;
             --card-footer-bg: #f9fafc;
         }
-        
+
         /* Focus styles pour l'accessibilité */
         a:focus, button:focus, input:focus, select:focus, textarea:focus {
             outline: 3px solid var(--focus-ring-color) !important;
             outline-offset: 2px !important;
             box-shadow: none !important;
         }
-        
+
         /* Classe pour les éléments visibles uniquement par les lecteurs d'écran */
         .sr-only {
             position: absolute;
@@ -49,7 +49,7 @@
             white-space: nowrap;
             border-width: 0;
         }
-        
+
         /* Styles généraux */
         .content-card {
             border-radius: var(--card-radius);
@@ -60,12 +60,12 @@
             transition: transform var(--transition-speed), box-shadow var(--transition-speed);
             overflow: hidden; /* Assure que les coins arrondis sont respectés */
         }
-        
+
         .content-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .content-card .card-header {
             background-color: var(--card-header-bg);
             border-bottom: var(--card-border);
@@ -74,14 +74,14 @@
             border-top-right-radius: var(--card-radius);
             font-weight: 500;
         }
-        
+
         .dashboard-header {
             position: relative;
             padding-left: 1.25rem;
             margin-bottom: 1.5rem;
             color: var(--text-dark);
         }
-        
+
         .dashboard-header::before {
             content: '';
             position: absolute;
@@ -92,7 +92,7 @@
             background-color: var(--primary-color);
             border-radius: 2px;
         }
-        
+
         /* Styles pour les cartes de conformité */
         .conformity-card {
             border: var(--card-border);
@@ -104,13 +104,13 @@
             height: 100%;
             overflow: hidden; /* Assure que les coins arrondis sont respectés */
         }
-        
+
         .conformity-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-hover);
             border-color: rgba(61, 95, 158, 0.2);
         }
-        
+
         .conformity-card .card-header {
             font-weight: 500;
             font-size: 1rem;
@@ -123,12 +123,12 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .conformity-card .card-body {
             padding: 1.25rem;
             background-color: var(--card-body-bg);
         }
-        
+
         .conformity-card .card-footer {
             background-color: var(--card-footer-bg);
             border-top: var(--card-border);
@@ -136,23 +136,23 @@
             border-bottom-left-radius: var(--card-radius);
             border-bottom-right-radius: var(--card-radius);
         }
-        
+
         .conformity-status {
             display: flex;
             align-items: center;
             margin-bottom: 0.75rem;
         }
-        
+
         .conformity-status-label {
             flex: 1;
             color: var(--text-dark);
             font-weight: 500;
         }
-        
+
         .conformity-status {
             position: relative;
         }
-        
+
         .conformity-status-icon {
             width: 28px;
             height: 28px;
@@ -162,26 +162,26 @@
             border-radius: 50%;
             transition: all var(--transition-speed) ease;
         }
-        
+
         .conformity-status-icon.success {
             background-color: rgba(46, 125, 50, 0.08);
             color: var(--success-color);
         }
-        
+
         .conformity-status-icon.warning {
             background-color: rgba(230, 81, 0, 0.08);
             color: var(--warning-color);
         }
-        
+
         .conformity-status-icon.danger {
             background-color: rgba(198, 40, 40, 0.08);
             color: var(--danger-color);
         }
-        
+
         .conformity-status:hover .conformity-status-icon {
             transform: scale(1.1);
         }
-        
+
         .todo-badge {
             display: inline-flex;
             align-items: center;
@@ -197,7 +197,7 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             letter-spacing: 0.03em;
         }
-        
+
         .conformity-progress {
             height: 6px;
             border-radius: 3px;
@@ -206,7 +206,7 @@
             overflow: hidden;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
         }
-        
+
         .conformity-progress-bar {
             height: 100%;
             background-color: var(--primary-color);
@@ -215,26 +215,26 @@
             background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
             background-size: 1rem 1rem;
         }
-        
+
         .conformity-progress-bar.success {
             background-color: var(--success-color);
         }
-        
+
         .conformity-progress-bar.warning {
             background-color: var(--warning-color);
         }
-        
+
         .conformity-progress-bar.danger {
             background-color: var(--danger-color);
         }
-        
+
         .conformity-badge {
             font-weight: 500;
             padding: 0.35em 0.75em;
             border-radius: 50rem;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
-        
+
         .conformity-meta {
             font-size: 0.875rem;
             color: var(--text-muted);
@@ -244,12 +244,12 @@
             border-radius: 0.25rem;
             border-left: 3px solid var(--primary-color);
         }
-        
+
         /* Responsive design */
         .mobile-view {
             display: block;
         }
-        
+
         .desktop-view {
             display: none;
         }
@@ -257,18 +257,18 @@
         .ls-1 {
             letter-spacing: 0.06em;
         }
-        
+
         @media (min-width: 992px) {
             .mobile-view {
                 display: none;
             }
-            
+
             .desktop-view {
                 display: block;
             }
         }
     </style>
-{% endblock %}
+{% endblock %}#}
 
 {% block body %}
     <main class="container-fluid my-4">
@@ -283,9 +283,9 @@
                 </p>
             </div>
             <div>
-                <a 
+                <a
                     href="{{ path('admin') }}"
-                    class="btn btn-outline-secondary rounded-pill shadow-sm" 
+                    class="btn btn-outline-secondary rounded-pill shadow-sm"
                     style="padding: 0.6rem 1.2rem;"
                     aria-label="Retour à l'administration"
                 >
@@ -300,14 +300,14 @@
             {% set total_items = item|length -1 %}
             {% set completed_items = 0 %}
             {% set todo_items = 0 %}
-            
+
             {# Vérification de chaque élément #}
             {% if item.apprenant_first_name == true %}{% set completed_items = completed_items + 1 %}{% endif %}
             {% if item.apprenant_last_name == true %}{% set completed_items = completed_items + 1 %}{% endif %}
             {% if item.apprenant_job == true %}{% set completed_items = completed_items + 1 %}{% endif %}
             {% if item.apprenant_service == true %}{% set completed_items = completed_items + 1 %}{% endif %}
             {% if item.mentor == true %}{% set completed_items = completed_items + 1 %}{% endif %}
-            
+
             {# Traitement spécial pour la mission - utilisation d'une variable temporaire #}
             {% set mission_status = item.mission %}
             {% if mission_status is same as(true) %}
@@ -315,14 +315,14 @@
             {% elseif mission_status is same as("TODO") %}
                 {% set todo_items = todo_items + 1 %}
             {% endif %}
-            
+
             {% set conformity_percent = (completed_items / total_items) * 100 %}
-            
+
             {# Définition des classes de couleur selon le pourcentage #}
             {% set progress_class = '' %}
             {% set status_text = '' %}
             {% set status_icon = '' %}
-            
+
             {% if conformity_percent == 100 %}
                 {% set progress_class = 'success-subtle text-success-emphasis rounded-pill fw-light ls-1' %}
                 {% set status_text = 'Conforme' %}
@@ -350,7 +350,7 @@
                     </div>
                     <div class="card-body">
                         <div class="conformity-progress mb-3">
-                            <div class="conformity-progress-bar {{ progress_class }}" style="width: {{ conformity_percent }}%" 
+                            <div class="conformity-progress-bar {{ progress_class }}" style="width: {{ conformity_percent }}%"
                                  aria-valuenow="{{ conformity_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="conformity-meta mb-3">
@@ -359,44 +359,44 @@
                                 <span class="ms-2 badge bg-warning-subtle text-warning-emphasis">{{ todo_items }} à compléter</span>
                             {% endif %}
                         </div>
-                        
+
                         <h6 class="mb-3 fw-bold">Détails de conformité</h6>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Prénom</span>
                             <span class="conformity-status-icon {{ item.apprenant_first_name ? 'success' : 'danger' }}">
                                 <i class="bi {{ item.apprenant_first_name ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
                             </span>
                         </div>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Nom</span>
                             <span class="conformity-status-icon {{ item.apprenant_last_name ? 'success' : 'danger' }}">
                                 <i class="bi {{ item.apprenant_last_name ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
                             </span>
                         </div>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Métier</span>
                             <span class="conformity-status-icon {{ item.apprenant_job ? 'success' : 'danger' }}">
                                 <i class="bi {{ item.apprenant_job ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
                             </span>
                         </div>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Service</span>
                             <span class="conformity-status-icon {{ item.apprenant_service ? 'success' : 'danger' }}">
                                 <i class="bi {{ item.apprenant_service ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
                             </span>
                         </div>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Tuteur</span>
                             <span class="conformity-status-icon {{ item.mentor ? 'success' : 'danger' }}">
                                 <i class="bi {{ item.mentor ? 'bi-check-lg' : 'bi-x-lg' }}"></i>
                             </span>
                         </div>
-                        
+
                         <div class="conformity-status">
                             <span class="conformity-status-label">Mission</span>
                             {% if item.mission is same as("TODO") %}

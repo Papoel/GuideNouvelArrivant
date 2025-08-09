@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\User;
 
-use App\Entity\LogbookTemplate;
 use App\Entity\User;
 use App\Repository\LogbookTemplateRepository;
 use App\Repository\UserRepository;
@@ -98,7 +97,7 @@ class UserLogbookController extends AbstractController
                 if ($user->getJob()) {
                     $logbook = $this->logbookTemplateService->createLogbookForUser($user, $replaceExisting);
                     if ($logbook) {
-                        $count++;
+                        ++$count;
                     }
                 }
             }

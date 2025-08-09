@@ -6,7 +6,6 @@ namespace App\Services\Logbook;
 
 use App\Entity\Action;
 use App\Entity\Logbook;
-use App\Entity\Module;
 use App\Entity\Theme;
 use App\Entity\User;
 use App\Repository\ActionRepository;

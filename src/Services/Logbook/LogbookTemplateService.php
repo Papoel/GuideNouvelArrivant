@@ -9,7 +9,6 @@ use App\Entity\LogbookTemplate;
 use App\Entity\Service;
 use App\Entity\User;
 use App\Enum\JobEnum;
-use App\Services\Logbook\LogbookReplacementService;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**

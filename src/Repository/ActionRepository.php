@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use Doctrine\ORM\AbstractQuery;
 use App\Entity\Action;
 use App\Entity\Logbook;
 use App\Entity\Module;
@@ -12,6 +11,7 @@ use App\Entity\Theme;
 use App\Entity\User;
 use App\Repository\Interfaces\ActionRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** Repository pour l'entité Action.

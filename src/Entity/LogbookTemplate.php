@@ -2,15 +2,14 @@
 
 namespace App\Entity;
 
-use App\Entity\Service;
-use App\Enum\JobEnum;
-use Doctrine\DBAL\Types\Types;
-use Symfony\Component\Uid\Uuid;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\TimestampTrait;
-use Doctrine\Common\Collections\Collection;
+use App\Enum\JobEnum;
 use App\Repository\LogbookTemplateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LogbookTemplateRepository::class)]

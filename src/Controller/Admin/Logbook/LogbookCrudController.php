@@ -8,22 +8,19 @@ use App\Entity\Module;
 use App\Entity\Theme;
 use App\Form\LogbookThemesType;
 use App\Repository\ActionRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Services\Logbook\LogbookThemeService;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 /** @extends AbstractCrudController<Logbook> */
 class LogbookCrudController extends AbstractCrudController
@@ -170,7 +167,7 @@ class LogbookCrudController extends AbstractCrudController
                 // Vérifier explicitement le type pour satisfaire PHPStan
                 if ($theme instanceof Theme && !$logbook->getThemes()->contains($theme)) {
                     $logbook->addTheme($theme);
-                    $themesCount++;
+                    ++$themesCount;
                 }
             }
 
@@ -232,7 +229,7 @@ class LogbookCrudController extends AbstractCrudController
 
             foreach ($actions as $action) {
                 $this->entityManager->remove($action);
-                $actionsRemoved++;
+                ++$actionsRemoved;
             }
         }
 

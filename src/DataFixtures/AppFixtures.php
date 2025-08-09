@@ -2,17 +2,17 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
-use App\Entity\Theme;
-use App\Enum\JobEnum;
 use App\Entity\Action;
-use App\Entity\Module;
 use App\Entity\Logbook;
+use App\Entity\Module;
 use App\Entity\Service;
-use Faker\Factory as Faker;
+use App\Entity\Theme;
+use App\Entity\User;
+use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use Faker\Factory as Faker;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[\AllowDynamicProperties] class AppFixtures extends Fixture

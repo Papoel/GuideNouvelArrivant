@@ -33,6 +33,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /** Trouve tous les apprenants associés à un mentor par son NNI
      *
      * @param  string $mentorNni Le NNI du mentor
+     *
      * @return array<int, User> Tableau d'utilisateurs (apprenants) */
     public function findApprenantByMentorNni(string $mentorNni): array
     {
@@ -45,7 +46,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
 
         // Garantir que le résultat est une liste (indices numériques consécutifs)
-        /** @var array<int, User> */
+        /* @var array<int, User> */
         return array_values($result);
     }
 
@@ -72,6 +73,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Trouve tous les utilisateurs d'un service spécifique qui n'ont pas de carnet associé
      *
      * @param Service $service Le service pour lequel filtrer les utilisateurs
+     *
      * @return array<int, User> Tableau d'utilisateurs sans carnet du service spécifié
      */
     public function findUsersWithoutLogbookByService(Service $service): array
