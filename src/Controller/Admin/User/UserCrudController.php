@@ -147,11 +147,13 @@ class UserCrudController extends AbstractCrudController
         yield ChoiceField::new(propertyName: 'job', label: 'Métier')
             ->setChoices(
                 choiceGenerator: [
-                    'Technicien' => JobEnum::TECHNICIEN,
-                    'Ingénieur' => JobEnum::INGENIEUR,
+                    "Technicien" => JobEnum::TECHNICIEN,
+                    "Ingénieur" => JobEnum::INGENIEUR,
                     "Chargé d'affaires" => JobEnum::CHARGE_AFFAIRES,
                     "Chargé d'affaires projet" => JobEnum::CHARGE_AFFAIRES_PROJET,
-                    'Chargé de surveillance' => JobEnum::CHARGE_SURVEILLANCE,
+                    "Chargé de surveillance" => JobEnum::CHARGE_SURVEILLANCE,
+                    "Manager premiere ligne" => JobEnum::MANAGER_PREMIERE_LIGNE
+
                 ]
             )
             ->onlyWhenCreating()
@@ -168,6 +170,7 @@ class UserCrudController extends AbstractCrudController
                     'Robinetterie' => SpecialityEnum::ROB,
                     'Soudage' => SpecialityEnum::SOU,
                     'Examen Non Destructif' => SpecialityEnum::END,
+                    'Encadrement' => SpecialityEnum::ENC
                 ]
             )
             ->onlyOnForms()

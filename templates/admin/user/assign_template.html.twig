@@ -20,48 +20,48 @@
             --transition-speed: 0.2s;
             --focus-ring-color: rgba(61, 95, 158, 0.5);
         }
-        
+
         /* Boutons */
         .btn-outline-primary {
             color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-outline-primary:hover, .btn-outline-primary:focus {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
             color: #fff;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-primary:hover, .btn-primary:focus {
             background-color: var(--primary-dark);
             border-color: var(--primary-dark);
         }
-        
+
         /* Adaptations mobiles */
         @media (max-width: 767.98px) {
             .content-card .card-header {
                 padding: 0.75rem 1rem;
             }
-            
+
             .card-body {
                 padding: 1rem;
             }
-            
+
             .table td, .table th {
                 padding: 0.5rem;
             }
-            
+
             .btn-sm {
                 padding: 0.25rem 0.5rem;
                 font-size: 0.75rem;
             }
-            
+
             .badge {
                 font-size: 0.7rem;
             }
@@ -75,9 +75,9 @@
             <p class="mb-3 mb-md-0 mt-2" style="color: var(--text-muted);">Attribuez un carnet à {{ user.fullName }} en fonction de son métier</p>
         </div>
         <div>
-            <a 
-                href="{{ path('admin') }}" 
-                class="btn btn-outline-secondary rounded-pill shadow-sm" 
+            <a
+                href="{{ path('admin') }}"
+                class="btn btn-outline-secondary rounded-pill shadow-sm"
                 style="padding: 0.6rem 1.2rem;"
                 aria-label="Retour au tableau de bord"
             >
@@ -85,7 +85,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="content-card">
         <div class="card-header">
             <h2 class="h5 mb-0 fw-bold"><i class="bi bi-person-vcard me-2" aria-hidden="true"></i>Informations utilisateur</h2>
@@ -107,7 +107,7 @@
                             <div class="col-sm-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-briefcase me-2 text-muted"></i>
-                                    <span><strong>Métier:</strong> {{ user.job ? user.job.name : 'Non défini' }}</span>
+                                    <span><strong>Métier:</strong> {{ user.job.value ? user.job.value : 'Non défini' }}</span>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -122,7 +122,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="content-card mt-4">
         <div class="card-header">
             <h2 class="h5 mb-0 fw-bold"><i class="bi bi-journal-bookmark me-2" aria-hidden="true"></i>Modèles de carnet compatibles</h2>
@@ -132,7 +132,7 @@
                 <form method="post" action="{{ path('admin_user_assign_template', {'id': user.id}) }}">
                     <div class="form-group mb-4">
                         <label for="template" class="form-label fw-bold">Sélectionnez un modèle :</label>
-                        <select name="template" id="template" class="form-select form-select-lg shadow-sm" required>
+                        <select name="template" id="template" class="form-select form-select shadow-sm" required>
                             <option value="">-- Choisir un modèle --</option>
                             {% for template in templates %}
                                 <option value="{{ template.id }}" {% if template.isDefault %}class="fw-bold"{% endif %}>
