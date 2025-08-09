@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +24,7 @@ class DebugTwigHeavyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $templatesDir = \dirname(path: __DIR__, levels: 2) . '/templates';
-        $iterator = new RecursiveIteratorIterator(iterator: new RecursiveDirectoryIterator(directory: $templatesDir));
+        $iterator = new \RecursiveIteratorIterator(iterator: new \RecursiveDirectoryIterator(directory: $templatesDir));
 
         $usage = [];
 
@@ -54,7 +52,7 @@ class DebugTwigHeavyCommand extends Command
         $count = 0;
         foreach ($usage as $tpl => $mem) {
             $output->writeln(messages: sprintf(
-                "%-70s %s",
+                '%-70s %s',
                 $tpl,
                 $this->formatBytes(bytes: $mem)
             ));

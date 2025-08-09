@@ -45,6 +45,6 @@ interface FeedbackServiceInterface
      * @param int    $limit       Nombre maximum de résultats
      * @param int    $offset      Position de départ
      *
-     * @return array<int, \App\Entity\Feedback> Les retours d'expérience avec les informations utilisateur */
+     * @return array<int, Feedback> Les retours d'expérience avec les informations utilisateur */
     public function getFeedbacksByServiceName(string $serviceName, int $limit = 25, int $offset = 0): array;
 }

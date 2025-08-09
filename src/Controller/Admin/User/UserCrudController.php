@@ -215,11 +215,11 @@ class UserCrudController extends AbstractCrudController
             ->setPaginatorPageSize(maxResultsPerPage: 20)
             ->setPageTitle(
                 pageName: 'detail',
-                title: fn(User $user) => '👁️ Détails - ' . $user->getFullName()
+                title: fn (User $user) => '👁️ Détails - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'edit',
-                title: fn(User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
+                title: fn (User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'new',
@@ -381,7 +381,6 @@ class UserCrudController extends AbstractCrudController
     /** @param User $entityInstance */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-
         if ($entityInstance->getPassword()) {
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $entityInstance,

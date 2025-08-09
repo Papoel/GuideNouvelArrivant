@@ -103,7 +103,7 @@ class ModuleRepository extends ServiceEntityRepository
 
         foreach ($actions as $action) {
             $entityManager->remove($action);
-            $count++;
+            ++$count;
         }
 
         $entityManager->flush();

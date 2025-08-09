@@ -111,8 +111,8 @@ readonly class StatisticsService implements StatisticsServiceInterface
         $agentProgress = $progress['agent_progress'] ?? 0;
         $mentorProgress = $progress['mentor_progress'] ?? 0;
 
-        $totalAgentProgress += is_numeric($agentProgress) ? (float)$agentProgress : 0;
-        $totalMentorProgress += is_numeric($mentorProgress) ? (float)$mentorProgress : 0;
+        $totalAgentProgress += is_numeric($agentProgress) ? (float) $agentProgress : 0;
+        $totalMentorProgress += is_numeric($mentorProgress) ? (float) $mentorProgress : 0;
         ++$usersWithLogbook;
 
         if ($progress['mentor_progress'] > 0) {

@@ -33,7 +33,7 @@ readonly class UserProvider implements UserProviderInterface, PasswordUpgraderIn
 
         // PHPStan sait que $user est de type User grâce à l'annotation @var,
         // mais getOneOrNullResult() peut réellement retourner null
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (null === $user) {
             throw new UserNotFoundException();
         }
