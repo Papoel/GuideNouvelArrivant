@@ -74,6 +74,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         'CHARGE_AFFAIRES' => 'badge-success',
                         'CHARGE_AFFAIRES_PROJET' => 'badge-warning',
                         'CHARGE_SURVEILLANCE' => 'badge-danger',
+                        'MANAGER_PREMIERE_LIGNE' => 'badge-dark',
                     ];
 
                     $labels = [
@@ -82,6 +83,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
                         'CHARGE_AFFAIRES_PROJET' => 'CAP',
                         'CHARGE_SURVEILLANCE' => 'CSI',
+                        'MANAGER_PREMIERE_LIGNE' => 'MPL',
                     ];
 
                     foreach ($jobs as $job) {
@@ -139,6 +141,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         'CHARGE_AFFAIRES' => 'bg-success-subtle text-success-emphasis',
                         'CHARGE_AFFAIRES_PROJET' => 'bg-warning-subtle text-warning-emphasis',
                         'CHARGE_SURVEILLANCE' => 'bg-danger-subtle text-danger-emphasis',
+                        'MANAGER_PREMIERE_LIGNE' => 'bg-dark text-white',
                     ];
 
                     $labels = [
@@ -147,6 +150,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
                         'CHARGE_AFFAIRES_PROJET' => 'CAP',
                         'CHARGE_SURVEILLANCE' => 'CSI',
+                        'MANAGER_PREMIERE_LIGNE' => 'MPL',
                     ];
 
                     foreach ($entity->getJobs() as $job) {
@@ -244,6 +248,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 'Chargé d\'affaires' => 'CHARGE_AFFAIRES',
                 'Chargé d\'affaires projet' => 'CHARGE_AFFAIRES_PROJET',
                 'Chargé de surveillance' => 'CHARGE_SURVEILLANCE',
+                'Manager premiere ligne' => 'MANAGER_PREMIERE_LIGNE',
             ])
             ->allowMultipleChoices()
             ->renderExpanded()

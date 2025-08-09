@@ -12,6 +12,7 @@ enum SpecialityEnum: string
     case ROB = 'Robinetterie';
     case SOU = 'Soudage';
     case END = 'Examen Non Destructif';
+    case ENC = 'Encadrement';
 
     public function getAbbreviation(): string
     {
@@ -22,6 +23,7 @@ enum SpecialityEnum: string
             self::ROB => 'ROB',
             self::SOU => 'SOU',
             self::END => 'END',
+            self::ENC => 'ENC',
         };
     }
 }
