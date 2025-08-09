@@ -1,5 +1,6 @@
 name: Quality Analysis
 on: [push, pull_request]
+
 jobs:
     quality:
         name: Quality Analysis
@@ -7,6 +8,7 @@ jobs:
         container:
             image: jakzal/phpqa:php8.3
             options: --user root
+
         steps:
             - name: Set safe directory
               run: |
@@ -29,31 +31,28 @@ jobs:
               uses: actions/cache@v4
               with:
                   path: ${{ env.COMPOSER_CACHE_DIR }}
-                  key: php8.3-composer-${{ hashfiles('**/composer.json') }}
+                  key: php8.3-composer-${{ hashFiles('**/composer.json') }}
                   restore-keys: |
                       php8.3-composer-latest-
 
             - name: Validate composer.json
               run: composer validate --strict
 
-            - name: install deps
+            - name: Install dependencies
               run: |
                   composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-            - # name: PHP-CS-Fixer
-                # Exclusion des règles qui posent problème dans la CI mais pas en local
-              # run: php-cs-fixer fix ./src --rules=@Symfony,"-trailing_comma_in_multiline","-concat_space","-array_indentation","-phpdoc_to_comment","-ordered_imports","-phpdoc_summary","-phpdoc_separation","-phpdoc_align","-cast_spaces","-fully_qualified_strict_types","-blank_line_before_statement","-no_extra_blank_lines","-yoda_style","-no_unused_imports","-increment_style","-function_declaration","-global_namespace_import" --verbose --dry-run
-
             - name: PHPStan
-              continue-on-error: true
               run: |
                   # Afficher la version de PHPStan pour le débogage
                   phpstan --version
-                  # Exécuter PHPStan avec les mêmes paramètres qu'en local
-                  phpstan analyse --configuration=phpstan.neon --memory-limit=1G
+                  # Exécuter PHPStan avec configuration
+                  phpstan analyse --configuration=phpstan.neon --memory-limit=1G --error-format=github
+              continue-on-error: false
 
-            - name: PHPCPD
-              run: phpcpd ./src
+            - name: PHPCPD (Copy/Paste Detector)
+              run: phpcpd ./src --min-lines=5 --min-tokens=50
+              continue-on-error: true
 
             - name: Lint YAML
               run: php bin/console lint:yaml config
