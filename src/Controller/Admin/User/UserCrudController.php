@@ -36,8 +36,7 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-    ) {
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -145,34 +144,14 @@ class UserCrudController extends AbstractCrudController
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
         yield ChoiceField::new(propertyName: 'job', label: 'Métier')
-            ->setChoices(
-                choiceGenerator: [
-                    "Technicien" => JobEnum::TECHNICIEN,
-                    "Ingénieur" => JobEnum::INGENIEUR,
-                    "Chargé d'affaires" => JobEnum::CHARGE_AFFAIRES,
-                    "Chargé d'affaires projet" => JobEnum::CHARGE_AFFAIRES_PROJET,
-                    "Chargé de surveillance" => JobEnum::CHARGE_SURVEILLANCE,
-                    "Manager premiere ligne" => JobEnum::MANAGER_PREMIERE_LIGNE
-
-                ]
-            )
+            ->setChoices(JobEnum::getChoices())
             ->onlyWhenCreating()
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'specialityLabel', label: 'Spécialité')->hideOnForm();
         yield ChoiceField::new(propertyName: 'speciality', label: 'Spécialité')
-            ->setChoices(
-                choiceGenerator: [
-                    'Chaudronnerie' => SpecialityEnum::CHA,
-                    'Levage' => SpecialityEnum::LEV,
-                    'Mécanique' => SpecialityEnum::MEC,
-                    'Robinetterie' => SpecialityEnum::ROB,
-                    'Soudage' => SpecialityEnum::SOU,
-                    'Examen Non Destructif' => SpecialityEnum::END,
-                    'Encadrement' => SpecialityEnum::ENC
-                ]
-            )
+            ->setChoices(SpecialityEnum::getChoices())
             ->onlyOnForms()
             ->setColumns(cols: 'col-md-6 col-sm-12');
 
@@ -218,11 +197,11 @@ class UserCrudController extends AbstractCrudController
             ->setPaginatorPageSize(maxResultsPerPage: 20)
             ->setPageTitle(
                 pageName: 'detail',
-                title: fn (User $user) => '👁️ Détails - ' . $user->getFullName()
+                title: fn(User $user) => '👁️ Détails - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'edit',
-                title: fn (User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
+                title: fn(User $user) => '🧑‍💻 Modifier - ' . $user->getFullName()
             )
             ->setPageTitle(
                 pageName: 'new',

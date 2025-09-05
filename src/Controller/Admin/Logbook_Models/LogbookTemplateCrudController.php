@@ -2,19 +2,20 @@
 
 namespace App\Controller\Admin\Logbook_Models;
 
+use App\Enum\JobEnum;
 use App\Entity\LogbookTemplate;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 /**
  * @template-extends AbstractCrudController<LogbookTemplate>
@@ -186,10 +187,10 @@ class LogbookTemplateCrudController extends AbstractCrudController
 
         yield TextField::new(propertyName: 'name', label: 'Nom du modèle')
             ->setRequired(isRequired: true)
-            ->setHelp(help: 'Le nom qui sera affiché pour ce modèle de carnet')
+            ->setHelp(help: 'Service + Nom du modèle')
             ->setColumns(cols: 'col-md-6')
             ->setFormTypeOption(optionName: 'attr', optionValue: [
-                'placeholder' => 'Ex: Modèle standard technicien',
+                'placeholder' => 'Ex: MRC - Modèle standard technicien',
                 'maxlength' => 100,
                 'class' => 'form-control-lg'
             ]);
@@ -242,14 +243,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->setIcon(iconCssClass: 'fas fa-user-tie text-success');
 
         yield ChoiceField::new(propertyName: 'jobs', label: 'Métiers applicables')
-            ->setChoices(choiceGenerator: [
-                'Technicien' => 'TECHNICIEN',
-                'Ingénieur' => 'INGENIEUR',
-                'Chargé d\'affaires' => 'CHARGE_AFFAIRES',
-                'Chargé d\'affaires projet' => 'CHARGE_AFFAIRES_PROJET',
-                'Chargé de surveillance' => 'CHARGE_SURVEILLANCE',
-                'Manager premiere ligne' => 'MANAGER_PREMIERE_LIGNE',
-            ])
+            ->setChoices(JobEnum::getChoices())
             ->allowMultipleChoices()
             ->renderExpanded()
             ->setHelp(help: 'Sélectionnez un ou plusieurs métiers pour lesquels ce modèle sera disponible')
