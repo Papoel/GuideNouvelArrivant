@@ -31,6 +31,9 @@ enum JobEnum: string
         };
     }
 
+    /**
+     * @return array<string, self>
+     */
     public static function getChoices(): array
     {
         $choices = [];

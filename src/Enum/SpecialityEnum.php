@@ -25,9 +25,13 @@ enum SpecialityEnum: string
             self::SOU => 'SOU',
             self::END => 'END',
             self::ENC => 'ENC',
+            self::ELE => 'ELE',
         };
     }
 
+    /**
+     * @return array<string, self>
+     */
     public static function getChoices(): array
     {
         $choices = [];

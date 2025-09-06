@@ -3,6 +3,8 @@
 namespace App\Tests\Controller\Admin\User;
 
 use App\Controller\Admin\User\UserCrudController;
+use App\Entity\Job;
+use App\Entity\Speciality;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\Admin\Users\UserDeletionService;
@@ -98,9 +100,9 @@ class UserCrudControllerTest extends TestCase
             'password' => ['class' => TextField::class, 'found' => false],
             'roles' => ['class' => [ArrayField::class, ChoiceField::class], 'found' => false],
             'jobLabel' => ['class' => TextField::class, 'found' => false],
-            'job' => ['class' => ChoiceField::class, 'found' => false],
+            'job' => ['class' => AssociationField::class, 'found' => false],
             'specialityLabel' => ['class' => TextField::class, 'found' => false],
-            'speciality' => ['class' => ChoiceField::class, 'found' => false],
+            'speciality' => ['class' => AssociationField::class, 'found' => false],
             'mentor' => ['class' => AssociationField::class, 'found' => false],
             'logbooks' => ['class' => AssociationField::class, 'found' => false],
             'hiringAt' => ['class' => DateTimeField::class, 'found' => false],

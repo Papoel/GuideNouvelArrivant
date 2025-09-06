@@ -26,9 +26,9 @@ Cette table stocke les informations des utilisateurs pour l'authentification et 
 | roles         | ARRAY              | Rôles de l'utilisateur (sous forme de tableau) | NOT NULL, DEFAULT '[]'    |
 | password      | VARCHAR(255)       | Mot de passe haché de l'utilisateur            | NOT NULL                  |
 | last_login_at | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
-| job           | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | ENUM: JobEnum             |
+| job           | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | RELATION: 1 TO *          |
 | nni           | VARCHAR(6)         | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
-| speciality    | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | Enum: SpecialityEnum      |
+| speciality    | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | RELATION: 1 TO *          |
 | hiring_at     | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
 | created_at    | DATETIME_IMMUTABLE | Date de création du compte                     | DEFAULT CURRENT_TIMESTAMP |
 | updated_at    | DATETIME_MUTABLE   | Date de la dernière mise à jour du compte      | DEFAULT CURRENT_TIMESTAMP |

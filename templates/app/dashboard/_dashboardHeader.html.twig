@@ -27,8 +27,8 @@
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header text-center">
                             <h6 class="fw-bold">{{ app.user.fullname }}</h6>
-                            <span class="d-block text-muted">{{ app.user.jobLabel }}</span>
-                            <small class="d-block fst-italic text-muted">{{ app.user.specialityLabel }}</small>
+                            <span class="d-block text-muted">{{ app.user.job.name }}</span>
+                            <small class="d-block fst-italic text-muted">{{ app.user.speciality.name }}</small>
                             <div class="mt-2">
                                 <small class="badge bg-success text-white" style="letter-spacing: 1px;">{{ app.user.nni }}</small>
                             </div>

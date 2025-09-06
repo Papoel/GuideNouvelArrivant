@@ -2,17 +2,19 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Action;
-use App\Entity\Logbook;
-use App\Entity\Module;
-use App\Entity\Service;
-use App\Entity\Theme;
+use App\Entity\Job;
 use App\Entity\User;
+use App\Entity\Theme;
 use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Action;
+use App\Entity\Module;
+use App\Entity\Logbook;
+use App\Entity\Service;
+use App\Entity\Speciality;
 use Faker\Factory as Faker;
+use App\Enum\SpecialityEnum;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[\AllowDynamicProperties] class AppFixtures extends Fixture
@@ -25,6 +27,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
     public function load(ObjectManager $manager): void
     {
+        // Création des jobs
+        $this->createJobs(manager: $manager);
+
+        // Création des spécialités
+        $this->createSpecialities(manager: $manager);
+        $manager->flush();
+
         // Création de l'administrateur
         $admin = new User();
         $admin->setFirstname(firstname: 'Bruce')
@@ -33,11 +42,11 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
             ->setRoles(roles: ['ROLE_ADMIN', 'ROLE_USER'])
             ->setPassword(password: $this->passwordHasher->hashPassword(user: $admin, plainPassword: 'Admin1234'))
             ->setNni(nni: 'H12345')
-            ->setJob(job: JobEnum::CHARGE_AFFAIRES)
-            ->setSpeciality(speciality: SpecialityEnum::CHA)
-            ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '2023/11/02'));
+            ->setJob($this->getReference('job_CHARGE_AFFAIRES', Job::class))
+            ->setSpeciality($this->getReference('speciality_CHA', Speciality::class))
+            ->setHiringAt(hiringAt: new \DateTimeImmutable('-3 years'));
 
-        $manager->persist($admin);
+        $manager->persist(object: $admin);
         $this->addReference(name: 'admin_user', object: $admin);
 
         // Création des utilisateurs
@@ -75,6 +84,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
         $mentors = [];
         $jobs = JobEnum::cases();
 
+        $jobRefs = [];
+        foreach (JobEnum::cases() as $jobEnum) {
+            $jobRefs[] = $this->getReference('job_' . $jobEnum->name, Job::class);
+        }
+        $specialityRefs = [];
+        foreach (SpecialityEnum::cases() as $specEnum) {
+            $specialityRefs[] = $this->getReference('speciality_' . $specEnum->name, Speciality::class);
+        }
         for ($i = 0; $i < 5; ++$i) {
             $mentor = new User();
             $mentor->setFirstname(firstname: $this->faker->firstName)
@@ -82,9 +99,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                 ->setEmail(email: sprintf('mentor%d@example.com', $i))
                 ->setPassword(password: $this->passwordHasher->hashPassword(user: $mentor, plainPassword: 'Password123!'))
                 ->setRoles(roles: ['ROLE_MENTOR'])
-                ->setJob(job: JobEnum::cases()[array_rand($jobs)])
+                ->setJob($jobRefs[array_rand($jobRefs)])
                 ->setNni(nni: sprintf('%s%s', chr(codepoint: 65 + $i), str_pad(string: $i, length: 5, pad_string: '0', pad_type: STR_PAD_LEFT)))
-                ->setSpeciality(speciality: SpecialityEnum::cases()[array_rand(SpecialityEnum::cases())])
+                ->setSpeciality($specialityRefs[array_rand($specialityRefs)])
                 ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-' . random_int(1, 5) . ' years'));
 
             $manager->persist(object: $mentor);
@@ -98,19 +115,33 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
     private function createUsers(ObjectManager $manager, array $mentors): array
     {
         $users = [];
+        $jobEnums = JobEnum::cases();
+        $specialityEnums = SpecialityEnum::cases();
+
         for ($i = 0; $i < 20; ++$i) {
             $user = new User();
-            $user->setFirstname(firstname: $this->faker->firstName)
-                ->setLastname(lastname: $this->faker->lastName)
-                ->setEmail(email: sprintf('user%d@example.com', $i))
-                ->setPassword(password: $this->passwordHasher->hashPassword(user: $user, plainPassword: 'Password123!'))
-                ->setRoles(['ROLE_USER'])
-                ->setNni(nni: sprintf('%s%s', chr(codepoint: 70 + $i), str_pad(string: $i, length: 5, pad_string: '0', pad_type: STR_PAD_LEFT)))
-                ->setMentor(mentor: $mentors[array_rand($mentors)])
-                ->setHiringAt(hiringAt: new \DateTimeImmutable(datetime: '-' . random_int(1, 3) . ' months'));
 
-            $manager->persist(object: $user);
-            $this->addReference(name: 'user_' . $i, object: $user);
+            // Sélectionne un job au hasard
+            $jobEnum = $jobEnums[array_rand($jobEnums)];
+            $job = $this->getReference('job_' . $jobEnum->name, Job::class);
+
+            // Sélectionne une spécialité au hasard
+            $specialityEnum = $specialityEnums[array_rand($specialityEnums)];
+            $speciality = $this->getReference('speciality_' . $specialityEnum->name, Speciality::class);
+
+            $user->setFirstname($this->faker->firstName)
+                ->setLastname($this->faker->lastName)
+                ->setEmail(sprintf('user%d@example.com', $i))
+                ->setPassword($this->passwordHasher->hashPassword($user, 'Password123!'))
+                ->setRoles(['ROLE_USER'])
+                ->setNni(sprintf('%s%s', chr(70 + $i), str_pad($i, 5, '0', STR_PAD_LEFT)))
+                ->setMentor($mentors[array_rand($mentors)])
+                ->setJob($job)
+                ->setSpeciality($speciality)
+                ->setHiringAt(new \DateTimeImmutable('-' . random_int(1, 3) . ' months'));
+
+            $manager->persist($user);
+            $this->addReference('user_' . $i, $user);
             $users[] = $user;
         }
 
@@ -298,6 +329,30 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
             $randomServiceKey = $serviceKeys[array_rand($serviceKeys)];
             $user->setService($services[$randomServiceKey]);
             $manager->persist($user);
+        }
+    }
+
+    private function createJobs(ObjectManager $manager): void
+    {
+        foreach (JobEnum::cases() as $job) {
+            $jobEntity = new Job();
+            $jobEntity->setName(name: $job->value)
+                ->setCode(code: $job->getAbbreviation());
+
+            $manager->persist(object: $jobEntity);
+            $this->addReference(name: 'job_' . $job->name, object: $jobEntity);
+        }
+    }
+
+    private function createSpecialities(ObjectManager $manager): void
+    {
+        foreach (SpecialityEnum::cases() as $speciality) {
+            $specialityEntity = new Speciality();
+            $specialityEntity->setName(name: $speciality->value)
+                ->setCode(code: $speciality->getAbbreviation());
+
+            $manager->persist(object: $specialityEntity);
+            $this->addReference(name: 'speciality_' . $speciality->name, object: $specialityEntity);
         }
     }
 }

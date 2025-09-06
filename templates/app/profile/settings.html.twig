@@ -24,10 +24,10 @@
                     <h1 class="text-white mb-2">{{ user.fullname }}</h1>
                     <div class="d-flex align-items-center text-white-50">
                         <i class="bi bi-briefcase me-2"></i>
-                        <span>{{ user.job.value }}</span>
+                        <span>{{ user.job.name }}</span>
                         <span class="mx-3">•</span>
                         <i class="bi bi-tools me-2"></i>
-                        <span>{{ user.speciality.value }}</span>
+                        <span>{{ user.speciality.name }}</span>
                     </div>
                 </div>
             </div>
@@ -235,11 +235,6 @@
             background: white;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .custom-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .info-grid {

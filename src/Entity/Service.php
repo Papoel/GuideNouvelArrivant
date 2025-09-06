@@ -11,6 +11,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
+#[ORM\Table(name: '`services`')]
 class Service
 {
     #[ORM\Id]

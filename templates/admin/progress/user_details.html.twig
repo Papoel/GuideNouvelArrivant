@@ -83,7 +83,7 @@
                                     <div class="user-info-mobile-label"><i class="bi bi-briefcase me-2"></i>Poste</div>
                                     <div class="user-info-mobile-value">
                                         {% if user.job %}
-                                            {{ user.job.value }}
+                                            {{ user.job.name }}
                                         {% else %}
                                             <span class="text-muted fst-italic">Non renseigné</span>
                                         {% endif %}
@@ -93,7 +93,7 @@
                                     <div class="user-info-mobile-label"><i class="bi bi-award me-2"></i>Spécialité</div>
                                     <div class="user-info-mobile-value">
                                         {% if user.speciality %}
-                                            {{ user.speciality.value }}
+                                            {{ user.speciality.name }}
                                         {% else %}
                                             <span class="text-muted fst-italic">Non renseigné</span>
                                         {% endif %}
@@ -151,7 +151,7 @@
                                     <div class="col-md-4 user-info-label"><i class="bi bi-briefcase"></i>Poste:</div>
                                     <div class="col-md-8 user-info-value">
                                         {% if user.job %}
-                                            {{ user.job.value }}
+                                            {{ user.job.name }}
                                         {% else %}
                                             <span class="text-muted">Non renseigné</span>
                                         {% endif %}
@@ -163,7 +163,7 @@
                                     <div class="col-md-4 user-info-label"><i class="bi bi-award"></i>Spécialité:</div>
                                     <div class="col-md-8 user-info-value">
                                         {% if user.speciality %}
-                                            {{ user.speciality.value }}
+                                            {{ user.speciality.name }}
                                         {% else %}
                                             <span class="text-muted">Non renseigné</span>
                                         {% endif %}

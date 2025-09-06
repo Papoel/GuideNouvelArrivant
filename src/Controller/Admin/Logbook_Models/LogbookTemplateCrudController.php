@@ -2,8 +2,9 @@
 
 namespace App\Controller\Admin\Logbook_Models;
 
-use App\Enum\JobEnum;
+use App\Entity\Job;
 use App\Entity\LogbookTemplate;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -15,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 /**
@@ -22,6 +24,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
  */
 class LogbookTemplateCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return LogbookTemplate::class;
@@ -61,40 +68,53 @@ class LogbookTemplateCrudController extends AbstractCrudController
                     }
 
                     // Traitement des jobs
-                    $jobs = $entity->getJobs();
+                    $jobCodes = $entity->getJobs();
 
                     // Si les jobs sont vides, retourner une chaîne vide
-                    if (empty($jobs)) {
+                    if (empty($jobCodes)) {
                         return '';
                     }
 
                     $badges = [];
                     $classes = [
-                        'TECHNICIEN' => 'badge-info',
-                        'INGENIEUR' => 'badge-primary',
-                        'CHARGE_AFFAIRES' => 'badge-success',
-                        'CHARGE_AFFAIRES_PROJET' => 'badge-warning',
-                        'CHARGE_SURVEILLANCE' => 'badge-danger',
-                        'MANAGER_PREMIERE_LIGNE' => 'badge-dark',
+                        'APP' => 'badge-info',
+                        'TECH' => 'badge-info',
+                        'AGENT' => 'badge-info',
+                        'CSI' => 'badge-danger',
+                        'CA' => 'badge-success',
+                        'CAP' => 'badge-warning',
+                        'ING' => 'badge-primary',
+                        'MPL' => 'badge-dark',
+                        'MPLD' => 'badge-dark',
                     ];
 
-                    $labels = [
-                        'TECHNICIEN' => 'Technicien',
-                        'INGENIEUR' => 'Ingénieur',
-                        'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
-                        'CHARGE_AFFAIRES_PROJET' => 'CAP',
-                        'CHARGE_SURVEILLANCE' => 'CSI',
-                        'MANAGER_PREMIERE_LIGNE' => 'MPL',
-                    ];
+                    // Récupérer les entités Job correspondant aux codes
+                    $jobRepository = $this->entityManager->getRepository(Job::class);
+                    $jobs = $jobRepository->findBy(['code' => $jobCodes]);
 
-                    foreach ($jobs as $job) {
-                        $badgeClass = $classes[$job] ?? 'badge-secondary';
-                        $jobLabel = $labels[$job] ?? $job;
-                        $badges[] = sprintf(
-                            '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
-                            $badgeClass,
-                            htmlspecialchars(string: (string) $jobLabel)
-                        );
+                    // Si aucun job n'est trouvé, essayer d'afficher les codes bruts
+                    if (empty($jobs)) {
+                        foreach ($jobCodes as $jobCode) {
+                            $badgeClass = $classes[$jobCode] ?? 'badge-secondary';
+                            $badges[] = sprintf(
+                                '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
+                                $badgeClass,
+                                htmlspecialchars(string: (string)$jobCode)
+                            );
+                        }
+                    } else {
+                        // Afficher les noms des jobs trouvés
+                        foreach ($jobs as $job) {
+                            $jobCode = $job->getCode();
+                            $jobName = $job->getName();
+                            $badgeClass = $classes[$jobCode] ?? 'badge-secondary';
+
+                            $badges[] = sprintf(
+                                '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
+                                $badgeClass,
+                                htmlspecialchars(string: (string)$jobName)
+                            );
+                        }
                     }
 
                     return implode(separator: '', array: $badges);
@@ -137,31 +157,42 @@ class LogbookTemplateCrudController extends AbstractCrudController
 
                     $badges = [];
                     $classes = [
-                        'TECHNICIEN' => 'bg-info-subtle text-info-emphasis',
-                        'INGENIEUR' => 'bg-primary-subtle text-primary-emphasis',
-                        'CHARGE_AFFAIRES' => 'bg-success-subtle text-success-emphasis',
-                        'CHARGE_AFFAIRES_PROJET' => 'bg-warning-subtle text-warning-emphasis',
-                        'CHARGE_SURVEILLANCE' => 'bg-danger-subtle text-danger-emphasis',
-                        'MANAGER_PREMIERE_LIGNE' => 'bg-dark text-white',
+                        'TECH' => 'bg-info-subtle text-info-emphasis',
+                        'APP' => 'bg-primary-subtle text-primary-emphasis',
+                        'ING' => 'bg-primary-subtle text-primary-emphasis',
+                        'CA' => 'bg-success-subtle text-success-emphasis',
+                        'CAP' => 'bg-warning-subtle text-warning-emphasis',
+                        'CSI' => 'bg-danger-subtle text-danger-emphasis',
+                        'MPL' => 'bg-dark text-white',
                     ];
 
-                    $labels = [
-                        'TECHNICIEN' => 'Technicien',
-                        'INGENIEUR' => 'Ingénieur',
-                        'CHARGE_AFFAIRES' => 'Chargé d\'affaires',
-                        'CHARGE_AFFAIRES_PROJET' => 'CAP',
-                        'CHARGE_SURVEILLANCE' => 'CSI',
-                        'MANAGER_PREMIERE_LIGNE' => 'MPL',
-                    ];
+                    $jobCodes = $entity->getJobs();
+                    $jobRepository = $this->entityManager->getRepository(Job::class);
+                    $jobs = $jobRepository->findBy(['code' => $jobCodes]);
 
-                    foreach ($entity->getJobs() as $job) {
-                        $badgeClass = $classes[$job] ?? 'bg-secondary';
-                        $jobLabel = $labels[$job] ?? $job;
-                        $badges[] = sprintf(
-                            '<span class="badge %s rounded-pill me-2 py-1 px-2">%s</span>',
-                            $badgeClass,
-                            htmlspecialchars(string: (string) $jobLabel)
-                        );
+                    // Si aucun job n'est trouvé, essayer d'afficher les codes bruts
+                    if (empty($jobs)) {
+                        foreach ($jobCodes as $jobCode) {
+                            $badgeClass = $classes[$jobCode] ?? 'bg-secondary';
+                            $badges[] = sprintf(
+                                '<span class="badge %s rounded-pill me-2 py-1 px-2">%s</span>',
+                                $badgeClass,
+                                htmlspecialchars(string: (string)$jobCode)
+                            );
+                        }
+                    } else {
+                        // Afficher les noms des jobs trouvés
+                        foreach ($jobs as $job) {
+                            $jobCode = $job->getCode();
+                            $jobName = $job->getName();
+                            $badgeClass = $classes[$jobCode] ?? 'bg-secondary';
+
+                            $badges[] = sprintf(
+                                '<span class="badge %s rounded-pill me-2 py-1 px-2">%s</span>',
+                                $badgeClass,
+                                htmlspecialchars(string: (string)$jobName)
+                            );
+                        }
                     }
 
                     return implode('', $badges);
@@ -243,7 +274,17 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->setIcon(iconCssClass: 'fas fa-user-tie text-success');
 
         yield ChoiceField::new(propertyName: 'jobs', label: 'Métiers applicables')
-            ->setChoices(JobEnum::getChoices())
+            ->setChoices(function () {
+                $jobRepository = $this->entityManager->getRepository(Job::class);
+                $jobs = $jobRepository->findBy([], ['name' => 'ASC']);
+
+                $choices = [];
+                foreach ($jobs as $job) {
+                    $choices[$job->getName()] = $job->getCode();
+                }
+
+                return $choices;
+            })
             ->allowMultipleChoices()
             ->renderExpanded()
             ->setHelp(help: 'Sélectionnez un ou plusieurs métiers pour lesquels ce modèle sera disponible')

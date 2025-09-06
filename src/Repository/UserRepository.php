@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use App\Entity\Logbook;
 
 /** @extends ServiceEntityRepository<User> */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
@@ -57,12 +58,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findUsersWithoutLogbook(): array
     {
-        $qb = $this->createQueryBuilder('u');
+        $qb = $this->createQueryBuilder(alias: 'u');
 
         /** @var array<int, User> $result */
-        $result = $qb->leftJoin('App\\Entity\\Logbook', 'l', 'WITH', 'l.owner = u.id')
-            ->where($qb->expr()->isNull('l.id'))
-            ->orderBy('u.lastname', 'ASC')
+        $result = $qb->leftJoin(join: Logbook::class, alias: 'l', conditionType: 'WITH', condition: 'l.owner = u.id')
+            ->where($qb->expr()->isNull(x: 'l.id'))
+            ->orderBy(sort: 'u.lastname', order: 'ASC')
             ->getQuery()
             ->getResult();
 
@@ -78,7 +79,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findUsersWithoutLogbookByService(Service $service): array
     {
-        // Approche simple en deux étapes :
+        // Vérifier d'abord l'ID du service
+        $serviceId = $service->getId();
+        if ($serviceId === null) {
+            return [];
+        }
+
         // 1. Récupérer tous les utilisateurs sans carnet
         $usersWithoutLogbook = $this->findUsersWithoutLogbook();
 

@@ -19,7 +19,8 @@ class UserLogbookController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly LogbookTemplateRepository $templateRepository,
         private readonly LogbookTemplateService $logbookTemplateService
-    ) {}
+    ) {
+    }
 
     #[Route('/admin/users/{id}/assign-template', name: 'admin_user_assign_template', methods: ['GET', 'POST'])]
     public function assignTemplate(Request $request, User $user): Response

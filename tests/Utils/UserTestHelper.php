@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Utils;
 
+use App\Entity\Job;
 use App\Entity\Logbook;
 use App\Entity\Module;
+use App\Entity\Speciality;
 use App\Entity\Theme;
 use App\Entity\User;
-use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserTestHelper
 {
@@ -24,8 +23,26 @@ class UserTestHelper
         $user->setLastname(lastname: $attributes['lastname'] ?? 'Wayne');
         $user->setEmail(email: $attributes['email'] ?? self::generateUniqueEmail());
         $user->setNni(nni: $attributes['nni'] ?? self::generateUniqueNni());
-        $user->setJob(job: $attributes['job'] ?? JobEnum::CHARGE_AFFAIRES);
-        $user->setSpeciality(speciality: $attributes['specialty'] ?? SpecialityEnum::CHA);
+        
+        // Créer un job par défaut si non fourni
+        if (!isset($attributes['job'])) {
+            $job = new Job();
+            $job->setName("Chargé d'affaires");
+            $job->setCode('CA');
+            $user->setJob(job: $job);
+        } else {
+            $user->setJob(job: $attributes['job']);
+        }
+        
+        // Créer une spécialité par défaut si non fournie
+        if (!isset($attributes['specialty'])) {
+            $speciality = new Speciality();
+            $speciality->setName('Chaudronnerie');
+            $speciality->setCode('CHA');
+            $user->setSpeciality(speciality: $speciality);
+        } else {
+            $user->setSpeciality(speciality: $attributes['specialty']);
+        }
 
         $timezone = new \DateTimeZone(timezone: self::TIMEZONE);
         $hiringAt = $attributes['hiringAt'] ?? new \DateTimeImmutable(datetime: '2023-11-02 08:00:00', timezone: $timezone);
@@ -77,6 +94,20 @@ class UserTestHelper
     {
         $container = $client->getContainer();
         $entityManager = $container->get(id: 'doctrine')->getManager();
+        
+        // Persister le job et la spécialité si nécessaire
+        if ($user instanceof User) {
+            $job = $user->getJob();
+            $speciality = $user->getSpeciality();
+            
+            if ($job && !$entityManager->contains($job)) {
+                $entityManager->persist($job);
+            }
+            
+            if ($speciality && !$entityManager->contains($speciality)) {
+                $entityManager->persist($speciality);
+            }
+        }
 
         // Mock : 1. Création des themes
         $theme1 = new Theme();
@@ -110,7 +141,7 @@ class UserTestHelper
         // Mock : Ajouter un carnet à l'utilisateur
         $logbook = new Logbook();
         $logbook->setOwner($user);
-        $logbook->setName(name: 'Carnet de '.$user->getFullName()) . ' (' . $user->getSpecialityAbreviation() . ')';
+        $logbook->setName(name: 'Carnet de ' . $user->getFullName() . ' (' . $user->getSpeciality()->getCode() . ')');
         $logbook->addTheme($theme1);
         $logbook->addTheme($theme2);
 
@@ -126,6 +157,19 @@ class UserTestHelper
 
         // Créer un utilisateur
         $user = self::createUser();
+        
+        // Persister le job et la spécialité avant l'utilisateur
+        $job = $user->getJob();
+        $speciality = $user->getSpeciality();
+        
+        if ($job) {
+            $entityManager->persist($job);
+        }
+        
+        if ($speciality) {
+            $entityManager->persist($speciality);
+        }
+        
         $entityManager->persist($user);
 
         $theme1 = new Theme();
@@ -159,7 +203,7 @@ class UserTestHelper
         // Mock : Ajouter un carnet à l'utilisateur
         $logbook = new Logbook();
         $logbook->setOwner($user);
-        $logbook->setName(name: 'Carnet de '.$user->getFullName() . ' (' . $user->getSpecialityAbreviation() . ')');
+        $logbook->setName(name: 'Carnet de ' . $user->getFullName() . ' (' . $user->getSpeciality()->getCode() . ')');
         $logbook->addTheme($theme1);
         $logbook->addTheme($theme2);
 

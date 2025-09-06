@@ -12,6 +12,7 @@ use App\Entity\User;
 use App\Repository\Interfaces\ActionRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /** Repository pour l'entité Action.
@@ -41,36 +42,41 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
      * @return Action[] Liste des actions correspondant aux critères */
     public function findByModuleAndCriteria(Module $module, array $criteria = []): array
     {
-        $qb = $this->createQueryBuilder('a')
-            ->andWhere('a.module = :module')
-            ->setParameter('module', $module);
+        // Utiliser le findBy natif pour trouver les actions par module
+        $actions = $this->findBy(['module' => $module]);
 
-        // Ajouter les critères supplémentaires
-        foreach ($criteria as $field => $value) {
-            if ('service' === $field || 'user.service' === $field) {
-                $qb->leftJoin('a.user', 'u')
-                    ->leftJoin('u.service', 's')
-                    ->andWhere('s = :service')
-                    ->setParameter('service', $value);
-            } else {
-                // Gérer les champs avec des points (relations)
-                if (false !== strpos($field, '.')) {
-                    [$relation, $property] = explode('.', $field, 2);
-                    $alias = $relation[0]; // Première lettre comme alias
-                    $qb->leftJoin("a.$relation", $alias)
-                        ->andWhere("$alias.$property = :$property")
-                        ->setParameter($property, $value);
-                } else {
-                    $qb->andWhere("a.$field = :$field")
-                        ->setParameter($field, $value);
-                }
-            }
+        // Si aucun critère supplémentaire, retourner toutes les actions trouvées
+        if (empty($criteria)) {
+            return $actions;
         }
 
-        /** @var array<int, Action> $result */
-        $result = $qb->getQuery()->getResult();
+        // Filtrer les actions selon les critères supplémentaires
+        return array_filter($actions, function (Action $action) use ($criteria) {
+            foreach ($criteria as $field => $value) {
+                if ('service' === $field) {
+                    // Vérifier si l'utilisateur a le service spécifié
+                    $userService = $action->getUser()?->getService();
+                    if ($userService !== $value) {
+                        return false;
+                    }
+                } elseif ('user' === $field) {
+                    // Vérifier si l'action appartient à l'utilisateur spécifié
+                    if ($action->getUser() !== $value) {
+                        return false;
+                    }
+                } else {
+                    // Gérer les autres critères
+                    $getter = 'get' . ucfirst($field);
+                    if (method_exists($action, $getter)) {
+                        if ($action->$getter() !== $value) {
+                            return false;
+                        }
+                    }
+                }
+            }
 
-        return $result;
+            return true;
+        });
     }
 
     /** Trouve la dernière action validée par un utilisateur.
@@ -101,23 +107,27 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
      * @return Action[] Liste des actions associées au thème dans le carnet */
     public function findByLogbookAndTheme(Logbook $logbook, Theme $theme, ?User $user = null): array
     {
-        // Utilise une requête avec des jointures explicites pour garantir que toutes les actions liées sont trouvées
-        $qb = $this->createQueryBuilder('a')
-            ->innerJoin('a.module', 'm', 'WITH', 'm.theme = :theme')
-            ->where('a.logbook = :logbook')
-            ->setParameter('logbook', $logbook)
-            ->setParameter('theme', $theme)
-            ->orderBy('a.id', 'ASC');
+        // Récupérer toutes les actions du carnet
+        $actions = $this->findBy(['logbook' => $logbook]);
 
-        // Si un utilisateur est spécifié, filtrer par utilisateur
-        if ($user !== null) {
-            $qb->andWhere('a.user = :user')
-                ->setParameter('user', $user);
-        }
+        // Filtrer les actions pour ne garder que celles dont le module a le thème spécifié
+        $filteredActions = array_filter($actions, function (Action $action) use ($theme, $user) {
+            // Vérifier que l'action a un module et que ce module a le thème spécifié
+            $module = $action->getModule();
+            if ($module === null || $module->getTheme() !== $theme) {
+                return false;
+            }
 
-        /** @var array<int, Action> $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+            // Si un utilisateur est spécifié, vérifier que l'action lui appartient
+            if ($user !== null && $action->getUser() !== $user) {
+                return false;
+            }
+
+            return true;
+        });
+
+        // Convertir le résultat en tableau indexé numériquement
+        return array_values($filteredActions);
     }
 
     /**
@@ -149,17 +159,44 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
         return $result !== false && isset($result['count_actions']) && $result['count_actions'] > 0;
     }
 
+    /**
+     * Helper method to check if a join already exists
+     *
+     * @param array<int, \Doctrine\ORM\Query\Expr\Join> $joins Liste des jointures à vérifier
+     * @param string $alias Alias à rechercher
+     * @return bool True si l'alias existe déjà dans les jointures
+     */
+    private function hasJoin(array $joins, string $alias): bool
+    {
+        foreach ($joins as $join) {
+            if ($join->getAlias() === $alias) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getLastActionDateForUser(User $user): ?\DateTimeInterface
     {
-        $result = $this->createQueryBuilder(alias: 'a')
-            ->select('a.agentValidatedAt')
-            ->where('a.user = :user')
-            ->setParameter(key: 'user', value: $user)
-            ->orderBy(sort: 'a.agentValidatedAt', order: 'DESC')
-            ->setMaxResults(maxResults: 1)
-            ->getQuery()
-            ->getOneOrNullResult(hydrationMode: AbstractQuery::HYDRATE_SINGLE_SCALAR);
+        // Récupérer toutes les actions de l'utilisateur
+        $actions = $this->findBy(['user' => $user]);
 
-        return $result instanceof \DateTimeInterface ? $result : null;
+        // Filtrer pour ne garder que les actions avec une date de validation
+        $validatedActions = array_filter($actions, function (Action $action) {
+            return $action->getAgentValidatedAt() !== null;
+        });
+
+        // Si aucune action validée n'est trouvée, retourner null
+        if (empty($validatedActions)) {
+            return null;
+        }
+
+        // Trier les actions par date de validation (la plus récente en premier)
+        usort($validatedActions, function (Action $a, Action $b) {
+            return $b->getAgentValidatedAt() <=> $a->getAgentValidatedAt();
+        });
+
+        // Retourner la date de la première action (la plus récente)
+        return reset($validatedActions)->getAgentValidatedAt();
     }
 }

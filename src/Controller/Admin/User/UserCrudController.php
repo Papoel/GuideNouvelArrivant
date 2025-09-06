@@ -2,8 +2,9 @@
 
 namespace App\Controller\Admin\User;
 
+use App\Entity\Job;
+use App\Entity\Speciality;
 use App\Entity\User;
-use App\Enum\JobEnum;
 use App\Enum\SpecialityEnum;
 use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,7 +37,8 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-    ) {}
+    ) {
+    }
 
     public static function getEntityFqcn(): string
     {
@@ -143,15 +145,30 @@ class UserCrudController extends AbstractCrudController
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
-        yield ChoiceField::new(propertyName: 'job', label: 'Métier')
-            ->setChoices(JobEnum::getChoices())
-            ->onlyWhenCreating()
+        yield AssociationField::new(propertyName: 'job', label: 'Métier')
+            ->setFormTypeOption('choice_label', 'name')
+            ->setQueryBuilder(
+                function ($queryBuilder) {
+                    if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
+                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                    }
+                    return $queryBuilder;
+                }
+            )
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'specialityLabel', label: 'Spécialité')->hideOnForm();
-        yield ChoiceField::new(propertyName: 'speciality', label: 'Spécialité')
-            ->setChoices(SpecialityEnum::getChoices())
+        yield AssociationField::new(propertyName: 'speciality', label: 'Spécialité')
+            ->setFormTypeOption('choice_label', 'name')
+            ->setQueryBuilder(
+                function ($queryBuilder) {
+                    if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
+                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                    }
+                    return $queryBuilder;
+                }
+            )
             ->onlyOnForms()
             ->setColumns(cols: 'col-md-6 col-sm-12');
 
