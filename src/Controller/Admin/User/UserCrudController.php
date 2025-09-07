@@ -2,10 +2,7 @@
 
 namespace App\Controller\Admin\User;
 
-use App\Entity\Job;
-use App\Entity\Speciality;
 use App\Entity\User;
-use App\Enum\SpecialityEnum;
 use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;

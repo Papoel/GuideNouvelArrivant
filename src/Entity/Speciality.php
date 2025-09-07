@@ -2,11 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\SpecialityRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SpecialityRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: SpecialityRepository::class)]
 #[ORM\Table(name: '`specialities`')]
+#[UniqueEntity(
+    fields: ['name', 'code'],
+    message: 'Cette combinaison nom/code existe déjà.',
+    errorPath: 'name'
+)]
 class Speciality
 {
     #[ORM\Id]
@@ -16,9 +23,25 @@ class Speciality
     private ?int $id = null;
 
     #[ORM\Column(length: 80)]
+    #[Assert\NotBlank(message: 'Le nom de la spécialité ne peut pas être vide.')]
+    #[Assert\Length(
+        min: 2,
+        max: 80,
+        minMessage: 'Le nom doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 40)]
+    #[Assert\NotBlank(message: 'Le code ne peut pas être vide.')]
+    #[Assert\Length(
+        max: 5,
+        maxMessage: 'Le code ne peut contenir plus de {{ limit }} caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[A-Z0-9]+$/',
+        message: 'Le code doit contenir uniquement des lettres majuscules et des chiffres.'
+    )]
     private ?string $code = null;
 
     public function getId(): ?int
@@ -45,8 +68,25 @@ class Speciality
 
     public function setCode(string $code): static
     {
-        $this->code = $code;
+        $this->code = strtoupper($code);
 
         return $this;
+    }
+
+    /**
+     * Génère une représentation unique de l'entité
+     * basée sur la combinaison nom et code
+     */
+    public function getUniqueEntity(): string
+    {
+        $name = strtolower($this->getName() ?? '');
+        $code = strtoupper($this->getCode() ?? '');
+
+        return $name . '-' . $code;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
     }
 }

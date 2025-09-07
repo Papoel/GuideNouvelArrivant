@@ -23,22 +23,28 @@ class UserTestHelper
         $user->setLastname(lastname: $attributes['lastname'] ?? 'Wayne');
         $user->setEmail(email: $attributes['email'] ?? self::generateUniqueEmail());
         $user->setNni(nni: $attributes['nni'] ?? self::generateUniqueNni());
-        
+
         // Créer un job par défaut si non fourni
         if (!isset($attributes['job'])) {
+            static $jobCounter = 0;
+            $jobCounter++;
+
             $job = new Job();
-            $job->setName("Chargé d'affaires");
-            $job->setCode('CA');
+            $job->setName("Chargé d'affaires " . $jobCounter);
+            $job->setCode('CA' . $jobCounter);
             $user->setJob(job: $job);
         } else {
             $user->setJob(job: $attributes['job']);
         }
-        
+
         // Créer une spécialité par défaut si non fournie
         if (!isset($attributes['specialty'])) {
+            static $specialityCounter = 0;
+            $specialityCounter++;
+
             $speciality = new Speciality();
-            $speciality->setName('Chaudronnerie');
-            $speciality->setCode('CHA');
+            $speciality->setName('Chaudronnerie ' . $specialityCounter);
+            $speciality->setCode('CHA' . $specialityCounter);
             $user->setSpeciality(speciality: $speciality);
         } else {
             $user->setSpeciality(speciality: $attributes['specialty']);
@@ -94,16 +100,16 @@ class UserTestHelper
     {
         $container = $client->getContainer();
         $entityManager = $container->get(id: 'doctrine')->getManager();
-        
+
         // Persister le job et la spécialité si nécessaire
         if ($user instanceof User) {
             $job = $user->getJob();
             $speciality = $user->getSpeciality();
-            
+
             if ($job && !$entityManager->contains($job)) {
                 $entityManager->persist($job);
             }
-            
+
             if ($speciality && !$entityManager->contains($speciality)) {
                 $entityManager->persist($speciality);
             }
@@ -157,19 +163,19 @@ class UserTestHelper
 
         // Créer un utilisateur
         $user = self::createUser();
-        
+
         // Persister le job et la spécialité avant l'utilisateur
         $job = $user->getJob();
         $speciality = $user->getSpeciality();
-        
+
         if ($job) {
             $entityManager->persist($job);
         }
-        
+
         if ($speciality) {
             $entityManager->persist($speciality);
         }
-        
+
         $entityManager->persist($user);
 
         $theme1 = new Theme();
