@@ -186,9 +186,11 @@ class ImportUsersCommand extends Command
     private function extractUsersFromPhpMyAdminExport(array $data): array
     {
         foreach ($data as $item) {
-            if (isset($item['type']) && $item['type'] === 'table'
+            if (
+                isset($item['type']) && $item['type'] === 'table'
                 && isset($item['name']) && $item['name'] === 'users'
-                && isset($item['data']) && is_array($item['data'])) {
+                && isset($item['data']) && is_array($item['data'])
+            ) {
                 return $item['data'];
             }
         }
