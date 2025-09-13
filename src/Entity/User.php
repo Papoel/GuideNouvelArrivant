@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Entity\Traits\TimestampTrait;
-use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -90,8 +88,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Type(type: \DateTimeInterface::class)]
     private ?\DateTimeInterface $lastLoginAt = null;
 
-    #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: JobEnum::class)]
-    private ?JobEnum $job = null;
+
+    #[ORM\ManyToOne(targetEntity: Job::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL', nullable: true)]
+    private ?Job $job = null;
+
+    #[ORM\ManyToOne(targetEntity: Speciality::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(onDelete: 'SET NULL', nullable: true)]
+    private ?Speciality $speciality = null;
 
     #[ORM\Column(type: Types::STRING, length: 6, nullable: true)]
     #[Assert\Length(max: 6, maxMessage: 'Le NNI doit contenir 6 caractères.')]
@@ -99,8 +103,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'Veuillez saisir un NNI.')]
     private ?string $nni = null;
 
-    #[ORM\Column(type: Types::STRING, length: 80, nullable: true, enumType: SpecialityEnum::class)]
-    private ?SpecialityEnum $speciality = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Type(type: \DateTimeImmutable::class)]
@@ -256,21 +258,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $firstname . ' ' . $lastname;
     }
 
-    public function getJob(): ?JobEnum
+    public function getJob(): ?Job
     {
         return $this->job;
     }
 
-    public function setJob(JobEnum $job): static
+    public function setJob(?Job $job): static
     {
         $this->job = $job;
-
         return $this;
-    }
-
-    public function getJobLabel(): ?string
-    {
-        return $this->job?->value;
     }
 
     public function getNni(): ?string
@@ -285,26 +281,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSpeciality(): ?SpecialityEnum
+    public function getSpeciality(): ?Speciality
     {
         return $this->speciality;
     }
 
-    public function setSpeciality(SpecialityEnum $speciality): static
+    public function setSpeciality(?Speciality $speciality): static
     {
         $this->speciality = $speciality;
-
         return $this;
-    }
-
-    public function getSpecialityAbreviation(): ?string
-    {
-        return $this->speciality?->getAbbreviation();
-    }
-
-    public function getSpecialityLabel(): ?string
-    {
-        return $this->speciality?->value;
     }
 
     public function getMentor(): ?self
@@ -463,5 +448,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->service = $service;
 
         return $this;
+    }
+
+    /**
+     * Méthode utilisée pour l'affichage du métier dans EasyAdmin
+     */
+    public function getJobLabel(): ?string
+    {
+        return $this->job ? $this->job->getName() : null;
+    }
+
+    /**
+     * Méthode utilisée pour l'affichage de la spécialité dans EasyAdmin
+     */
+    public function getSpecialityLabel(): ?string
+    {
+        return $this->speciality ? $this->speciality->getName() : null;
     }
 }

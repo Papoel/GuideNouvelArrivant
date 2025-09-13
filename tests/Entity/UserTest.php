@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Entity;
 
 use App\Entity\Action;
+use App\Entity\Feedback;
+use App\Entity\Job;
 use App\Entity\Logbook;
+use App\Entity\Service;
+use App\Entity\Speciality;
 use App\Entity\User;
-use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
 use App\Tests\Abstract\EntityTestCase;
 use App\Tests\Entity\Trait\EntityIdTestTrait;
 use DateTimeImmutable;
@@ -42,6 +44,15 @@ class UserTest extends EntityTestCase
 
     private function getEntityUser(): User
     {
+        // Créer les objets Job et Speciality pour les tests
+        $job = new Job();
+        $job->setName('Technicien');
+        $job->setCode('TECH');
+        
+        $speciality = new Speciality();
+        $speciality->setName('Chaudronnerie');
+        $speciality->setCode('CHA');
+        
         $user = new User();
         $user->setFirstname(firstname: "Noémi");
         $user->setLastname(lastname: "Colin");
@@ -49,9 +60,9 @@ class UserTest extends EntityTestCase
         $user->setRoles(roles: ['ROLE_USER']);
         $user->setPassword(password: "Password123!");
         $user->setLastLoginAt(lastLoginAt: null);
-        $user->setJob(job: JobEnum::TECHNICIEN);
+        $user->setJob(job: $job);
         $user->setNni(nni: "A74591");
-        $user->setSpeciality(speciality: SpecialityEnum::CHA);
+        $user->setSpeciality(speciality: $speciality);
         $user->setHiringAt(hiringAt: new DateTimeImmutable(datetime: "2023-01-01 12:00:00"));
         $user->setCreatedAt(createdAt: null);
         $user->setUpdatedAt(updatedAt: null);
@@ -116,7 +127,10 @@ class UserTest extends EntityTestCase
     public function getJob(): void
     {
         $entity = $this->getEntityUser();
-        self::assertEquals(expected: JobEnum::TECHNICIEN, actual: $entity->getJob());
+        $job = $entity->getJob();
+        self::assertInstanceOf(expected: Job::class, actual: $job);
+        self::assertEquals(expected: 'Technicien', actual: $job->getName());
+        self::assertEquals(expected: 'TECH', actual: $job->getCode());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
@@ -132,7 +146,10 @@ class UserTest extends EntityTestCase
     public function getSpeciality(): void
     {
         $entity = $this->getEntityUser();
-        self::assertEquals(expected: SpecialityEnum::CHA, actual: $entity->getSpeciality());
+        $speciality = $entity->getSpeciality();
+        self::assertInstanceOf(expected: Speciality::class, actual: $speciality);
+        self::assertEquals(expected: 'Chaudronnerie', actual: $speciality->getName());
+        self::assertEquals(expected: 'CHA', actual: $speciality->getCode());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 
@@ -177,12 +194,17 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getSpecialityAbbreviation(): void
     {
-        $this->entity->setSpeciality(speciality: SpecialityEnum::CHA); // Exemple avec une spécialité
+        // Créer une spécialité pour le test
+        $speciality = new Speciality();
+        $speciality->setName('Chaudronnerie');
+        $speciality->setCode('CHA');
+        
+        $this->entity->setSpeciality($speciality);
 
         // Vérifie que getSpecialityAbbreviation renvoie l'abréviation correcte
         $this->assertEquals(
             expected: 'CHA',
-            actual: $this->entity->getSpecialityAbreviation(),
+            actual: $this->entity->getSpeciality()->getCode(),
             message: "L'abréviation de la spécialité devrait être 'CHA'."
         );
     }
@@ -190,11 +212,16 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getSpecialityLabel(): void
     {
-        $this->entity->setSpeciality(SpecialityEnum::CHA); // Exemple avec une spécialité
+        // Créer une spécialité pour le test
+        $speciality = new Speciality();
+        $speciality->setName('Chaudronnerie');
+        $speciality->setCode('CHA');
+        
+        $this->entity->setSpeciality($speciality);
 
         // Vérifie que getSpecialityLabel renvoie le label de la spécialité
         $this->assertEquals(
-            SpecialityEnum::CHA->value,
+            'Chaudronnerie',
             $this->entity->getSpecialityLabel(),
             "Le label de la spécialité devrait être 'Chaudronnerie'."
         );
@@ -235,15 +262,20 @@ class UserTest extends EntityTestCase
         );
     }
 
-    // ----------------- TESTS ENUM -----------------
+    // ----------------- TESTS LABELS -----------------
     #[Test]
     public function getJobLabel(): void
     {
-        $this->entity->setJob(job: JobEnum::TECHNICIEN); // Exemple avec un emploi
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName('Technicien');
+        $job->setCode('TECH');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            JobEnum::TECHNICIEN->value,
+            'Technicien',
             $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Technicien'."
         );
@@ -252,11 +284,16 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getJobLabelReturnsTechnician(): void
     {
-        $this->entity->setJob(job: JobEnum::TECHNICIEN);
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName('Technicien');
+        $job->setCode('TECH');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            expected: JobEnum::TECHNICIEN->value,
+            expected: 'Technicien',
             actual: $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Technicien'."
         );
@@ -265,11 +302,16 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getJobLabelReturnsEngineer(): void
     {
-        $this->entity->setJob(job: JobEnum::INGENIEUR);
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName('Ingénieur');
+        $job->setCode('ING');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            expected: JobEnum::INGENIEUR->value,
+            expected: 'Ingénieur',
             actual: $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Ingénieur'."
         );
@@ -278,11 +320,16 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getJobLabelReturnsBusinessManager(): void
     {
-        $this->entity->setJob(job: JobEnum::CHARGE_AFFAIRES);
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName("Chargé d'affaires");
+        $job->setCode('CA');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            expected: JobEnum::CHARGE_AFFAIRES->value,
+            expected: "Chargé d'affaires",
             actual: $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Chargé d'affaires'."
         );
@@ -291,11 +338,16 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getJobLabelReturnsProjectBusinessManager(): void
     {
-        $this->entity->setJob(job: JobEnum::CHARGE_AFFAIRES_PROJET);
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName("Chargé d'affaires projet");
+        $job->setCode('CAP');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            expected: JobEnum::CHARGE_AFFAIRES_PROJET->value,
+            expected: "Chargé d'affaires projet",
             actual: $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Chargé d'affaires projet'."
         );
@@ -304,18 +356,23 @@ class UserTest extends EntityTestCase
     #[Test]
     public function getJobLabelReturnsSurveillanceManager(): void
     {
-        $this->entity->setJob(job: JobEnum::CHARGE_SURVEILLANCE);
+        // Créer un job pour le test
+        $job = new Job();
+        $job->setName("Chargé de surveillance");
+        $job->setCode('CSI');
+        
+        $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
         $this->assertEquals(
-            expected: JobEnum::CHARGE_SURVEILLANCE->value,
+            expected: "Chargé de surveillance",
             actual: $this->entity->getJobLabel(),
             message: "Le label de l'emploi devrait être 'Chargé de surveillance'."
         );
     }
 
 
-    // ----------------- FIN DES TESTS ENUM -----------------
+    // ----------------- FIN DES TESTS LABELS -----------------
 
     #[Test]
     public function returnIsToString(): void
@@ -410,6 +467,18 @@ class UserTest extends EntityTestCase
             message: "L'identifiant de l'utilisateur devrait être l'email '{$email}'."
         );
     }
+    
+    #[Test]
+    public function getUserIdentifierWithNullEmail(): void
+    {
+        // Créer un utilisateur avec un email vide
+        $user = new User();
+        $user->setEmail('');
+        
+        // Vérifie que getUserIdentifier gère correctement le cas où l'email est vide
+        $identifier = $user->getUserIdentifier();
+        $this->assertStringStartsWith('user_', $identifier, "L'identifiant devrait commencer par 'user_' lorsque l'email est vide.");
+    }
 
     /**
      * Ce test vérifie que la classe User implémente correctement l'interface UserInterface
@@ -424,7 +493,7 @@ class UserTest extends EntityTestCase
             \Symfony\Component\Security\Core\User\UserInterface::class,
             $this->entity
         );
-        
+
         $this->assertTrue(true); // Le test passe si l'assertion ci-dessus ne lève pas d'exception
     }
 
@@ -542,5 +611,127 @@ class UserTest extends EntityTestCase
         // Vérifie que le logbook a été supprimé
         $this->assertCount(expectedCount: 0, haystack: $this->entity->getLogbooks(), message: "Le logbook devrait être supprimé de la collection.");
         $this->assertNull(actual: $logbook->getOwner(), message: "L'utilisateur dans le logbook devrait être null après suppression.");
+    }
+    
+    #[Test]
+    public function hasLogbooks(): void
+    {
+        // Au départ, l'utilisateur n'a pas de logbooks
+        $this->assertFalse(
+            $this->entity->hasLogbooks(),
+            message: "Un nouvel utilisateur ne devrait pas avoir de logbooks."
+        );
+        
+        // Ajout d'un logbook
+        $logbook = new Logbook();
+        $this->entity->addLogbook($logbook);
+        
+        // Vérifie que hasLogbooks retourne true après l'ajout
+        $this->assertTrue(
+            $this->entity->hasLogbooks(),
+            message: "hasLogbooks() devrait retourner true après l'ajout d'un logbook."
+        );
+        
+        // Suppression du logbook
+        $this->entity->removeLogbook($logbook);
+        
+        // Vérifie que hasLogbooks retourne false après la suppression
+        $this->assertFalse(
+            $this->entity->hasLogbooks(),
+            message: "hasLogbooks() devrait retourner false après la suppression du logbook."
+        );
+    }
+    
+    // Tester la Collection Feedback
+    #[Test]
+    public function getFeedback(): void
+    {
+        $feedbacks = $this->entity->getFeedback();
+        
+        // Vérifie que getFeedback renvoie une Collection et qu'elle est initialement vide
+        $this->assertInstanceOf(expected: Collection::class, actual: $feedbacks, message: "getFeedback() devrait retourner une Collection.");
+        $this->assertCount(expectedCount: 0, haystack: $feedbacks, message: "La collection de feedbacks devrait être vide au départ.");
+    }
+    
+    #[Test]
+    public function addFeedback(): void
+    {
+        $feedback = new Feedback();
+        
+        // Ajoute un feedback
+        $this->entity->addFeedback($feedback);
+        
+        // Vérifie que le feedback a été ajouté
+        $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être ajouté à la collection.");
+        $this->assertTrue($this->entity->getFeedback()->contains($feedback), message: "Le feedback devrait être présent dans la collection.");
+        
+        // Vérifie que l'utilisateur est bien défini dans l'entité Feedback
+        $this->assertSame($this->entity, $feedback->getAuthor(), message: "L'utilisateur devrait être défini comme auteur dans le feedback.");
+    }
+    
+    #[Test]
+    public function addFeedbackDoesNotDuplicate(): void
+    {
+        $feedback = new Feedback();
+        
+        // Ajout du même feedback deux fois
+        $this->entity->addFeedback($feedback);
+        $this->entity->addFeedback($feedback);
+        
+        // Vérifie qu'il n'y a pas de doublon dans la collection
+        $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback ne devrait pas être ajouté en double.");
+    }
+    
+    #[Test]
+    public function removeFeedback(): void
+    {
+        $feedback = new Feedback();
+        $this->entity->addFeedback($feedback);
+        
+        // Vérifie que le feedback est bien ajouté
+        $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être présent dans la collection avant suppression.");
+        
+        // Supprime le feedback
+        $this->entity->removeFeedback($feedback);
+        
+        // Vérifie que le feedback a été supprimé
+        $this->assertCount(expectedCount: 0, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être supprimé de la collection.");
+        $this->assertNull(actual: $feedback->getAuthor(), message: "L'auteur dans le feedback devrait être null après suppression.");
+    }
+    
+    #[Test]
+    public function getService(): void
+    {
+        // Au départ, l'utilisateur n'a pas de service
+        $this->assertNull(
+            $this->entity->getService(),
+            message: "Un nouvel utilisateur ne devrait pas avoir de service par défaut."
+        );
+    }
+    
+    #[Test]
+    public function setService(): void
+    {
+        // Créer un service pour le test
+        $service = new Service();
+        $service->setName('SRV-TEST');
+        $service->setDescription('Service de test');
+        
+        // Assigner le service à l'utilisateur
+        $this->entity->setService($service);
+        
+        // Vérifie que le service est correctement assigné
+        $this->assertSame(
+            $service,
+            $this->entity->getService(),
+            message: "Le service devrait être correctement assigné à l'utilisateur."
+        );
+        
+        // Test avec null
+        $this->entity->setService(null);
+        $this->assertNull(
+            $this->entity->getService(),
+            message: "Le service devrait être null après avoir été supprimé."
+        );
     }
 }

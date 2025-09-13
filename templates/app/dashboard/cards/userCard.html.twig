@@ -3,15 +3,15 @@
         <!-- Bandeau de spécialité -->
         <div class="ribbon-box mt-2">
             <div class="ribbon
-                {% if user.specialityAbreviation == 'CHA' %}ribbon-cha
-                {% elseif user.specialityAbreviation == 'LEV' %}ribbon-lev
-                {% elseif user.specialityAbreviation == 'MEC' %}ribbon-mec
-                {% elseif user.specialityAbreviation == 'ROB' %}ribbon-rob
-                {% elseif user.specialityAbreviation == 'SOU' %}ribbon-sou
-                {% elseif user.specialityAbreviation == 'END' %}ribbon-end
+                {% if user.speciality.code == 'CHA' %}ribbon-cha
+                {% elseif user.speciality.code == 'LEV' %}ribbon-lev
+                {% elseif user.speciality.code == 'MEC' %}ribbon-mec
+                {% elseif user.speciality.code == 'ROB' %}ribbon-rob
+                {% elseif user.speciality.code == 'SOU' %}ribbon-sou
+                {% elseif user.speciality.code == 'END' %}ribbon-end
                 {% endif %}
             ">
-                {{ user.specialityAbreviation }}
+                {{ user.speciality.code }}
             </div>
         </div>
         <div class="card-body">
@@ -28,7 +28,7 @@
 
                 <div class="ps-3">
                         <h5 class="card-title">{{ user.getFullname() }}</h5>
-                        <h6>{{ user.jobLabel }}</h6>
+                        <h6>{{ user.job.name }}</h6>
                     <!-- Date d'embauche -->
                     <span class="text-success small pt-1 fw-bold">Embauche:</span>
                     {% if user.hiringAt is not null %}

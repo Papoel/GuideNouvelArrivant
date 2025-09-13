@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Job;
 use App\Entity\Traits\TimestampTrait;
-use App\Enum\JobEnum;
 use App\Repository\LogbookTemplateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -43,7 +43,7 @@ class LogbookTemplate
     #[ORM\Column]
     private ?bool $isDefault = null;
 
-    /** @var array<string> */
+    /** @var array<string|null> */
     #[ORM\Column(type: Types::JSON)]
     private array $jobs = [];
 
@@ -110,7 +110,7 @@ class LogbookTemplate
     }
 
     /**
-     * @return array<string>
+     * @return array<string|null>
      */
     public function getJobs(): array
     {
@@ -118,22 +118,61 @@ class LogbookTemplate
     }
 
     /**
-     * @param array<string> $jobs
+     * Normalise et retourne les jobs sous forme de tableau
+     * Cette méthode gère les différents formats possibles (JSON, array, string)
+     *
+     * @return array<string>
+     */
+    public function getNormalizedJobs(): array
+    {
+        $normalizedJobs = [];
+
+        foreach ($this->jobs as $job) {
+            // Si c'est une chaîne JSON, la décoder
+            if ((str_starts_with((string)$job, '[') || str_starts_with((string)$job, '{'))) {
+                try {
+                    $decoded = json_decode((string)$job, true);
+                    if (is_array($decoded)) {
+                        foreach ($decoded as $decodedJob) {
+                            if (is_string($decodedJob)) {
+                                $normalizedJobs[] = $decodedJob;
+                            }
+                        }
+                        continue;
+                    }
+                } catch (\Exception $e) {
+                    // Ignorer les erreurs de décodage
+                }
+            }
+
+            // Ajouter la valeur telle quelle si ce n'est pas du JSON
+            $normalizedJobs[] = (string)$job;
+        }
+
+        return $normalizedJobs;
+    }
+
+    /**
+     * @param array<string|null> $jobs
      */
     public function setJobs(array $jobs): static
     {
-        $this->jobs = $jobs;
+        // Filtrer pour garantir que seules des chaînes sont stockées
+        $this->jobs = array_map('strval', $jobs);
         return $this;
     }
 
     /**
      * Ajoute un métier au modèle
      *
-     * @param JobEnum|string $job Le métier à ajouter (objet JobEnum ou chaîne)
+     * @param string|Job $job Le métier à ajouter (objet Job ou chaîne)
      */
-    public function addJob(JobEnum|string $job): static
+    public function addJob(string|Job $job): static
     {
-        $jobValue = $job instanceof JobEnum ? $job->value : $job;
+        $jobValue = match (true) {
+            $job instanceof Job => $job->getCode(),
+            default => (string)$job
+        };
         if (!in_array($jobValue, $this->jobs, true)) {
             $this->jobs[] = $jobValue;
         }
@@ -143,11 +182,14 @@ class LogbookTemplate
     /**
      * Retire un métier du modèle
      *
-     * @param JobEnum|string $job Le métier à retirer (objet JobEnum ou chaîne)
+     * @param string|Job $job Le métier à retirer (objet Job ou chaîne)
      */
-    public function removeJob(JobEnum|string $job): static
+    public function removeJob(string|Job $job): static
     {
-        $jobValue = $job instanceof JobEnum ? $job->value : $job;
+        $jobValue = match (true) {
+            $job instanceof Job => $job->getCode(),
+            default => $job
+        };
         $key = array_search($jobValue, $this->jobs, true);
         if ($key !== false) {
             unset($this->jobs[$key]);
@@ -160,12 +202,47 @@ class LogbookTemplate
     /**
      * Vérifie si un métier est associé au modèle
      *
-     * @param JobEnum|string $job Le métier à vérifier (objet JobEnum ou chaîne)
+     * @param string|Job $job Le métier à vérifier (objet Job ou chaîne)
      */
-    public function hasJob(JobEnum|string $job): bool
+    public function hasJob(string|Job $job): bool
     {
-        $jobValue = $job instanceof JobEnum ? $job->value : $job;
-        return in_array($jobValue, $this->jobs, true);
+        // Récupérer les jobs normalisés
+        $normalizedJobs = $this->getNormalizedJobs();
+
+        // Si c'est une entité Job, on vérifie à la fois le code et le nom
+        if ($job instanceof Job) {
+            $jobCode = $job->getCode();
+            $jobName = $job->getName();
+
+            // Vérifier si le code ou le nom du job est dans les jobs normalisés
+            if (in_array($jobCode, $normalizedJobs, true) || in_array($jobName, $normalizedJobs, true)) {
+                return true;
+            }
+
+            // Vérification spéciale pour "Chargé d'affaires" vs "CA"
+            if ($jobCode === 'CA') {
+                $searchValue = "Charg\u00e9 d'affaires";
+                foreach ($normalizedJobs as $normalizedJob) {
+                    if (strpos((string)$normalizedJob, $searchValue) !== false) {
+                        return true;
+                    }
+                }
+            }
+
+            // Vérification supplémentaire pour les jobs stockés sous forme de chaîne JSON
+            foreach ($this->jobs as $jobValue) {
+                if ((str_starts_with((string)$jobValue, '[') || str_starts_with((string)$jobValue, '{'))) {
+                    if (strpos((string)$jobValue, (string)$jobCode) !== false || strpos((string)$jobValue, (string)$jobName) !== false) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        // Pour les autres types (string)
+        return in_array($job, $normalizedJobs, true);
     }
 
     /**
@@ -177,18 +254,7 @@ class LogbookTemplate
             return 'Aucun métier associé';
         }
 
-        $jobLabels = [];
-        foreach ($this->jobs as $jobValue) {
-            try {
-                $job = JobEnum::from($jobValue);
-                $jobLabels[] = $job->value;
-            } catch (\ValueError $e) {
-                // Ignorer les valeurs invalides
-                $jobLabels[] = $jobValue;
-            }
-        }
-
-        return implode(', ', $jobLabels);
+        return implode(', ', $this->jobs);
     }
 
     public function getService(): ?Service

@@ -13,6 +13,7 @@ enum SpecialityEnum: string
     case SOU = 'Soudage';
     case END = 'Examen Non Destructif';
     case ENC = 'Encadrement';
+    case ELE = 'Electrique';
 
     public function getAbbreviation(): string
     {
@@ -24,6 +25,19 @@ enum SpecialityEnum: string
             self::SOU => 'SOU',
             self::END => 'END',
             self::ENC => 'ENC',
+            self::ELE => 'ELE',
         };
+    }
+
+    /**
+     * @return array<string, self>
+     */
+    public static function getChoices(): array
+    {
+        $choices = [];
+        foreach (self::cases() as $case) {
+            $choices[$case->value] = $case;
+        }
+        return $choices;
     }
 }

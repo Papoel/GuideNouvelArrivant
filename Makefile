@@ -141,6 +141,7 @@ cc: clear-cache ## Alias pour clear-cache
 
 ## —— ✅ Tests & Qualité ———————————————————————————————————
 test: ## Exécute les tests
+	$(MAKE) db-test
 	@if [ -d "tests" ]; then \
 		$(PHP) bin/phpunit --testdox; \
 	else \

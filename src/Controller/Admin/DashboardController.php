@@ -2,28 +2,32 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\User\UserCrudController;
-use App\Entity\Logbook;
-use App\Entity\LogbookTemplate;
-use App\Entity\Module;
-use App\Entity\Service;
-use App\Entity\Theme;
+use App\Entity\Job;
 use App\Entity\User;
-use App\Repository\LogbookRepository;
-use App\Repository\LogbookTemplateRepository;
-use App\Repository\ModuleRepository;
-use App\Repository\ServiceRepository;
-use App\Repository\ThemeRepository;
+use App\Entity\Theme;
+use App\Entity\Module;
+use App\Entity\Logbook;
+use App\Entity\Service;
+use App\Entity\Speciality;
+use App\Entity\LogbookTemplate;
+use App\Repository\JobRepository;
 use App\Repository\UserRepository;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use App\Repository\ThemeRepository;
+use App\Repository\ModuleRepository;
+use App\Repository\LogbookRepository;
+use App\Repository\ServiceRepository;
+use App\Repository\SpecialityRepository;
+use App\Repository\LogbookTemplateRepository;
 use Symfony\Component\HttpFoundation\Response;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use App\Controller\Admin\User\UserCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 #[IsGranted('ROLE_ADMIN')]
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
@@ -37,6 +41,8 @@ class DashboardController extends AbstractDashboardController
         private readonly ModuleRepository $ModuleRepository,
         private readonly ServiceRepository $ServiceRepository,
         private readonly LogbookTemplateRepository $LogbookTemplateRepository,
+        private readonly JobRepository $JobRepository,
+        private readonly SpecialityRepository $SpecialityRepository,
     ) {
     }
 
@@ -147,6 +153,20 @@ class DashboardController extends AbstractDashboardController
             ]
         );
 
+        // Job et Spécialité
+        $totalJobs = $this->JobRepository->count();
+        $totalSpecialities = $this->SpecialityRepository->count();
+        yield MenuItem::section(label: 'Métier & Spécialité')
+            ->setBadge(content: sprintf('%d | %d', $totalJobs, $totalSpecialities));
+        yield MenuItem::subMenu(label: 'Métier & Spé', icon: 'fas fa-user-tie')->setSubItems(
+            subItems: [
+                MenuItem::linkToCrud(label: 'Liste des métiers', icon: 'fas fa-list', entityFqcn: Job::class)->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkToCrud(label: 'Créer métier', icon: 'fas fa-plus-circle', entityFqcn: Job::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkToCrud(label: 'Liste des spécialités', icon: 'fas fa-list', entityFqcn: Speciality::class)->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkToCrud(label: 'Créer spécialité', icon: 'fas fa-plus-circle', entityFqcn: Speciality::class)->setAction(actionName: Crud::PAGE_NEW),
+            ]
+        );
+
         // Section Tableau de bord de progression
         yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
         yield MenuItem::linkToRoute(
@@ -169,11 +189,12 @@ class DashboardController extends AbstractDashboardController
                     routeName: 'pages_guide_technique'
                 ),
                 // Analyse de conformité des carnets de compagnonnage AnalyseProcessusController::index
-                MenuItem::linkToRoute(
-                    label: 'Analyse de conformité',
-                    icon: 'fas fa-magnifying-glass-chart',
-                    routeName: 'service_analyse_processus_index'
-                ),
+                // TODO: Vérifier pourquoi tous les noms ne remonte pas (ex: Connexion avec agent MRC manque des informations et agent)
+                // MenuItem::linkToRoute(
+                //     label: 'Analyse de conformité',
+                //     icon: 'fas fa-magnifying-glass-chart',
+                //     routeName: 'service_analyse_processus_index'
+                // ),
             ]
         );
     }

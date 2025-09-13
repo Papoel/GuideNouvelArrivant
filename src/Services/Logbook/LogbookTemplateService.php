@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Logbook;
 
+use App\Entity\Job;
 use App\Entity\Logbook;
 use App\Entity\LogbookTemplate;
 use App\Entity\Service;
 use App\Entity\User;
-use App\Enum\JobEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -58,12 +58,12 @@ readonly class LogbookTemplateService
     /**
      * Trouve le modèle de carnet par défaut pour un métier donné et optionnellement un service
      *
-     * @param JobEnum $job Le métier de l'utilisateur
+     * @param Job $job Le métier de l'utilisateur
      * @param Service|null $service Le service de l'utilisateur (optionnel)
      *
      * @return LogbookTemplate|null Le modèle par défaut ou null si aucun n'est trouvé
      */
-    public function findDefaultTemplateForJob(JobEnum $job, ?Service $service = null): ?LogbookTemplate
+    public function findDefaultTemplateForJob(Job $job, ?Service $service = null): ?LogbookTemplate
     {
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
 
@@ -75,7 +75,7 @@ readonly class LogbookTemplateService
 
         foreach ($defaultTemplates as $template) {
             // Vérifier d'abord la compatibilité avec le métier
-            $jobMatch = $template->hasJob($job->name) || $template->hasJob($job);
+            $jobMatch = $template->hasJob($job);
 
             if (!$jobMatch) {
                 continue;
@@ -107,12 +107,12 @@ readonly class LogbookTemplateService
     /**
      * Trouve tous les modèles de carnet compatibles avec un métier donné et optionnellement un service
      *
-     * @param JobEnum $job Le métier de l'utilisateur
+     * @param Job $job Le métier de l'utilisateur
      * @param Service|null $service Le service de l'utilisateur (optionnel)
      *
      * @return array<LogbookTemplate> Les modèles compatibles
      */
-    public function findTemplatesForJob(JobEnum $job, ?Service $service = null): array
+    public function findTemplatesForJob(Job $job, ?Service $service = null): array
     {
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
         $allTemplates = $repository->findAll();
@@ -120,7 +120,9 @@ readonly class LogbookTemplateService
         // Filtrer pour ne garder que les modèles compatibles avec le métier et le service
         return array_filter($allTemplates, function (LogbookTemplate $template) use ($job, $service) {
             // Vérifier d'abord la compatibilité avec le métier
-            $jobMatch = $template->hasJob($job->name) || $template->hasJob($job);
+            // Utiliser le code du métier pour la comparaison
+            $jobCode = $job->getCode() ?? '';
+            $jobMatch = $template->hasJob($jobCode);
 
             // Si pas de correspondance de métier, rejeter immédiatement
             if (!$jobMatch) {

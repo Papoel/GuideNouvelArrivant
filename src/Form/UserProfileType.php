@@ -2,16 +2,18 @@
 
 namespace App\Form;
 
+use App\Entity\Job;
 use App\Entity\User;
-use App\Enum\JobEnum;
-use App\Enum\SpecialityEnum;
+use App\Entity\Speciality;
+use App\Repository\JobRepository;
+use App\Repository\SpecialityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class UserProfileType extends AbstractType
 {
@@ -78,13 +80,14 @@ class UserProfileType extends AbstractType
             )
             ->add(
                 child: 'job',
-                type: EnumType::class,
+                type: EntityType::class,
                 options: [
                     'label' => 'Poste',
-                    'class' => JobEnum::class,
-                    'choice_label' => function ($choice): string {
-                        /** @var JobEnum|SpecialityEnum|null $choice */
-                        return $choice ? $choice->value : '';
+                    'class' => Job::class,
+                    'choice_label' => 'name',
+                    'query_builder' => function (JobRepository $repository) {
+                        return $repository->createQueryBuilder('j')
+                            ->orderBy('j.name', 'ASC');
                     },
                     'attr' => [
                         'class' => 'form-select',
@@ -93,13 +96,14 @@ class UserProfileType extends AbstractType
             )
             ->add(
                 child: 'speciality',
-                type: EnumType::class,
+                type: EntityType::class,
                 options: [
                     'label' => 'Spécialité',
-                    'class' => SpecialityEnum::class,
-                    'choice_label' => function ($choice): string {
-                        /** @var JobEnum|SpecialityEnum|null $choice */
-                        return $choice ? $choice->value : '';
+                    'class' => Speciality::class,
+                    'choice_label' => 'name',
+                    'query_builder' => function (SpecialityRepository $repository) {
+                        return $repository->createQueryBuilder('s')
+                            ->orderBy('s.name', 'ASC');
                     },
                     'attr' => [
                         'class' => 'form-select',

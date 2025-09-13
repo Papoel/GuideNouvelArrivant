@@ -28,8 +28,8 @@ class LogbookNameSubscriberTest extends TestCase
     {
         $events = LogbookNameSubscriber::getSubscribedEvents();
 
-        $this->assertEquals(expected: ['nameLogbookWithUserFullname'], actual:  $events[BeforeEntityPersistedEvent::class]);
-        $this->assertEquals(expected: ['updateLogbookName'], actual:  $events[AfterEntityUpdatedEvent::class]);
+        $this->assertEquals(expected: ['nameLogbookWithUserFullname'], actual: $events[BeforeEntityPersistedEvent::class]);
+        $this->assertEquals(expected: ['updateLogbookName'], actual: $events[AfterEntityUpdatedEvent::class]);
     }
 
     #[Test] public function nameLogbookWithUserFullname(): void
@@ -39,7 +39,7 @@ class LogbookNameSubscriberTest extends TestCase
 
         // Récupération des informations de l'utilisateur
         $fullname = $user->getFullname();
-        $specialityAbreviation = $user->getSpecialityAbreviation();
+        $specialityAbreviation = $user->getSpeciality()->getCode();
 
         // Création d'un Logbook avec un propriétaire
         $logbook = $this->createMock(type: Logbook::class);
@@ -48,7 +48,7 @@ class LogbookNameSubscriberTest extends TestCase
         // On s’assure que setName est bien appelé avec les bons arguments
         $logbook->expects($this->once())
             ->method(constraint: 'setName')
-            ->with('Carnet de '.$fullname.' ('.$specialityAbreviation.')');
+            ->with('Carnet de ' . $fullname . ' (' . $specialityAbreviation . ')');
 
         // Définir les attentes avant d'appeler la méthode de test
         $this->entityManager->expects($this->once())
@@ -113,7 +113,7 @@ class LogbookNameSubscriberTest extends TestCase
         // On s’assure que setName est bien appelé avec les bons arguments
         $logbook->expects($this->once())
             ->method(constraint: 'setName')
-            ->with('Carnet de '.$user->getFullname());
+            ->with('Carnet de ' . $user->getFullname());
 
         // On s'assure que persist et flush sont bien appelés
         $this->entityManager->expects($this->once())
@@ -137,7 +137,7 @@ class LogbookNameSubscriberTest extends TestCase
         // Création d'un Logbook avec un propriétaire et un nom déjà défini
         $logbook = $this->createMock(type: Logbook::class);
         $logbook->method('getOwner')->willReturn(value: $user);
-        $logbook->method('getName')->willReturn(value: 'Carnet de '.$user->getFullname());
+        $logbook->method('getName')->willReturn(value: 'Carnet de ' . $user->getFullname());
 
         // On s'assure que setName n'est pas appelé
         $logbook->expects($this->never())->method(constraint: 'setName');
@@ -154,5 +154,4 @@ class LogbookNameSubscriberTest extends TestCase
         // Appel direct à la méthode
         $this->subscriber->updateLogbookName(event: $event);
     }
-
 }

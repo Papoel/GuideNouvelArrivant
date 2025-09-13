@@ -1,0 +1,235 @@
+{# templates/admin/form_theme.html.twig #}
+{% extends '@EasyAdmin/crud/form_theme.html.twig' %}
+
+{# Amélioration du style des panneaux de formulaire #}
+{% block ea_crud_widget_panels %}
+    {% for panel_name, panel_config in ea_crud_form.form_panels|filter(panel_config => not panel_config.form_tab or panel_config.form_tab == tab_name) %}
+        {% set panel_has_header = panel_config.label|default(false) or panel_config.icon|default(false) %}
+        {% set panel_has_footer = panel_config.help|default(false) %}
+        {% set panel_collapsible = panel_config.collapsible %}
+        {% set panel_collapsed = panel_config.collapsed %}
+
+        <div class="{{ panel_config.css_class ?? '' }} {{ panel_has_header ? 'field-panel' }} {{ panel_collapsible ? 'collapsible' }} {{ panel_collapsed ? 'collapsed' }}" {{ panel_collapsed ? 'data-collapsed="true"' }}>
+            {% if panel_has_header %}
+                <div class="content-panel-header">
+                    <div class="content-panel-title">
+                        {% if panel_config.icon|default(false) %}
+                            <i class="{{ panel_config.icon }} panel-icon"></i>
+                        {% endif %}
+                        {{ panel_config.label|trans|raw }}
+                    </div>
+
+                    {% if panel_collapsible %}
+                        <div class="content-panel-collapse">
+                            <i class="fas fw fa-chevron-right collapse-icon"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="content-panel-body">
+                {% for field in panel_config.fields %}
+                    {% if not field.isFormLayoutField() %}
+                        {{ field|raw }}
+                    {% else %}
+                        {{ field.formLayoutRenderCallback(form)|raw }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if panel_has_footer %}
+                <div class="content-panel-footer">
+                    {{ panel_config.help|trans|raw }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock ea_crud_widget_panels %}
+
+{# Amélioration des boutons d'action #}
+{% block item_actions %}
+    {% set actions = ea_crud_form.ea.crud.actions %}
+    {% if actions.index is defined and actions.index.isEnabled %}
+        <div class="btn-group">
+            {% for action in actions.index %}
+                {{ include(action.templatePath, { action: action, entity_config: ea.crud }, with_context = false) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{# Amélioration du style des champs #}
+{% block form_row -%}
+    {% set row_attr = row_attr|merge({
+        class: row_attr.class|default('') ~ ' form-group field-' ~ name|replace({'.': '-'})
+    })
+    %}
+    {{- parent() -}}
+{%- endblock form_row %}
+
+{# Amélioration du style des labels #}
+{% block form_label -%}
+    {% if label is not same as(false) -%}
+        {% set label_attr = label_attr|merge({
+            class: (label_attr.class|default('') ~ ' form-control-label text-dark fw-500')|trim
+        }) %}
+    {%- endif %}
+    {{- parent() -}}
+{%- endblock form_label %}
+
+{# Amélioration du style des inputs #}
+{% block form_widget_simple -%}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' form-control form-control-lg')|trim
+    }) %}
+    {{- parent() -}}
+{%- endblock form_widget_simple %}
+
+{# Amélioration des boutons #}
+{% block button_row -%}
+    <div class="form-group field-{{ block_prefixes|slice(-2, 1)|first }} {{ ea.field.cssClass|default('') }}">
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock button_row %}
+
+{% block button_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('btn-primary') ~ ' btn btn-lg')|trim}) %}
+    {{- parent() -}}
+{%- endblock %}
+
+{# Ajout de style CSS personnalisé #}
+{% block head_stylesheets %}
+    {{ parent() }}
+    
+    <style>
+        :root {
+            --primary-color: #3d5f9e;
+            --primary-hover-color: #32507f;
+            --text-color: #2c384e;
+            --border-color: #e9ecef;
+            --panel-header-bg: rgba(61, 95, 158, 0.08);
+            --panel-border-radius: 0.75rem;
+            --panel-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.07);
+        }
+
+        /* Style des panneaux */
+        .field-panel {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--panel-border-radius);
+            box-shadow: var(--panel-shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        
+        .field-panel:hover {
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-panel-header {
+            background-color: var(--panel-header-bg);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            display: flex;
+            font-weight: 600;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+        }
+        
+        .content-panel-body {
+            padding: 1.5rem 1.25rem;
+        }
+        
+        .content-panel-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid var(--border-color);
+            color: #6c757d;
+            font-size: 0.875rem;
+            padding: 0.75rem 1.25rem;
+        }
+        
+        .panel-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        /* Style des champs */
+        .form-control-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            padding: 0.6rem 0.75rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(61, 95, 158, 0.25);
+        }
+        
+        .form-help {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Style des boutons */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-hover-color);
+            border-color: var(--primary-hover-color);
+        }
+        
+        .btn {
+            border-radius: 0.375rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        /* Style du tableau */
+        .datagrid thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid var(--border-color) !important;
+            font-weight: 600;
+        }
+        
+        .datagrid tbody tr:hover {
+            background-color: rgba(61, 95, 158, 0.04);
+        }
+        
+        /* Style des actions en ligne */
+        .action-edit, .action-detail {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            margin-right: 0.25rem;
+        }
+        
+        .action-edit:hover, .action-detail:hover {
+            background-color: var(--panel-header-bg);
+        }
+        
+        .action-delete {
+            background-color: #fff;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+        
+        .action-delete:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    </style>
+{% endblock %}

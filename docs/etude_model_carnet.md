@@ -827,7 +827,7 @@ public function new(
                                 <td>{{ logbook_template.name }}</td>
                                 <td>
                                     {% for job in logbook_template.jobs %}
-                                        <span class="badge bg-secondary">{{ job.value }}</span>
+                                        <span class="badge bg-secondary">{{ job.name }}</span>
                                     {% endfor %}
                                 </td>
                                 <td>{{ logbook_template.themes|length }}</td>
@@ -1028,7 +1028,7 @@ public function new(
                                     <th>Métiers concernés</th>
                                     <td>
                                         {% for job in logbook_template.jobs %}
-                                            <span class="badge bg-secondary">{{ job.value }}</span>
+                                            <span class="badge bg-secondary">{{ job.name }}</span>
                                         {% endfor %}
                                     </td>
                                 </tr>
