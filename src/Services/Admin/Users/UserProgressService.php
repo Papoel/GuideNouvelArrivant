@@ -25,7 +25,8 @@ readonly class UserProgressService implements UserProgressServiceInterface
         private ProgressAccessService $progressAccessService,
         private Environment $twig,
         private parameterBagInterface $parameterBag,
-    ) {}
+    ) {
+    }
 
     public function getUserProgressDetails(User $user): array
     {
