@@ -2,608 +2,279 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Carnet de compagnonnage - {{ user.fullName }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet de Compagnonnage - {{ user.fullname }}</title>
     <style>
-        /* Configuration des pages */
-        @page {
-            size: A4 portrait;
-            margin: 2.5cm 2cm;
-        }
-
-        @page :first {
-            margin: 0;
-        }
-
-        @page detail {
-            size: A4 landscape;
-            margin: 2cm;
-            @top-right {
-                content: element(header);
-            }
-            @bottom-center {
-                content: element(footer);
-            }
-        }
-
-        /* Styles de base */
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            font-size: 11pt;
-            line-height: 1.5;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Mise en page et sauts de page */
-        .page-break {
-            page-break-before: always;
-        }
-
-        .no-break {
-            page-break-inside: avoid;
-        }
-
-        .landscape-section {
-            page: detail;
-        }
-
-        /* En-tête et pied de page */
-        .header {
-            position: running(header);
-            font-size: 9pt;
-            color: #666;
-            text-align: right;
-            border-bottom: 1px solid #3d5f9e;
-            padding-bottom: 3mm;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-logo {
-            height: 8mm;
-            width: auto;
-        }
-
-        .header-text {
-            font-weight: 500;
-        }
-
-        .footer {
-            position: running(footer);
-            font-size: 9pt;
-            color: #666;
-            text-align: center;
-            border-top: 1px solid #3d5f9e;
-            padding-top: 3mm;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .footer::after {
-            content: counter(page) "/" counter(pages);
-            font-weight: 500;
-        }
-
-        /* Page de couverture */
-        .cover {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 3cm 2cm;
-            background: linear-gradient(to bottom, rgba(245, 247, 250, 1) 0%, white 100%);
-            position: relative;
-            page-break-after: always;
-            page-break-inside: avoid;
-            box-sizing: border-box;
-        }
-
-        .cover::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 1cm;
-            height: 100%;
-            background-color: #3d5f9e; /* Couleur primaire du projet */
-        }
-
-        .logo-container {
-            text-align: left;
-            margin-bottom: 2cm;
-        }
-
-        .logo {
-            max-width: 6cm;
-            height: auto;
-        }
-
-        .cover-content {
-            text-align: center;
-            margin-bottom: 1.5cm;
-        }
-
-        .cover-title {
-            font-size: 28pt;
-            font-weight: 700;
-            color: #1a3c6e;
-            margin-bottom: 0.5cm;
-            letter-spacing: 0.05em;
-        }
-
-        .cover-decoration {
-            width: 15cm;
-            height: 1px;
-            background-color: #1a3c6e;
-            margin: 0.8cm auto;
-        }
-
-        .cover-subtitle {
-            font-size: 18pt;
-            color: #555;
-            font-weight: 300;
-            letter-spacing: 0.03em;
-        }
-
-        .cover-info {
-            width: 80%;
-            margin: 0 auto;
-            padding: 1cm;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #3d5f9e;
-            page-break-inside: avoid;
-        }
-
-        .info-row {
-            display: flex;
-            margin-bottom: 0.3cm;
-            border-bottom: 1px solid #f5f5f5;
-            padding-bottom: 0.2cm;
-        }
-
-        .info-label {
-            flex: 0 0 30%;
-            font-weight: 600;
-            color: #1a3c6e;
-        }
-
-        .info-value {
-            flex: 0 0 70%;
-        }
-
-        .cover-footer {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10pt;
-            color: #777;
-            margin-top: 2cm;
-        }
-
-        .confidential {
-            font-weight: 600;
-            letter-spacing: 0.05em;
-        }
-
-        /* Titres */
-        h1, h2, h3, h4, h5, h6 {
-            color: #1a3c6e;
-            font-weight: 600;
-            margin-top: 1cm;
-            margin-bottom: 0.5cm;
-        }
-
-        h2 {
-            font-size: 16pt;
-            border-bottom: 1px solid #eaeaea;
-            padding-bottom: 3mm;
-            page-break-after: avoid;
-        }
-
-        h3 {
-            font-size: 14pt;
-            page-break-after: avoid;
-        }
-
-        h4 {
-            font-size: 12pt;
-            color: #444;
-            page-break-after: avoid;
-        }
-
-        /* Sections */
-        .info-section, .day-section, .evaluation-section, .validation-section {
-            margin-bottom: 1cm;
-        }
-
-        /* Tableaux */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0.5cm 0 1cm 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e9ecef;
-            border-radius: 0.2cm;
-            overflow: hidden;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            color: #3d5f9e;
-            font-weight: 600;
-            text-align: left;
-            padding: 0.3cm;
-            border-bottom: 2px solid #e9ecef;
-            font-size: 10pt;
-        }
-
-        td {
-            padding: 0.3cm;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 10pt;
-            vertical-align: top;
-        }
-
-        tr:nth-child(even) {
-            background-color: rgba(61, 95, 158, 0.03);
-        }
-
-        /* Style pour les statuts */
-        .status {
-            display: inline-block;
-            padding: 0.1cm 0.3cm;
-            border-radius: 0.2cm;
-            font-size: 9pt;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .status-completed, .status-validated {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-        }
-
-        .status-pending {
-            background-color: #f5f5f5;
-            color: #757575;
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Niveaux de difficulté */
-        .difficulty-low {
-            color: #2d8659; /* Vert */
-        }
-
-        .difficulty-medium {
-            color: #c77c19; /* Orange */
-        }
-
-        .difficulty-high {
-            color: #ae3a30; /* Rouge */
-        }
-
-        /* Boîtes de remarques */
-        .remarks-box {
-            padding: 0.5cm;
-            background-color: #f9f9f9;
-            border: 1px solid #eaeaea;
-            border-left: 3px solid #1a3c6e;
-            margin-bottom: 0.8cm;
-        }
-
-        /* Barres de progression */
-        .competence-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .competence-list li {
-            margin-bottom: 0.5cm;
-            display: flex;
-            align-items: center;
-        }
-
-        .competence {
-            flex: 0 0 40%;
-        }
-
-        .progress-container {
-            flex: 0 0 50%;
-            height: 0.5cm;
-            background-color: rgba(61, 95, 158, 0.08);
-            border-radius: 3px;
-            margin: 0 0.5cm;
-            overflow: hidden;
-            border: 1px solid #e9ecef;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: #3d5f9e;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .progress-value {
-            flex: 0 0 10%;
-            text-align: right;
-            font-weight: 600;
-            color: #2c384e;
-        }
-
-        /* Signatures */
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5cm;
-            page-break-inside: avoid;
-        }
-
-        .signature-block {
-            flex: 0 0 30%;
-        }
-
-        .signature-label {
-            font-weight: 600;
-            color: #1a3c6e;
-            margin-bottom: 0.3cm;
-        }
-
-        .signature-box {
-            height: 2.5cm;
-            border: 1px solid #ddd;
-            margin-bottom: 0.3cm;
-            background-color: #fcfcfc;
-        }
-
-        .signature-date, .signature-name {
-            font-size: 10pt;
-            color: #666;
-        }
-
-        /* Optimisations pour l'impression */
-        @media print {
-            body, table, td {
-                color: #2c384e;
-            }
-            
-            a {
-                color: #3d5f9e;
-                text-decoration: none;
-            }
-            
-            .page {
-                page-break-after: always;
-            }
-            
-            th {
-                background-color: #f8f9fa !important;
-                color: #3d5f9e !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            .landscape-section {
-                page: detail;
-            }
-            
-            /* Améliorer le contraste pour l'impression */
-            .status-completed, .status-validated {
-                color: #000 !important;
-                background-color: #e9f5eb !important;
-                border: 1px solid #217938 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            .status-pending {
-                color: #000 !important;
-                background-color: #f5f5f5 !important;
-                border: 1px solid #999 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            /* Éviter les sauts de pages à l'intérieur des éléments importants */
-            table, tr, .signature-block, .info-section {
-                page-break-inside: avoid;
-            }
-            
-            .validation-section {
-                page-break-inside: avoid;
-                page-break-before: always;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
-            
-            /* Assurer que les nouveaux thèmes commencent sur une nouvelle page */
-            h2 {
-                page-break-before: always;
-                margin-top: 0;
-            }
-            
-            /* Éviter les pages blanches */
-            h2:first-of-type {
-                page-break-before: auto;
-            }
-            
-            /* Ajustements pour la page de couverture */
-            .cover {
-                overflow: hidden;
-                size: A4 portrait;
-            }
-            
-            .cover-info {
-                break-inside: avoid;
-            }
-        }
+        {% include 'pdf/css_workbook.twig' %}
     </style>
 </head>
-<body>
+<body style="padding: 20px;">
     <!-- Page de couverture -->
-    <div class="cover">
+    <div class="cover-page">
+        <div class="cover-header">
+            <div class="company-logo">
+                <div class="logo-placeholder">
+                    <img src="images/logos/edf.png" alt="Logo EDF" style="width: 80px; height: 80px; object-fit: contain;">
+                </div>
+            </div>
+            <div class="document-title">
+                <h1>CARNET DE COMPAGNONNAGE</h1>
+                <div class="subtitle">Certificat de fin de formation</div>
+            </div>
+        </div>
+
         <div class="cover-content">
-            <h1 class="cover-title">CARNET DE COMPAGNONNAGE</h1>
-            <div class="cover-decoration"></div>
-            <p class="cover-subtitle">PARCOURS D'INTÉGRATION</p>
+            <div class="apprentice-info-full">
+                <h2>Informations de l'apprenant</h2>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <span class="label">Nom complet :</span>
+                        <span class="value">{{ user.fullname }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">NNI :</span>
+                        <span class="value">{{ user.nni ?? 'Non renseigné' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Email :</span>
+                        <span class="value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Métier :</span>
+                        <span class="value">{{ user.job ? user.job.name : 'Non renseigné' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Spécialité :</span>
+                        <span class="value">{{ user.speciality ? user.speciality.name : 'Non renseigné' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Service :</span>
+                        <span class="value">{{ user.service ? user.service.name : 'Non renseigné' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Date d'embauche :</span>
+                        <span class="value">{{ user.hiringAt ? user.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Tuteur :</span>
+                        <span class="value">{{ user.mentor ? user.mentor.fullname : 'Non assigné' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Date de fin de formation :</span>
+                        <span class="value">{{ user.hiringAt|date_modify("+364 days")|date("d/m/Y") }}</span>
+                    </div>
+                </div>
+                
+                <div class="completion-certificate">
+                    <div class="certificate-text">
+                        <p class="certificate-statement">
+                            Nous certifions que <strong>{{ user.fullname }}</strong> a terminé avec succès 
+                            son parcours de professionalisation pour le métier de <strong>{{ user.job ? user.job.name : 'non spécifié' }}</strong>
+                            {% if user.speciality %} avec spécialisation en <strong>{{ user.speciality.name }}</strong>{% endif %}.
+                        </p>
+                        <p class="certificate-validation">
+                            Toutes les compétences requises ont été acquises et validées par le tuteur référent.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="cover-info">
-            <div class="info-row">
-                <span class="info-label">Apprenant</span>
-                <span class="info-value">{{ user.fullName }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">NNI</span>
-                <span class="info-value">{{ user.nni ?: 'Non renseigné' }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Date d'entrée</span>
-                <span class="info-value">{{ user.hiringAt ? user.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Service</span>
-                <span class="info-value">{{ user.specialityLabel ?: 'Non renseigné' }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Tuteur</span>
-                <span class="info-value">{{ user.mentor ? user.mentor.fullName : 'Non assigné' }}</span>
+
+        <div class="cover-footer">
+            <div class="generation-info">
+                <p>Document généré le {{ date_generation|date('d/m/Y à H:i') }}</p>
             </div>
         </div>
     </div>
-    
-    <!-- Informations générales -->
-    <h2>Synthèse du parcours d'intégration</h2>
-    
-    <!-- Détail des modules par thème -->
-    <div class="landscape-section">
-    {% for theme in logbook.themes %}
-        {# {% if not loop.first %}
-        <div class="page-break"></div>
-        {% endif %} #}
-        <h2>{{ theme.title }}</h2>
-        
-        <table class="no-break">
-            <thead>
-                <tr>
-                    <th style="width: 25%">Module</th>
-                    <th style="width: 20%">Auto-validation</th>
-                    <th style="width: 20%">Validation tuteur</th>
-                    <th style="width: 35%">Commentaires</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for module in theme.modules %}
-                    <tr>
-                        <td>
-                            <strong>{{ module.title }}</strong>
-                        </td>
-                        <td>
-                            {# Chercher l'action correspondante pour vérifier si complété par l'agent #}
-                            {% set action = null %}
-                            {% for userAction in user.actions %}
-                                {% if userAction.module == module %}
-                                    {% set action = userAction %}
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if action and action.agentValidatedAt %}
-                                <span class="status status-completed">Validé</span>
-                                <br><small>{{ action.agentValidatedAt|date('d/m/Y') }}</small>
-                            {% else %}
-                                <span class="status status-pending">En attente</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {# Chercher l'action correspondante pour vérifier si validé par le tuteur #}
-                            {% set action = null %}
-                            {% for userAction in user.actions %}
-                                {% if userAction.module == module %}
-                                    {% set action = userAction %}
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if action and action.mentorValidatedAt %}
-                                <span class="status status-validated">Validé</span>
-                                <br><small>{{ action.mentorValidatedAt|date('d/m/Y') }}</small>
-                            {% else %}
-                                <span class="status status-pending">En attente</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {# Chercher l'action correspondante pour afficher les commentaires #}
-                            {% set action = null %}
-                            {% for userAction in user.actions %}
-                                {% if userAction.module == module %}
-                                    {% set action = userAction %}
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if action and (action.agentComment or action.mentorComment) %}
-                                {% if action.agentComment %}
-                                    <div style="margin-bottom: 0.2cm">
-                                        <strong>Apprenant :</strong> {{ action.agentComment }}
+
+    <!-- Pages de contenu -->
+    <div class="content-page">
+        <div class="page-header">
+            <h1>Détail des compétences acquises</h1>
+            <div class="header-info">
+                <span>{{ user.fullname }} - {{ user.job ? user.job.name : 'Métier non renseigné' }}</span>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Progression par domaine de compétences</h2>
+            
+            {% if logbook.themes is defined and logbook.themes|length > 0 %}
+                {% for theme in logbook.themes %}
+                    <div class="domain-section">
+                        <h3>{{ theme.title }}</h3>
+                        <div class="skills-grid">
+                            {% for module in theme.modules %}
+                                {% set action = null %}
+                                {% for userAction in user.actions %}
+                                    {% if userAction.module.id == module.id %}
+                                        {% set action = userAction %}
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="skill-item {{ action and action.mentorValidatedAt ? 'completed' : 'pending' }}" style="{{ not loop.last ? 'margin-bottom: 10px;' : '' }}">
+                                    <div class="skill-header">
+                                        <span class="skill-name">{{ module.title }}</span>
+                                        <span class="skill-status">
+                                            {% if action and action.mentorValidatedAt %}
+                                                <span style="color: #28a745; font-weight: bold;">[VALIDÉ]</span>
+                                            {% elseif action and action.agentValidatedAt %}
+                                                <span style="color:rgb(212, 159, 1);">[EN ATTENTE]</span>
+                                            {% else %}
+                                                <span style="color: #6c757d;">[EN COURS]</span>
+                                            {% endif %}
+                                        </span>
                                     </div>
-                                {% endif %}
-                                {% if action.mentorComment %}
-                                    <div>
-                                        <strong>Tuteur :</strong> {{ action.mentorComment }}
-                                    </div>
-                                {% endif %}
-                            {% else %}
-                                <em>Aucun commentaire</em>
-                            {% endif %}
-                        </td>
-                    </tr>
+                                    {% if module.description %}
+                                        <p class="skill-description">{{ module.description }}</p>
+                                    {% endif %}
+                                    {% if action and action.mentorValidatedAt %}
+                                        <p class="completion-date">Validée le {{ action.mentorValidatedAt|date('d/m/Y') }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% endfor %}
-    </div>
-    
-    <!-- Page de signatures avec design élégant -->
-    <div class="validation-section">
-        <div>
-            <h2>Validation finale</h2>
-            <p style="margin: 0 0 0.5cm 0">
-                Ce carnet de compagnonnage officiel atteste que <strong>{{ user.fullName }}</strong> a suivi et validé le parcours d'intégration conformément aux exigences du service.
-            </p>
-            <p style="margin: 0 0 1cm 0">
-                Les compétences et connaissances acquises ont été évaluées et validées par le tuteur désigné et le responsable du service.
-            </p>
-        
-        <div class="signatures">
-            <div class="signature-block">
-                <p class="signature-label">L'apprenant</p>
-                <div class="signature-box"></div>
-                <p class="signature-date">Date : _______________</p>
-                <p class="signature-name">{{ user.fullName }}</p>
-            </div>
-            
-            <div class="signature-block">
-                <p class="signature-label">Le tuteur</p>
-                <div class="signature-box"></div>
-                <p class="signature-date">Date : _______________</p>
-                <p class="signature-name">{{ user.mentor ? user.mentor.fullName : '_______________' }}</p>
-            </div>
-            
-            <div class="signature-block">
-                <p class="signature-label">Le responsable</p>
-                <div class="signature-box"></div>
-                <p class="signature-date">Date : _______________</p>
-                <p class="signature-name">_______________</p>
-            </div>
+            {% else %}
+                <div class="no-data">
+                    <p>Aucun thème disponible dans ce carnet.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
+
+    <!-- Nouvelle page pour les actions -->
+    <div class="page-break"></div>
     
-    <div style="margin-top: 2cm; text-align: center; font-style: italic; color: #777; font-size: 10pt;">
-        <p>Ce document est confidentiel et fait partie intégrante du dossier de l'agent.</p>
-    </div>
+    <div class="content-page">
+        <div class="page-header">
+            <h1>Journal des actions réalisées</h1>
+            <div class="header-info">
+                <span>{{ user.fullname }} - Période de formation</span>
+            </div>
         </div>
+
+        <div class="content-section">
+            {% if logbook.actions is defined and logbook.actions|length > 0 %}
+                <div class="actions-timeline">
+                    {% for action in logbook.actions %}
+                        {% set actionStatus = 'pending' %}
+                        {% if action.mentorValidatedAt %}
+                            {% set actionStatus = 'completed' %}
+                        {% elseif action.agentValidatedAt %}
+                            {% set actionStatus = 'in_progress' %}
+                        {% endif %}
+                        <div class="action-item {{ actionStatus }}">
+                            <div class="action-date">
+                                {% if action.agentValidatedAt %}
+                                    {{ action.agentValidatedAt|date('d/m/Y') }}
+                                {% else %}
+                                    Non datée
+                                {% endif %}
+                            </div>
+                            <div class="action-content">
+                                <h4>{{ action.module ? action.module.title : 'Action sans module' }}</h4>
+                                {% if action.description %}
+                                    <p class="action-description">{{ action.description }}</p>
+                                {% endif %}
+                                <div class="action-meta">
+                                    <span class="action-status-badge status-{{ actionStatus }}">
+                                        {% if actionStatus == 'completed' %}
+                                            Validée par le tuteur
+                                        {% elseif actionStatus == 'in_progress' %}
+                                            Auto-validée (en attente tuteur)
+                                        {% else %}
+                                            En attente
+                                        {% endif %}
+                                    </span>
+                                    {% if action.module %}
+                                        <span class="action-skill">Module: {{ action.module.title }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if action.mentorComment %}
+                                    <div class="mentor-comment">
+                                        <strong>Commentaire du tuteur:</strong>
+                                        <p>{{ action.mentorComment }}</p>
+                                    </div>
+                                {% endif %}
+                                {% if action.agentComment %}
+                                    <div class="mentor-comment" style="background: #f8f9fa; border-left-color: #6c757d;">
+                                        <strong>Commentaire de l'apprenant:</strong>
+                                        <p>{{ action.agentComment }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <p>Aucune action enregistrée dans ce carnet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Page de signatures -->
+    <div class="page-break"></div>
+    
+    <div class="signature-page">
+        <div class="signature-header">
+            <h1>Validation du parcours de compagnonnage</h1>
+            <div class="signature-subtitle">
+                <p>Certification de fin de formation pour <strong>{{ user.fullname }}</strong></p>
+                <p>Métier : {{ user.job ? user.job.name : 'Non spécifié' }}{% if user.speciality %} - {{ user.speciality.name }}{% endif %}</p>
+            </div>
+        </div>
+
+        <div class="signature-content">
+            <div class="signature-text">
+                <p>Par la présente, nous certifions que l'apprenant mentionné ci-dessus a terminé avec succès son parcours de compagnonnage et a acquis toutes les compétences requises pour exercer son métier en autonomie.</p>
+                <p>Cette certification atteste de la validation complète de tous les modules de formation par le tuteur référent.</p>
+            </div>
+
+            <div class="signatures-grid">
+                <div class="signature-block-large">
+                    <div class="signature-info">
+                        <h4>L'apprenant</h4>
+                        <p>{{ user.fullname }}</p>
+                        <p class="signature-role">Bénéficiaire de la formation</p>
+                    </div>
+                    <div class="signature-area">
+                        <div class="signature-line-large"></div>
+                        <p class="signature-label">Signature et date</p>
+                    </div>
+                </div>
+
+                <div class="signature-block-large" style="margin-top: 20px;">
+                    <div class="signature-info">
+                        <h4>Le tuteur</h4>
+                        <p>{{ user.mentor ? user.mentor.fullname : 'Non assigné' }}</p>
+                        <p class="signature-role">Tuteur référent</p>
+                    </div>
+                    <div class="signature-area">
+                        <div class="signature-line-large"></div>
+                        <p class="signature-label">Signature et date</p>
+                    </div>
+                </div>
+
+                <div class="signature-block-large" style="margin-top: 20px;">
+                    <div class="signature-info">
+                        <h4>Le chef de service</h4>
+                        <p>{{ user.service.chef ?: '' }}</p>
+                        <p class="signature-role">Responsable de service</p>
+                    </div>
+                    <div class="signature-area">
+                        <div class="signature-line-large"></div>
+                        <p class="signature-label">Signature et date</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="signature-footer">
+            <p>Document généré le {{ date_generation|date('d/m/Y à H:i') }}</p>
+        </div>
+    </div>
 </body>
 </html>
