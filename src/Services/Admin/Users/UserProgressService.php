@@ -20,11 +20,11 @@ use Twig\Environment;
 readonly class UserProgressService implements UserProgressServiceInterface
 {
     public function __construct(
-        private LogbookRepository      $logbookRepository,
+        private LogbookRepository $logbookRepository,
         private LogbookProgressService $logbookProgressService,
-        private ProgressAccessService  $progressAccessService,
-        private Environment            $twig,
-        private parameterBagInterface  $parameterBag,
+        private ProgressAccessService $progressAccessService,
+        private Environment $twig,
+        private parameterBagInterface $parameterBag,
     ) {}
 
     public function getUserProgressDetails(User $user): array
@@ -67,6 +67,7 @@ readonly class UserProgressService implements UserProgressServiceInterface
         $options->set(attributes: 'defaultFont', value: 'Arial');
         $options->set('isPhpEnabled', true);
         // Important pour DomPDF : permettre les images locales
+        /* @phpstan-ignore-next-line */
         $options->set(attributes: 'chroot', value: $this->parameterBag->get(name: 'kernel.project_dir') . '/public');
 
         $dompdf = new Dompdf(options: $options);
