@@ -183,201 +183,201 @@
 
         <div class="card-body">
             <!-- Vue mobile/tablette (cartes) - Visible uniquement sur les petits écrans -->
-        <div id="apprenants-cards" class="d-block d-lg-none">
-            {% for user_data in users_data %}
-            <div class="content-card">
-                <!-- En-tête de la carte avec informations principales -->
-                <div class="card-header-custom">
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-container">
-                            <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-weight: 600;">
-                                {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
-                            </div>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-semibold text-dark">{{ user_data.user.fullName }}</h5>
-                            <small class="text-muted">{{ user_data.user.email }}</small>
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mt-2">
-                        <div class="col-sm-6">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-person-check text-primary me-2"></i>
-                                <div>
-                                    <small class="text-muted d-block">Tuteur</small>
-                                    {% if user_data.mentor %}
-                                        <span class="fw-medium">{{ user_data.mentor.fullName }}</span>
-                                    {% else %}
-                                        <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
-                                    {% endif %}
+            <div id="apprenants-cards" class="d-block d-lg-none">
+                {% for user_data in users_data %}
+                <div class="content-card">
+                    <!-- En-tête de la carte avec informations principales -->
+                    <div class="card-header-custom">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-container">
+                                <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-weight: 600;">
+                                    {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-calendar-event text-primary me-2"></i>
-                                <div>
-                                    <small class="text-muted d-block">Date d'embauche</small>
-                                    {% if user_data.hiring_date %}
-                                        <span class="fw-medium">{{ user_data.hiring_date|date('d/m/Y') }}</span>
-                                    {% else %}
-                                        <span class="text-muted">Non renseigné</span>
-                                    {% endif %}
-                                </div>
+                            <div>
+                                <h5 class="mb-0 fw-semibold text-dark">{{ user_data.user.fullName }}</h5>
+                                <small class="text-muted">{{ user_data.user.email }}</small>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Corps de la carte avec progression -->
-                <div class="card-body-custom">
-                    <div class="progress-section">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
-                                <i class="bi bi-person text-primary me-2"></i>Auto-validation
-                            </label>
-                            <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }} modules</small>
-                    </div>
-
-                    <div class="progress-section">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
-                                <i class="bi bi-award text-warning me-2"></i>Validation tuteur
-                            </label>
-                            <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar {{ user_data.progress.progress_class_mentor }}" role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }} modules</small>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="action-buttons">
-                        <div class="d-flex flex-wrap gap-2 justify-content-center">
-                            {% if user_data.logbook %}
-                                <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-primary rounded-pill action-btn" style="font-weight: 500;">
-                                    <i class="bi bi-eye me-1"></i> Détails
-                                </a>
-                                <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank">
-                                    <i class="bi bi-file-pdf me-1"></i> PDF
-                                </a>
-                            {% else %}
-                                <span class="badge bg-light text-danger border border-danger" style="font-weight: 500; padding: 0.5rem 1rem;">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Pas de carnet
-                                </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Vue desktop (tableau) - Visible uniquement sur grands écrans -->
-        <div id="apprenants-table" class="table-responsive d-none d-lg-block">
-            <table class="table table-hover data-table mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Apprenant</th>
-                        <th>Tuteur</th>
-                        <th>Date d'embauche</th>
-                        <th>Auto-validation</th>
-                        <th>Validation tuteur</th>
-                        <th class="text-center">Actions</th>
-                        <th class="text-center">PDF</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user_data in users_data %}
-                        <tr class="align-middle">
-                            <td class="ps-4">
+                        <div class="row g-3 mt-2">
+                            <div class="col-sm-6">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                        {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
-                                    </div>
+                                    <i class="bi bi-person-check text-primary me-2"></i>
                                     <div>
-                                        <h6 class="mb-0">{{ user_data.user.fullName }}</h6>
-                                        <small class="text-muted">{{ user_data.user.email }}</small>
+                                        <small class="text-muted d-block">Tuteur</small>
+                                        {% if user_data.mentor %}
+                                            <span class="fw-medium">{{ user_data.mentor.fullName }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            </td>
-                            <td>
-                                {% if user_data.mentor %}
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-placeholder bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                            {{ user_data.mentor.firstname|first }}{{ user_data.mentor.lastname|first }}
-                                        </div>
-                                        <span>{{ user_data.mentor.fullName }}</span>
-                                    </div>
-                                {% else %}
-                                    <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if user_data.hiring_date %}
-                                    <span class="text-dark" style="font-size: .9rem">
-                                        <i class="bi bi-calendar me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
-                                    </span>
-                                {% else %}
-                                    <span class="text-muted">Non renseigné</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column gap-1">
-                                    <div class="progress">
-                                        <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.85;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }}</small>
-                                        <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Date d'embauche</small>
+                                        {% if user_data.hiring_date %}
+                                            <span class="fw-medium">{{ user_data.hiring_date|date('d/m/Y') }}</span>
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column gap-1">
-                                    <div class="progress">
-                                        <div class="progress-bar {{ user_data.progress.progress_class_mentor }}"
-                                            role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.85;"
-                                            aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }}</small>
-                                        <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-center">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Corps de la carte avec progression -->
+                    <div class="card-body-custom">
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
+                                    <i class="bi bi-person text-primary me-2"></i>Auto-validation
+                                </label>
+                                <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }} modules</small>
+                        </div>
+
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 text-dark fw-medium d-flex align-items-center">
+                                    <i class="bi bi-award text-warning me-2"></i>Validation tuteur
+                                </label>
+                                <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar {{ user_data.progress.progress_class_mentor }}" role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.9;" aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block text-center">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }} modules</small>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="action-buttons">
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
                                 {% if user_data.logbook %}
-                                    <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;">
+                                    <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-primary rounded-pill action-btn" style="font-weight: 500;">
                                         <i class="bi bi-eye me-1"></i> Détails
                                     </a>
-                                {% else %}
-                                    <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
-                                {% endif %}
-                            </td>
-                            {# Bouton pour générer le carnet de compagnonnage en PDF #}
-                            <td class="text-center">
-                                {% if user_data.logbook %}
-                                    <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
+                                    <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank">
                                         <i class="bi bi-file-pdf me-1"></i> PDF
                                     </a>
                                 {% else %}
-                                    <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
+                                    <span class="badge bg-light text-danger border border-danger" style="font-weight: 500; padding: 0.5rem 1rem;">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Pas de carnet
+                                    </span>
                                 {% endif %}
-                            </td>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Vue desktop (tableau) - Visible uniquement sur grands écrans -->
+            <div id="apprenants-table" class="table-responsive d-none d-lg-block">
+                <table class="table table-hover data-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Apprenant</th>
+                            <th>Tuteur</th>
+                            <th>Date d'embauche</th>
+                            <th>Auto-validation</th>
+                            <th>Validation tuteur</th>
+                            <th class="text-center">Actions</th>
+                            <th class="text-center">PDF</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {% for user_data in users_data %}
+                            <tr class="align-middle">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            {{ user_data.user.firstname|first }}{{ user_data.user.lastname|first }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ user_data.user.fullName }}</h6>
+                                            <small class="text-muted">{{ user_data.user.email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if user_data.mentor %}
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-placeholder bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                                {{ user_data.mentor.firstname|first }}{{ user_data.mentor.lastname|first }}
+                                            </div>
+                                            <span>{{ user_data.mentor.fullName }}</span>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark fw-light ls-1">Non assigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user_data.hiring_date %}
+                                        <span class="text-dark" style="font-size: .9rem">
+                                            <i class="bi bi-calendar me-1"></i> {{ user_data.hiring_date|date('d/m/Y') }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <div class="progress">
+                                            <div class="progress-bar {{ user_data.progress.progress_class_agent }}" role="progressbar" style="width: {{ user_data.progress.agent_progress }}%; opacity: 0.85;" aria-valuenow="{{ user_data.progress.agent_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">{{ user_data.progress.completed_by_agent }}/{{ user_data.progress.total_modules }}</small>
+                                            <span class="badge {{ user_data.progress.progress_class_agent }} rounded-pill">{{ user_data.progress.agent_progress }}%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <div class="progress">
+                                            <div class="progress-bar {{ user_data.progress.progress_class_mentor }}"
+                                                role="progressbar" style="width: {{ user_data.progress.mentor_progress }}%; opacity: 0.85;"
+                                                aria-valuenow="{{ user_data.progress.mentor_progress }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">{{ user_data.progress.validated_by_mentor }}/{{ user_data.progress.total_modules }}</small>
+                                            <span class="badge {{ user_data.progress.progress_class_mentor }} rounded-pill">{{ user_data.progress.mentor_progress }}%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    {% if user_data.logbook %}
+                                        <a href="{{ path('admin_progress_user_details', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;">
+                                            <i class="bi bi-eye me-1"></i> Détails
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-light text-danger border border-danger" style="font-weight: 500;">Pas de carnet</span>
+                                    {% endif %}
+                                </td>
+                                {# Bouton pour générer le carnet de compagnonnage en PDF #}
+                                <td class="text-center">
+                                    {% if user_data.logbook %}
+                                        <a href="{{ path('admin_progress_generate_workbook', {'id': user_data.user.id}) }}" class="btn btn-sm btn-outline-secondary rounded-pill action-btn" style="border-width: 1px; font-weight: 500;" target="_blank" title="Générer le carnet de compagnonnage en PDF">
+                                            <i class="bi bi-file-pdf me-1"></i> PDF
+                                        </a>
+                                    {% else %}
+                                        <span class="badge bg-light text-muted border" style="font-weight: 500;">Non disponible</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
             {# Pagination #}
             {% if pagination.totalPages > 1 %}

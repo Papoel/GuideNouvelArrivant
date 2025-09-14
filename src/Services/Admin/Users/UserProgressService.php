@@ -11,30 +11,31 @@ use App\Services\Admin\Progress\ProgressAccessService;
 use App\Services\Logbook\LogbookProgressService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
 /** Service responsable de la gestion de la progression des utilisateurs.
  * Implémente l'interface UserProgressServiceInterface pour respecter le principe d'inversion de dépendance. */
-class UserProgressService implements UserProgressServiceInterface
+readonly class UserProgressService implements UserProgressServiceInterface
 {
     public function __construct(
-        private readonly LogbookRepository $logbookRepository,
-        private readonly LogbookProgressService $logbookProgressService,
-        private readonly ProgressAccessService $progressAccessService,
-        private readonly Environment $twig
-    ) {
-    }
+        private LogbookRepository      $logbookRepository,
+        private LogbookProgressService $logbookProgressService,
+        private ProgressAccessService  $progressAccessService,
+        private Environment            $twig,
+        private parameterBagInterface  $parameterBag,
+    ) {}
 
     public function getUserProgressDetails(User $user): array
     {
-        $logbook = $this->logbookRepository->findOneBy(['owner' => $user]);
+        $logbook = $this->logbookRepository->findOneBy(criteria: ['owner' => $user]);
 
         if (!$logbook) {
-            throw new \RuntimeException('Cet utilisateur n\'a pas de carnet de progression');
+            throw new \RuntimeException(message: 'Cet utilisateur n\'a pas de carnet de compagnonnage');
         }
 
-        $progress = $this->logbookProgressService->calculateLogbookProgress($logbook);
+        $progress = $this->logbookProgressService->calculateLogbookProgress(logbook: $logbook);
 
         return [
             'user' => $user,
@@ -57,42 +58,60 @@ class UserProgressService implements UserProgressServiceInterface
 
     public function generateUserWorkbookPdf(User $user): Response
     {
-        $progressData = $this->getUserProgressDetails($user);
+        $progressData = $this->getUserProgressDetails(user: $user);
 
         // Configuration de Dompdf avec des options optimisées pour l'impression
         $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
-        $options->set('defaultFont', 'Helvetica');
+        $options->set(attributes: 'isHtml5ParserEnabled', value: true);
+        $options->set(attributes: 'isRemoteEnabled', value: true);
+        $options->set(attributes: 'defaultFont', value: 'Arial');
+        $options->set('isPhpEnabled', true);
+        // Important pour DomPDF : permettre les images locales
+        $options->set(attributes: 'chroot', value: $this->parameterBag->get(name: 'kernel.project_dir') . '/public');
 
-        $dompdf = new Dompdf($options);
+        $dompdf = new Dompdf(options: $options);
 
         // Génération du HTML avec un template dédié à l'impression PDF
         $html = $this->twig->render(
-            'pdf/workbook.html.twig',
-            [
-            'user' => $user,
-            'logbook' => $progressData['logbook'],
-            'progress' => $progressData['progress'],
-            'date_generation' => new \DateTime(),
+            name: 'pdf/workbook.html.twig',
+            context: [
+                'user' => $user,
+                'logbook' => $progressData['logbook'],
+                'progress' => $progressData['progress'],
+                'date_generation' => new \DateTime(),
             ]
         );
 
-        $dompdf->loadHtml($html);
+        $dompdf->loadHtml(str: $html);
 
         // Paramétrage de la première page en portrait
         // Les pages suivantes seront configurées en paysage via CSS dans le template
-        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper(size: 'A4', orientation: 'portrait');
 
         // Rendu du PDF
         $dompdf->render();
+
+        // Ajout de la pagination après le rendu
+        $canvas = $dompdf->getCanvas();
+
+        // Approche simple sans police spécifique (utilise la police par défaut)
+        $canvas->page_text(
+            520,
+            800,
+            "Page {PAGE_NUM} sur {PAGE_COUNT}",
+            "Arial",
+            8,
+            // RGG : 61, 95, 158
+            // Pour DOMPDF: [61/255, 95/255, 158/255]
+            [0.239, 0.373, 0.619]
+        );
 
         // Génération du nom de fichier
         $filename = sprintf(
             'carnet-compagnonnage-%s-%s-%s.pdf',
             $user->getFirstname(),
             $user->getLastname(),
-            (new \DateTime())->format('d-m-Y')
+            (new \DateTime())->format(format: 'd-m-Y')
         );
 
         // Retourne une réponse HTTP avec le PDF

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Carnet de compagnonnage - {{ user.fullName }}</title>
+    <style>
+        /* Configuration des pages */
+        /* Définition de la zone footer pour toutes les pages */
+        @page {
+            /* espace réservé en bas */
+            margin: 2.5cm 2cm 15mm 2cm;
+            size: A4 portrait;
+        }
+        /*@page {
+            size: A4 portrait;
+            margin: 2.5cm 2cm;
+        }*/
+
+        @page :first {
+            margin: 0;
+            @bottom-center {
+                content: none;
+            }
+        }
+
+        @page detail {
+            size: A4 landscape;
+            margin: 2cm 2cm 20mm 2cm;
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+
+        /* Styles de base */
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        .landscape-section {
+            page: detail;
+        }
+
+        /* En-tête et pied de page */
+
+        /* Page de couverture */
+        .cover {
+            position: relative;
+            min-height: 100vh; /* correspond à la hauteur A4 */
+            display: flex;
+            flex-direction: column;
+            background: white;
+            box-sizing: border-box;
+            padding: 3cm 2cm;
+        }
+
+        /* Bande verticale pleine hauteur */
+        .cover::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10mm;           /* épaisseur de la bande */
+            height: 125%;          /* prend toute la hauteur du conteneur */
+            background-color: #ff9900;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2cm;
+        }
+
+        .logo {
+            max-width: 5cm;
+            height: auto;
+        }
+
+        .cover-content {
+            text-align: center;
+            margin-bottom: 1.5cm;
+        }
+
+        .cover-title {
+            font-size: 26pt;
+            font-weight: 700;
+            color: #1a3c6e;
+            margin-bottom: 0.5cm;
+            letter-spacing: 0.06em;
+        }
+
+        .cover-decoration {
+            width: 6cm;
+            height: 2px;
+            background-color: #ff9900;
+            margin: 0.5cm auto 0.8cm auto;
+        }
+
+        .cover-subtitle {
+            font-size: 16pt;
+            color: #555;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+
+        /* Encadré infos */
+        .cover-info {
+            width: 80%;
+            margin: 0 auto;
+            padding: 1cm;
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-left: 4px solid #1a3c6e;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .info-title {
+            font-size: 12pt;
+            font-weight: 600;
+            color: #1a3c6e;
+            margin-bottom: 0.8cm;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 3px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4cm;
+            font-size: 11pt;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1a3c6e;
+            flex: 0 0 40%;
+        }
+
+        .info-value {
+            flex: 0 0 60%;
+            color: #333;
+        }
+
+        /* Footer fixe et élégant */
+        .document-footer {
+            /*position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 10mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 8pt;
+            color: #555;
+            border-top: 0.4pt solid #ccc;
+            padding: 2mm 10mm;
+            box-sizing: border-box;
+            background-color: white;*/
+            position: running(footer);
+            width: 100%;
+            height: 15mm;
+            display: table;
+            table-layout: fixed;
+            border-top: 1px solid #ddd;
+            background-color: white;
+            font-size: 9pt;
+            color: #666;
+            margin-top: 5mm;
+        }
+
+        .footer-content {
+            display: table-row;
+            width: 100%;
+        }
+
+        .footer-left, .footer-center, .footer-right {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 3mm 0;
+        }
+
+        .footer-left {
+            width: 40%;
+            text-align: left;
+            font-weight: 600;
+            color: #ae3a30;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-center {
+            width: 20%;
+            text-align: center;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .footer-right {
+            width: 40%;
+            text-align: right;
+            color: #333;
+            font-size: 8pt;
+        }
+
+        /*.footer-left {
+            text-align: left;
+            font-weight: 600;
+            color: #ae3a30;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-right {
+            text-align: right;
+            color: #333;
+            font-size: 8pt;
+        }*/
+
+
+
+        /* Titres */
+        h1, h2, h3, h4, h5, h6 {
+            color: #1a3c6e;
+            font-weight: 600;
+            margin-top: 1cm;
+            margin-bottom: 0.5cm;
+        }
+
+        h2 {
+            font-size: 16pt;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 3mm;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 14pt;
+            page-break-after: avoid;
+        }
+
+        h4 {
+            font-size: 12pt;
+            color: #444;
+            page-break-after: avoid;
+        }
+
+        /* Sections */
+        .info-section, .day-section, .evaluation-section, .validation-section {
+            margin-bottom: 1cm;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.5cm 0 1cm 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+            border-radius: 0.2cm;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #3d5f9e;
+            font-weight: 600;
+            text-align: left;
+            padding: 0.3cm;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 10pt;
+        }
+
+        td {
+            padding: 0.3cm;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 10pt;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(61, 95, 158, 0.03);
+        }
+
+        /* Style pour les statuts */
+        .status {
+            display: inline-block;
+            padding: 0.1cm 0.3cm;
+            border-radius: 0.2cm;
+            font-size: 9pt;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-completed, .status-validated {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-pending {
+            background-color: #f5f5f5;
+            color: #757575;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Niveaux de difficulté */
+        .difficulty-low {
+            color: #2d8659; /* Vert */
+        }
+
+        .difficulty-medium {
+            color: #c77c19; /* Orange */
+        }
+
+        .difficulty-high {
+            color: #ae3a30; /* Rouge */
+        }
+
+        /* Boîtes de remarques */
+        .remarks-box {
+            padding: 0.5cm;
+            background-color: #f9f9f9;
+            border: 1px solid #eaeaea;
+            border-left: 3px solid #1a3c6e;
+            margin-bottom: 0.8cm;
+        }
+
+        /* Barres de progression */
+        .competence-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .competence-list li {
+            margin-bottom: 0.5cm;
+            display: flex;
+            align-items: center;
+        }
+
+        .competence {
+            flex: 0 0 40%;
+        }
+
+        .progress-container {
+            flex: 0 0 50%;
+            height: 0.5cm;
+            background-color: rgba(61, 95, 158, 0.08);
+            border-radius: 3px;
+            margin: 0 0.5cm;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3d5f9e;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-value {
+            flex: 0 0 10%;
+            text-align: right;
+            font-weight: 600;
+            color: #2c384e;
+        }
+
+        /* Signatures */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5cm;
+            page-break-inside: avoid;
+        }
+
+        .signature-block {
+            flex: 0 0 30%;
+        }
+
+        .signature-label {
+            font-weight: 600;
+            color: #1a3c6e;
+            margin-bottom: 0.3cm;
+        }
+
+        .signature-box {
+            height: 2.5cm;
+            border: 1px solid #ddd;
+            margin-bottom: 0.3cm;
+            background-color: #fcfcfc;
+        }
+
+        .signature-date, .signature-name {
+            font-size: 10pt;
+            color: #666;
+        }
+
+        /* Optimisations pour l'impression */
+        @media print {
+            html, body {
+                height: 100%;
+            }
+
+            table, td {
+                color: #2c384e;
+            }
+
+            a {
+                color: #3d5f9e;
+                text-decoration: none;
+            }
+
+            .page {
+                page-break-after: always;
+            }
+
+            th {
+                background-color: #f8f9fa !important;
+                color: #3d5f9e !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .landscape-section {
+                page: detail;
+            }
+
+            /* Améliorer le contraste pour l'impression */
+            .status-completed, .status-validated {
+                color: #000 !important;
+                background-color: #e9f5eb !important;
+                border: 1px solid #217938 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .status-pending {
+                color: #000 !important;
+                background-color: #f5f5f5 !important;
+                border: 1px solid #999 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Éviter les sauts de pages à l'intérieur des éléments importants */
+            table, tr, .signature-block, .info-section {
+                page-break-inside: avoid;
+            }
+
+            .validation-section {
+                page-break-inside: avoid;
+                page-break-before: always;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            /* Assurer que les nouveaux thèmes commencent sur une nouvelle page */
+            h2 {
+                page-break-before: always;
+                margin-top: 0;
+            }
+
+            /* Éviter les pages blanches */
+            h2:first-of-type {
+                page-break-before: auto;
+            }
+
+            /* Ajustements pour la page de couverture */
+            .cover {
+                overflow: hidden;
+                size: A4 portrait;
+                height: 100%;
+            }
+
+            .cover-info {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page de couverture -->
+    <div class="cover">
+        <!-- Logo -->
+        <div class="logo-container">
+            <img src="images/logos/edf.png" alt="Logo EDF" class="logo">
+        </div>
+
+        <!-- Titre principal -->
+        <div class="cover-content">
+            <h1 class="cover-title">CARNET DE COMPAGNONNAGE</h1>
+            <div class="cover-decoration"></div>
+            <p class="cover-subtitle">PARCOURS D'INTÉGRATION</p>
+        </div>
+
+        <!-- Encadré d'informations -->
+        <div class="cover-info">
+            <h2 class="info-title">Informations Apprenant</h2>
+            <div class="info-row">
+                <span class="info-label">Apprenant</span>
+                <span class="info-value">{{ user.fullName }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">NNI</span>
+                <span class="info-value">{{ user.nni ?: 'Non renseigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date d'entrée</span>
+                <span class="info-value">{{ user.hiringAt ? user.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Service</span>
+                <span class="info-value">{{ user.service ?: 'Non renseigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tuteur</span>
+                <span class="info-value">{{ user.mentor ? user.mentor.fullName : 'Non assigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Métier</span>
+                <span class="info-value">{{ user.job ?: 'Non assigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Spécialité</span>
+                <span class="info-value">{{ user.speciality ?: 'Non assigné' }}</span>
+            </div>
+        </div>
+
+    </div>
+    {#<div class="cover">
+
+        <div class="cover-content">
+            <img width="265" src="images/logos/edf.png" alt="Mon logo">
+            <h1 class="cover-title">CARNET DE COMPAGNONNAGE</h1>
+            <div class="cover-decoration"></div>
+            <p class="cover-subtitle">PARCOURS D'INTÉGRATION</p>
+        </div>
+
+        <div class="cover-info">
+            <div class="info-row">
+                <span class="info-label">Apprenant</span>
+                <span class="info-value">{{ user.fullName }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">NNI</span>
+                <span class="info-value">{{ user.nni ?: 'Non renseigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date d'entrée</span>
+                <span class="info-value">{{ user.hiringAt ? user.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Service</span>
+                <span class="info-value">{{ user.service ?: 'Non renseigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tuteur</span>
+                <span class="info-value">{{ user.mentor ? user.mentor.fullName : 'Non assigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Métier</span>
+                <span class="info-value">{{ user.job ?: 'Non assigné' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Spécialité</span>
+                <span class="info-value">{{ user.speciality ?: 'Non assigné' }}</span>
+            </div>
+
+        </div>
+
+    </div>#}
+
+    <!-- Informations générales -->
+    <h2>Synthèse du parcours d'intégration</h2>
+
+    <!-- Détail des modules par thème -->
+    <div class="landscape-section">
+        {% for theme in logbook.themes %}
+            {# {% if not loop.first %}
+            <div class="page-break"></div>
+            {% endif %} #}
+            <h2>{{ theme.title }}</h2>
+
+            <table class="no-break">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Module</th>
+                        <th style="width: 20%">Auto-validation</th>
+                        <th style="width: 20%">Validation tuteur</th>
+                        <th style="width: 35%">Commentaires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for module in theme.modules %}
+                        <tr>
+                            <td>
+                                <strong>{{ module.title }}</strong>
+                            </td>
+                            <td>
+                                {# Chercher l'action correspondante pour vérifier si complété par l'agent #}
+                                {% set action = null %}
+                                {% for userAction in user.actions %}
+                                    {% if userAction.module == module %}
+                                        {% set action = userAction %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if action and action.agentValidatedAt %}
+                                    <span class="status status-completed">Validé</span>
+                                    <br><small>{{ action.agentValidatedAt|date('d/m/Y') }}</small>
+                                {% else %}
+                                    <span class="status status-pending">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# Chercher l'action correspondante pour vérifier si validé par le tuteur #}
+                                {% set action = null %}
+                                {% for userAction in user.actions %}
+                                    {% if userAction.module == module %}
+                                        {% set action = userAction %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if action and action.mentorValidatedAt %}
+                                    <span class="status status-validated">Validé</span>
+                                    <br><small>{{ action.mentorValidatedAt|date('d/m/Y') }}</small>
+                                {% else %}
+                                    <span class="status status-pending">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# Chercher l'action correspondante pour afficher les commentaires #}
+                                {% set action = null %}
+                                {% for userAction in user.actions %}
+                                    {% if userAction.module == module %}
+                                        {% set action = userAction %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if action and (action.agentComment or action.mentorComment) %}
+                                    {% if action.agentComment %}
+                                        <div style="margin-bottom: 0.2cm">
+                                            <strong>Apprenant :</strong> {{ action.agentComment }}
+                                        </div>
+                                    {% endif %}
+                                    {% if action.mentorComment %}
+                                        <div>
+                                            <strong>Tuteur :</strong> {{ action.mentorComment }}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <em>Aucun commentaire</em>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+
+    <!-- Page de signatures avec design élégant -->
+    <div class="validation-section">
+        <div>
+            <h2>Validation finale</h2>
+            <p style="margin: 0 0 0.5cm 0">
+                Ce carnet de compagnonnage officiel atteste que <strong>{{ user.fullName }}</strong> a suivi et validé
+                le parcours d'intégration conformément aux exigences du service <strong>{{ user.service }}</strong>.
+            </p>
+            <p style="margin: 0 0 1cm 0">
+                Les compétences et connaissances acquises ont été évaluées et validées par le tuteur désigné
+                <strong>{{ user.mentor.fullName }}</strong> et le responsable du service <strong>{{ user.service.chef }}</strong>.
+            </p>
+
+            <div class="signatures">
+                <div class="signature-block">
+                    <p class="signature-label">L'apprenant</p>
+                    <div class="signature-box"></div>
+                    <p class="signature-date">Date : _______________</p>
+                    <p class="signature-name">{{ user.fullName }}</p>
+                </div>
+
+                <div class="signature-block">
+                    <p class="signature-label">Le tuteur</p>
+                    <div class="signature-box"></div>
+                    <p class="signature-date">Date : _______________</p>
+                    <p class="signature-name">{{ user.mentor ? user.mentor.fullName : '_______________' }}</p>
+                </div>
+
+                <div class="signature-block">
+                    <p class="signature-label">Le responsable</p>
+                    <div class="signature-box"></div>
+                    <p class="signature-date">Date : _______________</p>
+                    <p class="signature-name">{{ user.service.chef ?: '_______________' }} </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (défini en premier pour être disponible partout) -->
+    <div class="document-footer">
+        <div class="footer-content">
+            <div class="footer-left">DOCUMENT CONFIDENTIEL</div>
+            <div class="footer-center">Page <span class="pagenum"></span> / <span class="pagecount"></span></div>
+            <div class="footer-right">Généré le {{ date_generation|date('d/m/Y') }}</div>
+        </div>
+    </div>
+
+</body>
+</html>
