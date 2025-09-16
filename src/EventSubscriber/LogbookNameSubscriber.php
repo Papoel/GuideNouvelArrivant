@@ -14,8 +14,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {
-    }
+    ) {}
 
     /** @return array<class-string, array<int, string>> */
     public static function getSubscribedEvents(): array
@@ -26,6 +25,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** @phpstan-ignore-next-line */
     public function nameLogbookWithUserFullname(BeforeEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();
@@ -50,6 +50,7 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
         }
     }
 
+    /** @phpstan-ignore-next-line */
     public function updateLogbookName(AfterEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();

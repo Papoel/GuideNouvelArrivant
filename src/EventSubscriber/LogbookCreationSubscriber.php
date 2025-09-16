@@ -17,8 +17,7 @@ readonly class LogbookCreationSubscriber implements EventSubscriberInterface
         private LogbookReplacementService $logbookReplacementService,
         private RequestStack $requestStack,
         private LogbookRepository $logbookRepository,
-    ) {
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -27,6 +26,7 @@ readonly class LogbookCreationSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /** @phpstan-ignore-next-line */
     public function checkExistingLogbook(BeforeEntityPersistedEvent $event): void
     {
         $entity = $event->getEntityInstance();

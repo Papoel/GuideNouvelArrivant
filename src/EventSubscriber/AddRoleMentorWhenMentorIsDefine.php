@@ -13,8 +13,7 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -23,6 +22,7 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
         ];
     }
 
+    /** @phpstan-ignore-next-line */
     public function onBeforeEntityUpdated(BeforeEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();
