@@ -17,7 +17,8 @@ readonly class LogbookCreationSubscriber implements EventSubscriberInterface
         private LogbookReplacementService $logbookReplacementService,
         private RequestStack $requestStack,
         private LogbookRepository $logbookRepository,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {

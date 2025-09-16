@@ -14,7 +14,8 @@ readonly class LogbookNameSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     /** @return array<class-string, array<int, string>> */
     public static function getSubscribedEvents(): array
