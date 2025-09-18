@@ -63,4 +63,23 @@ class LogbookRepository extends ServiceEntityRepository
 
         return $conformity;
     }
+
+    /**
+     * Finds all logbooks with their owners and mentors preloaded
+     *
+     * @return array<int, Logbook> Returns an array of Logbook objects with preloaded relations
+     */
+    public function findAllWithOwnerAndMentor(): array
+    {
+        $result = $this->createQueryBuilder('l')
+            ->leftJoin('l.owner', 'o')
+            ->addSelect('o')
+            ->leftJoin('o.mentor', 'm')
+            ->addSelect('m')
+            ->getQuery()
+            ->getResult();
+        
+        /** @var array<int, Logbook> $result */
+        return $result;
+    }
 }
