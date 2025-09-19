@@ -78,7 +78,7 @@ class LogbookRepository extends ServiceEntityRepository
             ->addSelect('m')
             ->getQuery()
             ->getResult();
-        
+
         /** @var array<int, Logbook> $result */
         return $result;
     }

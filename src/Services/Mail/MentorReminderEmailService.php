@@ -65,7 +65,7 @@ final class MentorReminderEmailService
 
     /**
      * Détermine le niveau d'urgence
-     * 
+     *
      * @return array{level: string, color: string, text: string, class: string}
      */
     private function getUrgencyLevel(int $pendingCount): array

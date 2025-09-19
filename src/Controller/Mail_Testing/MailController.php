@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Mail_Testing;
 
-use App\Services\Mail\MentorReminderEmailService;
-use Symfony\Component\Mime\Email;
 use App\Repository\LogbookRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use App\Services\Logbook\LogbookProgressService;
+use App\Services\Mail\MentorReminderEmailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\File;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_ADMIN')]
 final class MailController extends AbstractController
 {
     public function __construct(
@@ -76,7 +77,7 @@ final class MailController extends AbstractController
 
             // Créer l'email
             $emailSubject = $reminderData['subject'];
-            
+
             $email = (new Email())
                 ->from('noreply@gna-edf.fr')
                 ->to($mentorData['mentor_email'])
@@ -104,11 +105,11 @@ final class MailController extends AbstractController
 
         $user = $this->getUser();
         $nni = null;
-        
+
         if ($user instanceof \App\Entity\User) {
             $nni = $user->getNni();
         }
-        
+
         return $this->redirectToRoute('dashboard_index', [
             'nni' => $nni,
         ]);
