@@ -65,7 +65,7 @@ class UserLogbookController extends AbstractController
                 $replaceExisting
             );
 
-            $this->addFlash('success', 'Le carnet a été créé avec succès pour ' . $user->getFullName() . '.');
+            $this->addFlash('success', 'Le carnet a été créé avec succès pour ' . $user->getFullname() . '.');
             return $this->redirectToRoute('admin');
         }
 

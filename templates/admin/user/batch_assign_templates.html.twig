@@ -279,15 +279,18 @@
 
                 <div class="border-top p-3 p-md-4">
                     <form method="post" action="{{ path('admin_batch_assign_templates') }}">
-                        <div class="card shadow-sm mb-4" style="border-radius: var(--card-radius); border-left: 4px solid var(--info-color);">
+                        <div class="card shadow-sm mb-4" style="border-radius: var(--card-radius); border-left: 4px solid var(--info-color); transition: all var(--transition-speed) ease-in-out;">
                             <div class="card-body p-3 p-md-4">
-                                <div class="d-flex">
-                                    <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3" aria-hidden="true">
+                                <div class="d-flex align-items-start">
+                                    <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; min-width: 48px; align-self: center;" aria-hidden="true">
                                         <i class="bi bi-info-circle" style="color: var(--info-color); font-size: 1.25rem;"></i>
                                     </div>
                                     <div>
-                                        <h3 class="h6 fw-bold mb-2">Information importante</h3>
-                                        <p class="mb-0">Cette action va assigner automatiquement un carnet modèle par défaut à tous les utilisateurs listés ci-dessus en fonction de leur métier.</p>
+                                        <h3 class="h6 fw-bold mb-2 text-uppercase text-decoration-underline">Information importante</h3>
+                                        <p class="mb-0" style="color: var(--text-dark); line-height: 1.5;">
+                                            Cette action attribuera automatiquement un carnet modèle par défaut à tous les utilisateurs listés ci-dessus, en fonction de leur métier.. <br>
+                                            👉  Si un carnet doit être assigné à un agent ayant plus d’un an d’ancienneté, il faudra effectuer l’opération manuellement via : Carnet > Liste des carnets > Créer un carnet.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
