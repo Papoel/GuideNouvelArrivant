@@ -23,6 +23,7 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
         ];
     }
 
+    /** @phpstan-ignore-next-line */
     public function onBeforeEntityUpdated(BeforeEntityUpdatedEvent $event): void
     {
         $entity = $event->getEntityInstance();
