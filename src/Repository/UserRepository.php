@@ -88,12 +88,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         // 1. Récupérer tous les utilisateurs sans carnet
         $usersWithoutLogbook = $this->findUsersWithoutLogbook();
 
-        // 2. Filtrer manuellement par service
-        $serviceId = $service->getId();
-        if ($serviceId === null) {
-            return [];
-        }
+        // 2. Définir la date seuil: il y a un an
+        $oneYearAgo = new \DateTimeImmutable('-1 year');
 
+        // 3. Filtrer manuellement par service ET par date d'embauche (<= 1 an)
         $serviceIdString = $serviceId->__toString();
         $filteredUsers = [];
 
@@ -102,7 +100,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $userServiceId = $userService ? $userService->getId() : null;
 
             if ($userServiceId !== null && $userServiceId->__toString() === $serviceIdString) {
-                $filteredUsers[] = $user;
+                $hiringAt = $user->getHiringAt();
+
+                // Inclure uniquement les utilisateurs embauchés depuis un an ou moins
+                // (ou dont la date d'embauche est inconnue)
+                if ($hiringAt === null || $hiringAt >= $oneYearAgo) {
+                    $filteredUsers[] = $user;
+                }
             }
         }
 
