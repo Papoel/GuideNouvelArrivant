@@ -77,7 +77,7 @@ class SendMailCommand extends Command
                 $reminderData['logo_cid'] = $contentId;
 
                 // Rendre le template avec les données
-                $htmlContent = $this->twig->render(name: 'mail/MentorReminderEmailTemplate.html.twig', context: $reminderData);
+                $htmlContent = $this->twig->render(name: 'mail/mentorReminderEmailTemplate.html.twig', context: $reminderData);
 
                 // Créer l'email
                 $emailSubject = $reminderData['subject'];
@@ -95,7 +95,7 @@ class SendMailCommand extends Command
 
                     // Mettre à jour le template pour utiliser le Content-ID simple
                     $reminderData['logo_cid'] = 'logo';
-                    $htmlContent = $this->twig->render('mail/MentorReminderEmailTemplate.html.twig', $reminderData);
+                    $htmlContent = $this->twig->render('mail/mentorReminderEmailTemplate.html.twig', $reminderData);
                     $email->html($htmlContent);
                 }
 

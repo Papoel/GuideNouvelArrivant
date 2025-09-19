@@ -45,7 +45,7 @@ final class MailController extends AbstractController
         // Mais comme c'est juste un aperçu web, l'image sera chargée via l'URL absolue
         $reminderData['logo_cid'] = 'logo';
 
-        return $this->render('mail/MentorReminderEmailTemplate.html.twig', $reminderData);
+        return $this->render('mail/mentorReminderEmailTemplate.html.twig', $reminderData);
     }
 
     #[Route('/mailing/send', name: 'app_mailing_send')]
@@ -93,7 +93,7 @@ final class MailController extends AbstractController
                 // Dans le template, on utilise juste cid:logo pour y faire référence
                 // On met à jour le template pour utiliser ce Content-ID simple
                 $reminderData['logo_cid'] = 'logo';
-                $htmlContent = $this->renderView('mail/MentorReminderEmailTemplate.html.twig', $reminderData);
+                $htmlContent = $this->renderView('mail/mentorReminderEmailTemplate.html.twig', $reminderData);
                 $email->html($htmlContent);
             }
 
