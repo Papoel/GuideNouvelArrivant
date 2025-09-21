@@ -79,7 +79,7 @@ final class MailController extends AbstractController
             $emailSubject = $reminderData['subject'];
 
             $email = (new Email())
-                ->from('noreply@gna-edf.fr')
+                ->from('no-reply@gna.papoel.fr')
                 ->to($mentorData['mentor_email'])
                 ->subject($emailSubject)
                 ->html($htmlContent);

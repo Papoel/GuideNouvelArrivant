@@ -61,7 +61,7 @@ final class SendReminderEmailsHandler
             $htmlContent = $this->twig->render('mail/mentorReminderEmailTemplate.html.twig', $reminderData);
 
             $email = (new Email())
-                ->from('noreply@gna-edf.fr')
+                ->from('no-reply@gna.papoel.fr')
                 ->addCc('bridevproject@gmail.com')
                 ->to($mentorData['mentor_email'])
                 ->subject($reminderData['subject'])
