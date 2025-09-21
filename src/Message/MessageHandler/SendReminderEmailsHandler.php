@@ -62,7 +62,7 @@ final class SendReminderEmailsHandler
 
             $email = (new Email())
                 ->from('no-reply@gna.papoel.fr')
-                ->addCc('bridevproject@gmail.com')
+                // ->addCc('bridevproject@gmail.com')
                 ->to($mentorData['mentor_email'])
                 ->subject($reminderData['subject'])
                 ->html($htmlContent);
