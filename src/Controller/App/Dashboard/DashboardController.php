@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\App\Dashboard;
 
 use App\Entity\Feedback;
+use App\Entity\User;
 use App\Form\FeedbackType;
 use App\Services\Dashboard\DashboardService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,18 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'index', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function index(string $nni, DashboardService $dashboardService): Response
     {
+        // Vérifier que l'utilisateur est connecté et récupérer ses informations
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Utilisateur non connecté');
+        }
+
+        // Vérifier que le User connecté accède bien au Dashboard de son NNI
+        $userNni = $user->getNni();
+        if (!$userNni || $nni !== $userNni) {
+            throw $this->createAccessDeniedException('Accès non autorisé');
+        }
+
         // Création du formulaire de feedback pour la sidebar
         $feedback = new Feedback();
         $feedbackForm = $this->createForm(
