@@ -21,7 +21,8 @@ class WeeklyReminderEmailService
         private readonly LogbookRepository $logbookRepository,
         private readonly MailerInterface $mailer,
         private readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     public function send(\DateTimeImmutable $triggeredAt): void
     {
