@@ -22,7 +22,8 @@ final class MailController extends AbstractController
         private readonly LogbookProgressService $logbookProgressService,
         private readonly LogbookRepository $logbookRepository,
         private readonly MentorReminderEmailService $reminderService,
-    ) {}
+    ) {
+    }
 
     #[Route('/mailing/preview', name: 'app_mailing_preview')]
     public function preview(): Response
