@@ -48,7 +48,7 @@ class UserCrudController extends AbstractCrudController
             ->hideOnForm()
             ->hideOnIndex();
 
-        yield TextField::new(propertyName: 'fullname', label: 'Prénom')
+        yield TextField::new(propertyName: 'fullname', label: 'Nom complet')
             ->addCssClass(cssClass: 'text-capitalize')
             ->onlyOnIndex();
 

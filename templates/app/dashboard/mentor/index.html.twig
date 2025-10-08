@@ -113,10 +113,19 @@
                                                 {{ progression.modules_awaiting_validation }}
                                             </td>
                                             <td>
-                                                <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanNni': apprenant.nni }) }}"
-                                                   class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-eye-fill me-1"></i>Détails
-                                                </a>
+                                                <div class="d-flex gap-2">
+                                                    <a href="{{ path('mentor_logbook_details', { 'id': logbook.id, 'nni': app.user.nni,'padawanNni': apprenant.nni }) }}"
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       title="Voir les détails du carnet">
+                                                        <i class="bi bi-journal-text me-1"></i>
+                                                    </a>
+                                                    <button type="button"
+                                                       popovertarget="logbook-popover-{{ apprenant.id }}"
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       title="Voir tous les modules">
+                                                        <i class="bi bi-list-check me-1"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -128,5 +137,116 @@
                 </div>
             </div>
         </section>
+
+        <section id="padawanLogbooks">
+            {% for apprenantId, logbook in padawanLogbooks %}
+                {% set apprenant = apprenants|filter(a => a.id == apprenantId|number_format(0, '', ''))|first %}
+                {% set progression = apprenantsProgress[apprenantId] %}
+                
+                <div id="logbook-popover-{{ apprenantId }}" popover style="width: min(800px, 90vw); max-height: 85vh; overflow-y: auto; border: 2px solid #3d5f9e; border-radius: 12px; padding: 0; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); background-color: #ffffff;">
+                    {# En-tête du popover #}
+                    <div style="background: linear-gradient(135deg, #3d5f9e 0%, #2c4a7c 100%); color: white; padding: 20px; border-radius: 10px 10px 0 0; margin: 0;">
+                        <h3 style="margin: 0 0 12px 0; font-size: 1.25rem; font-weight: 600;">{{ logbook.name }}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.95rem; display: flex; align-items: center;">
+                                <i class="bi bi-person-circle" style="margin-right: 8px; font-size: 1.1rem;"></i>
+                                <span style="font-weight: 500;">{{ logbook.owner.fullname }}</span>
+                            </p>
+                            <div style="background-color: rgba(255, 255, 255, 0.2); border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 2px;">Progression</div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; line-height: 1;">{{ progression.agent_progress }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Corps du popover #}
+                    <div style="padding: 20px;">
+                        {# Statistiques rapides #}
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 4px solid #3d5f9e;">
+                                <div style="font-size: 0.75rem; color: #6c757d; margin-bottom: 4px;">Thèmes</div>
+                                <div style="font-size: 1.25rem; font-weight: 600; color: #2c384e;">{{ logbook.themes|length }}</div>
+                            </div>
+                            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 4px solid #28a745;">
+                                <div style="font-size: 0.75rem; color: #6c757d; margin-bottom: 4px;">En attente</div>
+                                <div style="font-size: 1.25rem; font-weight: 600; color: #2c384e;">{{ progression.modules_awaiting_validation }}</div>
+                            </div>
+                        </div>
+
+                        {# Affichage des thèmes et modules #}
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: #2c384e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e9ecef;">
+                                <i class="bi bi-folder2-open" style="margin-right: 8px; color: #3d5f9e;"></i>
+                                Thèmes et modules
+                            </h4>
+                            {% if logbook.themes|length > 0 %}
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    {% for theme in logbook.themes %}
+                                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; border: 1px solid #e9ecef;">
+                                            <div style="font-weight: 600; color: #2c384e; margin-bottom: 8px; font-size: 0.95rem;">
+                                                <i class="bi bi-folder" style="margin-right: 6px; color: #3d5f9e;"></i>
+                                                {{ theme.title }}
+                                            </div>
+                                            {% if theme.modules|length > 0 %}
+                                                <div style="margin-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+                                                    {% for module in theme.modules %}
+                                                        <div style="padding: 6px 10px; background-color: white; border-radius: 4px; font-size: 0.85rem; border-left: 3px solid #3d5f9e; color: #2c384e;">
+                                                            <i class="bi bi-check-circle" style="margin-right: 6px; color: #28a745; font-size: 0.75rem;"></i>
+                                                            {{ module.title }}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <div style="margin-left: 20px; padding: 8px; color: #6c757d; font-size: 0.85rem; font-style: italic;">
+                                                    <i class="bi bi-info-circle" style="margin-right: 6px;"></i>
+                                                    Aucun module
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div style="padding: 20px; text-align: center; color: #6c757d; font-style: italic;">
+                                    <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 8px; opacity: 0.5;"></i>
+                                    Aucun thème disponible
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Affichage des modules renseignés #}
+                        {% if logbook.actions|length > 0 %}
+                            <div>
+                                <h4 style="font-size: 1rem; font-weight: 600; color: #2c384e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e9ecef;">
+                                    <i class="bi bi-check-circle-fill" style="margin-right: 8px; color: #28a745;"></i>
+                                    Modules renseignés ({{ logbook.actions|length }})
+                                </h4>
+                                <div style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+                                    {% for action in logbook.actions %}
+                                        <div style="padding: 10px; background-color: #f8f9fa; border-radius: 6px; border-left: 3px solid #28a745; font-size: 0.85rem;">
+                                            <div style="color: #2c384e; font-weight: 500; margin-bottom: 2px;">{{ action.module.title }}</div>
+                                            <div style="color: #6c757d; font-size: 0.75rem;">
+                                                <i class="bi bi-calendar-check" style="margin-right: 4px;"></i>
+                                                {{ action.agentValidatedAt|date('d/m/Y à H:i') }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Pied du popover #}
+                    <div style="background-color: #f8f9fa; padding: 12px 20px; border-radius: 0 0 10px 10px; border-top: 1px solid #e9ecef; text-align: right;">
+                        <button type="button" popovertarget="logbook-popover-{{ apprenantId }}" popovertargetaction="hide" style="background-color: #3d5f9e; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#2c4a7c'" onmouseout="this.style.backgroundColor='#3d5f9e'">
+                            <i class="bi bi-x-lg" style="margin-right: 6px;"></i>
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
     </main>
 {% endblock %}

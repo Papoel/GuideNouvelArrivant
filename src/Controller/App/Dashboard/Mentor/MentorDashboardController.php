@@ -53,11 +53,21 @@ class MentorDashboardController extends AbstractController
             }
         }
 
+        // Récupérer le carnet de l'apprenant
+        $padawanLogbooks = [];
+        foreach ($apprenants as $apprenant) {
+            $logbook = $apprenant->getLogbooks()->first();
+            if ($logbook) {
+                $padawanLogbooks[(string) $apprenant->getId()] = $logbook;
+            }
+        }
+
         return $this->render(
             view: 'app/dashboard/mentor/index.html.twig',
             parameters: [
             'apprenants' => $apprenants,
             'apprenantsProgress' => $apprenantsProgress,
+            'padawanLogbooks' => $padawanLogbooks,
             ]
         );
     }
