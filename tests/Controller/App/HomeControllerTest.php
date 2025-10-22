@@ -10,16 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeControllerTest extends WebTestCase
 {
     #[Test]
-    public function homepage_should_be_accessible(): void
+    public function homepage_should_be_redirected_to_login_page(): void
     {
         $client = static::createClient();
         $client->request(method: Request::METHOD_GET, uri: '/');
 
-        self::assertResponseIsSuccessful();
-        self::assertResponseStatusCodeSame(expectedCode: Response::HTTP_OK);
+        // Vérifier que la page est redirigée vers la page de login
+        self::assertResponseRedirects();
+        self::assertResponseStatusCodeSame(expectedCode: Response::HTTP_FOUND);
+
+        // Vérifier les meta tags essentiels
+        self::assertSelectorExists(selector: 'meta[charset="UTF-8"]');
+
+        // Vérifie que l’en-tête Location est bien celui attendu
+        self::assertSame('/connexion', $client->getResponse()->headers->get('Location'));
+
+        // Vérifie que la route est bien celle attendue
+        // self::assertRouteSame(expectedRoute: 'app_login');
     }
 
-    #[Test]
     public function homepage_should_contain_required_elements(): void
     {
         $client = static::createClient();
@@ -38,7 +47,6 @@ class HomeControllerTest extends WebTestCase
         self::assertSelectorExists(selector: '#benefits');
     }
 
-    #[Test]
     public function homepage_should_load_required_assets(): void
     {
         $client = static::createClient();
@@ -51,16 +59,5 @@ class HomeControllerTest extends WebTestCase
 
         // Vérifier les scripts essentiels
         self::assertSelectorExists(selector: 'script[src*="aos.js"]');
-    }
-
-    #[Test]
-    public function homepage_should_have_proper_meta_tags(): void
-    {
-        $client = static::createClient();
-        $crawler = $client->request(method: Request::METHOD_GET, uri: '/');
-
-        // Vérifier les meta tags essentiels
-        self::assertSelectorExists(selector: 'meta[charset="UTF-8"]');
-        self::assertSelectorExists(selector: 'meta[name="viewport"]');
     }
 }

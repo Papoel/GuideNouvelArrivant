@@ -1,0 +1,291 @@
+[
+  {
+    "type": "header",
+    "version": "5.2.3",
+    "comment": "Export to JSON plugin for phpMyAdmin"
+  },
+  { "type": "database", "name": "db_compagnonnage" },
+  {
+    "type": "table",
+    "name": "modules",
+    "database": "db_compagnonnage",
+    "data": [
+      {
+        "id": "0x019a0cda202b713dbc741059a05c9b37",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la DI100",
+        "description": "Déclaration des événements à l'ASN"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a142d8fb",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la DI55",
+        "description": "Présentation de l'organisation pour le traitement et la gestion des écarts"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a156a386",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la DI61",
+        "description": "Métrologies et éxigences associés"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a17c2ca3",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la DI81",
+        "description": "Qualification des matériels"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a1e3e60d",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "EP / PBMP",
+        "description": "Prendre connaissance des critères d'acceptabilité d'un EP RGE9 et de la gestion associé en cas de non respect d'un critère"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a1f26cf4",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance du processus PdR",
+        "description": "Rencontre avec l'ingénieur PdR, immersion d'une journée avec un logisticien d'interface (le magasin est envisageable)"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a2c4a086",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la réglementation environnementale",
+        "description": "Découvrez les objectifs du site, et les actions mise en oeuvre au quotidien"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a392fa6b",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la réglementation propreté radiologique",
+        "description": "Découvrez les objectifs du site, du service, et les actions mise en oeuvre au quotidien"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a3fe7114",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance de la réglementation incendie",
+        "description": "Découvrez comment le risque incendie est pris en compte dans nos activités (points chauds, charge calorifiques, SFS)"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a477db56",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Prendre connaissance des principes de la maintenance et leurs exigences associés",
+        "description": "Découvrez comment la maintenance est gérées, les types de maintenances (curative ou préventive), les PBMP, PLMP, AP913..."
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a49c298e",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Analyse de risque",
+        "description": "Prendre connaissance de la démarche Analyse de Risque"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a4f90156",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Activité cas 1 et cas 2",
+        "description": "<ol>\n                    <li>Prendre connaissance des différences entre une activité en cas 1 et une activité en cas 2</li>\n                    <li>Appropriation des fiches réflexes n°65 (BPE) et n°22 (VSO)</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a5f0f7a9",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Gestion des DMP/MTI",
+        "description": "<ol>\n                    <li>Prendre connaissance de l'organisation du site et du service pour la gestion des DMP/MTI</li>\n                    <li>Prendre connaissance des différentes aires de stockage et tableaux de gestion physique</li>\n                    <li>Appropriation de la fiche réflexe n°20</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a66dae71",
+        "theme_id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+        "title": "Fiches de constats",
+        "description": "<ol>\n                    <li>Prendre connaissance de l'organisation pour la gestion des fiches de constats</li>\n                    <li>Appropriation de la fiche réflexe n°8</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a737054d",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "AdREX",
+        "description": "Prendre connaissance de l'outil AdREX (Créer, contrôler et capitaliser une AdR dans l'EAM et en dehors de l'EAM"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a74c327e",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "BI",
+        "description": "Prendre connaissance de l'outil de requête (ROP10, ROP11...)"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a82129e9",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | Pluri",
+        "description": "Gérer des activités pluriannuelles (Affecter un code projet à une DT ou à une TOT"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a83e3e9e",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | AT-TEM",
+        "description": "Gérer des activités d'un projet AT ou TEM (Affecter ou reporter un code projet à une TOT"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a8aa48d9",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | DT",
+        "description": "<ol>\n                    <li>Émettre une DT et associer une DT à un OT</li>\n                    <li>Prendre connaissance du guide de rédaction des DT</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a9847fbe",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | DMP-MTI",
+        "description": "Préparer ou créer un OTM / OTR de pose et dépose de DMP ou MTI"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059a9be6a93",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | OT",
+        "description": "Créer et dupliquer un OT"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059aa49d5ba",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | 1N",
+        "description": "<ol>\n                    <li>Prendre connaissance des attendus pour la réalisation de l'analyse premier niveau</li>\n                    <li>Prendre connaissance de la fiche réflexe n°18</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059aa5c15cc",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | PDR",
+        "description": "Assurer la mise à disposition des PDR (Contrôler, Modifier, Approuver une DM"
+      },
+      {
+        "id": "0x019a0cda202b713dbc741059aab15087",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EAM | HISTO",
+        "description": "<ol>\n                    <li>Connaitre l'organisation pour l'historisation des dossiers</li>\n                    <li>Prendre connaissance de la fiche réflexe n°13</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a6304cfc59",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "Maitriser la qualité du dossier de maintenance",
+        "description": "Prendre connaissance de la fiche réflexe n°27"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a631378d4b",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "Requalification d'une partie de l'installation",
+        "description": "<ol>\n                    <li>Renseigner la coche requalification nécessaire d'une TOT M ou R</li>\n                    <li>Instruire l'ADS ou la FSR (sharepoint)</li>\n                    <li>Préparer les TOTR RQi ou RQf</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a631a89bef",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "eDRT (Web et Tablette)",
+        "description": "Préparer ou réaliser une activité technique dématérialisée"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a632376bdb",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "EPSILON2",
+        "description": "<ol>\n                    <li>Consulter une demande de logistique</li>\n                    <li>Créer une demande de logistique</li>\n                    <li>Approuver une demande de logistique</li>\n                    <li>Soumettre une demande de logistique</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a632a36a39",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "Espace Opérationnel (EOX)",
+        "description": "Prendre connaissance de l'espace opérationnel"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a633534b36",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "GPS",
+        "description": "<ol>\n                    <li>Maitriser l'outil pour consulter ou gérer des activités TEM ou AT</li>\n                    <li>Savoir faire le TPLRIA</li>\n                    <li>Savoir créer une fiche d'appel</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63391512f",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "PGI / SAP",
+        "description": "<ol>\n                    <li>Assurer la mise à disposition des PdR</li>\n                    <li>Savoir consulter le stock de PdR</li>\n                    <li>Savoir rechercher et suivre une commande de PdR</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a6342aec87",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "VESPA",
+        "description": "Consulter, surligner et modifier les schémas mécaniques"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a634d5ecd9",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "AICO",
+        "description": "<ol>\n                    <li>Savoir rédiger des demandes de régimes (consignation, intervention immédiate...)</li>\n                    <li>Savoir rédiger un A2X</li>\n                    <li>Savoir créer une gamme de régime</li>\n                    <li>Savoir ajouter des chargés de travaux sur un régime</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a6351e6814",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "ECM",
+        "description": "Apprendre à rechercher la documentation"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a635ce3e87",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "OSECAP",
+        "description": "Prendre connaissance des 9 objets de capitalisation (ADR, ADS, DSI, DL, DM...)"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63637d634",
+        "theme_id": "0x019a0cda20017815ad4affde8b703278",
+        "title": "PLURITOOLS",
+        "description": "Prendre connaissance de la gestion des activités pluriannuelles"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a637353a7d",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Présentation du processus d'achat",
+        "description": "Présentation du processus d'achat et de l'organisation liée au cheminement des commandes"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a6381b5bc0",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Présentation des bases budgétaires",
+        "description": "<ol>\n                    <li>PGI: Rédaction d'une demande d'achat</li>\n                    <li>PGI: Réception d'une commande</li>\n                    <li>PGI: Module PdR</li>\n                    <li>PGI: Imputation</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a6386e24be",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "CCTP",
+        "description": "Présentation des éxigences d'un CCTP"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63878d6d1",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Surveillance des partenaires",
+        "description": "<ol>\n                    <li>Présentation des éxigences vis à vis des partenaires</li>\n                    <li>Programme de surveillance</li>\n                    <li>Rédaction et traitement des FEP</li>\n                    <li>Connaissance de l'application ARGOS</li>\n                    <li>Connaissance de l'application KALIF</li>\n                    <li>Appropriation de la fiche réflexe N°72</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63959b44f",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Réunion d'enclenchement ou levée des préalables",
+        "description": "Anime ou participe à une réunion d'enclenchement ou de levée des préalables"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a639772067",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "FEP",
+        "description": "<ol>\n                    <li>Participe à la rédaction d'une Fiche d'Evaluation de la Prestation</li>\n                    <li>Connaissance de l'application e-FEP</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63a44d32b",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Projet TEM",
+        "description": "<ol>\n                    <li>Présentation du projet TEM et de l'organisation de la planification à S+9</li>\n                    <li>Participation éventuelle aux réunions de pilotage RHC / RCM / RDTem</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63a951b07",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Projet AT",
+        "description": "<ol>\n                    <li>Présentation des projets d'arrêt et de la préparation modulaire d'arrêt de tranche</li>\n                    <li>Participation éventuelle aux réunions de pilotage RDT / RTOT / RAT</li>\n            </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63ad58776",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Organisation du Service",
+        "description": "<ol>\n                    <li>Prendre connaissance de l'organisation du service</li>\n                    <li>Prendre connaissance du REX (Caméléon)</li>\n                </ol>"
+      },
+      {
+        "id": "0x019a0cda202c75e097afc5a63b5ecb4b",
+        "theme_id": "0x019a0cda20017815ad4affde8c497b3e",
+        "title": "Organisation du Site",
+        "description": "Prendre connaissance de l'organisation du site et du service pour la préparation des COMSAT (changement d'état standard)"
+      }
+    ]
+  }
+]

@@ -1,0 +1,33 @@
+[
+    {
+        "type": "header",
+        "version": "5.2.3",
+        "comment": "Export to JSON plugin for phpMyAdmin"
+    },
+    {
+        "type": "database",
+        "name": "db_compagnonnage"
+    },
+    {
+        "type": "table",
+        "name": "themes",
+        "database": "db_compagnonnage",
+        "data": [
+            {
+                "id": "0x019a0cda1ff57588b0d65a97e2dbcac0",
+                "title": "CA - Connaissance de la réglementation et des prescriptions",
+                "description": null
+            },
+            {
+                "id": "0x019a0cda20017815ad4affde8b703278",
+                "title": "CA - Connaissance des outils SDIN",
+                "description": null
+            },
+            {
+                "id": "0x019a0cda20017815ad4affde8c497b3e",
+                "title": "CA - Préparation et réalisation des activités",
+                "description": null
+            }
+        ]
+    }
+]
