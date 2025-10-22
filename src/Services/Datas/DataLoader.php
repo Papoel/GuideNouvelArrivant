@@ -12,7 +12,8 @@ readonly class DataLoader
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     /** @return Theme[] */
     public function loadThemes(): array

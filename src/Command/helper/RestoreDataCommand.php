@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * Commande pour restaurer des données depuis des exports JSON phpMyAdmin
  * Commande générée par IA avec Claude Sonnet 4.5
- * 
+ *
  * Cette commande permet de :
  * - Lire des exports JSON générés par phpMyAdmin depuis le dossier helper/files
  * - Extraire les données utiles (tableau "data")
@@ -23,7 +23,7 @@ use Symfony\Component\Uid\Uuid;
  * - Régénérer automatiquement les IDs (UUID)
  * - Maintenir les relations entre entités (ex: theme_id)
  * - Persister les données en base avec Doctrine
- * 
+ *
  * Usage:
  * php bin/console app:restore-data modules.json
  * php bin/console app:restore-data themes.json modules.json
@@ -43,7 +43,7 @@ class RestoreDataCommand extends Command
     /**
      * Mapping des anciens IDs vers les nouveaux IDs générés
      * Permet de maintenir les relations entre entités
-     * 
+     *
      * @var array<string, string>
      */
     private array $idMapping = [];
@@ -51,7 +51,7 @@ class RestoreDataCommand extends Command
     /**
      * Cache des entités créées pour résoudre les relations
      * Structure: ['ancien_id' => entity_object]
-     * 
+     *
      * @var array<string, object>
      */
     private array $entityCache = [];
@@ -59,7 +59,7 @@ class RestoreDataCommand extends Command
     /**
      * Cache des données chargées depuis les fichiers JSON
      * Structure: ['table_name' => ['data' => [...], 'dependencies' => [...]]]
-     * 
+     *
      * @var array
      */
     private array $filesCache = [];
@@ -167,7 +167,7 @@ HELP
 
     /**
      * Charge les données de tous les fichiers demandés et détecte leurs dépendances
-     * 
+     *
      * @param array $requestedFiles Liste des noms de fichiers demandés
      * @param SymfonyStyle $io Interface pour l'affichage
      * @throws \Exception
@@ -198,7 +198,7 @@ HELP
 
     /**
      * Charge les données d'un fichier JSON et les stocke en cache
-     * 
+     *
      * @param string $filepath Chemin complet vers le fichier
      * @param SymfonyStyle $io Interface pour l'affichage
      * @throws \Exception
@@ -241,7 +241,7 @@ HELP
 
     /**
      * Détecte les dépendances d'une table en analysant les champs *_id
-     * 
+     *
      * @param array $tableData Données de la table
      * @return array Liste des tables dont dépend cette table
      */
@@ -271,7 +271,7 @@ HELP
 
     /**
      * Charge automatiquement les fichiers JSON des tables dépendantes
-     * 
+     *
      * @param SymfonyStyle $io Interface pour l'affichage
      */
     private function autoLoadDependencies(SymfonyStyle $io): void
@@ -330,7 +330,7 @@ HELP
     /**
      * Détermine l'ordre optimal d'insertion basé sur les dépendances
      * Utilise un tri topologique pour résoudre le graphe de dépendances
-     * 
+     *
      * @param SymfonyStyle $io Interface pour l'affichage
      * @return array Liste ordonnée des noms de tables
      */
@@ -387,7 +387,7 @@ HELP
 
     /**
      * Traite une table et insère ses données en base
-     * 
+     *
      * @param string $tableName Nom de la table à traiter
      * @param SymfonyStyle $io Interface pour l'affichage
      * @param bool $dryRun Si true, ne persiste pas en base
@@ -432,7 +432,7 @@ HELP
 
     /**
      * Extrait les informations de la table depuis le JSON phpMyAdmin
-     * 
+     *
      * @param array $data Données JSON décodées
      * @return array|null Informations de la table ou null si non trouvé
      */
@@ -448,12 +448,12 @@ HELP
 
     /**
      * Déduit le nom de la classe d'entité depuis le nom de la table
-     * 
+     *
      * Conventions :
      * - themes => Theme
      * - modules => Module
      * - user_roles => UserRole (camelCase)
-     * 
+     *
      * @param string $tableName Nom de la table en base
      * @return string Nom complet de la classe (FQCN)
      */
@@ -473,7 +473,7 @@ HELP
 
     /**
      * Traite un enregistrement et crée l'entité correspondante
-     * 
+     *
      * @param array $record Données de l'enregistrement
      * @param string $entityClass Classe de l'entité à créer
      * @param SymfonyStyle $io Interface pour l'affichage
