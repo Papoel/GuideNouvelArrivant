@@ -59,7 +59,14 @@ class LogbookRepository extends ServiceEntityRepository
         }
 
         // 3. Le missionement des tuteurs et compagnons sont formalisés par une lettre de mission
-        $conformity['mission'] = 'TODO';
+        // Pour l'instant, on vérifie que le mentor a bien le rôle ROLE_MENTOR
+        // TODO futur: implémenter une entité MissionLetter pour gérer les lettres de mission formelles
+        $hasMissionLetter = false;
+        if ($owner instanceof User && $owner->getMentor()) {
+            $mentor = $owner->getMentor();
+            $hasMissionLetter = in_array('ROLE_MENTOR', $mentor->getRoles(), true);
+        }
+        $conformity['mission'] = $hasMissionLetter;
 
         return $conformity;
     }

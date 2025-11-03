@@ -7,9 +7,10 @@ use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Form\UserActionType;
 use App\Repository\ActionRepository;
+use App\Repository\LogbookRepository;
+use App\Repository\ModuleRepository;
 use App\Services\Action\ActionService;
 use App\Services\Dashboard\DashboardService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,9 @@ class ActionController extends AbstractController
     public function __construct(
         private readonly DashboardService $dashboardService,
         private readonly ActionService $actionService,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly ModuleRepository $moduleRepository,
+        private readonly LogbookRepository $logbookRepository,
+        private readonly ActionRepository $actionRepository,
     ) {
     }
 
@@ -31,13 +34,13 @@ class ActionController extends AbstractController
     public function edit(string $nni, Request $request, string $moduleId, string $logbookId): Response
     {
         // Récupérer le module par son ID
-        $module = $this->entityManager->getRepository(Module::class)->find($moduleId);
+        $module = $this->moduleRepository->find($moduleId);
         if (!$module) {
             throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du module');
         }
 
         // Récupérer le logbook par son ID
-        $logbook = $this->entityManager->getRepository(Logbook::class)->find($logbookId);
+        $logbook = $this->logbookRepository->find($logbookId);
         if (!$logbook) {
             throw $this->createNotFoundException('Une erreur est survenue lors de la récupération du carnet');
         }
@@ -73,14 +76,13 @@ class ActionController extends AbstractController
     }
 
     #[Route('/{id}', name: 'action_delete', methods: ['POST'])]
-    public function delete(string $nni, Request $request, Action $action, EntityManagerInterface $entityManager): Response
+    public function delete(string $nni, Request $request, Action $action): Response
     {
         $datas = $this->dashboardService->getDashboardData($nni);
         $user = $datas['user'];
 
         if ($this->isCsrfTokenValid('delete' . $action->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($action);
-            $entityManager->flush();
+            $this->actionRepository->remove($action, true);
         }
 
         return $this->redirectToRoute(
@@ -91,7 +93,7 @@ class ActionController extends AbstractController
     }
 
     #[Route('/{id}/comment-clear', name: 'action_clear', methods: ['GET'])]
-    public function clearComment(Action $action, ActionRepository $actionRepository): Response
+    public function clearComment(Action $action): Response
     {
         $user = $action->getUser();
         $module = $action->getModule();
@@ -101,8 +103,7 @@ class ActionController extends AbstractController
             throw new \RuntimeException('Action incomplète : utilisateur, module ou carnet manquant.');
         }
 
-        $actionRepository->remove($action);
-        $this->entityManager->flush();
+        $this->actionRepository->remove($action, true);
 
         $this->addFlash('success', 'Le commentaire a été supprimé avec succès.');
 
