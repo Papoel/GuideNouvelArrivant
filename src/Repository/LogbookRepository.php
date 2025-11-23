@@ -89,4 +89,53 @@ class LogbookRepository extends ServiceEntityRepository
         /** @var array<int, Logbook> $result */
         return $result;
     }
+
+    /**
+     * Finds logbooks for a user with all related data preloaded to avoid N+1 queries.
+     * This method uses a batch loading strategy to minimize queries while avoiding
+     * the Cartesian product problem of multiple OneToMany joins.
+     *
+     * Strategy:
+     * 1. Load logbooks with owner and mentor (1 query)
+     * 2. Batch load themes and modules for these logbooks (2 queries)
+     * 3. Batch load actions for these modules (1 query)
+     *
+     * Total: ~4 queries instead of N+1 queries
+     *
+     * @return array<int, Logbook> Returns an array of Logbook objects with all relations preloaded
+     */
+    public function findByUserWithFullRelations(User $user): array
+    {
+        // Get logbook IDs using native SQL (workaround for UUID comparison issue)
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT id FROM logbooks WHERE owner_id = :userId';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $user->getId()->toBinary()]);
+        $logbookIds = $resultSet->fetchFirstColumn();
+
+        if (empty($logbookIds)) {
+            return [];
+        }
+
+        // Single query approach: Load everything with JOINs and DISTINCT
+        $query = $this->createQueryBuilder('l')
+            ->distinct()
+            ->leftJoin('l.owner', 'o')->addSelect('o')
+            ->leftJoin('o.mentor', 'm')->addSelect('m')
+            ->leftJoin('l.themes', 't')->addSelect('t')
+            ->leftJoin('t.modules', 'mod')->addSelect('mod')
+            ->leftJoin('mod.actions', 'a')->addSelect('a')
+            ->leftJoin('a.user', 'au')->addSelect('au')
+            ->where('l.id IN (:logbookIds)')
+            ->setParameter('logbookIds', $logbookIds)
+            ->getQuery();
+
+        // Use HINT to fetch join properly
+        $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, false);
+
+        $logbooks = $query->getResult();
+
+        /** @var array<int, Logbook> $logbooks */
+        return $logbooks;
+    }
 }

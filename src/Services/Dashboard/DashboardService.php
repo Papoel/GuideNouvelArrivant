@@ -13,65 +13,76 @@ use App\Services\Logbook\LogbookProgressService;
 use App\Services\User\UserSeniorityService;
 use App\Services\User\UserValidationService;
 
+/**
+ * Dashboard orchestration service following SOLID principles.
+ *
+ * SOLID Principles Applied:
+ * - Single Responsibility: Focuses on orchestrating dashboard data assembly
+ * - Open/Closed: Can be extended without modification through dependency injection
+ * - Liskov Substitution: Works with DashboardDataProviderInterface
+ * - Interface Segregation: Depends on focused interfaces
+ * - Dependency Inversion: Depends on abstractions (interfaces) not concretions
+ */
 readonly class DashboardService
 {
     public function __construct(
         private UserValidationService $userValidationService,
         private UserSeniorityService $seniorityService,
         private LogbookProgressService $logbookProgressService,
-    ) {
-    }
+        private DashboardDataProviderInterface $dataProvider,
+    ) {}
 
-    /** @return array{
+    /**
+     * Orchestrates the retrieval and assembly of all dashboard data.
+     * Uses optimized data provider to avoid N+1 queries.
+     *
+     * @return array{
      *     user: User,
      *     logbooks: array<Logbook>,
+     *     logbooksProgress: array,
      *     themes: array<Theme>,
      *     modules: array<Module>,
      *     actions: array<Action>,
      *     userSeniority: string,
      *     mentorSeniority: ?string
-     * } */
+     * }
+     */
     public function getDashboardData(string $nni): array
     {
         // Validation et récupération de l'utilisateur par NNI
         $currentUser = $this->userValidationService->validateUserAccess($nni);
 
-        // Récupération des logbooks associés à l'utilisateur
-        $logbooks = $this->getLogbooksByUser($currentUser);
+        // Récupération optimisée des données (résout le problème N+1)
+        $dashboardData = $this->dataProvider->getDashboardDataForUser($currentUser);
 
-        // Récupération des thèmes liés aux logbooks
-        $themes = $this->getThemesByLogbooks($logbooks);
+        // Calcul de la progression des carnets
+        $logbooksProgress = $this->calculateLogbooksProgress($dashboardData['logbooks']);
 
-        // Récupération des modules liés aux thèmes
-        $modules = $this->getModulesByThemes($themes);
-
-        $logbooksProgress = $this->calculateLogbooksProgress($logbooks);
-
+        // Assemblage final des données
         return [
             'user' => $currentUser,
-            'logbooks' => $logbooks,
+            'logbooks' => $dashboardData['logbooks'],
             'logbooksProgress' => $logbooksProgress,
-            'themes' => $themes,
-            'modules' => $modules,
-            'actions' => $this->getActionsByModulesForUser($modules, $currentUser),
-            'userSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getHiringAt()),
-            'mentorSeniority' => $this->calculateSeniority(hiringAt: $currentUser->getMentor()?->getHiringAt()),
+            'themes' => $dashboardData['themes'],
+            'modules' => $dashboardData['modules'],
+            'actions' => $dashboardData['actions'],
+            'userSeniority' => $this->calculateSeniority($currentUser->getHiringAt()),
+            'mentorSeniority' => $this->calculateSeniority($currentUser->getMentor()?->getHiringAt()),
         ];
     }
 
-    /** @return array<Logbook> */
-    private function getLogbooksByUser(User $user): array
-    {
-        return $user->getLogbooks()->toArray();
-    }
-
-    /** @phpstan-ignore-next-line */
+    /**
+     * Calculates progress for all logbooks.
+     *
+     * @param array<Logbook> $logbooks
+     * @return array
+     */
     private function calculateLogbooksProgress(array $logbooks): array
     {
         $logbooksProgress = [];
         foreach ($logbooks as $logbook) {
             if (!$logbook instanceof Logbook) {
-                throw new \InvalidArgumentException(message: 'Une erreur est survenue lors du calcul de la progression des carnets.');
+                throw new \InvalidArgumentException('Une erreur est survenue lors du calcul de la progression des carnets.');
             }
             $logbooksProgress[] = $this->logbookProgressService->calculateLogbookProgress($logbook);
         }
@@ -79,57 +90,11 @@ readonly class DashboardService
         return $logbooksProgress;
     }
 
-    /** @param array<Logbook> $logbooks
-     *
-     * @return array<Theme> */
-    private function getThemesByLogbooks(array $logbooks): array
-    {
-        $themes = [];
-        foreach ($logbooks as $logbook) {
-            foreach ($logbook->getThemes() as $theme) {
-                $themes[] = $theme;
-            }
-        }
-
-        return $themes;
-    }
-
-    /** @param array<Theme> $themes
-     *
-     * @return array<Module> */
-    private function getModulesByThemes(array $themes): array
-    {
-        $modules = [];
-        foreach ($themes as $theme) {
-            foreach ($theme->getModules() as $module) {
-                $modules[] = $module;
-            }
-        }
-
-        return $modules;
-    }
-
+    /**
+     * Calculates seniority for a given hiring date.
+     */
     private function calculateSeniority(?\DateTimeImmutable $hiringAt): string
     {
         return $hiringAt ? $this->seniorityService->getSeniority(hiringAt: $hiringAt) : 'Non défini';
-    }
-
-    /** @param array<Module> $modules
-     *
-     * @return array<Action> */
-    private function getActionsByModulesForUser(array $modules, User $user): array
-    {
-        $actions = [];
-
-        foreach ($modules as $module) {
-            foreach ($module->getActions() as $action) {
-                // Vérifier si l'action est associée à l'utilisateur courant
-                if ($action->getUser()?->getId() === $user->getId()) {
-                    $actions[] = $action;
-                }
-            }
-        }
-
-        return $actions;
     }
 }
