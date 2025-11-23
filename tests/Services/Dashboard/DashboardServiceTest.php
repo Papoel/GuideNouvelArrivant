@@ -10,6 +10,7 @@ use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Entity\Theme;
 use App\Entity\User;
+use App\Services\Dashboard\DashboardDataProviderInterface;
 use App\Services\Dashboard\DashboardService;
 use App\Services\Logbook\LogbookProgressService;
 use App\Services\User\UserSeniorityService;
@@ -30,6 +31,7 @@ class DashboardServiceTest extends WebTestCase
     private UserValidationService $userValidationService;
     private UserSeniorityService $seniorityService;
     private LogbookProgressService $logbookProgressService;
+    private DashboardDataProviderInterface $dataProvider;
     private DashboardService $dashboardService;
 
     #[Test] public function getDashboardData(): void
@@ -44,6 +46,18 @@ class DashboardServiceTest extends WebTestCase
             ->method(constraint: 'validateUserAccess')
             ->with($nni)
             ->willReturn($testUser);
+
+        // Configurer le mock du dataProvider pour retourner des données vides
+        $this->dataProvider
+            ->expects($this->once())
+            ->method('getDashboardDataForUser')
+            ->with($testUser)
+            ->willReturn([
+                'logbooks' => [],
+                'themes' => [],
+                'modules' => [],
+                'actions' => [],
+            ]);
 
         // Appel du service avec le NNI généré
         $result = $this->dashboardService->getDashboardData(nni: $nni);
@@ -60,15 +74,9 @@ class DashboardServiceTest extends WebTestCase
         $nni = $user->getNni();
 
         $logbook = $this->createMockLogbook();
-        $user->addLogbook($logbook);
         $theme = $this->createMockTheme();
         $module = $this->createMockModule();
         $action = $this->createMockAction($user);
-
-        // Configuration des autres mocks
-        $logbook->method('getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
-        $theme->method('getModules')->willReturn(value: new ArrayCollection(elements: [$module]));
-        $module->method('getActions')->willReturn(value: new ArrayCollection(elements: [$action]));
 
         // Mocks des services
         $this->userValidationService
@@ -76,6 +84,18 @@ class DashboardServiceTest extends WebTestCase
             ->method(constraint: 'validateUserAccess')
             ->with($nni)
             ->willReturn($user);
+
+        // Mock du dataProvider pour retourner les données complètes
+        $this->dataProvider
+            ->expects($this->once())
+            ->method('getDashboardDataForUser')
+            ->with($user)
+            ->willReturn([
+                'logbooks' => [$logbook],
+                'themes' => [$theme],
+                'modules' => [$module],
+                'actions' => [$action],
+            ]);
 
         $this->logbookProgressService
             ->expects($this->once())
@@ -133,66 +153,6 @@ class DashboardServiceTest extends WebTestCase
         $this->invokePrivateMethod(methodName: 'calculateLogbooksProgress', parameters: [$invalidLogbooks]);
     }
 
-    #[DataProvider('provideSizes')]
-    public function testGetLogbooksByUser(int $size): void
-    {
-        // Arrange
-        $user = $this->createMock(type: User::class);
-        $logbooks = [];
-        for ($i = 0; $i < $size; $i++) {
-            $logbooks[] = $this->createMockLogbook();
-        }
-        // Utilisation de method() pour simuler le retour de getLogbooks()
-        $user->method(constraint: 'getLogbooks')->willReturn(value: new ArrayCollection(elements: $logbooks));
-
-        // Act
-        $result = $this->invokePrivateMethod(methodName: 'getLogbooksByUser', parameters: [$user]);
-
-        // Assert
-        $this->assertCount(expectedCount: $size, haystack: $result);
-    }
-
-    #[DataProvider('provideSizes')]
-    #[Test] public function getThemesByLogbooks(int $size): void
-    {
-        // Arrange
-        $logbooks = [];
-        $themes = [];
-        for ($i = 0; $i < $size; $i++) {
-            $logbook = $this->createMockLogbook();
-            $theme = $this->createMockTheme();
-            $logbook->method(constraint: 'getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
-            $logbooks[] = $logbook;
-            $themes[] = $theme;
-        }
-
-        // Act
-        $result = $this->invokePrivateMethod(methodName: 'getThemesByLogbooks', parameters: [$logbooks]);
-
-        // Assert
-        $this->assertCount(expectedCount: $size, haystack: $result);
-    }
-
-    #[DataProvider('provideSizes')]
-    #[Test] public function getModulesByThemes(int $size): void
-    {
-        // Arrange
-        $themes = [];
-        $modules = [];
-        for ($i = 0; $i < $size; $i++) {
-            $theme = $this->createMockTheme();
-            $module = $this->createMockModule();
-            $theme->method(constraint: 'getModules')->willReturn(new ArrayCollection(elements: [$module]));
-            $themes[] = $theme;
-            $modules[] = $module;
-        }
-
-        // Act
-        $result = $this->invokePrivateMethod(methodName: 'getModulesByThemes', parameters: [$themes]);
-
-        // Assert
-        $this->assertCount(expectedCount: $size, haystack: $result);
-    }
 
     #[DataProvider('provideHiringDates')]
     #[Test] public function calculateSeniority(?\DateTimeImmutable $hiringDate, string $expectedSeniority): void
@@ -262,39 +222,19 @@ class DashboardServiceTest extends WebTestCase
     }
 
 
-    #[DataProvider('provideSizes')]
-    #[Test] public function getActionsByModulesForUser(int $size): void
-    {
-        // Arrange
-        $user = UserTestHelper::createUser();
-        $modules = [];
-        $actions = [];
-
-        for ($i = 0; $i < $size; $i++) {
-            $module = $this->createMockModule();
-            $action = $this->createMockAction($user);
-            $module->method(constraint: 'getActions')->willReturn(value: new ArrayCollection(elements: [$action]));
-            $modules[] = $module;
-            $actions[] = $action;
-        }
-
-        // Act
-        $result = $this->invokePrivateMethod(methodName: 'getActionsByModulesForUser', parameters: [$modules, $user]);
-
-        // Assert
-        $this->assertCount($size, $result);
-    }
 
     protected function setUp(): void
     {
         $this->userValidationService = $this->createMock(type: UserValidationService::class);
         $this->seniorityService = $this->createMock(type: UserSeniorityService::class);
         $this->logbookProgressService = $this->createMock(type: LogbookProgressService::class);
+        $this->dataProvider = $this->createMock(type: DashboardDataProviderInterface::class);
 
         $this->dashboardService = new DashboardService(
             $this->userValidationService,
             $this->seniorityService,
             $this->logbookProgressService,
+            $this->dataProvider,
         );
     }
 
