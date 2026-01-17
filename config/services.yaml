@@ -24,5 +24,9 @@ services:
         arguments:
             $migrationDir: '%migrations.dir%'
 
+    # Dashboard Data Provider - Interface binding for Dependency Inversion Principle
+    App\Services\Dashboard\DashboardDataProviderInterface:
+        class: App\Services\Dashboard\DashboardDataProvider
+
     # Ajouter cet alias pour le FixturesLoader
     # Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader: '@doctrine.fixtures.loader'

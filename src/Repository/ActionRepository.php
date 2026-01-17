@@ -26,12 +26,19 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
         parent::__construct($registry, Action::class);
     }
 
-    /** Supprime une action de la base de données.
+    /**
+     * Supprime une action de la base de données.
      *
-     * @param Action $action L'action à supprimer */
-    public function remove(Action $action): void
+     * @param Action $action L'action à supprimer
+     * @param bool $flush Si true, exécute flush() automatiquement
+     */
+    public function remove(Action $action, bool $flush = false): void
     {
         $this->getEntityManager()->remove($action);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     /** Trouve les actions associées à un module spécifique et répondant à des critères additionnels.

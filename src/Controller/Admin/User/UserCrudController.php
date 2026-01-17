@@ -3,6 +3,7 @@
 namespace App\Controller\Admin\User;
 
 use App\Entity\User;
+use App\Enum\UserRole;
 use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -85,31 +86,10 @@ class UserCrudController extends AbstractCrudController
 
         // Champ pour l'édition des rôles dans le formulaire
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
-            ->setChoices(
-                choiceGenerator: [
-                    'Utilisateur' => 'ROLE_USER',
-                    'Administrateur' => 'ROLE_ADMIN',
-                    'Chef de service' => 'ROLE_SERVICE_HEAD',
-                    'Chef de service délégué' => 'ROLE_SERVICE_HEAD_DELEGATE',
-                    'Manager' => 'ROLE_MANAGER',
-                    'Manager délégué' => 'ROLE_MANAGER_DELEGATE',
-                    'Tuteur' => 'ROLE_MENTOR',
-                    'Nouvel arrivant' => 'ROLE_NEWCOMER',
-                ]
-            )
+            ->setChoices(choiceGenerator: UserRole::getChoices())
             ->allowMultipleChoices()
             ->renderExpanded(expanded: false)
-            ->renderAsBadges(
-                [
-                    'ROLE_ADMIN' => 'danger',
-                    'ROLE_SERVICE_HEAD' => 'primary',
-                    'ROLE_SERVICE_HEAD_DELEGATE' => 'primary',
-                    'ROLE_MANAGER' => 'info',
-                    'ROLE_MANAGER_DELEGATE' => 'info',
-                    'ROLE_MENTOR' => 'success',
-                    'ROLE_NEWCOMER' => 'warning',
-                ]
-            )
+            ->renderAsBadges(UserRole::getBadgeMapping())
             ->setColumns(cols: 'col-md-9 col-sm-12')
             ->setRequired(isRequired: false)
             ->onlyOnForms();
