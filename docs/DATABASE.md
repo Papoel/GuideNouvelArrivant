@@ -1,87 +1,177 @@
 # Documentation de la Base de Données
 
-## Ordre de Création des Entités
+## Vue d'ensemble
 
-Pour faciliter la création des entités avec le Maker Bundle de Symfony et éviter les problèmes de dépendances circulaires, veuillez suivre l'ordre ci-dessous :
+Le projet utilise **MySQL/MariaDB** avec **Doctrine ORM**. Les identifiants principaux utilisent des **UUID** pour la plupart des entités (sauf Job et Speciality qui utilisent des auto-incréments).
 
-1. **User** : Crée l'entité `User` car elle est utilisée dans plusieurs autres entités.
-2. **Service** : Crée l'entité `Service`, qui est une entité parent pour `Logbook`.
-3. **Logbook** : Crée l'entité `Logbook`, qui dépend des entités `Service` et `User`.
-4. **Theme** : Crée l'entité `Theme`, qui dépend de l'entité `Logbook`.
-5. **Answer** : Crée l'entité `Answer`, qui dépend des entités `Theme` et `User`.
+## Schéma des Relations
 
-## Table: [USER](database/USER.md)
+```
+User ←──────── Logbook ←──────── Theme ←──────── Module ←──────── Action
+  │               │                 │                                 │
+  │               │                 └── ManyToMany ──────────────────┘
+  │               │                                                   │
+  ├── ManyToOne ──┤                                                   │
+  │   (mentor)    └── ManyToMany ── Theme                             │
+  │                                                                   │
+  ├── ManyToOne ── Job                                                │
+  ├── ManyToOne ── Speciality                                         │
+  ├── ManyToOne ── Service                                            │
+  └── OneToMany ── Feedback                                           │
+                                                                      │
+LogbookTemplate ── ManyToMany ── Theme                                │
+       │                                                              │
+       └── JSON ── jobs[]                                             │
+```
 
-Cette table stocke les informations des utilisateurs pour l'authentification et la gestion des rôles dans l'application.
+## Entités
 
-### Structure de la Table
+### User (users)
 
-| Colonne       | Type               | Description                                    | Contraintes               |
-|---------------|--------------------|------------------------------------------------|---------------------------|
-| id            | SERIAL             | Identifiant unique de l'utilisateur            | PRIMARY KEY               |
-| mentor_id     | VARCHAR(100)       | Relation                                       | PRIMARY KEY               |
-| firstname     | VARCHAR(100)       | Prénom de l'utilisateur                        | NOT NULL                  |
-| lastname      | VARCHAR(100)       | Nom de famille de l'utilisateur                | NOT NULL                  |
-| email         | VARCHAR(100)       | Adresse e-mail de l'utilisateur                | UNIQUE, NOT NULL          |
-| roles         | ARRAY              | Rôles de l'utilisateur (sous forme de tableau) | NOT NULL, DEFAULT '[]'    |
-| password      | VARCHAR(255)       | Mot de passe haché de l'utilisateur            | NOT NULL                  |
-| last_login_at | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
-| job           | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | RELATION: 1 TO *          |
-| nni           | VARCHAR(6)         | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
-| speciality    | VARCHAR(80)        | Date de la dernière connexion de l'utilisateur | RELATION: 1 TO *          |
-| hiring_at     | DATETIME_MUTABLE   | Date de la dernière connexion de l'utilisateur | NULLABLE                  |
-| created_at    | DATETIME_IMMUTABLE | Date de création du compte                     | DEFAULT CURRENT_TIMESTAMP |
-| updated_at    | DATETIME_MUTABLE   | Date de la dernière mise à jour du compte      | DEFAULT CURRENT_TIMESTAMP |
+Utilisateur de l'application avec authentification et relations.
 
-## Table: [SERVICE](database/SERVICE.md)
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| firstname | VARCHAR(50) | Prénom |
+| lastname | VARCHAR(50) | Nom |
+| email | VARCHAR(180) | Email (unique) |
+| password | VARCHAR(255) | Mot de passe hashé |
+| roles | SIMPLE_ARRAY | Rôles (ROLE_USER, ROLE_ADMIN, etc.) |
+| nni | VARCHAR(6) | Numéro National d'Identification |
+| last_login_at | DATETIME | Dernière connexion |
+| hiring_at | DATETIME_IMMUTABLE | Date d'embauche |
+| created_at | DATETIME_IMMUTABLE | Date de création |
+| updated_at | DATETIME | Dernière mise à jour |
+| mentor_id | UUID (FK) | Mentor assigné |
+| job_id | INT (FK) | Métier |
+| speciality_id | INT (FK) | Spécialité |
+| service_id | UUID (FK) | Service |
 
-Cette table représente un service ou un département au sein de l'entreprise.
+### Logbook (logbooks)
 
-### Structure de la Table
+Carnet de compagnonnage assigné à un utilisateur.
 
-| Colonne    | Type               | Description                                    | Contraintes               |
-|------------|--------------------|------------------------------------------------|---------------------------|
-| id         | SERIAL             | Identifiant unique du service                  | PRIMARY KEY               |
-| name       | VARCHAR(255)       | Nom du service                                 | NOT NULL                  |
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| name | VARCHAR(100) | Nom du carnet |
+| owner_id | UUID (FK) | Propriétaire du carnet |
 
-## Table: [LOGBOOK](database/LOGBOOK.md)
+**Relations** : ManyToMany avec Theme, OneToMany avec Action
 
-Cette table représente un carnet de compagnonnage pour un service spécifique, un nouvel arrivant et un tuteur.
+### LogbookTemplate (logbook_templates)
 
-### Structure de la Table
+Modèle de carnet par métier.
 
-| Colonne      | Type    | Description                                    | Contraintes               | Relation  |
-|--------------|---------|------------------------------------------------|---------------------------|-----------|
-| id           | SERIAL  | Identifiant unique du carnet de compagnonnage  | PRIMARY KEY               |           |
-| service_id   | INTEGER | Identifiant du service associé                 | FOREIGN KEY (service)     | ManyToOne |
-| newcomer_id  | INTEGER | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        | OneToOne  |
-| mentor_id    | INTEGER | Identifiant du tuteur                          | FOREIGN KEY (user)        | OneToOne  |
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| name | VARCHAR(100) | Nom du modèle |
+| description | TEXT | Description |
+| is_default | BOOLEAN | Modèle par défaut |
+| jobs | JSON | Liste des métiers compatibles |
+| service_id | UUID (FK) | Service associé |
+| created_at | DATETIME_IMMUTABLE | Date de création |
+| updated_at | DATETIME | Dernière mise à jour |
 
-## Table: [THEME](database/THEME.md)
+**Relations** : ManyToMany avec Theme
 
-Cette table représente un thème ou une tâche à compléter dans le carnet de compagnonnage.
+### Theme (themes)
 
-### Structure de la Table
+Thème regroupant plusieurs modules.
 
-| Colonne     | Type         | Description                            | Contraintes           | Relation   |
-|-------------|--------------|----------------------------------------|-----------------------|------------|
-| id          | SERIAL       | Identifiant unique du thème            | PRIMARY KEY           |            |
-| title       | VARCHAR(255) | Titre du thème                         | NOT NULL              |            |
-| description | TEXT         | Description détaillée du thème         | NOT NULL              |            |
-| validated   | BOOLEAN      | Indique si le thème a été validé       | NULLABLE              |            |
-| remark      | TEXT         | Remarques du tuteur                    | NULLABLE              |            |
-| logbook_id  | INTEGER      | Identifiant du carnet de compagnonnage | FOREIGN KEY (logbook) | ManyToMany |
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| title | VARCHAR(100) | Titre du thème |
+| description | TEXT | Description |
 
-## Table: [ANSWER](database/ANSWER.md)
+**Relations** : ManyToMany avec Logbook, OneToMany avec Module
 
-Cette table représente une réponse d'un nouvel arrivant à un thème spécifique dans le carnet de compagnonnage.
+### Module (modules)
 
-### Structure de la Table
+Module contenant des actions à réaliser.
 
-| Colonne      | Type     | Description                                    | Contraintes               | Relation   |
-|--------------|----------|------------------------------------------------|---------------------------|------------|
-| id           | SERIAL   | Identifiant unique de la réponse               | PRIMARY KEY               |            |
-| content      | TEXT     | Contenu de la réponse                          | NULLABLE                  |            |
-| created_at   | DATETIME | Date de création de la réponse                 | DEFAULT CURRENT_TIMESTAMP |            |
-| theme_id     | INTEGER  | Identifiant du thème associé                   | FOREIGN KEY (theme)       | ManyToOne  |
-| newcomer_id  | INTEGER  | Identifiant du nouvel arrivant                 | FOREIGN KEY (user)        | ManyToOne  |
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| title | VARCHAR(100) | Titre du module |
+| description | TEXT | Description |
+| theme_id | UUID (FK) | Thème parent |
+
+**Relations** : ManyToOne avec Theme, OneToMany avec Action
+
+### Action (actions)
+
+Action à réaliser par l'utilisateur.
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| description | VARCHAR(255) | Description de l'action |
+| agent_comment | TEXT | Commentaire de l'agent |
+| agent_validated_at | DATETIME | Date de validation agent |
+| agent_visa | VARCHAR(255) | Visa de l'agent |
+| mentor_comment | TEXT | Commentaire du mentor |
+| mentor_validated_at | DATETIME | Date de validation mentor |
+| mentor_commented_at | DATETIME | Date du commentaire mentor |
+| mentor_visa | VARCHAR(255) | Visa du mentor |
+| module_id | UUID (FK) | Module parent |
+| user_id | UUID (FK) | Utilisateur assigné |
+| logbook_id | UUID (FK) | Carnet associé |
+
+### Service (services)
+
+Service ou département de l'entreprise.
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| name | VARCHAR(10) | Nom du service |
+| description | TEXT | Description |
+| chef_id | UUID (FK) | Chef du service |
+
+**Relations** : OneToMany avec User
+
+### Job (jobs)
+
+Métier de l'utilisateur.
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | INT (auto) | Identifiant unique |
+| name | VARCHAR(80) | Nom du métier |
+| code | VARCHAR(40) | Code (ex: TECH, CA, ING) |
+
+### Speciality (specialities)
+
+Spécialité technique de l'utilisateur.
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | INT (auto) | Identifiant unique |
+| name | VARCHAR(80) | Nom de la spécialité |
+| code | VARCHAR(40) | Code |
+
+### Feedback (feedbacks)
+
+Retours d'expérience des utilisateurs.
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | UUID | Identifiant unique |
+| title | VARCHAR(150) | Titre du REX |
+| content | TEXT | Contenu |
+| category | VARCHAR(50) | Catégorie |
+| is_reviewed | BOOLEAN | Statut de revue |
+| manager_comment | TEXT | Commentaire du manager |
+| author_id | UUID (FK) | Auteur |
+| reviewed_by_id | UUID (FK) | Réviseur |
+| review_at | DATETIME_IMMUTABLE | Date de revue |
+| created_at | DATETIME_IMMUTABLE | Date de création |
+| updated_at | DATETIME | Dernière mise à jour |
+
+### ResetPasswordRequest
+
+Gestion des demandes de réinitialisation de mot de passe (bundle SymfonyCasts).
