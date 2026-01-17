@@ -30,7 +30,8 @@ readonly class DashboardService
         private UserSeniorityService $seniorityService,
         private LogbookProgressService $logbookProgressService,
         private DashboardDataProviderInterface $dataProvider,
-    ) {}
+    ) {
+    }
 
     /**
      * Orchestrates the retrieval and assembly of all dashboard data.
@@ -38,13 +39,13 @@ readonly class DashboardService
      *
      * @return array{
      *     user: User,
-     *     logbooks: array<Logbook>,
-     *     logbooksProgress: array,
-     *     themes: array<Theme>,
-     *     modules: array<Module>,
-     *     actions: array<Action>,
+     *     logbooks: array<int, Logbook>,
+     *     logbooksProgress: array<int, array<string, mixed>>,
+     *     themes: array<int, Theme>,
+     *     modules: array<int, Module>,
+     *     actions: array<int, Action>,
      *     userSeniority: string,
-     *     mentorSeniority: ?string
+     *     mentorSeniority: string
      * }
      */
     public function getDashboardData(string $nni): array
@@ -74,16 +75,13 @@ readonly class DashboardService
     /**
      * Calculates progress for all logbooks.
      *
-     * @param array<Logbook> $logbooks
-     * @return array
+     * @param array<int, Logbook> $logbooks
+     * @return array<int, array<string, mixed>>
      */
     private function calculateLogbooksProgress(array $logbooks): array
     {
         $logbooksProgress = [];
         foreach ($logbooks as $logbook) {
-            if (!$logbook instanceof Logbook) {
-                throw new \InvalidArgumentException('Une erreur est survenue lors du calcul de la progression des carnets.');
-            }
             $logbooksProgress[] = $this->logbookProgressService->calculateLogbookProgress($logbook);
         }
 

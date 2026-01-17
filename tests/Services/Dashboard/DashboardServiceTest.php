@@ -146,8 +146,8 @@ class DashboardServiceTest extends WebTestCase
         // Arrange
         $invalidLogbooks = [new \stdClass()];
 
-        // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        // Assert - TypeError is thrown by PHP's type system when invalid type is passed
+        $this->expectException(\TypeError::class);
 
         // Act
         $this->invokePrivateMethod(methodName: 'calculateLogbooksProgress', parameters: [$invalidLogbooks]);

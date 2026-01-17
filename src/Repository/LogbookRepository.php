@@ -110,7 +110,11 @@ class LogbookRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $sql = 'SELECT id FROM logbooks WHERE owner_id = :userId';
         $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery(['userId' => $user->getId()->toBinary()]);
+        $userId = $user->getId();
+        if ($userId === null) {
+            return [];
+        }
+        $resultSet = $stmt->executeQuery(['userId' => $userId->toBinary()]);
         $logbookIds = $resultSet->fetchFirstColumn();
 
         if (empty($logbookIds)) {

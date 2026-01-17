@@ -20,7 +20,8 @@ readonly class DashboardDataProvider implements DashboardDataProviderInterface
 {
     public function __construct(
         private LogbookRepository $logbookRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * Retrieves all dashboard data for a given user using a single optimized query.
