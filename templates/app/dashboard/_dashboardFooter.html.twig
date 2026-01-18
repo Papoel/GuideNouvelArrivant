@@ -1,11 +1,60 @@
 <footer id="footer" class="footer">
-    <div class="copyright">
-        &copy; Copyright <strong><span>Pascal Briffard</span></strong>. Tous droits réservés.
-    </div>
-    <div class="credits">
-        Application conçue par
-        <a target="_blank" href="https://www.github.com/Papoel">Papoel</a>, propulsée par
-        <a target="_blank" href="https://www.symfony.com/">Symfony 7</a> et
-        <a target="_blank" href="https://getbootstrap.com/">Bootstrap</a>.
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center text-md-start mb-2 mb-md-0">
+                <div class="copyright">
+                    &copy; 2025 - {{ "now"|date("Y") }} <strong>Pascal Briffard</strong>. Tous droits réservés.
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-2 mb-md-0">
+                <div class="legal-links">
+                    <a href="{{ path('app_privacy_policy') }}" class="footer-link">
+                        <i class="bi bi-shield-check me-1"></i>Politique de confidentialité
+                    </a>
+                    <span class="mx-2 text-muted">|</span>
+                    <a href="{{ path('app_legal_notices') }}" class="footer-link">
+                        <i class="bi bi-file-text me-1"></i>Mentions légales
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 text-center text-md-end">
+                <div class="credits">
+                    <a target="_blank" href="https://www.github.com/Papoel" class="footer-link">Papoel</a>
+                    <span class="mx-1 text-muted">•</span>
+                    <a target="_blank" href="https://www.symfony.com/" class="footer-link">Symfony 7</a>
+                    <span class="mx-1 text-muted">•</span>
+                    <a target="_blank" href="https://getbootstrap.com/" class="footer-link">Bootstrap</a>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
+
+<style>
+    #footer {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+    #footer .footer-link {
+        color: #3d5f9e;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s ease;
+    }
+    #footer .footer-link:hover {
+        color: #2c384e;
+        text-decoration: underline;
+    }
+    #footer .copyright {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    #footer .credits {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    #footer .legal-links {
+        font-size: 0.85rem;
+    }
+</style>

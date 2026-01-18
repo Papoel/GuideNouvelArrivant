@@ -33,6 +33,7 @@
 
 ###> REFACTORING ###
 REFACTORING.md
+docs/audit/*
 ###< REFACTORING ###
 
 ###> Datas PROD ###

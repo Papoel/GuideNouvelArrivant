@@ -1,0 +1,439 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Confidentialité
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.privacy-container {
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+		.privacy-header {
+			background: linear-gradient(135deg, #3d5f9e 0%, #2c384e 100%);
+			color: white;
+			padding: 3rem 2rem;
+			border-radius: 0.75rem;
+			margin-bottom: 2rem;
+		}
+		.privacy-header h1 {
+			margin: 0;
+			font-size: 2rem;
+		}
+		.privacy-header .update-date {
+			opacity: 0.8;
+			margin-top: 0.5rem;
+		}
+		.privacy-section {
+			background: white;
+			border-radius: 0.75rem;
+			padding: 1.5rem 2rem;
+			margin-bottom: 1.5rem;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		}
+		.privacy-section h2 {
+			color: #3d5f9e;
+			font-size: 1.25rem;
+			margin-bottom: 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid #e9ecef;
+		}
+		.privacy-section h3 {
+			color: #2c384e;
+			font-size: 1.1rem;
+			margin-top: 1.25rem;
+			margin-bottom: 0.75rem;
+		}
+		.privacy-section p,
+		.privacy-section li {
+			color: #2c384e;
+			line-height: 1.7;
+		}
+		.privacy-section ul {
+			padding-left: 1.5rem;
+		}
+		.privacy-section li {
+			margin-bottom: 0.5rem;
+		}
+		.data-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 1rem 0;
+		}
+		.data-table th,
+		.data-table td {
+			padding: 0.75rem;
+			text-align: left;
+			border-bottom: 1px solid #e9ecef;
+		}
+		.data-table th {
+			background: #f8f9fa;
+			font-weight: 600;
+			color: #2c384e;
+		}
+		.contact-box {
+			background: #f8f9fa;
+			border-left: 4px solid #3d5f9e;
+			padding: 1rem 1.5rem;
+			margin: 1rem 0;
+			border-radius: 0 0.5rem 0.5rem 0;
+		}
+		.rights-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1rem;
+			margin: 1rem 0;
+		}
+		.right-card {
+			background: #f8f9fa;
+			padding: 1rem;
+			border-radius: 0.5rem;
+			border-left: 3px solid #3d5f9e;
+		}
+		.right-card h4 {
+			color: #3d5f9e;
+			margin: 0 0 0.5rem;
+			font-size: 1rem;
+		}
+		.right-card p {
+			margin: 0;
+			font-size: 0.9rem;
+		}
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: #3d5f9e;
+			text-decoration: none;
+			margin-bottom: 1rem;
+		}
+		.back-link:hover {
+			text-decoration: underline;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="privacy-container">
+		<a href="{{ path('home_index') }}" class="back-link">
+            <twig:ux:icon name="bi:arrow-left" />
+			Retour à l'accueil
+		</a>
+
+		<div class="privacy-header">
+			<h1 class="d-flex align-items-center">
+				<twig:ux:icon class="me-2" name="bi:shield-shaded" />
+                Politique de Confidentialité
+            </h1>
+			<p class="update-date">Dernière mise à jour :
+				{{ "now"|date("d/m/Y") }}</p>
+		</div>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="bi:building-fill" />
+                1. Responsable du traitement
+            </h2>
+			<p>L'application
+				<strong>GuideNouvelArrivant</strong>
+				est éditée par :</p>
+			<div class="contact-box">
+				<strong>EDF SA</strong><br>
+				{# TODO: Compléter avec l'entité exacte #}
+				CNPE Penly / service MRC<br>
+				Route de la centrale,<br>
+                76630 Petit-Caux<br>
+				<strong>Contact :</strong>
+				pascal.briffard@edf.fr
+			</div>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="mdi:bullseye" />
+                2. Finalités du traitement
+            </h2>
+			<p>Vos données personnelles sont collectées et traitées pour les finalités suivantes :</p>
+			<ul>
+				<li>
+					<strong>Gestion de votre compte utilisateur</strong>
+					: authentification, accès à l'application</li>
+				<li>
+					<strong>Suivi de votre parcours d'intégration</strong>
+					: gestion de votre carnet de compagnonnage, suivi de la progression</li>
+				<li>
+					<strong>Relation tuteur/nouvel arrivant</strong>
+					: faciliter l'accompagnement et les validations</li>
+				<li>
+					<strong>Capitalisation des retours d'expérience</strong>
+					: amélioration continue du processus d'intégration</li>
+				<li>
+					<strong>Statistiques internes</strong>
+					: pilotage et amélioration de l'outil</li>
+			</ul>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="cil:balance-scale" />
+                3. Base légale du traitement
+            </h2>
+			<p>Le traitement de vos données repose sur :</p>
+			<ul>
+				<li>
+					<strong>L'exécution du contrat de travail</strong>
+					(Article 6.1.b du RGPD) : le suivi de votre intégration fait partie de votre parcours professionnel
+                </li>
+				<li>
+					<strong>L'intérêt légitime de l'employeur</strong>
+					(Article 6.1.f du RGPD) : amélioration des processus d'intégration et capitalisation des bonnes pratiques
+                </li>
+			</ul>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="streamline-freehand:database-hand" />
+                4. Données collectées
+            </h2>
+			<p>Les catégories de données personnelles traitées sont :</p>
+
+			<table class="data-table">
+				<thead>
+					<tr>
+						<th>Catégorie</th>
+						<th>Données</th>
+						<th>Finalité</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<strong>Identité</strong>
+						</td>
+						<td>Nom, prénom, email professionnel, NNI</td>
+						<td>Identification et authentification</td>
+					</tr>
+					<tr>
+						<td>
+							<strong>Vie professionnelle</strong>
+						</td>
+						<td>Métier, spécialité, service, prise de poste</td>
+						<td>Personnalisation du parcours</td>
+					</tr>
+					<tr>
+						<td>
+							<strong>Suivi d'intégration</strong>
+						</td>
+						<td>Progression, validations, commentaires</td>
+						<td>Accompagnement et suivi</td>
+					</tr>
+					<tr>
+						<td>
+							<strong>Connexion</strong>
+						</td>
+						<td>Date de dernière connexion</td>
+						<td>Sécurité et statistiques</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="fa6-solid:users" />
+                5. Destinataires des données
+            </h2>
+			<p>Vos données sont accessibles aux personnes suivantes, dans le strict cadre de leurs missions :</p>
+			<ul>
+				<li>
+					<strong>Votre tuteur</strong>
+					: suivi de votre progression
+                </li>
+				<li>
+					<strong>Votre responsable hiérarchique</strong>
+					: pilotage de l'intégration
+                </li>
+				<li>
+					<strong>Les administrateurs de l'application</strong>
+					: gestion technique et support
+                </li>
+				<li>
+					<strong>Le service RH</strong>
+					: suivi global des intégrations
+                </li>
+			</ul>
+			<p>Aucune donnée n'est transmise à des tiers extérieurs à l'entreprise, sauf obligation légale.</p>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="svg-spinners:clock" />
+                6. Durée de conservation
+            </h2>
+			<p>
+				L'ensemble de vos données personnelles (compte utilisateur, carnet de compagnonnage, actions, 
+				retours d'expérience, logs de connexion) est conservé <strong>jusqu'à l'archivage 
+				physique de votre carnet de compagnonnage signé</strong>.
+			</p>
+			<p>
+				Une fois le carnet de compagnonnage archivé physiquement et signé par les parties 
+				concernées, vos données numériques seront supprimées de l'application.
+			</p>
+			<div class="contact-box">
+                <twig:ux:icon class="me-2" name="solar:info-circle-linear" />
+				<strong>Note :</strong> La suppression de vos données intervient après confirmation 
+				de l'archivage physique par votre responsable ou le service RH.
+			</div>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="fa-solid:user-shield" />
+                7. Vos droits
+            </h2>
+			<p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</p>
+
+			<div class="rights-grid">
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="bi:eye" />
+                        Droit d'accès
+                    </h4>
+					<p>Obtenir la confirmation que vos données sont traitées et en recevoir une copie</p>
+				</div>
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="ep:edit" />
+                        Droit de rectification
+                    </h4>
+					<p>Faire corriger vos données inexactes ou incomplètes</p>
+				</div>
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="ph:trash-light" />
+                        Droit à l'effacement
+                    </h4>
+					<p>Demander la suppression de vos données (sous conditions)</p>
+				</div>
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="bi:download" />
+                        Droit à la portabilité
+                    </h4>
+					<p>Recevoir vos données dans un format structuré</p>
+				</div>
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="bi:ban" />
+                        Droit à la limitation
+                    </h4>
+					<p>Limiter temporairement le traitement de vos données</p>
+				</div>
+				<div class="right-card">
+					<h4 class="d-flex align-items-center">
+                        <twig:ux:icon class="me-2" name="la:hand-paper" />
+                        Droit d'opposition
+                    </h4>
+					<p>Vous opposer au traitement pour motif légitime</p>
+				</div>
+			</div>
+
+			<h3>Comment exercer vos droits ?</h3>
+			<p>Pour exercer vos droits, vous pouvez :</p>
+			<ul>
+				<li>Utiliser la fonction
+					<strong>"Exporter mes données"</strong>
+					dans votre profil (droit d'accès et portabilité)</li>
+				<li>Contacter le Délégué à la Protection des Données (DPO) :</li>
+			</ul>
+			<div class="contact-box">
+				<strong>DPO EDF</strong><br>
+				Nom : Eric Parent<br>
+				Email : eric.parent@edf.fr<br>
+			</div>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="material-symbols-light:lock" />
+				8. Sécurité des données
+            </h2>
+			<p>Nous mettons en œuvre les mesures techniques et organisationnelles appropriées pour protéger vos données :</p>
+			<ul>
+				<li>Chiffrement des mots de passe (algorithme bcrypt/argon2)</li>
+				<li>Connexion sécurisée (HTTPS)</li>
+				<li>Contrôle d'accès basé sur les rôles</li>
+				<li>Sessions sécurisées avec protection contre le vol de session</li>
+				<li>Protection contre les attaques CSRF</li>
+			</ul>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="mdi:server" />
+				9. Hébergement
+            </h2>
+			<p>L'application est hébergée par :</p>
+			<div class="contact-box">
+				<strong>Hostinger International Ltd</strong><br>
+				Localisation des serveurs : Europe (France)<br>
+				<br>
+				<small>
+                    L'hébergeur est soumis au DPA Hostinger 
+                    (<a href="https://www.hostinger.com/legal/dpa" target="_blank">consulter le DPA</a>) 
+                    conforme au RGPD.
+                </small>
+			</div>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="material-symbols-light:cookie-outline" />
+                10. Cookies
+            </h2>
+			<p>L'application utilise uniquement des cookies techniques strictement nécessaires à son fonctionnement :</p>
+			<ul>
+				<li>
+					<strong>Cookie de session</strong>
+					: maintien de votre connexion</li>
+				<li>
+					<strong>Cookie "Remember Me"</strong>
+					: connexion persistante (si activée)</li>
+				<li>
+					<strong>Token CSRF</strong>
+					: protection contre les attaques</li>
+			</ul>
+			<p>Ces cookies sont exemptés de consentement car indispensables au fonctionnement du service.</p>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="fluent:gavel-16-regular" />
+                11. Réclamation
+            </h2>
+			<p>Si vous estimez que le traitement de vos données ne respecte pas la réglementation, vous pouvez introduire une réclamation auprès de la CNIL :</p>
+			<div class="contact-box">
+				<strong>Commission Nationale de l'Informatique et des Libertés (CNIL)</strong><br>
+				3 Place de Fontenoy - TSA 80715<br>
+				75334 Paris Cedex 07<br>
+				<a href="https://www.cnil.fr/fr/plaintes" target="_blank">www.cnil.fr/fr/plaintes</a>
+			</div>
+		</section>
+
+		<section class="privacy-section">
+			<h2 class="d-flex align-items-center">
+                <twig:ux:icon class="me-2" name="fa7-solid:sync-alt" />
+                12. Mise à jour
+            </h2>
+			<p>Cette politique de confidentialité peut être mise à jour. Vous serez informé(e) de toute modification substantielle.</p>
+			<p>
+				<strong>Version actuelle :</strong>
+				1.0 -
+				{{ "now"|date("d/m/Y") }}</p>
+		</section>
+	</div>
+{% endblock %}
+

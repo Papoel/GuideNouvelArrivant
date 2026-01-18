@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annuler la demande de suppression{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.cancel-container {
+			max-width: 600px;
+			margin: 3rem auto;
+			padding: 0 1rem;
+		}
+		.cancel-card {
+			background: white;
+			border-radius: 0.75rem;
+			padding: 2rem;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+			text-align: center;
+		}
+		.cancel-icon {
+			font-size: 4rem;
+			color: #ffc107;
+			margin-bottom: 1.5rem;
+		}
+		.cancel-card h1 {
+			color: #2c384e;
+			font-size: 1.5rem;
+			margin-bottom: 1rem;
+		}
+		.cancel-card p {
+			color: #6c757d;
+			margin-bottom: 1.5rem;
+		}
+		.info-box {
+			background: #d1ecf1;
+			border-left: 4px solid #17a2b8;
+			padding: 1rem;
+			border-radius: 0 0.5rem 0.5rem 0;
+			text-align: left;
+			margin-bottom: 2rem;
+		}
+		.info-box strong {
+			color: #0c5460;
+		}
+		.info-box p {
+			color: #0c5460;
+			margin: 0.5rem 0 0 0;
+			font-size: 0.9rem;
+		}
+		.btn-group-actions {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="cancel-container">
+		<div class="cancel-card">
+			<div class="cancel-icon">
+				<twig:ux:icon name="bi:question-circle-fill" />
+			</div>
+			
+			<h1>Annuler la demande de suppression ?</h1>
+			
+			<p>
+				Vous avez demandé la suppression de votre compte le 
+				<strong>{{ pendingRequest.requestedAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>.
+			</p>
+			
+			<div class="info-box">
+				<strong><twig:ux:icon name="bi:info-circle" class="me-1" /> Si vous annulez :</strong>
+				<p>
+					Votre compte et toutes vos données seront conservés.<br>
+					Vous pourrez continuer à utiliser l'application normalement.
+				</p>
+			</div>
+			
+			<div class="btn-group-actions">
+				<a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="btn btn-outline-secondary">
+					<twig:ux:icon name="bi:arrow-left" class="me-1" />
+					Retour au tableau de bord
+				</a>
+				
+				<form action="{{ path('app_account_deletion_cancel') }}" method="post" style="display: inline;">
+					<input type="hidden" name="_token" value="{{ csrf_token('cancel-deletion') }}">
+					<button type="submit" class="btn btn-success">
+						<twig:ux:icon name="bi:check-lg" class="me-1" />
+						Oui, annuler ma demande
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}

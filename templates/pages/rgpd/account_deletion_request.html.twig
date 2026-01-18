@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suppression de compte{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.deletion-container {
+			max-width: 700px;
+			margin: 2rem auto;
+			padding: 2rem;
+		}
+		.deletion-header {
+			background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+			color: white;
+			padding: 2rem;
+			border-radius: 0.75rem;
+			margin-bottom: 2rem;
+			text-align: center;
+		}
+		.deletion-header h1 {
+			margin: 0;
+			font-size: 1.75rem;
+		}
+		.deletion-card {
+			background: white;
+			border-radius: 0.75rem;
+			padding: 2rem;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+			margin-bottom: 1.5rem;
+		}
+		.warning-box {
+			background: #fff3cd;
+			border-left: 4px solid #ffc107;
+			padding: 1rem 1.5rem;
+			margin: 1.5rem 0;
+			border-radius: 0 0.5rem 0.5rem 0;
+		}
+		.info-box {
+			background: #d1ecf1;
+			border-left: 4px solid #17a2b8;
+			padding: 1rem 1.5rem;
+			margin: 1.5rem 0;
+			border-radius: 0 0.5rem 0.5rem 0;
+		}
+		.pending-request {
+			background: #f8d7da;
+			border: 1px solid #f5c6cb;
+			border-radius: 0.75rem;
+			padding: 1.5rem;
+		}
+		.countdown {
+			font-size: 1.25rem;
+			font-weight: 600;
+			color: #dc3545;
+		}
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: #3d5f9e;
+			text-decoration: none;
+			margin-bottom: 1rem;
+		}
+		.back-link:hover {
+			text-decoration: underline;
+		}
+		.btn-danger-custom {
+			background: #dc3545;
+			border: none;
+			color: white;
+			padding: 0.75rem 1.5rem;
+			border-radius: 0.5rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+		.btn-danger-custom:hover {
+			background: #c82333;
+		}
+		.btn-success-custom {
+			background: #28a745;
+			border: none;
+			color: white;
+			padding: 0.75rem 1.5rem;
+			border-radius: 0.5rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+		.btn-success-custom:hover {
+			background: #218838;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="deletion-container">
+		<a href="{{ path('home_index') }}" class="back-link">
+			<twig:ux:icon name="bi:arrow-left" />
+			Retour à l'accueil
+		</a>
+
+		<div class="deletion-header">
+			<h1>
+				<twig:ux:icon class="me-2" name="bi:trash" />
+				Suppression de compte
+			</h1>
+		</div>
+
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		{% if pendingRequest %}
+			<div class="deletion-card">
+				<div class="pending-request">
+					<h3>
+						<twig:ux:icon class="me-2" name="bi:hourglass-split" />
+						Demande de suppression en cours
+					</h3>
+					<p>
+						Vous avez demandé la suppression de votre compte le 
+						<strong>{{ pendingRequest.requestedAt|date('d/m/Y à H:i') }}</strong>.
+					</p>
+					
+					{% set remaining = pendingRequest.remainingTime %}
+					{% if remaining %}
+						<p class="countdown">
+							<twig:ux:icon class="me-1" name="bi:clock" />
+							Temps restant pour annuler : 
+							{{ remaining.h }}h {{ remaining.i }}min
+						</p>
+					{% else %}
+						<p class="countdown">
+							La suppression sera effectuée lors du prochain passage du robot (2h00 du matin).
+						</p>
+					{% endif %}
+
+					<div class="warning-box">
+						<strong>Attention :</strong> Si vous n'annulez pas cette demande, votre compte 
+						et toutes vos données (carnet de compagnonnage, retours d'expérience) seront 
+						définitivement supprimés.
+					</div>
+
+					<form method="post" action="{{ path('app_account_deletion_cancel') }}">
+						<input type="hidden" name="_token" value="{{ csrf_token('cancel-deletion') }}">
+						<button type="submit" class="btn-success-custom">
+							<twig:ux:icon class="me-1" name="bi:x-circle" />
+							Annuler ma demande de suppression
+						</button>
+					</form>
+				</div>
+			</div>
+		{% else %}
+			<div class="deletion-card">
+				<h3>Demander la suppression de mon compte</h3>
+				
+				<div class="warning-box">
+					<strong>Attention :</strong> Cette action est irréversible après 48 heures.
+				</div>
+
+				<p>En demandant la suppression de votre compte :</p>
+				<ul>
+					<li>Votre compte utilisateur sera supprimé</li>
+					<li>Votre carnet de compagnonnage sera supprimé</li>
+					<li>Vos retours d'expérience (REX) seront supprimés</li>
+					<li>Toutes vos actions et validations seront supprimées</li>
+				</ul>
+
+				<div class="info-box">
+					<strong>Délai de rétractation :</strong> Vous disposez de 48 heures pour annuler 
+					votre demande. Un email de confirmation avec un lien d'annulation vous sera envoyé.
+				</div>
+
+				<form method="post" action="{{ path('app_account_deletion_request') }}" 
+					  onsubmit="return confirm('Êtes-vous sûr de vouloir demander la suppression de votre compte ?');">
+					<input type="hidden" name="_token" value="{{ csrf_token('delete-account') }}">
+					<button type="submit" class="btn-danger-custom">
+						<twig:ux:icon class="me-1" name="bi:trash" />
+						Demander la suppression de mon compte
+					</button>
+				</form>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

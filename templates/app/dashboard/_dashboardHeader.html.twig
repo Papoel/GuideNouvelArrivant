@@ -4,10 +4,17 @@
         <!-- Logo -->
         <div class="d-flex align-items-center justify-content-between">
             <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="logo d-flex align-items-center">
-                <img src="{{ asset('images/logos/edf.png') }}" alt="">
+                <img src="{{ asset('images/logos/edf.png') }}" alt="Logo EDF">
                 <span class="d-none d-lg-block" style="font-size: 14px;">Carnet de Compagnonnage</span>
             </a>
-            <i id="sidebar-toggle" class="bi bi-list toggle-sidebar-btn"></i>
+            <button id="sidebar-toggle"
+                class="sidebar-toggle-btn"
+                aria-label="Toggle sidebar"
+                role="button">
+                <i class="bi bi-list toggle-sidebar-btn"></i>
+            </button>
+            {# <i id="sidebar-toggle" class="bi bi-list toggle-sidebar-btn" 
+                aria-label="Toggle sidebar" role="button"></i> #}
         </div>
         <!-- End Logo -->
 
@@ -75,11 +82,30 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Besoin d'aide ?</span>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_user_export_data') }}">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                <span>Exporter mes données personnelles</span>
                             </a>
                         </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            {% if has_pending_deletion_request() %}
+                                <a class="dropdown-item d-flex align-items-center" style="color: rgb(149, 117, 19);" href="{{ path('app_account_deletion_cancel') }}">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>Annuler la suppression du compte</span>
+                                </a>
+                            {% else %}
+                                <a class="dropdown-item d-flex align-items-center text-danger" href="{{ path('app_account_deletion_request') }}">
+                                    <i class="bi bi-trash"></i>
+                                    <span>Supprimer mon compte</span>
+                                </a>
+                            {% endif %}
+                        </li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
