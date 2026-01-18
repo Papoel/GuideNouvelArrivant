@@ -19,8 +19,7 @@ class UserDataExportService
         private readonly LogbookRepository $logbookRepository,
         private readonly ActionRepository $actionRepository,
         private readonly FeedbackRepository $feedbackRepository,
-    ) {
-    }
+    ) {}
 
     public function exportUserDataAsPdf(User $user): string
     {
@@ -29,7 +28,7 @@ class UserDataExportService
         $html = $this->twig->render('pdf/rgpd_export.html.twig', [
             'user' => $user,
             'data' => $userData,
-            'exportDate' => new \DateTimeImmutable(),
+            'exportDate' => new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')),
         ]);
 
         $options = new Options();
