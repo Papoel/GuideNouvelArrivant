@@ -4,10 +4,17 @@
         <!-- Logo -->
         <div class="d-flex align-items-center justify-content-between">
             <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="logo d-flex align-items-center">
-                <img src="{{ asset('images/logos/edf.png') }}" alt="">
+                <img src="{{ asset('images/logos/edf.png') }}" alt="Logo EDF">
                 <span class="d-none d-lg-block" style="font-size: 14px;">Carnet de Compagnonnage</span>
             </a>
-            <i id="sidebar-toggle" class="bi bi-list toggle-sidebar-btn"></i>
+            <button id="sidebar-toggle"
+                class="sidebar-toggle-btn"
+                aria-label="Toggle sidebar"
+                role="button">
+                <i class="bi bi-list toggle-sidebar-btn"></i>
+            </button>
+            {# <i id="sidebar-toggle" class="bi bi-list toggle-sidebar-btn" 
+                aria-label="Toggle sidebar" role="button"></i> #}
         </div>
         <!-- End Logo -->
 
@@ -74,12 +81,12 @@
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        {# <li>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Besoin d'aide ?</span>
                             </a>
-                        </li>
+                        </li> #}
                         <li>
                             <hr class="dropdown-divider">
                         </li>

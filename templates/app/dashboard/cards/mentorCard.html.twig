@@ -53,11 +53,7 @@
                 <h5 class="card-title">Aucun mentor assigné</h5>
                 <p class="text-muted">{{ user.fullname }} n'a actuellement pas de mentor assigné.</p>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('admin', {
-                        crudAction: 'edit',
-                        crudControllerFqcn: 'App\\Controller\\Admin\\User\\UserCrudController',
-                        entityId: app.user.id
-                    }) }}" class="btn btn-sm" id="btn-assign--mentor">Assigner un mentor</a>
+                    <span class="btn btn-sm" id="btn-assign--mentor">Veuillez en informer votre supérieur.</span>
                 {% endif %}
             </div>
         </div>
