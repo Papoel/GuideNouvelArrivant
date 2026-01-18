@@ -19,7 +19,8 @@ class UserDataExportService
         private readonly LogbookRepository $logbookRepository,
         private readonly ActionRepository $actionRepository,
         private readonly FeedbackRepository $feedbackRepository,
-    ) {}
+    ) {
+    }
 
     public function exportUserDataAsPdf(User $user): string
     {

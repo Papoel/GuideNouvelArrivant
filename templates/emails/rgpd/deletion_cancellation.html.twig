@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annulation de la demande de suppression</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #28a745 0%, #218838 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+                                ✅ Demande annulée
+                            </h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Bonjour <strong>{{ user.firstname }}</strong>,
+                            </p>
+                            
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Votre demande de suppression de compte du 
+                                <strong>{{ deletionRequest.requestedAt|date('d/m/Y à H:i', 'Europe/Paris') }}</strong>
+                                a été <strong style="color: #28a745;">annulée avec succès</strong>.
+                            </p>
+                            
+                            <!-- Success Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #d4edda; border-left: 4px solid #28a745; padding: 15px; border-radius: 0 8px 8px 0;">
+                                        <strong style="color: #155724;">🎉 Bonne nouvelle !</strong>
+                                        <p style="color: #155724; margin: 10px 0 0 0; font-size: 14px;">
+                                            Votre compte et toutes vos données sont conservés.<br>
+                                            Vous pouvez continuer à utiliser l'application normalement.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #6c757d; font-size: 14px; margin-top: 25px;">
+                                Si vous n'êtes pas à l'origine de cette annulation, veuillez contacter 
+                                le support immédiatement.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                            <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                                Cet email a été envoyé automatiquement par l'application GuideNouvelArrivant.<br>
+                                © {{ "now"|date("Y") }} CNPE Penly - Service MRC
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lien invalide{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.result-container {
+			max-width: 600px;
+			margin: 4rem auto;
+			padding: 2rem;
+			text-align: center;
+		}
+		.result-card {
+			background: white;
+			border-radius: 0.75rem;
+			padding: 3rem 2rem;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		}
+		.error-icon {
+			font-size: 4rem;
+			color: #dc3545;
+			margin-bottom: 1.5rem;
+		}
+		.result-card h1 {
+			color: #dc3545;
+			margin-bottom: 1rem;
+		}
+		.result-card p {
+			color: #6c757d;
+			margin-bottom: 1.5rem;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="result-container">
+		<div class="result-card">
+			<div class="error-icon">
+				<twig:ux:icon name="bi:x-circle-fill" />
+			</div>
+			<h1>Lien invalide ou expiré</h1>
+			<p>
+				Ce lien d'annulation n'est plus valide.<br>
+				Il a peut-être déjà été utilisé ou le délai de 48 heures est dépassé.
+			</p>
+			<a href="{{ path('home_index') }}" class="btn btn-primary">
+				<twig:ux:icon class="me-1" name="bi:house" />
+				Retour à l'accueil
+			</a>
+		</div>
+	</div>
+{% endblock %}
