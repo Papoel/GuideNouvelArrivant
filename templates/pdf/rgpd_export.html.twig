@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Export de mes données personnelles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #2c384e;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #3d5f9e;
+        }
+        .header h1 {
+            color: #3d5f9e;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .header .subtitle {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        .header .export-date {
+            margin-top: 10px;
+            font-size: 10px;
+            color: #6c757d;
+        }
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        .section-title {
+            background: #3d5f9e;
+            color: white;
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .section-content {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        .data-row {
+            display: table;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .data-label {
+            display: table-cell;
+            width: 40%;
+            font-weight: bold;
+            color: #3d5f9e;
+            padding: 3px 0;
+        }
+        .data-value {
+            display: table-cell;
+            width: 60%;
+            padding: 3px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table th {
+            background: #3d5f9e;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 10px;
+        }
+        table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 10px;
+        }
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .no-data {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 9px;
+            color: #6c757d;
+        }
+        .legal-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 9px;
+        }
+        .legal-notice strong {
+            color: #856404;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            background: #e9ecef;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Export de mes données personnelles</h1>
+        <div class="subtitle">Application GuideNouvelArrivant - EDF</div>
+        <div class="export-date">
+            Document généré le {{ exportDate|date('d/m/Y à H:i') }}<br>
+            Conformément au RGPD - Article 15 (Droit d'accès) et Article 20 (Droit à la portabilité)
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Informations personnelles</div>
+        <div class="section-content">
+            <div class="data-row">
+                <span class="data-label">Nom :</span>
+                <span class="data-value">{{ data.personal.lastname|upper }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Prénom :</span>
+                <span class="data-value">{{ data.personal.firstname|capitalize }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Email professionnel :</span>
+                <span class="data-value">{{ data.personal.email }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">NNI :</span>
+                <span class="data-value">{{ data.personal.nni }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Informations professionnelles</div>
+        <div class="section-content">
+            <div class="data-row">
+                <span class="data-label">Métier :</span>
+                <span class="data-value">{{ data.professional.job }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Spécialité :</span>
+                <span class="data-value">{{ data.professional.speciality }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Service :</span>
+                <span class="data-value">{{ data.professional.service }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Date d'embauche :</span>
+                <span class="data-value">{{ data.professional.hiringAt ? data.professional.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Tuteur assigné :</span>
+                <span class="data-value">{{ data.professional.mentor }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">3. Informations du compte</div>
+        <div class="section-content">
+            <div class="data-row">
+                <span class="data-label">Rôles :</span>
+                <span class="data-value">
+                    {% for role in data.account.roles %}
+                        <span class="badge">{{ role }}</span>
+                    {% endfor %}
+                </span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Date de création :</span>
+                <span class="data-value">{{ data.account.createdAt ? data.account.createdAt|date('d/m/Y à H:i') : 'Non disponible' }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Dernière connexion :</span>
+                <span class="data-value">{{ data.account.lastLoginAt ? data.account.lastLoginAt|date('d/m/Y à H:i') : 'Jamais connecté' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">4. Carnets de bord ({{ data.logbooks|length }})</div>
+        <div class="section-content">
+            {% if data.logbooks|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 70%">Nom du carnet</th>
+                            <th style="width: 30%">Nombre de thèmes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for logbook in data.logbooks %}
+                            <tr>
+                                <td>{{ logbook.name }}</td>
+                                <td>{{ logbook.themesCount }} thème(s)</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">Aucun carnet de bord associé</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">5. Actions et validations ({{ data.actions|length }})</div>
+        <div class="section-content">
+            {% if data.actions|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Mon commentaire</th>
+                            <th>Validé le</th>
+                            <th>Commentaire mentor</th>
+                            <th>Validé mentor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in data.actions %}
+                            <tr>
+                                <td>{{ action.module }}</td>
+                                <td>{{ action.agentComment|default('-')|slice(0, 50) }}{% if action.agentComment|length > 50 %}...{% endif %}</td>
+                                <td>{{ action.agentValidatedAt ? action.agentValidatedAt|date('d/m/Y') : '-' }}</td>
+                                <td>{{ action.mentorComment|default('-')|slice(0, 50) }}{% if action.mentorComment|length > 50 %}...{% endif %}</td>
+                                <td>{{ action.mentorValidatedAt ? action.mentorValidatedAt|date('d/m/Y') : '-' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">Aucune action enregistrée</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">6. Retours d'expérience ({{ data.feedbacks|length }})</div>
+        <div class="section-content">
+            {% if data.feedbacks|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Catégorie</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for feedback in data.feedbacks %}
+                            <tr>
+                                <td>{{ feedback.title }}</td>
+                                <td>{{ feedback.category }}</td>
+                                <td>{{ feedback.createdAt ? feedback.createdAt|date('d/m/Y') : '-' }}</td>
+                                <td>
+                                    {% if feedback.isReviewed %}
+                                        <span class="badge badge-success">Traité</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">En attente</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">Aucun retour d'expérience soumis</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="legal-notice">
+        <strong>Informations importantes :</strong><br>
+        Ce document contient l'ensemble des données personnelles vous concernant stockées dans l'application GuideNouvelArrivant.
+        Conformément au RGPD, vous disposez d'un droit de rectification, d'effacement et de limitation du traitement de ces données.
+        Pour exercer ces droits, contactez le Délégué à la Protection des Données (DPO) de votre entité. Par défaut, vous avez la
+        possibilité de contacter M. <span style="padding: 0 2px">Pascal BRIFFARD.</span>    
+    </div>
+
+    <div class="footer">
+        <p>Document généré automatiquement par l'application GuideNouvelArrivant</p>
+        <p>© EDF - Tous droits réservés - {{ "now"|date('Y') }}</p>
+        <p style="margin-top: 5px;">Ce document est confidentiel et destiné uniquement à la personne concernée.</p>
+    </div>
+</body>
+</html>
