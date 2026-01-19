@@ -35,8 +35,7 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-    ) {
-    }
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -264,6 +263,9 @@ class UserCrudController extends AbstractCrudController
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly);
     }
 
+    /**
+     * @param AdminContext<User> $context
+     */
     public function deleteUserOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -294,6 +296,9 @@ class UserCrudController extends AbstractCrudController
         return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
+    /**
+     * @param AdminContext<User> $context
+     */
     public function deleteAll(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -324,6 +329,9 @@ class UserCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
+    /**
+     * @param AdminContext<User> $context
+     */
     public function deleteLogbooksOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
