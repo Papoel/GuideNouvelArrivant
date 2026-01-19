@@ -1,0 +1,927 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* pages/guides/guide_technique.html.twig */
+class __TwigTemplate_ccb614cf95ae826cea874727a6020d19 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->blocks = [
+            'title' => [$this, 'block_title'],
+            'content' => [$this, 'block_content'],
+        ];
+    }
+
+    protected function doGetParent(array $context): bool|string|Template|TemplateWrapper
+    {
+        // line 1
+        return "pages/pages.html.twig";
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "pages/guides/guide_technique.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "pages/guides/guide_technique.html.twig"));
+
+        $this->parent = $this->load("pages/pages.html.twig", 1);
+        yield from $this->parent->unwrap()->yield($context, array_merge($this->blocks, $blocks));
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+    }
+
+    // line 3
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_title(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        yield "Guide Technique";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 5
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_content(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "content"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "content"));
+
+        // line 6
+        yield "    ";
+        $context["user"] = CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 6, $this->source); })()), "user", [], "any", false, false, false, 6);
+        // line 7
+        yield "    ";
+        yield from $this->load("app/dashboard/_dashboardHeader.html.twig", 7)->unwrap()->yield($context);
+        // line 8
+        yield "    ";
+        yield from $this->load("app/dashboard/_dashboardAside.html.twig", 8)->unwrap()->yield($context);
+        // line 9
+        yield "
+    <main id=\"main\" class=\"main\">
+        <section class=\"section pages\">
+            <div class=\"container-fluid\">
+                <div class=\"row\">
+                    <!-- Breadcrumb -->
+                    <div class=\"pageTitle\">
+                        <h1>Guide Technique</h1>
+                        <nav>
+                            <ol class=\"breadcrumb\">
+                                <li class=\"breadcrumb-item\"><a href=\"";
+        // line 19
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("dashboard_index", ["nni" => CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 19, $this->source); })()), "user", [], "any", false, false, false, 19), "nni", [], "any", false, false, false, 19)]), "html", null, true);
+        yield "\">Accueil</a>
+                                </li>
+                                <li class=\"breadcrumb-item active\">Guide technique pour les chargés d'affaires</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- Main -->
+                    <div class=\"col-lg-8\">
+                        <!-- Titre et description -->
+                        <div class=\"hero bg-dark text-white p-5 rounded shadow-lg\">
+                            <!-- Contenu de la carte -->
+                            <div class=\"position-relative z-1 text-center\">
+                                <h1 class=\"display-4 fw-bold mb-3 text-gradient\">Carnet de compagnonnage</h1>
+                                <p class=\"lead mb-4\">Chargés d'affaires</p>
+                                <p>
+                                    <span class=\"btn btn-outline-light btn-lg fw-bold px-5 py-3 rounded-5\">RDU: D454220027677</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Contenu principal -->
+                        <article class=\"content mt-4\">
+                            <section id=\"compagnonnage\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le compagnonnage</h2>
+                                <div id=\"definitions\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Définitions</h4>
+                                    <div class=\"px-3\">
+                                        <p>Le but du compagnonnage est de faciliter l'intégration de l'agent nouvellement nommé
+                                            dans son emploi. Cette mission consiste à présenter le positionnement de l'emploi
+                                            au sein de l'organisation du service, les référentiels nécessaire à la réalisation
+                                            de ses activités, les outils à sa disposition, et à l'accompagner pour répondre aux
+                                            difficultés rencontrées.</p>
+                                        <p><strong>Tuteur : </strong>désigné sur une ou plusieurs activités pour apprendre un geste technique, un savoir-faire
+                                            (le tuteur peut aussi être compagnon).</p>
+                                        <p><strong>Compagnon : </strong>Responsable de la formation et du suivi de la bonne progression du nouvel arrivant.
+                                            En appui et conseil, il pilote le carnet de compagnonnage.</p>
+                                    </div>
+                                </div>
+                                <div id=\"objectifs\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Objectifs</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"mb-4 text-muted\">
+                                            Favoriser l'insertion du nouveau chargé d'affaires dans l'équipe de travail en
+                                            l'accompagnant dans les domaines suivants :
+                                        </p>
+                                        <ul class=\"list-unstyled\">
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Connaissance de la réglementation et des prescriptions</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Connaissance des outils (documentations, informatique, logistique)</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Apprentissage dans ses nouvelles activités</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Contribuer au processus de développement des compétences du chargé d'affaires</span>
+                                            </li>
+                                            <li class=\"d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>
+                                                    Assurer la traçabilité des actions réalisées et apprécier le degré d'assimilation de ces 
+                                                    actions, lors d'entretiens réguliers entre le nouveau chargé d'affaires et son Chef d'Équipe.
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id=\"champs-application\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Champs d'application</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Ceci concerne les chargés d'affaires nouvellement nommés au service
+                                            <strong>M</strong>écanique
+                                            <strong>R</strong>obinetterie
+                                            <strong>C</strong>haudronnerie.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div id=\"tuteur-choice\" class=\"p-4 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Choix du tuteur</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Le chef d'équipe de l'agent est chargé de suivre et de contrôler l'acquisition
+                                            par celui-ci des connaissances et compétences liées à son nouvel emploi.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"fonctionnement\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le fonctionnement</h2>
+                                <div id=\"takeover\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Avant la prise en charge</h4>
+                                    <div class=\"px-3\">
+                                        <table class=\"table table-striped\">
+                                            <thead>
+                                            <tr>
+                                                <th scope=\"col\">#</th>
+                                                <th scope=\"col\">Action à réaliser</th>
+                                                <th scope=\"col\">Qui ?</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class=\"table-group-divider\">
+                                            <tr>
+                                                <th>1</th>
+                                                <td>Réaliser les actions pour préparer la prise de
+                                                    fonction du nouveau chargé d'affaires
+                                                </td>
+                                                <td>Chef d'équipe</td>
+                                            </tr>
+                                            <tr>
+                                                <th>2</th>
+                                                <td>
+                                                    Préparer le
+                                                    <strong>P</strong>lan
+                                                    <strong>I</strong>ndividuel de
+                                                    <strong>F</strong>ormation
+                                                </td>
+                                                <td>Chef d'équipe</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div id=\"start-companionship\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Début du compagnonnage</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"mx-2\">
+                                            Les étapes suivantes sont à réaliser par le chef d'équipe durant cette période :
+                                        </p>
+                                    </div>
+
+                                    <div class=\"px-3\">
+                                        <!-- Carte 1 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Positionnement du chargé d'affaires
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du positionnement du chargé d'affaires dans l'organisation du service.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 2 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Adaptation du cursus
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Adaptation du cursus de compagnonnage par rapport au profil du nouveau chargé d'affaires.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 3 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Plan Individuel de Formation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du <strong>PIF</strong>.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 4 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Mode opératoire au <strong>MRC</strong>
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du mode opératoire de compagnonnage des chargés d'affaires au <strong>MRC</strong>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"suivi\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le suivi</h2>
+                                <div class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Le suivi du carnet</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"text-justify\">
+                                            Le chef d'équipe est responsable du suivi de l'acquisition par l'agent des connaissances
+                                            et compétences liées à son nouvel emploi. Pour cela, il doit prendre le temps
+                                            nécessaire et se retrouver régulièrement avec le nouveau chargé d'affaires.
+                                            La traçabilité est assurée par le carnet de compagnonnage. <br>
+                                            Le carnet sera détenu par le nouveau chargé d'affaires.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"duree\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">La durée</h2>
+                                <div class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">La durée de compagnonnage</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"text-justify\">
+                                            La durée de compagnonnage est de l'ordre de 12 à 18 mois en fonction du profil
+                                            et des capacités du nouveau chargé d'affaires.
+                                            Cette adaptation se fera en fonction de l'avancement constaté lors des points
+                                            de rencontre entre les différents acteurs
+                                            <small>
+                                                <a href=\"#controles\">(voir chapitre 5.2)</a>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"formalisation\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Formalisation</h2>
+
+                                <div id=\"use-case\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Utilisation du carnet</h4>
+                                    <div class=\"px-3\">
+                                        <!-- Carte 1 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Complétion du carnet
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le nouveau chargé d'affaires, au fur et à mesure des actions suivies, complète son carnet de compagnonnage et le fait valider par son Chef d'Equipe.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 2 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Visa du Chef d'Équipe
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le visa dans la case \"Chef d'Equipe\" pour la phase considérée doit être apposé par le Chef d'Equipe ou par une autre personne ayant effectué l'acte de présentation ou de réalisation à la demande du Chef d'Equipe.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 3 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Contrôle de l'assimilation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Dans la colonne <strong class=\"text-primary-emphasis\">Contrôle assimilation</strong>, on trouve les moyens de vérification de l'assimilation des connaissances ou compétences liées à la phase. Ces moyens sont soit déjà spécifiés, soit précisés par le Chef d'Equipe. <br>
+                                                    En mettant son visa, le Chef d'Equipe atteste de l'atteinte du niveau de connaissances ou de compétences requis pour la phase considérée.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 4 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Documents à fournir
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Les documents cités dans le carnet sont à minima à présenter au nouveau chargé d'affaires et à lui remettre le cas échéant.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 5 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Personnalisation du carnet
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    La personnalisation du carnet au profil du nouveau chargé d'affaires se fera en mentionnant <strong class=\"text-primary-emphasis\">Acquis</strong> ou <strong class=\"text-primary-emphasis\">Non requis</strong> dans la colonne actions des phases de Thèmes ne nécessitant pas un acte de compagnonnage.
+                                                    <br>
+                                                    Cette personnalisation sera réalisée au cours d'un entretien entre le Chef d'Equipe et le nouveau chargé d'affaires, en début de compagnonnage en même temps que la présentation du mode opératoire sur le compagnonnage.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 6 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Connaissance de la réglementation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Concernant le chapitre <strong class=\"text-primary-emphasis\">Connaissance de la réglementation et prescriptions</strong>, les prescriptions et directives sont présentées en allant jusqu'à une déclinaison concrète d'actions réalisées dans le service afin de donner tout le sens à ces référentiels.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 7 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Responsabilisation du chargé d'affaires
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le chargé d'affaires est responsabilisé sur la prise en charge de son compagnonnage. Pour certaines présentations, il pourra être amené à restituer un travail de synthèse à partir des éléments fournis par son Chef d'Equipe. Cette restitution servira de contrôle de l'assimilation des connaissances, et pourra être réalisée dans le cadre de présentation à thèmes pour d'autres agents du service.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id=\"controles\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Contrôles</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Chaque trimestre, au cours d'une entrevue, le Chef d'Equipe s'assure du respect de la progression et définit les points particuliers à examiner lors de la prochaine entrevue. La formalisation de ces entrevues est réalisée en fin de carnet de compagnonnage.
+                                            <br>
+                                            À l'issue de la période de compagnonnage le livret renseigné est inétgré dans le
+                                            <strong>C</strong>arnet <strong>I</strong>ndividuel de <strong>Formation</strong>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </section>
+                        </article>
+                    </div>
+                    <!-- Sidebar -->
+                    <div class=\"col-lg-4 z-n1\">
+                        <div class=\"sticky-top\" style=\"top: 100px;\">
+                            <div class=\"bg-light p-4 rounded mb-4 shadow-sm\">
+                                <h4 class=\"fst-italic\">À propos</h4>
+                                <p class=\"text-muted\">
+                                    Guide du carnet de compagnonnage du service <strong>MRC</strong> rédigé par <strong>Fabien Chevalier</strong>.
+                                    <br>
+                                    <small>Adaptation numérique par Pascal BRIFFARD.</small>
+                                </p>
+                            </div>
+                            <div class=\"p-4 rounded bg-light shadow-sm mb-4\">
+                                <h5 class=\"fst-italic\">Sommaire</h5>
+                                <ul class=\"list-unstyled\">
+                                    <li><a href=\"#compagnonnage\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Compagnonnage</a></li>
+                                    <li><a href=\"#fonctionnement\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Fonctionnement</a></li>
+                                    <li><a href=\"#suivi\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Suivi</a></li>
+                                    <li><a href=\"#duree\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Durée</a></li>
+                                    <li><a href=\"#formalisation\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Formalisation</a></li>
+                                </ul>
+                            </div>
+                            <div class=\"p-4 bg-light rounded shadow-sm\">
+                                <h5 class=\"fst-italic\">Processus</h5>
+                                <ul class=\"list-unstyled\">
+                                    <li><a href=\"#definitions\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Définitions</a></li>
+                                    <li><a href=\"#objectifs\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Objectifs</a></li>
+                                    <li><a href=\"#takeover\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Avant la prise en charge</a></li>
+                                    <li><a href=\"#start-companionship\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Début du compagnonnage</a></li>
+                                    <li><a href=\"#suivi\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Suivi du carnet</a></li>
+                                    <li><a href=\"#duree\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Durée de compagnonnage</a></li>
+                                    <li><a href=\"#use-case\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Utilisation du carnet</a></li>
+                                    <li><a href=\"#controles\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Contrôles</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "pages/guides/guide_technique.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  121 => 19,  109 => 9,  106 => 8,  103 => 7,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{% extends 'pages/pages.html.twig' %}
+
+{% block title %}Guide Technique{% endblock %}
+
+{% block content %}
+    {% set user = app.user %}
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id=\"main\" class=\"main\">
+        <section class=\"section pages\">
+            <div class=\"container-fluid\">
+                <div class=\"row\">
+                    <!-- Breadcrumb -->
+                    <div class=\"pageTitle\">
+                        <h1>Guide Technique</h1>
+                        <nav>
+                            <ol class=\"breadcrumb\">
+                                <li class=\"breadcrumb-item\"><a href=\"{{ path('dashboard_index', {'nni': app.user.nni}) }}\">Accueil</a>
+                                </li>
+                                <li class=\"breadcrumb-item active\">Guide technique pour les chargés d'affaires</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- Main -->
+                    <div class=\"col-lg-8\">
+                        <!-- Titre et description -->
+                        <div class=\"hero bg-dark text-white p-5 rounded shadow-lg\">
+                            <!-- Contenu de la carte -->
+                            <div class=\"position-relative z-1 text-center\">
+                                <h1 class=\"display-4 fw-bold mb-3 text-gradient\">Carnet de compagnonnage</h1>
+                                <p class=\"lead mb-4\">Chargés d'affaires</p>
+                                <p>
+                                    <span class=\"btn btn-outline-light btn-lg fw-bold px-5 py-3 rounded-5\">RDU: D454220027677</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Contenu principal -->
+                        <article class=\"content mt-4\">
+                            <section id=\"compagnonnage\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le compagnonnage</h2>
+                                <div id=\"definitions\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Définitions</h4>
+                                    <div class=\"px-3\">
+                                        <p>Le but du compagnonnage est de faciliter l'intégration de l'agent nouvellement nommé
+                                            dans son emploi. Cette mission consiste à présenter le positionnement de l'emploi
+                                            au sein de l'organisation du service, les référentiels nécessaire à la réalisation
+                                            de ses activités, les outils à sa disposition, et à l'accompagner pour répondre aux
+                                            difficultés rencontrées.</p>
+                                        <p><strong>Tuteur : </strong>désigné sur une ou plusieurs activités pour apprendre un geste technique, un savoir-faire
+                                            (le tuteur peut aussi être compagnon).</p>
+                                        <p><strong>Compagnon : </strong>Responsable de la formation et du suivi de la bonne progression du nouvel arrivant.
+                                            En appui et conseil, il pilote le carnet de compagnonnage.</p>
+                                    </div>
+                                </div>
+                                <div id=\"objectifs\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Objectifs</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"mb-4 text-muted\">
+                                            Favoriser l'insertion du nouveau chargé d'affaires dans l'équipe de travail en
+                                            l'accompagnant dans les domaines suivants :
+                                        </p>
+                                        <ul class=\"list-unstyled\">
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Connaissance de la réglementation et des prescriptions</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Connaissance des outils (documentations, informatique, logistique)</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Apprentissage dans ses nouvelles activités</span>
+                                            </li>
+                                            <li class=\"mb-3 d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>Contribuer au processus de développement des compétences du chargé d'affaires</span>
+                                            </li>
+                                            <li class=\"d-flex align-items-start\">
+                                                <i class=\"bi bi-pin text-primary me-2\"></i>
+                                                <span>
+                                                    Assurer la traçabilité des actions réalisées et apprécier le degré d'assimilation de ces 
+                                                    actions, lors d'entretiens réguliers entre le nouveau chargé d'affaires et son Chef d'Équipe.
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id=\"champs-application\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Champs d'application</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Ceci concerne les chargés d'affaires nouvellement nommés au service
+                                            <strong>M</strong>écanique
+                                            <strong>R</strong>obinetterie
+                                            <strong>C</strong>haudronnerie.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div id=\"tuteur-choice\" class=\"p-4 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Choix du tuteur</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Le chef d'équipe de l'agent est chargé de suivre et de contrôler l'acquisition
+                                            par celui-ci des connaissances et compétences liées à son nouvel emploi.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"fonctionnement\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le fonctionnement</h2>
+                                <div id=\"takeover\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Avant la prise en charge</h4>
+                                    <div class=\"px-3\">
+                                        <table class=\"table table-striped\">
+                                            <thead>
+                                            <tr>
+                                                <th scope=\"col\">#</th>
+                                                <th scope=\"col\">Action à réaliser</th>
+                                                <th scope=\"col\">Qui ?</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class=\"table-group-divider\">
+                                            <tr>
+                                                <th>1</th>
+                                                <td>Réaliser les actions pour préparer la prise de
+                                                    fonction du nouveau chargé d'affaires
+                                                </td>
+                                                <td>Chef d'équipe</td>
+                                            </tr>
+                                            <tr>
+                                                <th>2</th>
+                                                <td>
+                                                    Préparer le
+                                                    <strong>P</strong>lan
+                                                    <strong>I</strong>ndividuel de
+                                                    <strong>F</strong>ormation
+                                                </td>
+                                                <td>Chef d'équipe</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div id=\"start-companionship\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Début du compagnonnage</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"mx-2\">
+                                            Les étapes suivantes sont à réaliser par le chef d'équipe durant cette période :
+                                        </p>
+                                    </div>
+
+                                    <div class=\"px-3\">
+                                        <!-- Carte 1 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Positionnement du chargé d'affaires
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du positionnement du chargé d'affaires dans l'organisation du service.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 2 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Adaptation du cursus
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Adaptation du cursus de compagnonnage par rapport au profil du nouveau chargé d'affaires.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 3 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Plan Individuel de Formation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du <strong>PIF</strong>.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Carte 4 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-square-fill text-primary me-2\"></i>
+                                                    Mode opératoire au <strong>MRC</strong>
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Présentation du mode opératoire de compagnonnage des chargés d'affaires au <strong>MRC</strong>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"suivi\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Le suivi</h2>
+                                <div class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Le suivi du carnet</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"text-justify\">
+                                            Le chef d'équipe est responsable du suivi de l'acquisition par l'agent des connaissances
+                                            et compétences liées à son nouvel emploi. Pour cela, il doit prendre le temps
+                                            nécessaire et se retrouver régulièrement avec le nouveau chargé d'affaires.
+                                            La traçabilité est assurée par le carnet de compagnonnage. <br>
+                                            Le carnet sera détenu par le nouveau chargé d'affaires.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"duree\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">La durée</h2>
+                                <div class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">La durée de compagnonnage</h4>
+                                    <div class=\"px-3\">
+                                        <p class=\"text-justify\">
+                                            La durée de compagnonnage est de l'ordre de 12 à 18 mois en fonction du profil
+                                            et des capacités du nouveau chargé d'affaires.
+                                            Cette adaptation se fera en fonction de l'avancement constaté lors des points
+                                            de rencontre entre les différents acteurs
+                                            <small>
+                                                <a href=\"#controles\">(voir chapitre 5.2)</a>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id=\"formalisation\" class=\"mb-5\">
+                                <h2 class=\"title-guide-page\">Formalisation</h2>
+
+                                <div id=\"use-case\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Utilisation du carnet</h4>
+                                    <div class=\"px-3\">
+                                        <!-- Carte 1 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Complétion du carnet
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le nouveau chargé d'affaires, au fur et à mesure des actions suivies, complète son carnet de compagnonnage et le fait valider par son Chef d'Equipe.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 2 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Visa du Chef d'Équipe
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le visa dans la case \"Chef d'Equipe\" pour la phase considérée doit être apposé par le Chef d'Equipe ou par une autre personne ayant effectué l'acte de présentation ou de réalisation à la demande du Chef d'Equipe.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 3 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Contrôle de l'assimilation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Dans la colonne <strong class=\"text-primary-emphasis\">Contrôle assimilation</strong>, on trouve les moyens de vérification de l'assimilation des connaissances ou compétences liées à la phase. Ces moyens sont soit déjà spécifiés, soit précisés par le Chef d'Equipe. <br>
+                                                    En mettant son visa, le Chef d'Equipe atteste de l'atteinte du niveau de connaissances ou de compétences requis pour la phase considérée.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 4 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Documents à fournir
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Les documents cités dans le carnet sont à minima à présenter au nouveau chargé d'affaires et à lui remettre le cas échéant.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 5 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Personnalisation du carnet
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    La personnalisation du carnet au profil du nouveau chargé d'affaires se fera en mentionnant <strong class=\"text-primary-emphasis\">Acquis</strong> ou <strong class=\"text-primary-emphasis\">Non requis</strong> dans la colonne actions des phases de Thèmes ne nécessitant pas un acte de compagnonnage.
+                                                    <br>
+                                                    Cette personnalisation sera réalisée au cours d'un entretien entre le Chef d'Equipe et le nouveau chargé d'affaires, en début de compagnonnage en même temps que la présentation du mode opératoire sur le compagnonnage.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 6 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Connaissance de la réglementation
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Concernant le chapitre <strong class=\"text-primary-emphasis\">Connaissance de la réglementation et prescriptions</strong>, les prescriptions et directives sont présentées en allant jusqu'à une déclinaison concrète d'actions réalisées dans le service afin de donner tout le sens à ces référentiels.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Carte 7 -->
+                                        <div class=\"card mb-3 shadow-sm\">
+                                            <div class=\"card-body\">
+                                                <h5 class=\"card-title\">
+                                                    <i class=\"bi bi-forward text-primary me-2\"></i>
+                                                    Responsabilisation du chargé d'affaires
+                                                </h5>
+                                                <p class=\"card-text\">
+                                                    Le chargé d'affaires est responsabilisé sur la prise en charge de son compagnonnage. Pour certaines présentations, il pourra être amené à restituer un travail de synthèse à partir des éléments fournis par son Chef d'Equipe. Cette restitution servira de contrôle de l'assimilation des connaissances, et pourra être réalisée dans le cadre de présentation à thèmes pour d'autres agents du service.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id=\"controles\" class=\"p-4 mb-2 bg-light rounded shadow-sm\">
+                                    <h4 class=\"mb-4 border-bottom pb-2 text-secondary\">Contrôles</h4>
+                                    <div class=\"px-3\">
+                                        <p>
+                                            Chaque trimestre, au cours d'une entrevue, le Chef d'Equipe s'assure du respect de la progression et définit les points particuliers à examiner lors de la prochaine entrevue. La formalisation de ces entrevues est réalisée en fin de carnet de compagnonnage.
+                                            <br>
+                                            À l'issue de la période de compagnonnage le livret renseigné est inétgré dans le
+                                            <strong>C</strong>arnet <strong>I</strong>ndividuel de <strong>Formation</strong>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </section>
+                        </article>
+                    </div>
+                    <!-- Sidebar -->
+                    <div class=\"col-lg-4 z-n1\">
+                        <div class=\"sticky-top\" style=\"top: 100px;\">
+                            <div class=\"bg-light p-4 rounded mb-4 shadow-sm\">
+                                <h4 class=\"fst-italic\">À propos</h4>
+                                <p class=\"text-muted\">
+                                    Guide du carnet de compagnonnage du service <strong>MRC</strong> rédigé par <strong>Fabien Chevalier</strong>.
+                                    <br>
+                                    <small>Adaptation numérique par Pascal BRIFFARD.</small>
+                                </p>
+                            </div>
+                            <div class=\"p-4 rounded bg-light shadow-sm mb-4\">
+                                <h5 class=\"fst-italic\">Sommaire</h5>
+                                <ul class=\"list-unstyled\">
+                                    <li><a href=\"#compagnonnage\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Compagnonnage</a></li>
+                                    <li><a href=\"#fonctionnement\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Fonctionnement</a></li>
+                                    <li><a href=\"#suivi\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Suivi</a></li>
+                                    <li><a href=\"#duree\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Durée</a></li>
+                                    <li><a href=\"#formalisation\" class=\"text-dark\"><i class=\"bi bi-bookmark-fill\"></i> Formalisation</a></li>
+                                </ul>
+                            </div>
+                            <div class=\"p-4 bg-light rounded shadow-sm\">
+                                <h5 class=\"fst-italic\">Processus</h5>
+                                <ul class=\"list-unstyled\">
+                                    <li><a href=\"#definitions\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Définitions</a></li>
+                                    <li><a href=\"#objectifs\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Objectifs</a></li>
+                                    <li><a href=\"#takeover\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Avant la prise en charge</a></li>
+                                    <li><a href=\"#start-companionship\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Début du compagnonnage</a></li>
+                                    <li><a href=\"#suivi\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Suivi du carnet</a></li>
+                                    <li><a href=\"#duree\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Durée de compagnonnage</a></li>
+                                    <li><a href=\"#use-case\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Utilisation du carnet</a></li>
+                                    <li><a href=\"#controles\" class=\"text-dark\"><i class=\"bi bi-arrow-right-circle\"></i> Contrôles</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+", "pages/guides/guide_technique.html.twig", "/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/templates/pages/guides/guide_technique.html.twig");
+    }
+}

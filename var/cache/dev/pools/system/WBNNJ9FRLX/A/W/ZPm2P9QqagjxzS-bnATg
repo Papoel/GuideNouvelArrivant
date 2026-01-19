@@ -1,0 +1,19 @@
+<?php //mdi--code
+
+return [PHP_INT_MAX, new class() implements \Symfony\Component\Cache\Traits\CachedValueInterface { public function getValue(): mixed { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['Symfony\\UX\\Icons\\Icon'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\UX\\Icons\\Icon')),
+    ],
+    null,
+    [],
+    $o[0],
+    [
+        [
+            '<path fill="currentColor" d="m12.89 3l1.96.4L11.11 21l-1.96-.4zm6.7 9L16 8.41V5.58L22.42 12L16 18.41v-2.83zM1.58 12L8 5.58v2.83L4.41 12L8 15.58v2.83z"/>',
+            [
+                'xmlns' => 'http://www.w3.org/2000/svg',
+                'viewBox' => '0 0 24 24',
+            ],
+        ],
+    ]
+); } }];

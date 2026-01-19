@@ -1,0 +1,1898 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* mail/mentorReminderEmailTemplate.html.twig */
+class __TwigTemplate_4d86da5a3cb8e1434542818fd130dbea extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "mail/mentorReminderEmailTemplate.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "mail/mentorReminderEmailTemplate.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html lang=\"fr\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+    <title>";
+        // line 7
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["subject"]) || array_key_exists("subject", $context) ? $context["subject"] : (function () { throw new RuntimeError('Variable "subject" does not exist.', 7, $this->source); })()), "html", null, true);
+        yield "</title>
+    <style type=\"text/css\">
+        /* Reset et base - Force Gmail */
+        
+        /* Force Gmail à respecter nos styles */
+        .gmail-fix {
+            font-size: 0 !important;
+            line-height: 0 !important;
+        }
+        
+        /* Anti-Gmail classes */
+        u + .body .gmail-blend-screen { background: transparent !important; }
+        u + .body .gmail-blend-difference { background: transparent !important; }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            line-height: 1.6 !important;
+            color: #2c384e !important;
+            background-color: #f5f7fa !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+        
+        /* Gmail container fix */
+        .body {
+            background-color: #f5f7fa !important;
+        }
+        
+        .email-container {
+            max-width: 600px !important;
+            width: 600px !important;
+            margin: 0 auto !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+        
+        .main-wrapper {
+            padding: 40px 25px !important;
+            background-color: #f5f7fa !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+        }
+        
+        .header {
+            max-width: 85% !important;
+            margin: 0 auto !important;
+            padding: 30px 0 25px !important;
+            border-bottom: 1px solid rgba(61, 95, 158, 0.15) !important;
+        }
+        
+        /* Table layout for header - better email client support */
+        .header-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        
+        .header-table td {
+            vertical-align: middle !important;
+            padding: 0 0 0 3px !important;
+        }
+        
+        .logo-container {
+            width: auto;
+            padding-right: 20px;
+            border-right: 1px solid rgba(61, 95, 158, 0.15);
+        }
+        
+        .logo-cell {
+            width: 60px;
+            text-align: center;
+            padding-right: 20px;
+            border-right: 1px solid rgba(61, 95, 158, 0.15);
+        }
+
+        .logo {
+            max-height: 32px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .header-title {
+            padding-left: 20px;
+        }
+        
+        .title-cell {
+            padding-right: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c384e;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 400;
+            color: #6c757d;
+            letter-spacing: 0.3px;
+        }
+        
+        .header-banner {
+            background: #3d5f9e; /* Fallback couleur unie pour Outlook */
+            padding: 0;
+            color: #ffffff;
+            margin-top: 0;
+        }
+        
+        .header-banner-wrapper {
+            background: linear-gradient(135deg, #3d5f9e 0%, #2c4a80 100%);
+            background: #3d5f9e; /* Fallback pour Outlook */
+        }
+        
+        .header-banner-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .header-banner-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .header-content-cell {
+            padding: 28px 25px;
+            text-align: center;
+        }
+        
+        .header-badge-cell {
+            width: 160px;
+            text-align: right;
+            padding: 10px 25px 10px 0;
+            position: relative;
+        }
+        
+        .header-banner h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-banner p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .banner-badge {
+            background: #ffffff;
+            color: #2c4a80;
+            border-radius: 25px;
+            padding: 10px 18px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: inline-block;
+            /* Ombre compatible Outlook */
+            mso-border-shadow: yes;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        /* Main content card */
+        .main-card {
+            margin: 0 !important;
+            background: white !important;
+            padding: 0 !important;
+            position: relative !important;
+            z-index: 1 !important;
+            overflow: hidden !important;
+        }
+
+        .card-header {
+            background: rgba(61, 95, 158, 0.04) !important;
+            padding: 0 !important;
+            border-bottom: 1px solid rgba(61, 95, 158, 0.08);
+        }
+        
+        .card-header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .card-header-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .greeting-cell {
+            padding: 22px 0 22px 25px;
+        }
+        
+        .priority-cell {
+            width: 100px;
+            text-align: center;
+        }
+
+        .priority-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-top: 5px;
+        }
+
+        .urgent {
+            background-color: #dc3545;
+        }
+
+        .important {
+            background-color:rgb(250, 141, 52);
+        }
+
+        .normal {
+            background-color: #198754;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 25px;
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            border: 1px solid rgba(61, 95, 158, 0.1);
+            box-shadow: 0 2px 8px rgba(61, 95, 158, 0.05);
+        }
+
+        .stat-number {
+            position: relative;
+            font-size: 42px;
+            font-weight: 700;
+            color: #3d5f9e;
+            margin: 0 0 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            position: relative;
+            font-size: 13px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Notification box style */
+        .notification-box {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(61, 95, 158, 0.04);
+            border-left: 3px solid #3d5f9e;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            color: #3d5f9e;
+            font-size: 16px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        .stats-container {
+            text-align: center !important;
+            margin: 15px auto !important;
+            background: rgba(61, 95, 158, 0.03) !important;
+            border-radius: 12px !important;
+            max-width: 200px !important;
+        .notification-text {
+            flex: 1;
+            color:rgb(211, 120, 16);
+        }
+
+        .notification-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c384e;
+            margin: 0 0 5px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .owner-highlight {
+            color: #3d5f9e;
+            font-weight: 600;
+        }
+
+        /* Timeline compatible avec tous les clients email */
+        .timeline {
+            margin: 40px 0 35px !important;
+        }
+        
+        .timeline-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin-bottom: 20px !important;
+        }
+        
+        .timeline-table:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .timeline-dot-cell {
+            width: 30px;
+            text-align: center;
+            padding-right: 15px;
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3d5f9e;
+            border: 3px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-top: 2px;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa !important;
+            border-left: 3px solid #3d5f9e !important;
+            padding: 20px !important;
+            border-radius: 0 8px 8px 0 !important;
+            margin-left: 5px !important;
+        }
+        
+        .timeline-title {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #3d5f9e;
+        }
+        
+        .timeline-text {
+            margin: 0;
+            font-size: 14px;
+            color: #2c384e;
+            line-height: 1.5;
+        }
+
+        /* Modern button */
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #2c4a80;
+            color: #ffffff !important;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none !important;
+            font-size: 15px;
+            box-shadow: 0 2px 5px rgba(61, 95, 158, 0.2);
+            /* Better contrast for accessibility */
+        }
+        
+        .button:hover {
+            background-color: #1e3560;
+            text-decoration: none !important;
+        }
+
+        /* Note box compatible avec tous les clients email */
+        .note-box {
+            margin: 25px 0;
+            background-color: #fff9e6;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            padding: 0;
+            position: relative;
+        }
+        
+        .note-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .note-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .note-icon-cell {
+            width: 50px;
+            text-align: center;
+            padding: 15px 0 15px 15px;
+            position: relative;
+        }
+        
+        .note-icon {
+            width: 24px;
+            height: 24px;
+            background-color: #ffc107;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: -12px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .note-content-cell {
+            padding: 15px 15px 15px 5px;
+        }
+
+        .note-content {
+            font-style: italic;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Signature & contact */
+        .signature {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(61, 95, 158, 0.1);
+        }
+        
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .signature-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .signature-logo {
+            width: 40px;
+            height: 40px;
+            background-color: #3d5f9e;
+            border-radius: 50%;
+            color: white;
+            display: inline-block;
+            text-align: center;
+            line-height: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 15px;
+            padding: 5px;
+        }
+        
+        .signature-logo-cell {
+            width: 55px;
+            text-align: center;
+        }
+        
+        .signature-content {
+            flex: 1;
+        }
+        
+        .signature-text {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #2c384e;
+        }
+
+        .team-signature {
+            font-weight: 600;
+            margin: 0;
+            color: #3d5f9e;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to bottom, #f8f9fa, #f1f3f5);
+            padding: 30px 20px 25px;
+            text-align: center;
+            font-size: 13px;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .footer-note {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-left: 3px solid #ffc107;
+            text-align: left;
+            display: inline-block;
+            max-width: 80%;
+        }
+
+        .footer-note-icon {
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+
+        .footer-note-text {
+            display: inline-block;
+            vertical-align: middle;
+            color: #6c757d;
+        }
+
+        .footer-note strong {
+            color: #2c384e;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background: rgba(108, 117, 125, 0.12);
+            margin: 22px auto;
+            width: 60%;
+        }
+        
+        .footer-info-wrapper {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-info {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            padding: 0 10px;
+        }
+        
+        .footer-info strong {
+            color: #2c384e;
+            font-weight: 600;
+        }
+
+        /* Recipient tag */
+        .recipient-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .footer-links {
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .footer-link {
+            color: #3d5f9e;
+            text-decoration: none;
+            padding: 5px 12px;
+            margin: 0 5px;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: background-color 0.15s ease;
+        }
+        
+        .footer-link:hover {
+            background-color: rgba(61, 95, 158, 0.05);
+        }
+
+        /* Responsive adjustments */
+        /* Table-based layout for better email client support */
+        @media only screen and (max-width: 600px) {
+            .email-body { 
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+            .header { max-width: 95% !important; }
+            .header h1 { font-size: 18px !important; }
+            .header p { font-size: 12px !important; }
+            .logo { max-height: 28px !important; }
+            .stats-container { max-width: 160px !important; }
+            .button { padding: 10px 20px !important; font-size: 14px !important; }
+        }
+    </style>
+</head>
+<body class=\"body\" style=\"font-family: 'Segoe UI', Arial, sans-serif !important; line-height: 1.6 !important; color: #2c384e !important; background-color: #f5f7fa !important; margin: 0 !important; padding: 0 !important; width: 100% !important; min-width: 100% !important;\">
+    <!-- Preview text -->
+    <div style=\"display:none; max-height:0; overflow:hidden; mso-hide:all;\">
+        ";
+        // line 650
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["pending_modules_count"]) || array_key_exists("pending_modules_count", $context) ? $context["pending_modules_count"] : (function () { throw new RuntimeError('Variable "pending_modules_count" does not exist.', 650, $this->source); })()), "html", null, true);
+        yield " ";
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["modules_text"]) || array_key_exists("modules_text", $context) ? $context["modules_text"] : (function () { throw new RuntimeError('Variable "modules_text" does not exist.', 650, $this->source); })()), "html", null, true);
+        yield " en attente - Action requise pour ";
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["owner_fullname"]) || array_key_exists("owner_fullname", $context) ? $context["owner_fullname"] : (function () { throw new RuntimeError('Variable "owner_fullname" does not exist.', 650, $this->source); })()), "html", null, true);
+        yield "
+    </div>
+
+    <!-- Gmail wrapper fix -->
+    <div class=\"main-wrapper\" style=\"padding: 40px 25px !important; background-color: #f5f7fa !important; width: 100% !important;\">
+        <div class=\"email-container\" style=\"max-width: 600px !important; width: 600px !important; margin: 0 auto !important; background-color: #ffffff !important; box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important; border-radius: 16px !important; overflow: hidden !important;\">
+            <!-- Professional header structure -->
+            <div class=\"header-wrapper\" style=\"padding: 0 !important;\">
+                <div class=\"header\" style=\"max-width: 85% !important; margin: 0 auto !important; padding: 30px 0 25px !important; border-bottom: 1px solid rgba(61, 95, 158, 0.15) !important;\">
+                    <table class=\"header-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important;\">
+                        <tr>
+                            <td class=\"logo-cell\" style=\"width: 60px !important; text-align: center !important; padding-right: 20px !important; border-right: 1px solid rgba(61, 95, 158, 0.15) !important; vertical-align: middle !important;\">
+                                ";
+        // line 662
+        if ((array_key_exists("logo_cid", $context) &&  !(null === (isset($context["logo_cid"]) || array_key_exists("logo_cid", $context) ? $context["logo_cid"] : (function () { throw new RuntimeError('Variable "logo_cid" does not exist.', 662, $this->source); })())))) {
+            // line 663
+            yield "                                    <img src=\"cid:";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["logo_cid"]) || array_key_exists("logo_cid", $context) ? $context["logo_cid"] : (function () { throw new RuntimeError('Variable "logo_cid" does not exist.', 663, $this->source); })()), "html", null, true);
+            yield "\" alt=\"Logo EDF\" class=\"logo\" style=\"max-height: 32px !important; width: auto !important; display: block !important; margin: 0 auto !important;\">
+                                ";
+        } else {
+            // line 665
+            yield "                                    <img src=\"";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\HttpFoundationExtension']->generateAbsoluteUrl($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("images/logos/edf.png")), "html", null, true);
+            yield "\" alt=\"Logo EDF\" class=\"logo\" style=\"max-height: 32px !important; width: auto !important; display: block !important; margin: 0 auto !important;\">
+                                ";
+        }
+        // line 667
+        yield "                            </td>
+                            <td class=\"title-cell\" style=\"padding-left: 20px !important; vertical-align: middle !important;\">
+                                <h1 style=\"margin: 0 !important; font-size: 20px !important; font-weight: 600 !important; color: #2c384e !important; letter-spacing: 0.3px !important;\">Guide du Nouvel Arrivant</h1>
+                                <p style=\"margin: 0 !important; font-size: 13px !important; font-weight: 400 !important; color: #6c757d !important; letter-spacing: 0.3px !important;\">Plateforme de gestion des carnets de compagnonnage</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Header banner premium -->
+                <div class=\"header-banner-wrapper\" style=\"background: #3d5f9e !important;\">
+                    <!-- Structure table pour badge flottant Gmail -->
+                    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; position: relative !important;\">
+                        <tr>
+                            <td style=\"padding: 35px 30px !important; text-align: center !important; color: #ffffff !important; vertical-align: middle !important;\">
+                                <h2 style=\"margin: 0 !important; font-size: 26px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: #ffffff !important; font-family: 'Segoe UI', Arial, sans-serif !important;\">À valider</h2>
+                                <p style=\"margin: 8px 0 0 !important; font-size: 15px !important; color: rgba(255,255,255,0.9) !important; font-family: 'Segoe UI', Arial, sans-serif !important; font-weight: 400 !important;\">Demande de validation en attente</p>
+                            </td>
+                            <td style=\"width: 140px !important; text-align: right !important; padding: 20px 25px !important; vertical-align: top !important;\">
+                                <!-- Badge Gmail compatible -->
+                                <div style=\"background: #ffffff !important; color: #2c4a80 !important; border-radius: 25px !important; padding: 10px 16px !important; font-size: 9px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.8px !important; border: 2px solid #ffffff !important; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; display: inline-block !important; font-family: Arial, sans-serif !important; white-space: nowrap !important; margin-top: -10px !important;\">
+                                    <span style=\"display: inline-block !important; width: 6px !important; height: 6px !important; background: #28a745 !important; border-radius: 50% !important; margin-right: 8px !important; vertical-align: middle !important;\"></span><span style=\"vertical-align: middle !important;\">Action requise</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Main floating card -->
+            <div class=\"main-card\">
+                <div class=\"card-header\" style=\"background: rgba(61, 95, 158, 0.04); padding: 0; border-bottom: 1px solid rgba(61, 95, 158, 0.08);\">
+                    <table class=\"card-header-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                        <tr>
+                            <td class=\"greeting-cell\" style=\"padding: 40px 40px 35px; vertical-align: middle;\">
+                                <h2 class=\"greeting\" style=\"font-size: 22px; font-weight: 600; margin: 0; color: #2c384e; letter-spacing: 0.4px; line-height: 1.3;\">Bonjour ";
+        // line 702
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["mentor_firstname"]) || array_key_exists("mentor_firstname", $context) ? $context["mentor_firstname"] : (function () { throw new RuntimeError('Variable "mentor_firstname" does not exist.', 702, $this->source); })()), "html", null, true);
+        yield ",</h2>
+                                <div style=\"width: 60px; height: 3px; background: linear-gradient(90deg, #3d5f9e 0%, #2c4a80 100%); border-radius: 2px; margin-top: 12px;\"></div>
+                            </td>
+                            ";
+        // line 705
+        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 705, $this->source); })()), "text", [], "any", false, false, false, 705)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 706
+            yield "                            <td style=\"width: 120px !important; text-align: center !important; padding: 40px 20px 35px !important; vertical-align: middle !important;\">
+                                ";
+            // line 707
+            if ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 707, $this->source); })()), "class", [], "any", false, false, false, 707) == "important")) {
+                // line 708
+                yield "                                <div style=\"background-color: rgb(250, 141, 52) !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    ";
+                // line 709
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 709, $this->source); })()), "text", [], "any", false, false, false, 709), "html", null, true);
+                yield "
+                                </div>
+                                ";
+            } elseif ((CoreExtension::getAttribute($this->env, $this->source,             // line 711
+(isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 711, $this->source); })()), "class", [], "any", false, false, false, 711) == "urgent")) {
+                // line 712
+                yield "                                <div style=\"background-color: #dc3545 !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    ";
+                // line 713
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 713, $this->source); })()), "text", [], "any", false, false, false, 713), "html", null, true);
+                yield "
+                                </div>
+                                ";
+            } else {
+                // line 716
+                yield "                                <div style=\"background-color: #198754 !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    ";
+                // line 717
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["urgency_level"]) || array_key_exists("urgency_level", $context) ? $context["urgency_level"] : (function () { throw new RuntimeError('Variable "urgency_level" does not exist.', 717, $this->source); })()), "text", [], "any", false, false, false, 717), "html", null, true);
+                yield "
+                                </div>
+                                ";
+            }
+            // line 720
+            yield "                            </td>
+                            ";
+        }
+        // line 722
+        yield "                        </tr>
+                    </table>
+                </div>
+                
+                <div class=\"card-body\" style=\"padding: 30px 30px 5px 30px !important;\">
+                    <!-- Statistiques -->
+                    <div class=\"stats-container\" style=\"text-align: center !important; margin: 20px auto 30px !important; background: rgba(61, 95, 158, 0.03) !important; border-radius: 12px !important; max-width: 180px !important; padding: 15px !important;\">
+                        <div class=\"stat-box\" style=\"background: #f8f9fa !important; border-radius: 12px !important; padding: 20px 15px !important; text-align: center !important; border: 1px solid rgba(61, 95, 158, 0.1) !important; box-shadow: 0 2px 8px rgba(61, 95, 158, 0.05) !important;\">
+                            <div class=\"stat-number\" style=\"font-size: 32px; font-weight: 700; color: #3d5f9e; margin-bottom: 5px;\">";
+        // line 730
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["pending_modules_count"]) || array_key_exists("pending_modules_count", $context) ? $context["pending_modules_count"] : (function () { throw new RuntimeError('Variable "pending_modules_count" does not exist.', 730, $this->source); })()), "html", null, true);
+        yield "</div>
+                            <div class=\"stat-label\" style=\"font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; font-weight: 600;\">";
+        // line 731
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["modules_text"]) || array_key_exists("modules_text", $context) ? $context["modules_text"] : (function () { throw new RuntimeError('Variable "modules_text" does not exist.', 731, $this->source); })()), "html", null, true);
+        yield "</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification section élégante -->
+                    <div class=\"notification-box\" style=\"margin: 30px 0 35px; padding: 0; background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); border: 1px solid rgba(61, 95, 158, 0.15); border-radius: 12px; overflow: hidden;\">
+                        <div class=\"notification-content\" style=\"padding: 25px 30px;\">
+                            <!-- Structure table Gmail pour notification -->
+                            <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important;\">
+                                <tr>
+                                    <td style=\"width: 50px !important; text-align: center !important; vertical-align: top !important; padding-right: 15px !important;\">
+                                        <!-- Icône centrée Gmail -->
+                                        <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 40px !important; height: 40px !important; background: #3d5f9e !important; border-radius: 50% !important; margin: 2px auto 0 !important;\">
+                                            <tr>
+                                                <td style=\"width: 40px !important; height: 40px !important; text-align: center !important; vertical-align: middle !important; color: white !important; font-weight: 700 !important; font-size: 18px !important; font-family: Arial, sans-serif !important; line-height: 40px !important;\">!</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style=\"vertical-align: top !important; padding-top: 2px !important;\">
+                                        <div style=\"font-size: 16px !important; font-weight: 700 !important; color: #2c4a80 !important; margin: 0 0 8px !important; letter-spacing: 0.3px !important; font-family: Arial, sans-serif !important;\">Action requise</div>
+                                        <p style=\"margin: 0 !important; font-size: 14px !important; line-height: 1.6 !important; color: #4a5568 !important; font-family: Arial, sans-serif !important;\">
+                                            <span style=\"color: #2c4a80 !important; font-weight: 600 !important;\">";
+        // line 752
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["owner_fullname"]) || array_key_exists("owner_fullname", $context) ? $context["owner_fullname"] : (function () { throw new RuntimeError('Variable "owner_fullname" does not exist.', 752, $this->source); })()), "html", null, true);
+        yield "</span> attend votre validation 
+                                            pour progresser dans son parcours de formation.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline compatible avec tous les clients email -->
+                    <div class=\"timeline\" style=\"margin: 40px 0 35px !important;\">
+                        <table class=\"timeline-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important;\">
+                            <tr>
+                                <td class=\"timeline-dot-cell\" style=\"width: 30px; text-align: center; padding-right: 15px; vertical-align: top;\">
+                                    <div class=\"timeline-dot\" style=\"width: 16px; height: 16px; border-radius: 50%; background: #3d5f9e; border: 3px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); display: inline-block; margin-top: 2px;\"></div>
+                                </td>
+                                <td style=\"vertical-align: top;\">
+                                    <div class=\"timeline-content\" style=\"background: #f8f9fa !important; border-left: 3px solid #3d5f9e !important; padding: 20px !important; border-radius: 0 8px 8px 0 !important; margin-left: 5px !important;\">
+                                        <h4 class=\"timeline-title\" style=\"margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #3d5f9e;\">Modules en attente</h4>
+                                        <p class=\"timeline-text\" style=\"margin: 0; font-size: 14px; color: #2c384e; line-height: 1.5;\">
+                                            ";
+        // line 772
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::titleCase($this->env->getCharset(), (isset($context["number_text"]) || array_key_exists("number_text", $context) ? $context["number_text"] : (function () { throw new RuntimeError('Variable "number_text" does not exist.', 772, $this->source); })())), "html", null, true);
+        yield " ";
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["modules_text"]) || array_key_exists("modules_text", $context) ? $context["modules_text"] : (function () { throw new RuntimeError('Variable "modules_text" does not exist.', 772, $this->source); })()), "html", null, true);
+        yield " ";
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["verb_text"]) || array_key_exists("verb_text", $context) ? $context["verb_text"] : (function () { throw new RuntimeError('Variable "verb_text" does not exist.', 772, $this->source); })()), "html", null, true);
+        yield " en attente de validation 
+                                            dans le carnet de compagnonnage.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <table class=\"timeline-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; margin-bottom: 0 !important;\">
+                            <tr>
+                                <td class=\"timeline-dot-cell\" style=\"width: 30px; text-align: center; padding-right: 15px; vertical-align: top;\">
+                                    <div class=\"timeline-dot\" style=\"width: 16px; height: 16px; border-radius: 50%; background: #3d5f9e; border: 3px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); display: inline-block; margin-top: 2px;\"></div>
+                                </td>
+                                <td style=\"vertical-align: top;\">
+                                    <div class=\"timeline-content\" style=\"background: #f8f9fa !important; border-left: 3px solid #3d5f9e !important; padding: 20px !important; border-radius: 0 8px 8px 0 !important; margin-left: 5px !important;\">
+                                        <h4 class=\"timeline-title\" style=\"margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #3d5f9e;\">Action requise</h4>
+                                        <p class=\"timeline-text\" style=\"margin: 0; font-size: 14px; color: #2c384e; line-height: 1.5;\">
+                                            Une validation rapide permet à votre apprenant(e) de progresser efficacement
+                                            dans son parcours de formation.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- CTA Button -->
+                    <div class=\"button-container\" style=\"text-align: center !important; margin: 40px 0 35px !important;\">
+                        <a href=\"https://gna.papoel.fr/dashboard/";
+        // line 800
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["mentor_nni"]) || array_key_exists("mentor_nni", $context) ? $context["mentor_nni"] : (function () { throw new RuntimeError('Variable "mentor_nni" does not exist.', 800, $this->source); })()), "html", null, true);
+        yield "/\" class=\"button\" style=\"display: inline-block !important; background-color: #2c4a80 !important; color: #ffffff !important; padding: 16px 32px !important; border-radius: 8px !important; font-weight: 600 !important; text-decoration: none !important; font-size: 15px !important; box-shadow: 0 4px 12px rgba(44, 74, 128, 0.25) !important; letter-spacing: 0.3px !important;\">
+                            🚀 Accéder à mon espace mentor
+                        </a>
+                    </div>
+                    
+                    <!-- Note box compatible avec tous les clients email -->
+                    <div class=\"note-box\" style=\"margin: 35px 0 30px !important; background-color: #fff9e6 !important; border: 1px solid rgba(255, 193, 7, 0.3) !important; border-radius: 8px !important; padding: 0 !important; position: relative !important;\">
+                        <table class=\"note-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                            <tr>
+                                <td class=\"note-icon-cell\" style=\"width: 50px !important; text-align: center !important; padding: 20px 0 20px 20px !important; position: relative !important; vertical-align: top !important;\">
+                                    <div class=\"note-icon\" style=\"width: 24px !important; height: 24px !important; background-color: #ffc107a5 !important; border-radius: 50% !important; display: inline-block !important; text-align: center !important; line-height: 24px !important; color: white !important; font-size: 14px !important; font-weight: bold !important; margin-top: -12px !important; position: relative !important; z-index: 2 !important; padding: 5px !important;\">💡</div>
+                                </td>
+                                <td class=\"note-content-cell\" style=\"padding: 20px 20px 20px 10px !important; vertical-align: top !important;\">
+                                    <p class=\"note-content\" style=\"font-style: italic !important; color: #856404 !important; font-size: 14px !important; line-height: 1.6 !important; margin: 0 !important;\">
+                                        Votre accompagnement est essentiel pour la progression et la motivation de ";
+        // line 814
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["owner_fullname"]) || array_key_exists("owner_fullname", $context) ? $context["owner_fullname"] : (function () { throw new RuntimeError('Variable "owner_fullname" does not exist.', 814, $this->source); })()), "html", null, true);
+        yield ".
+                                        Chaque validation est une étape importante dans son développement professionnel.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- Signature élégante -->
+                    <div class=\"signature\" style=\"padding-top: 25px; border-top: 1px solid rgba(61, 95, 158, 0.1);\">
+                        <table class=\"signature-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                            <tr>
+                                <td style=\"width: 55px !important; text-align: center !important; padding-right: 20px !important; vertical-align: middle !important;\">
+                                    <!-- Logo GNA centré Gmail -->
+                                    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 45px !important; height: 45px !important; background: #3d5f9e !important; border-radius: 50% !important; margin: 0 auto !important;\">
+                                        <tr>
+                                            <td style=\"width: 45px !important; height: 45px !important; text-align: center !important; vertical-align: middle !important; color: white !important; font-weight: 700 !important; font-size: 13px !important; letter-spacing: 0.5px !important; font-family: Arial, sans-serif !important; line-height: 45px !important;\">GNA</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class=\"signature-content\" style=\"vertical-align: middle; padding-left: 5px;\">
+                                    <p class=\"signature-text\" style=\"margin: 0 0 4px; color: #2c384e; font-size: 15px; font-weight: 600;\">Cordialement,</p>
+                                    <p class=\"team-signature\" style=\"margin: 0; color: #6c757d; font-size: 14px; line-height: 1.4;\">L'équipe de gestion des carnets de compagnonnage.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer élégant et organisé -->  
+            <div class=\"footer\" style=\"background: #f8f9fa; padding: 30px 35px; margin-top: 20px; border-top: 1px solid rgba(61, 95, 158, 0.08);\">
+                <!-- Message automatique élégant -->
+                <div class=\"footer-note\" style=\"text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 12px; box-shadow: 0 2px 8px rgba(255, 193, 7, 0.1);\">
+                    <div style=\"display: inline-flex; align-items: center; gap: 15px; max-width: 400px;\">
+                        <div style=\"width: 36px; height: 36px; background-color:transparent !important; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;\">
+                            <span style=\"font-size: 16px;\">⚠️</span>
+                        </div>
+                        <div class=\"footer-note-text\" style=\"text-align: left; line-height: 1.4;\">
+                            <strong style=\"color: #8b6914; font-size: 14px; display: block; font-weight: 600; margin-bottom: 2px;\">Message automatique</strong>
+                            <span style=\"color: #8b6914; font-size: 13px; opacity: 0.9;\">Envoyé chaque mercredi à 14h00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informations de contact -->
+                <div class=\"footer-info-wrapper\" style=\"text-align: center; max-width: 450px; margin: 0 auto;\">
+                    <div class=\"footer-info\" style=\"margin-bottom: 20px; line-height: 1.6; color: #6c757d; font-size: 14px;\">
+                        <strong style=\"color: #2c384e; font-weight: 600; display: block; margin-bottom: 8px;\">Merci de ne pas répondre directement à cet email.</strong>
+                        Pour toute assistance concernant les carnets de compagnonnage, contactez notre équipe support.
+                    </div>
+                    
+                    <div class=\"recipient-tag\" style=\"display: inline-block; padding: 6px 16px; background: #ffffff; border: 1px solid #e9ecef; border-radius: 25px; font-size: 11px; color: #6c757d; box-shadow: 0 1px 3px rgba(0,0,0,0.05);\">pascal.briffard@edf.fr</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "mail/mentorReminderEmailTemplate.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  930 => 814,  913 => 800,  878 => 772,  855 => 752,  831 => 731,  827 => 730,  817 => 722,  813 => 720,  807 => 717,  804 => 716,  798 => 713,  795 => 712,  793 => 711,  788 => 709,  785 => 708,  783 => 707,  780 => 706,  778 => 705,  772 => 702,  735 => 667,  729 => 665,  723 => 663,  721 => 662,  702 => 650,  56 => 7,  48 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html lang=\"fr\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+    <title>{{ subject }}</title>
+    <style type=\"text/css\">
+        /* Reset et base - Force Gmail */
+        
+        /* Force Gmail à respecter nos styles */
+        .gmail-fix {
+            font-size: 0 !important;
+            line-height: 0 !important;
+        }
+        
+        /* Anti-Gmail classes */
+        u + .body .gmail-blend-screen { background: transparent !important; }
+        u + .body .gmail-blend-difference { background: transparent !important; }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+            line-height: 1.6 !important;
+            color: #2c384e !important;
+            background-color: #f5f7fa !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+        
+        /* Gmail container fix */
+        .body {
+            background-color: #f5f7fa !important;
+        }
+        
+        .email-container {
+            max-width: 600px !important;
+            width: 600px !important;
+            margin: 0 auto !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+        
+        .main-wrapper {
+            padding: 40px 25px !important;
+            background-color: #f5f7fa !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+        }
+        
+        .header {
+            max-width: 85% !important;
+            margin: 0 auto !important;
+            padding: 30px 0 25px !important;
+            border-bottom: 1px solid rgba(61, 95, 158, 0.15) !important;
+        }
+        
+        /* Table layout for header - better email client support */
+        .header-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        
+        .header-table td {
+            vertical-align: middle !important;
+            padding: 0 0 0 3px !important;
+        }
+        
+        .logo-container {
+            width: auto;
+            padding-right: 20px;
+            border-right: 1px solid rgba(61, 95, 158, 0.15);
+        }
+        
+        .logo-cell {
+            width: 60px;
+            text-align: center;
+            padding-right: 20px;
+            border-right: 1px solid rgba(61, 95, 158, 0.15);
+        }
+
+        .logo {
+            max-height: 32px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .header-title {
+            padding-left: 20px;
+        }
+        
+        .title-cell {
+            padding-right: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c384e;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 400;
+            color: #6c757d;
+            letter-spacing: 0.3px;
+        }
+        
+        .header-banner {
+            background: #3d5f9e; /* Fallback couleur unie pour Outlook */
+            padding: 0;
+            color: #ffffff;
+            margin-top: 0;
+        }
+        
+        .header-banner-wrapper {
+            background: linear-gradient(135deg, #3d5f9e 0%, #2c4a80 100%);
+            background: #3d5f9e; /* Fallback pour Outlook */
+        }
+        
+        .header-banner-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .header-banner-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .header-content-cell {
+            padding: 28px 25px;
+            text-align: center;
+        }
+        
+        .header-badge-cell {
+            width: 160px;
+            text-align: right;
+            padding: 10px 25px 10px 0;
+            position: relative;
+        }
+        
+        .header-banner h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-banner p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .banner-badge {
+            background: #ffffff;
+            color: #2c4a80;
+            border-radius: 25px;
+            padding: 10px 18px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: inline-block;
+            /* Ombre compatible Outlook */
+            mso-border-shadow: yes;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        /* Main content card */
+        .main-card {
+            margin: 0 !important;
+            background: white !important;
+            padding: 0 !important;
+            position: relative !important;
+            z-index: 1 !important;
+            overflow: hidden !important;
+        }
+
+        .card-header {
+            background: rgba(61, 95, 158, 0.04) !important;
+            padding: 0 !important;
+            border-bottom: 1px solid rgba(61, 95, 158, 0.08);
+        }
+        
+        .card-header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .card-header-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .greeting-cell {
+            padding: 22px 0 22px 25px;
+        }
+        
+        .priority-cell {
+            width: 100px;
+            text-align: center;
+        }
+
+        .priority-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-top: 5px;
+        }
+
+        .urgent {
+            background-color: #dc3545;
+        }
+
+        .important {
+            background-color:rgb(250, 141, 52);
+        }
+
+        .normal {
+            background-color: #198754;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 25px;
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            border: 1px solid rgba(61, 95, 158, 0.1);
+            box-shadow: 0 2px 8px rgba(61, 95, 158, 0.05);
+        }
+
+        .stat-number {
+            position: relative;
+            font-size: 42px;
+            font-weight: 700;
+            color: #3d5f9e;
+            margin: 0 0 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            position: relative;
+            font-size: 13px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Notification box style */
+        .notification-box {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(61, 95, 158, 0.04);
+            border-left: 3px solid #3d5f9e;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            color: #3d5f9e;
+            font-size: 16px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        .stats-container {
+            text-align: center !important;
+            margin: 15px auto !important;
+            background: rgba(61, 95, 158, 0.03) !important;
+            border-radius: 12px !important;
+            max-width: 200px !important;
+        .notification-text {
+            flex: 1;
+            color:rgb(211, 120, 16);
+        }
+
+        .notification-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c384e;
+            margin: 0 0 5px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .owner-highlight {
+            color: #3d5f9e;
+            font-weight: 600;
+        }
+
+        /* Timeline compatible avec tous les clients email */
+        .timeline {
+            margin: 40px 0 35px !important;
+        }
+        
+        .timeline-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin-bottom: 20px !important;
+        }
+        
+        .timeline-table:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .timeline-dot-cell {
+            width: 30px;
+            text-align: center;
+            padding-right: 15px;
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3d5f9e;
+            border: 3px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-top: 2px;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa !important;
+            border-left: 3px solid #3d5f9e !important;
+            padding: 20px !important;
+            border-radius: 0 8px 8px 0 !important;
+            margin-left: 5px !important;
+        }
+        
+        .timeline-title {
+            margin: 0 0 6px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #3d5f9e;
+        }
+        
+        .timeline-text {
+            margin: 0;
+            font-size: 14px;
+            color: #2c384e;
+            line-height: 1.5;
+        }
+
+        /* Modern button */
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #2c4a80;
+            color: #ffffff !important;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none !important;
+            font-size: 15px;
+            box-shadow: 0 2px 5px rgba(61, 95, 158, 0.2);
+            /* Better contrast for accessibility */
+        }
+        
+        .button:hover {
+            background-color: #1e3560;
+            text-decoration: none !important;
+        }
+
+        /* Note box compatible avec tous les clients email */
+        .note-box {
+            margin: 25px 0;
+            background-color: #fff9e6;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            padding: 0;
+            position: relative;
+        }
+        
+        .note-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .note-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .note-icon-cell {
+            width: 50px;
+            text-align: center;
+            padding: 15px 0 15px 15px;
+            position: relative;
+        }
+        
+        .note-icon {
+            width: 24px;
+            height: 24px;
+            background-color: #ffc107;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: -12px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .note-content-cell {
+            padding: 15px 15px 15px 5px;
+        }
+
+        .note-content {
+            font-style: italic;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Signature & contact */
+        .signature {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(61, 95, 158, 0.1);
+        }
+        
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .signature-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .signature-logo {
+            width: 40px;
+            height: 40px;
+            background-color: #3d5f9e;
+            border-radius: 50%;
+            color: white;
+            display: inline-block;
+            text-align: center;
+            line-height: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 15px;
+            padding: 5px;
+        }
+        
+        .signature-logo-cell {
+            width: 55px;
+            text-align: center;
+        }
+        
+        .signature-content {
+            flex: 1;
+        }
+        
+        .signature-text {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #2c384e;
+        }
+
+        .team-signature {
+            font-weight: 600;
+            margin: 0;
+            color: #3d5f9e;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to bottom, #f8f9fa, #f1f3f5);
+            padding: 30px 20px 25px;
+            text-align: center;
+            font-size: 13px;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .footer-note {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-left: 3px solid #ffc107;
+            text-align: left;
+            display: inline-block;
+            max-width: 80%;
+        }
+
+        .footer-note-icon {
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+
+        .footer-note-text {
+            display: inline-block;
+            vertical-align: middle;
+            color: #6c757d;
+        }
+
+        .footer-note strong {
+            color: #2c384e;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background: rgba(108, 117, 125, 0.12);
+            margin: 22px auto;
+            width: 60%;
+        }
+        
+        .footer-info-wrapper {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-info {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            padding: 0 10px;
+        }
+        
+        .footer-info strong {
+            color: #2c384e;
+            font-weight: 600;
+        }
+
+        /* Recipient tag */
+        .recipient-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .footer-links {
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .footer-link {
+            color: #3d5f9e;
+            text-decoration: none;
+            padding: 5px 12px;
+            margin: 0 5px;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: background-color 0.15s ease;
+        }
+        
+        .footer-link:hover {
+            background-color: rgba(61, 95, 158, 0.05);
+        }
+
+        /* Responsive adjustments */
+        /* Table-based layout for better email client support */
+        @media only screen and (max-width: 600px) {
+            .email-body { 
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+            .header { max-width: 95% !important; }
+            .header h1 { font-size: 18px !important; }
+            .header p { font-size: 12px !important; }
+            .logo { max-height: 28px !important; }
+            .stats-container { max-width: 160px !important; }
+            .button { padding: 10px 20px !important; font-size: 14px !important; }
+        }
+    </style>
+</head>
+<body class=\"body\" style=\"font-family: 'Segoe UI', Arial, sans-serif !important; line-height: 1.6 !important; color: #2c384e !important; background-color: #f5f7fa !important; margin: 0 !important; padding: 0 !important; width: 100% !important; min-width: 100% !important;\">
+    <!-- Preview text -->
+    <div style=\"display:none; max-height:0; overflow:hidden; mso-hide:all;\">
+        {{ pending_modules_count }} {{ modules_text }} en attente - Action requise pour {{ owner_fullname }}
+    </div>
+
+    <!-- Gmail wrapper fix -->
+    <div class=\"main-wrapper\" style=\"padding: 40px 25px !important; background-color: #f5f7fa !important; width: 100% !important;\">
+        <div class=\"email-container\" style=\"max-width: 600px !important; width: 600px !important; margin: 0 auto !important; background-color: #ffffff !important; box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important; border-radius: 16px !important; overflow: hidden !important;\">
+            <!-- Professional header structure -->
+            <div class=\"header-wrapper\" style=\"padding: 0 !important;\">
+                <div class=\"header\" style=\"max-width: 85% !important; margin: 0 auto !important; padding: 30px 0 25px !important; border-bottom: 1px solid rgba(61, 95, 158, 0.15) !important;\">
+                    <table class=\"header-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important;\">
+                        <tr>
+                            <td class=\"logo-cell\" style=\"width: 60px !important; text-align: center !important; padding-right: 20px !important; border-right: 1px solid rgba(61, 95, 158, 0.15) !important; vertical-align: middle !important;\">
+                                {% if logo_cid is defined and logo_cid is not null %}
+                                    <img src=\"cid:{{ logo_cid }}\" alt=\"Logo EDF\" class=\"logo\" style=\"max-height: 32px !important; width: auto !important; display: block !important; margin: 0 auto !important;\">
+                                {% else %}
+                                    <img src=\"{{ absolute_url(asset('images/logos/edf.png')) }}\" alt=\"Logo EDF\" class=\"logo\" style=\"max-height: 32px !important; width: auto !important; display: block !important; margin: 0 auto !important;\">
+                                {% endif %}
+                            </td>
+                            <td class=\"title-cell\" style=\"padding-left: 20px !important; vertical-align: middle !important;\">
+                                <h1 style=\"margin: 0 !important; font-size: 20px !important; font-weight: 600 !important; color: #2c384e !important; letter-spacing: 0.3px !important;\">Guide du Nouvel Arrivant</h1>
+                                <p style=\"margin: 0 !important; font-size: 13px !important; font-weight: 400 !important; color: #6c757d !important; letter-spacing: 0.3px !important;\">Plateforme de gestion des carnets de compagnonnage</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Header banner premium -->
+                <div class=\"header-banner-wrapper\" style=\"background: #3d5f9e !important;\">
+                    <!-- Structure table pour badge flottant Gmail -->
+                    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; position: relative !important;\">
+                        <tr>
+                            <td style=\"padding: 35px 30px !important; text-align: center !important; color: #ffffff !important; vertical-align: middle !important;\">
+                                <h2 style=\"margin: 0 !important; font-size: 26px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: #ffffff !important; font-family: 'Segoe UI', Arial, sans-serif !important;\">À valider</h2>
+                                <p style=\"margin: 8px 0 0 !important; font-size: 15px !important; color: rgba(255,255,255,0.9) !important; font-family: 'Segoe UI', Arial, sans-serif !important; font-weight: 400 !important;\">Demande de validation en attente</p>
+                            </td>
+                            <td style=\"width: 140px !important; text-align: right !important; padding: 20px 25px !important; vertical-align: top !important;\">
+                                <!-- Badge Gmail compatible -->
+                                <div style=\"background: #ffffff !important; color: #2c4a80 !important; border-radius: 25px !important; padding: 10px 16px !important; font-size: 9px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.8px !important; border: 2px solid #ffffff !important; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; display: inline-block !important; font-family: Arial, sans-serif !important; white-space: nowrap !important; margin-top: -10px !important;\">
+                                    <span style=\"display: inline-block !important; width: 6px !important; height: 6px !important; background: #28a745 !important; border-radius: 50% !important; margin-right: 8px !important; vertical-align: middle !important;\"></span><span style=\"vertical-align: middle !important;\">Action requise</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Main floating card -->
+            <div class=\"main-card\">
+                <div class=\"card-header\" style=\"background: rgba(61, 95, 158, 0.04); padding: 0; border-bottom: 1px solid rgba(61, 95, 158, 0.08);\">
+                    <table class=\"card-header-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                        <tr>
+                            <td class=\"greeting-cell\" style=\"padding: 40px 40px 35px; vertical-align: middle;\">
+                                <h2 class=\"greeting\" style=\"font-size: 22px; font-weight: 600; margin: 0; color: #2c384e; letter-spacing: 0.4px; line-height: 1.3;\">Bonjour {{ mentor_firstname }},</h2>
+                                <div style=\"width: 60px; height: 3px; background: linear-gradient(90deg, #3d5f9e 0%, #2c4a80 100%); border-radius: 2px; margin-top: 12px;\"></div>
+                            </td>
+                            {% if urgency_level.text %}
+                            <td style=\"width: 120px !important; text-align: center !important; padding: 40px 20px 35px !important; vertical-align: middle !important;\">
+                                {% if urgency_level.class == 'important' %}
+                                <div style=\"background-color: rgb(250, 141, 52) !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    {{ urgency_level.text }}
+                                </div>
+                                {% elseif urgency_level.class == 'urgent' %}
+                                <div style=\"background-color: #dc3545 !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    {{ urgency_level.text }}
+                                </div>
+                                {% else %}
+                                <div style=\"background-color: #198754 !important; font-size: 10px !important; text-transform: uppercase !important; border-radius: 20px !important; font-weight: 700 !important; letter-spacing: 0.8px !important; color: white !important; box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important; display: inline-block !important; padding: 6px 14px !important; font-family: Arial, sans-serif !important;\">
+                                    {{ urgency_level.text }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class=\"card-body\" style=\"padding: 30px 30px 5px 30px !important;\">
+                    <!-- Statistiques -->
+                    <div class=\"stats-container\" style=\"text-align: center !important; margin: 20px auto 30px !important; background: rgba(61, 95, 158, 0.03) !important; border-radius: 12px !important; max-width: 180px !important; padding: 15px !important;\">
+                        <div class=\"stat-box\" style=\"background: #f8f9fa !important; border-radius: 12px !important; padding: 20px 15px !important; text-align: center !important; border: 1px solid rgba(61, 95, 158, 0.1) !important; box-shadow: 0 2px 8px rgba(61, 95, 158, 0.05) !important;\">
+                            <div class=\"stat-number\" style=\"font-size: 32px; font-weight: 700; color: #3d5f9e; margin-bottom: 5px;\">{{ pending_modules_count }}</div>
+                            <div class=\"stat-label\" style=\"font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; font-weight: 600;\">{{ modules_text }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification section élégante -->
+                    <div class=\"notification-box\" style=\"margin: 30px 0 35px; padding: 0; background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); border: 1px solid rgba(61, 95, 158, 0.15); border-radius: 12px; overflow: hidden;\">
+                        <div class=\"notification-content\" style=\"padding: 25px 30px;\">
+                            <!-- Structure table Gmail pour notification -->
+                            <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important;\">
+                                <tr>
+                                    <td style=\"width: 50px !important; text-align: center !important; vertical-align: top !important; padding-right: 15px !important;\">
+                                        <!-- Icône centrée Gmail -->
+                                        <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 40px !important; height: 40px !important; background: #3d5f9e !important; border-radius: 50% !important; margin: 2px auto 0 !important;\">
+                                            <tr>
+                                                <td style=\"width: 40px !important; height: 40px !important; text-align: center !important; vertical-align: middle !important; color: white !important; font-weight: 700 !important; font-size: 18px !important; font-family: Arial, sans-serif !important; line-height: 40px !important;\">!</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style=\"vertical-align: top !important; padding-top: 2px !important;\">
+                                        <div style=\"font-size: 16px !important; font-weight: 700 !important; color: #2c4a80 !important; margin: 0 0 8px !important; letter-spacing: 0.3px !important; font-family: Arial, sans-serif !important;\">Action requise</div>
+                                        <p style=\"margin: 0 !important; font-size: 14px !important; line-height: 1.6 !important; color: #4a5568 !important; font-family: Arial, sans-serif !important;\">
+                                            <span style=\"color: #2c4a80 !important; font-weight: 600 !important;\">{{ owner_fullname }}</span> attend votre validation 
+                                            pour progresser dans son parcours de formation.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline compatible avec tous les clients email -->
+                    <div class=\"timeline\" style=\"margin: 40px 0 35px !important;\">
+                        <table class=\"timeline-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important;\">
+                            <tr>
+                                <td class=\"timeline-dot-cell\" style=\"width: 30px; text-align: center; padding-right: 15px; vertical-align: top;\">
+                                    <div class=\"timeline-dot\" style=\"width: 16px; height: 16px; border-radius: 50%; background: #3d5f9e; border: 3px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); display: inline-block; margin-top: 2px;\"></div>
+                                </td>
+                                <td style=\"vertical-align: top;\">
+                                    <div class=\"timeline-content\" style=\"background: #f8f9fa !important; border-left: 3px solid #3d5f9e !important; padding: 20px !important; border-radius: 0 8px 8px 0 !important; margin-left: 5px !important;\">
+                                        <h4 class=\"timeline-title\" style=\"margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #3d5f9e;\">Modules en attente</h4>
+                                        <p class=\"timeline-text\" style=\"margin: 0; font-size: 14px; color: #2c384e; line-height: 1.5;\">
+                                            {{ number_text|title }} {{ modules_text }} {{ verb_text }} en attente de validation 
+                                            dans le carnet de compagnonnage.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <table class=\"timeline-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100% !important; border-collapse: collapse !important; margin-bottom: 0 !important;\">
+                            <tr>
+                                <td class=\"timeline-dot-cell\" style=\"width: 30px; text-align: center; padding-right: 15px; vertical-align: top;\">
+                                    <div class=\"timeline-dot\" style=\"width: 16px; height: 16px; border-radius: 50%; background: #3d5f9e; border: 3px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); display: inline-block; margin-top: 2px;\"></div>
+                                </td>
+                                <td style=\"vertical-align: top;\">
+                                    <div class=\"timeline-content\" style=\"background: #f8f9fa !important; border-left: 3px solid #3d5f9e !important; padding: 20px !important; border-radius: 0 8px 8px 0 !important; margin-left: 5px !important;\">
+                                        <h4 class=\"timeline-title\" style=\"margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #3d5f9e;\">Action requise</h4>
+                                        <p class=\"timeline-text\" style=\"margin: 0; font-size: 14px; color: #2c384e; line-height: 1.5;\">
+                                            Une validation rapide permet à votre apprenant(e) de progresser efficacement
+                                            dans son parcours de formation.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- CTA Button -->
+                    <div class=\"button-container\" style=\"text-align: center !important; margin: 40px 0 35px !important;\">
+                        <a href=\"https://gna.papoel.fr/dashboard/{{ mentor_nni }}/\" class=\"button\" style=\"display: inline-block !important; background-color: #2c4a80 !important; color: #ffffff !important; padding: 16px 32px !important; border-radius: 8px !important; font-weight: 600 !important; text-decoration: none !important; font-size: 15px !important; box-shadow: 0 4px 12px rgba(44, 74, 128, 0.25) !important; letter-spacing: 0.3px !important;\">
+                            🚀 Accéder à mon espace mentor
+                        </a>
+                    </div>
+                    
+                    <!-- Note box compatible avec tous les clients email -->
+                    <div class=\"note-box\" style=\"margin: 35px 0 30px !important; background-color: #fff9e6 !important; border: 1px solid rgba(255, 193, 7, 0.3) !important; border-radius: 8px !important; padding: 0 !important; position: relative !important;\">
+                        <table class=\"note-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                            <tr>
+                                <td class=\"note-icon-cell\" style=\"width: 50px !important; text-align: center !important; padding: 20px 0 20px 20px !important; position: relative !important; vertical-align: top !important;\">
+                                    <div class=\"note-icon\" style=\"width: 24px !important; height: 24px !important; background-color: #ffc107a5 !important; border-radius: 50% !important; display: inline-block !important; text-align: center !important; line-height: 24px !important; color: white !important; font-size: 14px !important; font-weight: bold !important; margin-top: -12px !important; position: relative !important; z-index: 2 !important; padding: 5px !important;\">💡</div>
+                                </td>
+                                <td class=\"note-content-cell\" style=\"padding: 20px 20px 20px 10px !important; vertical-align: top !important;\">
+                                    <p class=\"note-content\" style=\"font-style: italic !important; color: #856404 !important; font-size: 14px !important; line-height: 1.6 !important; margin: 0 !important;\">
+                                        Votre accompagnement est essentiel pour la progression et la motivation de {{ owner_fullname }}.
+                                        Chaque validation est une étape importante dans son développement professionnel.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- Signature élégante -->
+                    <div class=\"signature\" style=\"padding-top: 25px; border-top: 1px solid rgba(61, 95, 158, 0.1);\">
+                        <table class=\"signature-table\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 100%; border-collapse: collapse;\">
+                            <tr>
+                                <td style=\"width: 55px !important; text-align: center !important; padding-right: 20px !important; vertical-align: middle !important;\">
+                                    <!-- Logo GNA centré Gmail -->
+                                    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width: 45px !important; height: 45px !important; background: #3d5f9e !important; border-radius: 50% !important; margin: 0 auto !important;\">
+                                        <tr>
+                                            <td style=\"width: 45px !important; height: 45px !important; text-align: center !important; vertical-align: middle !important; color: white !important; font-weight: 700 !important; font-size: 13px !important; letter-spacing: 0.5px !important; font-family: Arial, sans-serif !important; line-height: 45px !important;\">GNA</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class=\"signature-content\" style=\"vertical-align: middle; padding-left: 5px;\">
+                                    <p class=\"signature-text\" style=\"margin: 0 0 4px; color: #2c384e; font-size: 15px; font-weight: 600;\">Cordialement,</p>
+                                    <p class=\"team-signature\" style=\"margin: 0; color: #6c757d; font-size: 14px; line-height: 1.4;\">L'équipe de gestion des carnets de compagnonnage.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer élégant et organisé -->  
+            <div class=\"footer\" style=\"background: #f8f9fa; padding: 30px 35px; margin-top: 20px; border-top: 1px solid rgba(61, 95, 158, 0.08);\">
+                <!-- Message automatique élégant -->
+                <div class=\"footer-note\" style=\"text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 12px; box-shadow: 0 2px 8px rgba(255, 193, 7, 0.1);\">
+                    <div style=\"display: inline-flex; align-items: center; gap: 15px; max-width: 400px;\">
+                        <div style=\"width: 36px; height: 36px; background-color:transparent !important; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;\">
+                            <span style=\"font-size: 16px;\">⚠️</span>
+                        </div>
+                        <div class=\"footer-note-text\" style=\"text-align: left; line-height: 1.4;\">
+                            <strong style=\"color: #8b6914; font-size: 14px; display: block; font-weight: 600; margin-bottom: 2px;\">Message automatique</strong>
+                            <span style=\"color: #8b6914; font-size: 13px; opacity: 0.9;\">Envoyé chaque mercredi à 14h00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informations de contact -->
+                <div class=\"footer-info-wrapper\" style=\"text-align: center; max-width: 450px; margin: 0 auto;\">
+                    <div class=\"footer-info\" style=\"margin-bottom: 20px; line-height: 1.6; color: #6c757d; font-size: 14px;\">
+                        <strong style=\"color: #2c384e; font-weight: 600; display: block; margin-bottom: 8px;\">Merci de ne pas répondre directement à cet email.</strong>
+                        Pour toute assistance concernant les carnets de compagnonnage, contactez notre équipe support.
+                    </div>
+                    
+                    <div class=\"recipient-tag\" style=\"display: inline-block; padding: 6px 16px; background: #ffffff; border: 1px solid #e9ecef; border-radius: 25px; font-size: 11px; color: #6c757d; box-shadow: 0 1px 3px rgba(0,0,0,0.05);\">pascal.briffard@edf.fr</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>", "mail/mentorReminderEmailTemplate.html.twig", "/Users/papoel/Documents/sandbox/side_project/GuideNouvelArrivant/templates/mail/mentorReminderEmailTemplate.html.twig");
+    }
+}
