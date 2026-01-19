@@ -371,8 +371,7 @@ db-fixtures: ## Charge les fixtures
 db-entity: ## Génère les entités
 	$(CONSOLE) make:entity
 
-db-reset: db-drop db-create db-migrate ## Réinitialise la base de données
-	@$(MAKE) db-fixtures
+db-reset: db-drop db-create db-migrate db-fixtures ## Réinitialise la base de données
 
 db-test: ## Crée la base de données pour les tests
 	@echo "$(YELLOW)🌱 Suppression de la base de données pour les tests...$(NC)"
