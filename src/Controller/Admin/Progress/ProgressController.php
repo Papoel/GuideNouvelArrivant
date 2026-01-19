@@ -14,7 +14,7 @@ use App\Services\Admin\Progress\ProgressAccessService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
@@ -26,8 +26,7 @@ class ProgressController extends AbstractController
         private readonly ProgressAccessService $progressAccessService,
         private readonly UserProgressServiceInterface $userProgressService,
         private readonly FeedbackServiceInterface $feedbackService
-    ) {
-    }
+    ) {}
 
     /** Affiche le tableau de bord global de progression. */
     #[Route('/', name: 'dashboard', methods: ['GET'])]
