@@ -26,27 +26,31 @@ class LogbookProgressServiceTest extends TestCase
 
     private function createLogbookWithModules(array $modules, array $actions = [], ?User $user = null): Logbook
     {
-        $logbook = $this->createMock(type: Logbook::class);
-        $theme = $this->createMock(type: Theme::class);
-        $logbook->method(constraint: 'getThemes')->willReturn(value: new ArrayCollection(elements: [$theme]));
-        $theme->method(constraint: 'getModules')->willReturn(value: new ArrayCollection(elements: $modules));
+        $theme = $this->createConfiguredMock(Theme::class, [
+            'getModules' => new ArrayCollection(elements: $modules),
+        ]);
+
+        $logbookConfig = [
+            'getThemes' => new ArrayCollection(elements: [$theme]),
+        ];
 
         if ($user) {
-            $logbook->method(constraint: 'getOwner')->willReturn(value: $user);
-            $user->method('getActions')->willReturn(value: new ArrayCollection(elements: $actions));
+            $configuredUser = $this->createConfiguredMock(User::class, [
+                'getActions' => new ArrayCollection(elements: $actions),
+            ]);
+            $logbookConfig['getOwner'] = $configuredUser;
         }
 
-        return $logbook;
+        return $this->createConfiguredMock(Logbook::class, $logbookConfig);
     }
 
     private function createAction(Module $module, ?DateTime $agentValidatedAt = null, ?DateTime $mentorValidatedAt = null): Action
     {
-        $action = $this->createMock(type: Action::class);
-        $action->method(constraint: 'getModule')->willReturn(value: $module);
-        $action->method(constraint: 'getAgentValidatedAt')->willReturn(value: $agentValidatedAt);
-        $action->method(constraint: 'getMentorValidatedAt')->willReturn(value: $mentorValidatedAt);
-
-        return $action;
+        return $this->createConfiguredMock(Action::class, [
+            'getModule' => $module,
+            'getAgentValidatedAt' => $agentValidatedAt,
+            'getMentorValidatedAt' => $mentorValidatedAt,
+        ]);
     }
 
     #[Test] public function calculateLogbookProgressWithNoModules(): void

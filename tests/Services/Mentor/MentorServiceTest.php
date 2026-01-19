@@ -75,8 +75,9 @@ class MentorServiceTest extends TestCase
         $user->setMentor(mentor: $mentor);
 
         // Créer un Logbook et assigner l'apprenti à ce carnet
-        $logbook = $this->createMock(type: Logbook::class);
-        $logbook->method(constraint: 'getOwner')->willReturn(value: $user); // Un seul apprenti
+        $logbook = $this->createConfiguredMock(Logbook::class, [
+            'getOwner' => $user,
+        ]); // Un seul apprenti
 
         // Instancier le service ou la classe qui contient la méthode à tester
         $service = new MentorService(
@@ -102,7 +103,7 @@ class MentorServiceTest extends TestCase
         $mentorNni = $mentor->getNni();  // Utilisation du NNI du mentor créé
 
         // Créez un apprenant fictif (mock)
-        $apprenantMock = $this->createMock(type: User::class);
+        $apprenantMock = $this->createConfiguredMock(User::class, []);
 
         // Simulez le comportement du repository pour renvoyer un apprenant associé au mentor
         $this->userRepository->method(constraint: 'findApprenantByMentorNni')
@@ -189,14 +190,17 @@ class MentorServiceTest extends TestCase
         $mentorNni = 'E54681';
 
         // Créez un apprenant fictif avec un mentor différent
-        $apprenant = $this->createMock(type: User::class);
-        $mentor = $this->createMock(type: User::class);
-        $mentor->method(constraint: 'getNni')->willReturn(value: 'wrongMentorNni');
-        $apprenant->method(constraint: 'getMentor')->willReturn(value: $mentor);
+        $mentor = $this->createConfiguredMock(User::class, [
+            'getNni' => 'wrongMentorNni',
+        ]);
+        $apprenant = $this->createConfiguredMock(User::class, [
+            'getMentor' => $mentor,
+        ]);
 
         // Créez un carnet fictif
-        $logbook = $this->createMock(type: Logbook::class);
-        $logbook->method(constraint: 'getOwner')->willReturn(value: $apprenant);
+        $logbook = $this->createConfiguredMock(Logbook::class, [
+            'getOwner' => $apprenant,
+        ]);
 
         // Instanciation du service
         $mentorService = new MentorService(
@@ -214,25 +218,24 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function getPadawanData(): void
     {
-        $mentor = $this->createMock(type: User::class);
-        $logbook = $this->createMock(type: Logbook::class);
-        $padawan = $this->createMock(type: User::class);
-        $action = $this->createMock(type: Action::class);
-
-        // Simuler que le padawan est associé au carnet
-        $logbook->method(constraint: 'getOwner')->willReturn(value: $padawan);
-
-        // Simuler que le padawan a bien ce mentor
-        $padawan->method(constraint: 'getMentor')->willReturn(value: $mentor);
-
-        // Créer des actions fictives pour le carnet
+        $mentor = $this->createConfiguredMock(User::class, []);
+        $theme = $this->createConfiguredMock(Theme::class, []);
+        $module = $this->createConfiguredMock(Module::class, [
+            'getTheme' => $theme,
+        ]);
+        $action = $this->createConfiguredMock(Action::class, [
+            'getModule' => $module,
+        ]);
         $actions = [$action];
-        $logbook->method(constraint: 'getActions')->willReturn(value: new ArrayCollection(elements: $actions));
 
-        // Simuler la récupération du module et du thème des actions
-        $module = $this->createMock(type: Module::class);
-        $module->method(constraint: 'getTheme')->willReturn(value: $this->createMock(type: Theme::class));
-        $action->method(constraint: 'getModule')->willReturn(value: $module);
+        $padawan = $this->createConfiguredMock(User::class, [
+            'getMentor' => $mentor,
+        ]);
+
+        $logbook = $this->createConfiguredMock(Logbook::class, [
+            'getOwner' => $padawan,
+            'getActions' => new ArrayCollection(elements: $actions),
+        ]);
 
         // Instanciation du service
         $mentorService = new MentorService(
