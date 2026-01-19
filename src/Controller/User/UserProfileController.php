@@ -17,7 +17,8 @@ class UserProfileController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     #[Route('/settings', name: 'app_user_profile_settings')]
     public function settings(Request $request): Response

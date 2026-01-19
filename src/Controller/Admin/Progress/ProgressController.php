@@ -26,7 +26,8 @@ class ProgressController extends AbstractController
         private readonly ProgressAccessService $progressAccessService,
         private readonly UserProgressServiceInterface $userProgressService,
         private readonly FeedbackServiceInterface $feedbackService
-    ) {}
+    ) {
+    }
 
     /** Affiche le tableau de bord global de progression. */
     #[Route('/', name: 'dashboard', methods: ['GET'])]
