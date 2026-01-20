@@ -1,3 +1,4 @@
+import './stimulus_bootstrap.js';
 import "./bootstrap.js";
 // Fichier JS global
 

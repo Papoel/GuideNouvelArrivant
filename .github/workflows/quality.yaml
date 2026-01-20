@@ -6,7 +6,7 @@ jobs:
         name: Quality Analysis
         runs-on: ubuntu-latest
         container:
-            image: jakzal/phpqa:php8.3
+            image: jakzal/phpqa:php8.4
             options: --user root
 
         steps:
@@ -31,9 +31,9 @@ jobs:
               uses: actions/cache@v4
               with:
                   path: ${{ env.COMPOSER_CACHE_DIR }}
-                  key: php8.3-composer-${{ hashFiles('**/composer.json') }}
+                  key: php8.4-composer-${{ hashFiles('**/composer.json') }}
                   restore-keys: |
-                      php8.3-composer-latest-
+                      php8.4-composer-latest-
 
             - name: Validate composer.json
               run: composer validate --strict

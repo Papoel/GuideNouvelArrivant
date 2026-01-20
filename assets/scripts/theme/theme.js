@@ -1,12 +1,12 @@
 /*----------------------------------------------
 # 1. Sidebar TOGGLE
 ----------------------------------------------*/
-document.addEventListener('turbo:load', function() {
-    let sidebarToggle = document.querySelector('.toggle-sidebar-btn');
+document.addEventListener("DOMContentLoaded", function () {
+    let sidebarToggle = document.querySelector(".toggle-sidebar-btn");
 
     if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-            document.body.classList.toggle('toggle-sidebar');
+        sidebarToggle.addEventListener("click", function () {
+            document.body.classList.toggle("toggle-sidebar");
         });
     }
 });
@@ -131,7 +131,6 @@ document.addEventListener('turbo:load', function() {
     });
 });*/
 
-
 /*----------------------------------------------
 # 5. Modal
 ----------------------------------------------*/
@@ -225,7 +224,6 @@ document.addEventListener('turbo:load', function() {
         });
     });
 });*/
-
 
 /*let saveBtn = document.querySelector('#action_form_submit');*/
 

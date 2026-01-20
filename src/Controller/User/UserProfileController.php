@@ -8,9 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/profile')]
 #[IsGranted('ROLE_USER')]
 class UserProfileController extends AbstractController
 {
@@ -19,7 +20,7 @@ class UserProfileController extends AbstractController
     ) {
     }
 
-    #[Route('/profile/settings', name: 'app_user_profile_settings')]
+    #[Route('/settings', name: 'app_user_profile_settings')]
     public function settings(Request $request): Response
     {
         /** @var User $user */
@@ -34,7 +35,7 @@ class UserProfileController extends AbstractController
             return $this->redirectToRoute(
                 route: 'dashboard_index',
                 parameters: [
-                'nni' => $user->getNni(),
+                    'nni' => $user->getNni(),
                 ]
             );
         }
@@ -42,8 +43,8 @@ class UserProfileController extends AbstractController
         return $this->render(
             view: 'app/profile/settings.html.twig',
             parameters: [
-            'user' => $user,
-            'form' => $form->createView(),
+                'user' => $user,
+                'form' => $form->createView(),
             ]
         );
     }

@@ -285,25 +285,25 @@ class DashboardServiceTest extends WebTestCase
 
     private function createMockLogbook(): Logbook & MockObject
     {
-        return $this->createMock(type: Logbook::class);
+        return $this->createConfiguredMock(Logbook::class, []);
     }
 
     private function createMockTheme(): Theme & MockObject
     {
-        return $this->createMock(type: Theme::class);
+        return $this->createConfiguredMock(Theme::class, []);
     }
 
     private function createMockModule(): Module & MockObject
     {
-        return $this->createMock(type: Module::class);
+        return $this->createConfiguredMock(Module::class, []);
     }
 
     private function createMockAction($user): Action
     {
-        $action = $this->createMock(type: Action::class);
-        $action->method(constraint: 'getUser')->willReturn(value: $user);
-        $action->method(constraint: 'getId')->willReturn(value: Uuid::v7());
-        return $action;
+        return $this->createConfiguredMock(Action::class, [
+            'getUser' => $user,
+            'getId' => Uuid::v7(),
+        ]);
     }
 
     private function invokePrivateMethod(string $methodName, array $parameters = []): mixed

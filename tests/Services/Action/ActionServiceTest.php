@@ -30,7 +30,7 @@ class ActionServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        // Mocks des dépendances
+        // Mocks des dépendances (compatible PHPUnit 13)
         $this->actionRepository = $this->createMock(type: ActionRepository::class);
         $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
         $this->security = $this->createMock(type: Security::class);

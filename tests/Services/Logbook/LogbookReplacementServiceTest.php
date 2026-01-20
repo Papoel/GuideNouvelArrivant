@@ -37,22 +37,21 @@ class LogbookReplacementServiceTest extends TestCase
 
     private function createLogbookWithOwner(User $owner, array $themes = []): Logbook
     {
-        $logbook = $this->createMock(type: Logbook::class);
-        $logbook->method(constraint: 'getOwner')->willReturn(value: $owner);
-        $logbook->method(constraint: 'getThemes')->willReturn(value: new ArrayCollection(elements: $themes));
-
-        return $logbook;
+        return $this->createConfiguredMock(Logbook::class, [
+            'getOwner' => $owner,
+            'getThemes' => new ArrayCollection(elements: $themes),
+        ]);
     }
 
     #[Test] public function handleExistingLogbookReturnsTrueWhenLogbookExists(): void
     {
-        $owner = $this->createMock(type: User::class);
+        $owner = $this->createConfiguredMock(User::class, []);
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'un logbook existant pour le même owner
         $this->logbookRepository->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
-            ->willReturn(value: $this->createMock(type: Logbook::class));
+            ->willReturn(value: $this->createConfiguredMock(Logbook::class, []));
 
         $result = $this->service->handleExistingLogbook(newLogbook: $newLogbook);
 
@@ -61,7 +60,7 @@ class LogbookReplacementServiceTest extends TestCase
 
     #[Test] public function handleExistingLogbookReturnsFalseWhenLogbookDoesNotExist(): void
     {
-        $owner = $this->createMock(type: User::class);
+        $owner = $this->createConfiguredMock(User::class, []);
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'aucun logbook existant pour le même owner
@@ -76,10 +75,10 @@ class LogbookReplacementServiceTest extends TestCase
 
     #[Test] public function deleteExistingLogbookRemovesLogbookWhenItExists(): void
     {
-        $owner = $this->createMock(type: User::class);
-        $theme = $this->createMock(type: Theme::class);
+        $owner = $this->createConfiguredMock(User::class, []);
+        $theme = $this->createConfiguredMock(Theme::class, []);
         $newLogbook = $this->createLogbookWithOwner(owner: $owner, themes: [$theme]);
-        $existingLogbook = $this->createMock(type: Logbook::class);
+        $existingLogbook = $this->createConfiguredMock(Logbook::class, []);
 
         // Simulation d'un logbook existant
         $this->logbookRepository->method(constraint: 'findOneBy')
@@ -96,7 +95,7 @@ class LogbookReplacementServiceTest extends TestCase
 
     #[Test] public function deleteExistingLogbookDoesNothingWhenNoExistingLogbook(): void
     {
-        $owner = $this->createMock(type: User::class);
+        $owner = $this->createConfiguredMock(User::class, []);
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'aucun logbook existant pour le même owner
