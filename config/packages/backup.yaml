@@ -1,0 +1,18 @@
+parameters:
+    backup.directory: '%kernel.project_dir%/var/backups'
+    backup.schedules:
+        daily:
+            retention: 7
+            hour: '02:00'
+        weekly:
+            retention: 4
+            hour: '03:00'
+            day: 'sunday'
+        monthly:
+            retention: 12
+            hour: '04:00'
+            day: 'last'
+        annual:
+            retention: 5
+            hour: '05:00'
+            date: '12-31'

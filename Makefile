@@ -1,6 +1,6 @@
 
 # eCommerce - Makefile
-.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull fix-doc-comments
+.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull fix-doc-comments backup-daily backup-daily-force backup-weekly backup-weekly-force backup-monthly backup-monthly-force backup-annual backup-annual-force backup-all backup-all-force backup-list backup-list-daily backup-list-weekly backup-list-monthly backup-list-annual backup-restore backup-restore-latest backup-restore-latest-force backup-restore-force backup-delete backup-delete-daily backup-delete-weekly backup-delete-monthly backup-delete-annual backup-delete-old backup-delete-old-30 backup-delete-daily-force backup-delete-weekly-force backup-delete-monthly-force backup-delete-annual-force backup-delete-old-force backup-help backup-status backup-check-schedule backup-cleanup backup-test
 
 # Définition des variables
 ENABLE_PSALM := 0  # Définissez à 0 pour désactiver l'analyse Psalm
@@ -15,6 +15,7 @@ NC = \033[0m
 # Variables
 SYMFONY = symfony
 CONSOLE = $(SYMFONY) console
+BIN = php bin/console
 COMPOSER = composer
 PHP = php
 NPM = npm
@@ -533,6 +534,183 @@ pull: ## Bascule sur Main, met à jour le dépôt et optionnellement supprime un
 			fi; \
 		fi'
 
+## —— 🗄️  Backup ————————————————————————————————————————————————————————————————
+
+## Création de sauvegardes
+backup-daily: ## Créer une sauvegarde quotidienne (si planifiée)
+	$(BIN) app:backup:create daily
+
+backup-daily-force: ## Forcer une sauvegarde quotidienne
+	$(BIN) app:backup:create daily --force
+
+backup-weekly: ## Créer une sauvegarde hebdomadaire (si planifiée)
+	$(BIN) app:backup:create weekly
+
+backup-weekly-force: ## Forcer une sauvegarde hebdomadaire
+	$(BIN) app:backup:create weekly --force
+
+backup-monthly: ## Créer une sauvegarde mensuelle (si planifiée)
+	$(BIN) app:backup:create monthly
+
+backup-monthly-force: ## Forcer une sauvegarde mensuelle
+	$(BIN) app:backup:create monthly --force
+
+backup-annual: ## Créer une sauvegarde annuelle (si planifiée)
+	$(BIN) app:backup:create annual
+
+backup-annual-force: ## Forcer une sauvegarde annuelle
+	$(BIN) app:backup:create annual --force
+
+backup-all: ## Créer toutes les sauvegardes planifiées selon le calendrier
+	$(BIN) app:backup:create --all
+
+backup-all-force: ## Forcer la création de toutes les sauvegardes (ignore le calendrier)
+	$(BIN) app:backup:create --all --force
+
+## Consultation des sauvegardes
+backup-list: ## Afficher toutes les sauvegardes disponibles
+	$(BIN) app:backup:list
+
+backup-list-daily: ## Afficher uniquement les sauvegardes quotidiennes
+	$(BIN) app:backup:list --type=daily
+
+backup-list-weekly: ## Afficher uniquement les sauvegardes hebdomadaires
+	$(BIN) app:backup:list --type=weekly
+
+backup-list-monthly: ## Afficher uniquement les sauvegardes mensuelles
+	$(BIN) app:backup:list --type=monthly
+
+backup-list-annual: ## Afficher uniquement les sauvegardes annuelles
+	$(BIN) app:backup:list --type=annual
+
+## Restauration de sauvegardes
+backup-restore: ## Restaurer une sauvegarde (mode interactif avec choix)
+	$(BIN) app:backup:restore
+
+backup-restore-latest: ## Restaurer la dernière sauvegarde (avec confirmation)
+	$(BIN) app:backup:restore --latest
+
+backup-restore-latest-force: ## ⚠️  DANGER: Restaurer la dernière sauvegarde SANS confirmation
+	@echo "⚠️  ATTENTION: Cette action va écraser la base de données actuelle!"
+	@echo "⚠️  Appuyez sur Ctrl+C pour annuler ou Entrée pour continuer..."
+	@read confirm
+	$(BIN) app:backup:restore --latest --yes
+
+backup-restore-force: ## ⚠️  DANGER: Restaurer une sauvegarde SANS confirmation (mode interactif)
+	@echo "⚠️  ATTENTION: Cette action va écraser la base de données actuelle!"
+	@echo "⚠️  Appuyez sur Ctrl+C pour annuler ou Entrée pour continuer..."
+	@read confirm
+	$(BIN) app:backup:restore --yes
+
+## Suppression de sauvegardes
+backup-delete: ## Supprimer une sauvegarde (mode interactif avec choix)
+	$(BIN) app:backup:delete
+
+backup-delete-daily: ## Supprimer toutes les sauvegardes quotidiennes (avec confirmation)
+	$(BIN) app:backup:delete --type=daily
+
+backup-delete-weekly: ## Supprimer toutes les sauvegardes hebdomadaires (avec confirmation)
+	$(BIN) app:backup:delete --type=weekly
+
+backup-delete-monthly: ## Supprimer toutes les sauvegardes mensuelles (avec confirmation)
+	$(BIN) app:backup:delete --type=monthly
+
+backup-delete-annual: ## Supprimer toutes les sauvegardes annuelles (avec confirmation)
+	$(BIN) app:backup:delete --type=annual
+
+backup-delete-old: ## Supprimer les sauvegardes de plus de 90 jours (avec confirmation)
+	$(BIN) app:backup:delete --older-than=90
+
+backup-delete-old-30: ## Supprimer les sauvegardes de plus de 30 jours (avec confirmation)
+	$(BIN) app:backup:delete --older-than=30
+
+backup-delete-daily-force: ## ⚠️  Supprimer toutes les sauvegardes quotidiennes SANS confirmation
+	$(BIN) app:backup:delete --type=daily --yes
+
+backup-delete-weekly-force: ## ⚠️  Supprimer toutes les sauvegardes hebdomadaires SANS confirmation
+	$(BIN) app:backup:delete --type=weekly --yes
+
+backup-delete-monthly-force: ## ⚠️  Supprimer toutes les sauvegardes mensuelles SANS confirmation
+	$(BIN) app:backup:delete --type=monthly --yes
+
+backup-delete-annual-force: ## ⚠️  Supprimer toutes les sauvegardes annuelles SANS confirmation
+	$(BIN) app:backup:delete --type=annual --yes
+
+backup-delete-old-force: ## ⚠️  Supprimer les sauvegardes de plus de 90 jours SANS confirmation
+	$(BIN) app:backup:delete --older-than=90 --yes
+
+## Commandes d'aide et de statut
+backup-help: ## Afficher l'aide complète sur les commandes de sauvegarde
+	@echo ""
+	@echo "📦 SYSTÈME DE SAUVEGARDE DE BASE DE DONNÉES"
+	@echo "============================================="
+	@echo ""
+	@echo "📁 CRÉATION:"
+	@echo "  make backup-daily              - Sauvegarde quotidienne (si planifiée)"
+	@echo "  make backup-daily-force        - Force une sauvegarde quotidienne"
+	@echo "  make backup-weekly             - Sauvegarde hebdomadaire (si planifiée)"
+	@echo "  make backup-monthly            - Sauvegarde mensuelle (si planifiée)"
+	@echo "  make backup-annual             - Sauvegarde annuelle (si planifiée)"
+	@echo "  make backup-all                - Toutes les sauvegardes planifiées"
+	@echo "  make backup-all-force          - Force toutes les sauvegardes"
+	@echo ""
+	@echo "📋 CONSULTATION:"
+	@echo "  make backup-list               - Liste toutes les sauvegardes"
+	@echo "  make backup-list-daily         - Liste les sauvegardes quotidiennes"
+	@echo "  make backup-list-weekly        - Liste les sauvegardes hebdomadaires"
+	@echo "  make backup-list-monthly       - Liste les sauvegardes mensuelles"
+	@echo "  make backup-list-annual        - Liste les sauvegardes annuelles"
+	@echo ""
+	@echo "🔄 RESTAURATION:"
+	@echo "  make backup-restore            - Restaurer (choix interactif)"
+	@echo "  make backup-restore-latest     - Restaurer la plus récente (avec confirmation)"
+	@echo "  make backup-restore-latest-force - ⚠️  Restaurer sans confirmation"
+	@echo ""
+	@echo "🗑️  SUPPRESSION:"
+	@echo "  make backup-delete             - Supprimer (choix interactif)"
+	@echo "  make backup-delete-daily       - Supprimer toutes les quotidiennes"
+	@echo "  make backup-delete-old         - Supprimer sauvegardes > 90 jours"
+	@echo "  make backup-delete-old-30      - Supprimer sauvegardes > 30 jours"
+	@echo ""
+	@echo "⚠️  Les commandes avec -force ignorent les confirmations!"
+	@echo ""
+
+backup-status: ## Afficher le statut des sauvegardes (nombre par type)
+	@echo ""
+	@echo "📊 STATUT DES SAUVEGARDES"
+	@echo "========================="
+	@echo ""
+	@echo "Quotidiennes (daily):"
+	@$(BIN) app:backup:list --type=daily | grep -c "│" || echo "  0 sauvegarde"
+	@echo ""
+	@echo "Hebdomadaires (weekly):"
+	@$(BIN) app:backup:list --type=weekly | grep -c "│" || echo "  0 sauvegarde"
+	@echo ""
+	@echo "Mensuelles (monthly):"
+	@$(BIN) app:backup:list --type=monthly | grep -c "│" || echo "  0 sauvegarde"
+	@echo ""
+	@echo "Annuelles (annual):"
+	@$(BIN) app:backup:list --type=annual | grep -c "│" || echo "  0 sauvegarde"
+	@echo ""
+
+## Commandes de maintenance
+backup-check-schedule: ## Vérifier quelles sauvegardes doivent être effectuées
+	@echo "🔍 Vérification du calendrier de sauvegarde..."
+	@$(BIN) app:backup:create --all --dry-run 2>/dev/null || echo "Note: ajoutez --dry-run à la commande pour cette fonctionnalité"
+
+backup-cleanup: ## Nettoyer les anciennes sauvegardes (>90 jours)
+	@echo "🧹 Nettoyage des sauvegardes de plus de 90 jours..."
+	$(BIN) app:backup:delete --older-than=90
+
+## Test et développement
+backup-test: ## Créer une sauvegarde de test et l'afficher
+	@echo "🧪 Test du système de sauvegarde..."
+	$(BIN) app:backup:create daily --force
+	@echo ""
+	@echo "✅ Sauvegarde créée, voici la liste:"
+	$(BIN) app:backup:list
+	@echo ""
+	@echo "💡 Pour restaurer: make backup-restore-latest"
 
 ## —— 📜 Autres ————————————————————————————————————————————
 show-wip: ## Affiche les add effectués sur la branche | # git log main..emails --name-status --pretty=format:"Commit %h - %s%nAuthor: %an%nDate: %ad" --date=short

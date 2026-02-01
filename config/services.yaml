@@ -31,5 +31,10 @@ services:
     App\Services\Dashboard\DashboardDataProviderInterface:
         class: App\Services\Dashboard\DashboardDataProvider
 
+    # Backup Service
+    App\Services\Backup\BackupService:
+        arguments:
+            $databaseUrl: '%env(DATABASE_URL)%'
+
     # Ajouter cet alias pour le FixturesLoader
     # Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader: '@doctrine.fixtures.loader'
