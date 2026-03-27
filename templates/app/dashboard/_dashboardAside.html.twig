@@ -1,19 +1,24 @@
 <!-- ======= Sidebar ======= -->
-<aside id="sidebar" class="sidebar bg-white shadow-sm">
-    <div class="sidebar-header p-4 border-bottom">
-        <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}"
-           class="d-flex align-items-center text-decoration-none">
-            <i class="bi bi-speedometer2 fs-4 me-3 text-primary"></i>
-            <span class="fs-5 fw-bold text-dark">Tableau de bord</span>
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+            <div class="brand-text">
+                <h4 class="brand-title">Tableau de bord</h4>
+                <p class="brand-subtitle">Vue d'ensemble</p>
+            </div>
         </a>
     </div>
 
-    <div class="sidebar-content p-4">
-        <nav class="nav flex-column mb-4">
-            <a href="{{ path('pages_guide_technique') }}"
-               class="nav-link text-dark d-flex align-items-center py-2 px-3 rounded hover-bg-light">
-                <i class="bi bi-bookmark-check me-3 text-primary"></i>
-                <span class="fw-medium">Guide Technique</span>
+    <div class="sidebar-content">
+        <nav class="sidebar-nav">
+            <a href="{{ path('pages_guide_technique') }}" class="nav-item">
+                <div class="nav-icon">
+                    <i class="bi bi-bookmark-check"></i>
+                </div>
+                <span class="nav-label">Guide Technique</span>
             </a>
         </nav>
 
@@ -21,80 +26,85 @@
         {% if app.user.logbooks is defined and app.user.logbooks is not empty %}
             {% set logbooksProgress = get_logbooks_progress(app.user.logbooks) %}
             {% for logbookProgress in logbooksProgress %}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body p-4">
+                <div class="progress-card">
+                    <div class="progress-header">
+                        <div class="progress-icon">
+                            <i class="bi bi-journal-check"></i>
+                        </div>
+                        <h5 class="progress-title">Votre Progression</h5>
+                    </div>
 
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted fw-medium">Progression de l'agent</span>
-                                <span class="badge {{ logbookProgress.progress_class_agent }} rounded-pill">{{ logbookProgress.agent_progress }}%</span>
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <div class="progress-label-wrapper">
+                                <span class="progress-label">Progression de l'agent</span>
+                                <span class="progress-badge {{ logbookProgress.progress_class_agent }}">{{ logbookProgress.agent_progress }}%</span>
                             </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <small class="text-muted">Complété: {{ logbookProgress.completed_by_agent }}
-                                    / {{ logbookProgress.total_modules }}</small>
+                            <div class="progress-stats">
+                                <span class="stats-text">{{ logbookProgress.completed_by_agent }} / {{ logbookProgress.total_modules }} modules complétés</span>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted fw-medium">Validation du mentor</span>
+                        <div class="progress-divider"></div>
+
+                        <div class="progress-item">
+                            <div class="progress-label-wrapper">
+                                <span class="progress-label">Validation du tuteur</span>
                             </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <small class="text-muted">Validé: {{ logbookProgress.validated_by_mentor }}
-                                    / {{ logbookProgress.total_modules }}</small>
+                            <div class="progress-stats">
+                                <span class="stats-text">{{ logbookProgress.validated_by_mentor }} / {{ logbookProgress.total_modules }} modules validés</span>
                             </div>
                         </div>
 
-                        {% if logbookProgress.modules_awaiting_validation  > 0 %}
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge bg-warning text-dark rounded-pill">
-                                    {{ logbookProgress.modules_awaiting_validation }} en attente de validation
-                                </span>
+                        {% if logbookProgress.modules_awaiting_validation > 0 %}
+                            <div class="progress-alert alert-warning">
+                                <i class="bi bi-clock-history"></i>
+                                <span>{{ logbookProgress.modules_awaiting_validation }} en attente de validation</span>
                             </div>
                         {% else %}
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge bg-success rounded-pill text-light" style="letter-spacing: .5px">Aucun module en attente de validation</span>
+                            <div class="progress-alert alert-success">
+                                <i class="bi bi-check-circle"></i>
+                                <span>Aucun module en attente</span>
                             </div>
                         {% endif %}
-
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <div class="alert alert-info rounded-3" role="alert">
-                <i class="bi bi-info-circle me-2"></i>
-                Aucun carnet de progression disponible.
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+                <p class="empty-text">Aucun carnet de progression disponible.</p>
+            </div>
+        {% endif %}
+        {# TODO: P1: Lorsque je désigne un tuteur je dois lui affecter le ROLE_MENTOR avec un listener #}
+        {% if is_granted('ROLE_MENTOR') %}
+            <div class="mentor-section">
+                <div class="section-header">
+                    <h5 class="section-title">Actions Tuteurs</h5>
+                </div>
+                <div class="mentor-card">
+                    <a class="mentor-toggle" data-bs-toggle="collapse" href="#aside-crud" role="button"
+                       aria-expanded="false" aria-controls="aside-crud">
+                        <div class="toggle-icon">
+                            <i class="bi bi-file-ruled"></i>
+                        </div>
+                        <span class="toggle-label">Tutorat</span>
+                        <i class="bi bi-chevron-down toggle-chevron"></i>
+                    </a>
+                    <div class="collapse" id="aside-crud">
+                        <div class="mentor-links">
+                            <a href="{{ path('mentor_dashboard_index', {'nni': app.user.nni}) }}" class="mentor-link">
+                                <i class="bi bi-arrow-right-short"></i>
+                                <span>Carnets des Collaborateurs</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
-    {# TODO: P1: Lorsque je désigne un tuteur je dois lui affecter le ROLE_MENTOR avec un listener #}
-    {% if is_granted('ROLE_MENTOR') %}
-        <ul class="sidebar-nav">
-            <li class="nav-heading py-3">Actions tuteur</li>
-        </ul>
-        <div>
-            <section id="section-crud">
-                <p class="d-inline-flex gap-1">
-                    <a class="custom-link" data-bs-toggle="collapse" href="#aside-crud" role="button"
-                       aria-expanded="false" aria-controls="crud">
-                        <i class="bi bi-file-ruled me-2"></i>
-                        <span class="custom-title">Mentorat</span>
-                        <i class="bi bi-chevron-down chevron-icon ms-2"></i>
-                    </a>
-                </p>
-                <div class="collapse" id="aside-crud">
-                    <ul class="sidebar-nav" id="sidebar-nav-formalisation">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('mentor_dashboard_index', {'nni': app.user.nni}) }}">
-                                <i class="bi bi-caret-right"></i>
-                                Carnets des Collaborateurs
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-        </div>
-    {% endif %}
 </aside>
 <!-- End Sidebar-->
 
