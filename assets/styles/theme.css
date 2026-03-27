@@ -112,6 +112,8 @@ h6 {
     animation-fill-mode: both;
     border: 0;
     box-shadow: 0 5px 30px 0 rgba(82, 63, 105, 0.2);
+    z-index: 9999;
+    position: absolute;
 }
 
 .dropdown-menu .dropdown-header,
@@ -381,13 +383,19 @@ h6 {
 
 .header {
     transition: all 0.5s;
-    z-index: 997;
+    z-index: 9998;
     height: 60px;
     box-shadow: 0 2px 20px rgba(1, 41, 112, 0.1);
     background-color: #fff;
     padding-left: 20px;
+    position: relative;
+    pointer-events: auto;
     /* Toggle Sidebar Button */
     /* Search Bar */
+}
+
+.header * {
+    pointer-events: auto;
 }
 
 .header .toggle-sidebar-btn {

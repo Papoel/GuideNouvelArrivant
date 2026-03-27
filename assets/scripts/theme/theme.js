@@ -2,11 +2,22 @@
 # 1. Sidebar TOGGLE
 ----------------------------------------------*/
 document.addEventListener("DOMContentLoaded", function () {
-    let sidebarToggle = document.querySelector(".toggle-sidebar-btn");
+    let sidebarToggle = document.querySelector("#sidebar-toggle");
 
     if (sidebarToggle) {
         sidebarToggle.addEventListener("click", function () {
             document.body.classList.toggle("toggle-sidebar");
+        });
+    }
+
+    // Initialize Bootstrap dropdowns
+    const dropdownElementList = document.querySelectorAll(
+        '[data-bs-toggle="dropdown"]',
+    );
+
+    if (typeof bootstrap !== "undefined") {
+        dropdownElementList.forEach(function (dropdownToggle) {
+            new bootstrap.Dropdown(dropdownToggle);
         });
     }
 });
