@@ -45,13 +45,49 @@ class AppExtension extends AbstractExtension
         }
 
         try {
-            $output = [];
-            $returnCode = 0;
-            exec('cd ' . escapeshellarg($projectRoot) . ' && git log -1 --format=%ci 2>/dev/null', $output, $returnCode);
+            // Lire HEAD pour savoir sur quelle branche on est
+            $headFile = $gitDir . '/HEAD';
+            if (!file_exists($headFile)) {
+                return null;
+            }
 
-            if ($returnCode === 0 && !empty($output[0])) {
-                $dateString = trim($output[0]);
-                return new \DateTime($dateString);
+            $head = trim(file_get_contents($headFile));
+
+            // HEAD pointe vers une branche (ref: refs/heads/main)
+            if (str_starts_with($head, 'ref: ')) {
+                $ref = substr($head, 5); // "refs/heads/main"
+                $refFile = $gitDir . '/' . $ref;
+
+                if (!file_exists($refFile)) {
+                    return null;
+                }
+
+                $commitHash = trim(file_get_contents($refFile));
+            } else {
+                // HEAD détaché : c'est directement le hash
+                $commitHash = $head;
+            }
+
+            // Lire l'objet commit pour extraire la date
+            $objectPath = $gitDir . '/objects/'
+                . substr($commitHash, 0, 2) . '/'
+                . substr($commitHash, 2);
+
+            if (!file_exists($objectPath)) {
+                return null;
+            }
+
+            // Les objets Git sont compressés en zlib
+            $raw = file_get_contents($objectPath);
+            $content = zlib_decode($raw);
+
+            // Chercher la ligne "committer" qui contient le timestamp Unix
+            // Format : "committer Name <email> 1234567890 +0200"
+            if (preg_match('/^committer .+ (\d+) [+-]\d{4}$/m', $content, $matches)) {
+                $timestamp = (int) $matches[1];
+                $date = new \DateTime();
+                $date->setTimestamp($timestamp);
+                return $date;
             }
         } catch (\Exception $e) {
             // Fail silently
