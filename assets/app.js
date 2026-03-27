@@ -27,6 +27,10 @@ import "./styles/static/processus_elementaire.css";
 
 // CSS Footer (Dashboard)
 import "./styles/dashboard/footer_dashboard.css";
+// CSS Aside (Dashboard)
+import "./styles/dashboard/aside_dashboard.css";
+// CSS Logbook (Dashboard)
+import "./styles/dashboard/logbook_dashboard.css";
 
 // Script JS
 import "./scripts/typewriterOnCard.js"; // Effet machine à écrire lorsque le User n'a pas de carnet

@@ -3,7 +3,7 @@
         <div class="card info-card mentor-card h-100">
             <div class="ribbon-box mt-2">
                 <div class="ribbon ribbon-mentor">
-                    mentor ({{ user.mentor.speciality.code }})
+                    tuteur ({{ user.mentor.speciality.code }})
                 </div>
             </div>
             <div class="card-body">
@@ -23,7 +23,7 @@
                             <h5 class="card-title">{{ user.mentor.getFullname() }}</h5>
                             <h6>{{ user.mentor.jobLabel }}</h6>
                         {% else %}
-                            <h5 class="card-title">Mentor non défini</h5>
+                            <h5 class="card-title">Tuteur non défini</h5>
                         {% endif %}
                         <!-- Date d'embauche -->
                         <span class="text-success small pt-1 fw-bold">Embauche:</span>
@@ -43,15 +43,15 @@
         <div class="card info-card no-mentor-card h-100 px-4">
             <div class="ribbon-box mt-2">
                 <div class="ribbon ribbon-no-mentor">
-                    Pas de Mentor
+                    Pas de Tuteur
                 </div>
             </div>
             <div class="card-body text-center">
                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="bi bi-exclamation-circle"></i>
                 </div>
-                <h5 class="card-title">Aucun mentor assigné</h5>
-                <p class="text-muted">{{ user.fullname }} n'a actuellement pas de mentor assigné.</p>
+                <h5 class="card-title">Aucun tuteur assigné</h5>
+                <p class="text-muted">{{ user.fullname }} n'a actuellement pas de tuteur assigné.</p>
                 {% if is_granted('ROLE_ADMIN') %}
                     <span class="btn btn-sm" id="btn-assign--mentor">Veuillez en informer votre supérieur.</span>
                 {% endif %}

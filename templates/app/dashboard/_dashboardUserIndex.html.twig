@@ -39,21 +39,37 @@
                             <div class="accordion mt-3" id="theme-{{ theme.id }}-logbook-{{ logbook.id }}">
                                 <div class="accordion-item border-0">
                                     <h2 class="accordion-header" id="heading-{{ theme.id }}-logbook-{{ logbook.id }}">
-                                        <button class="accordion-button collapsed shadow-sm rounded-3 bg-primary-subtle text-dark"
+                                        <button class="accordion-button collapsed shadow-sm rounded-3 bg-primary-subtle text-dark fw-semibold"
                                                 type="button"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}"
                                                 aria-expanded="false"
                                                 aria-controls="collapse-theme-{{ theme.id }}-logbook-{{ logbook.id }}">
-                                            {{ theme.title }}
+                                            <span class="d-flex align-items-center gap-2 flex-grow-1">
+                                                <i class="bi bi-folder2-open text-primary"></i>
+                                                <span>{{ theme.title }}</span>
+                                            </span>
                                             {% set completedModules = 0 %}
+                                            {% set modulesWithTutorComments = 0 %}
                                             {% for module in theme.modules %}
                                                 {% set actionByCurrentUser = module.actions|filter(action => action.agentComment is not null and action.user == app.user) %}
+                                                {% set moduleCommented = module.actions|filter(action => action.mentorComment is not null and action.user == app.user) %}
                                                 {% if actionByCurrentUser|length > 0 %}
                                                     {% set completedModules = completedModules + 1 %}
                                                 {% endif %}
+                                                {% if moduleCommented|length > 0 %}
+                                                    {% set modulesWithTutorComments = modulesWithTutorComments + 1 %}
+                                                {% endif %}
                                             {% endfor %}
-                                            <span class="badge {% if completedModules == theme.modules|length %}bg-success{% else %}bg-primary{% endif %} rounded-pill ms-3">{{ completedModules }} / {{ theme.modules|length }}</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {% if modulesWithTutorComments > 0 %}
+                                                    <span class="badge bg-warning text-dark rounded-pill d-flex align-items-center gap-1" title="{{ modulesWithTutorComments }} module(s) avec commentaire tuteur">
+                                                        <i class="bi bi-chat-left-text-fill"></i>
+                                                        {{ modulesWithTutorComments }}
+                                                    </span>
+                                                {% endif %}
+                                                <span class="badge {% if completedModules == theme.modules|length %}bg-success{% else %}bg-primary{% endif %} rounded-pill">{{ completedModules }} / {{ theme.modules|length }}</span>
+                                            </div>
                                         </button>
                                     </h2>
 
