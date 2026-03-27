@@ -1,60 +1,68 @@
 <footer id="footer" class="footer">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-md-4 text-center text-md-start mb-2 mb-md-0">
-                <div class="copyright">
-                    &copy; 2025 - {{ "now"|date("Y") }} <strong>Pascal Briffard</strong>. Tous droits réservés.
+    <div class="footer-container">
+        <div class="footer-content">
+            <!-- Main Footer Row -->
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="brand-info">
+                        <h4 class="brand-name">GuideNouvelArrivant</h4>
+                        <p class="brand-tagline">Excellence & accompagnement professionnel</p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4 text-center mb-2 mb-md-0">
-                <div class="legal-links">
+                
+                <div class="footer-meta">
+                    <div class="meta-item update-info">
+                        <div class="meta-icon">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </div>
+                        <div class="meta-content">
+                            <span class="meta-label">Mise à jour</span>
+                            <span class="meta-value">
+                                {% set lastUpdate = git_last_commit_date() %}
+                                {% if lastUpdate %}
+                                    {{ lastUpdate|date('d/m/Y', "Europe/Paris") }}
+                                {% else %}
+                                    {{ "now"|date('d/m/Y', "Europe/Paris") }}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
                     <a href="{{ path('app_privacy_policy') }}" class="footer-link">
-                        <i class="bi bi-shield-check me-1"></i>Politique de confidentialité
+                        <span>Confidentialité</span>
                     </a>
-                    <span class="mx-2 text-muted">|</span>
+                    <span class="link-divider"></span>
                     <a href="{{ path('app_legal_notices') }}" class="footer-link">
-                        <i class="bi bi-file-text me-1"></i>Mentions légales
+                        <span>Mentions légales</span>
                     </a>
                 </div>
             </div>
-            <div class="col-md-4 text-center text-md-end">
-                <div class="credits">
-                    <a target="_blank" href="https://www.github.com/Papoel" class="footer-link">Papoel</a>
-                    <span class="mx-1 text-muted">•</span>
-                    <a target="_blank" href="https://www.symfony.com/" class="footer-link">Symfony 7</a>
-                    <span class="mx-1 text-muted">•</span>
-                    <a target="_blank" href="https://getbootstrap.com/" class="footer-link">Bootstrap</a>
+            
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <span>&copy; {{ "now"|date("Y") }} Pascal Briffard</span>
+                    <span class="separator">·</span>
+                    <span>Tous droits réservés</span>
+                </div>
+                
+                <div class="footer-tech">
+                    <span class="tech-text">Propulsé par</span>
+                    <a href="https://symfony.com" target="_blank" class="tech-badge">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        <span>Symfony</span>
+                    </a>
+                    <a href="https://getbootstrap.com" target="_blank" class="tech-badge">
+                        <i class="bi bi-bootstrap-fill"></i>
+                        <span>Bootstrap</span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </footer>
-
-<style>
-    #footer {
-        padding: 15px 20px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-    }
-    #footer .footer-link {
-        color: #3d5f9e;
-        text-decoration: none;
-        font-size: 0.85rem;
-        transition: color 0.2s ease;
-    }
-    #footer .footer-link:hover {
-        color: #2c384e;
-        text-decoration: underline;
-    }
-    #footer .copyright {
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
-    #footer .credits {
-        font-size: 0.8rem;
-        color: #6c757d;
-    }
-    #footer .legal-links {
-        font-size: 0.85rem;
-    }
-</style>
