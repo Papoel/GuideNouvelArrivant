@@ -51,7 +51,11 @@ class AppExtension extends AbstractExtension
                 return null;
             }
 
-            $head = trim(file_get_contents($headFile));
+            $headContent = file_get_contents($headFile);
+            if ($headContent === false) {
+                return null;
+            }
+            $head = trim($headContent);
 
             // HEAD pointe vers une branche (ref: refs/heads/main)
             if (str_starts_with($head, 'ref: ')) {
@@ -62,7 +66,11 @@ class AppExtension extends AbstractExtension
                     return null;
                 }
 
-                $commitHash = trim(file_get_contents($refFile));
+                $commitContent = file_get_contents($refFile);
+                if ($commitContent === false) {
+                    return null;
+                }
+                $commitHash = trim($commitContent);
             } else {
                 // HEAD détaché : c'est directement le hash
                 $commitHash = $head;
@@ -79,7 +87,13 @@ class AppExtension extends AbstractExtension
 
             // Les objets Git sont compressés en zlib
             $raw = file_get_contents($objectPath);
+            if ($raw === false) {
+                return null;
+            }
             $content = zlib_decode($raw);
+            if ($content === false) {
+                return null;
+            }
 
             // Chercher la ligne "committer" qui contient le timestamp Unix
             // Format : "committer Name <email> 1234567890 +0200"
