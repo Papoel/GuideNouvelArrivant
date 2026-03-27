@@ -24,7 +24,7 @@ readonly class UserProgressService implements UserProgressServiceInterface
         private LogbookProgressService $logbookProgressService,
         private ProgressAccessService $progressAccessService,
         private Environment $twig,
-        private parameterBagInterface $parameterBag,
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
