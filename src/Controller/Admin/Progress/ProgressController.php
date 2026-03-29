@@ -345,20 +345,22 @@ class ProgressController extends AbstractController
             return $this->redirectToRoute('admin_progress_user_details', ['id' => $userId]);
         }
 
-        // Récupérer le type de validation à supprimer (agent ou mentor)
+        // Vérifier que c'est bien une dévalidation tuteur
         $validationType = $request->request->get('validation_type');
 
-        if ('agent' === $validationType) {
-            $action->setAgentValidatedAt(null);
-            $this->addFlash('success', 'L\'auto-validation du module a été supprimée.');
-        } elseif ('mentor' === $validationType) {
-            $action->setMentorValidatedAt(null);
-            $this->addFlash('success', 'La validation tuteur du module a été supprimée.');
-        } else {
-            $this->addFlash('error', 'Type de validation invalide.');
+        if ('mentor' !== $validationType) {
+            $this->addFlash('error', 'Type de validation invalide. Seule la validation tuteur peut être supprimée.');
 
             return $this->redirectToRoute('admin_progress_user_details', ['id' => $userId]);
         }
+
+        // Supprimer tous les champs liés à la validation tuteur pour assurer la cohérence
+        $action->setMentorValidatedAt(null);
+        $action->setMentorVisa(null);
+        $action->setMentorComment(null);
+        $action->setMentorCommentedAt(null);
+
+        $this->addFlash('success', 'La validation tuteur du module a été supprimée.');
 
         $entityManager->flush();
 

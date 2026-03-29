@@ -30,7 +30,7 @@
     <div class="dash-metrics">
         <div class="dash-metric-card">
             <div class="dash-metric-header">
-                <span class="dash-metric-label">Auto-validation</span>
+                <span class="dash-metric-label">Progression de l'agent</span>
                 <div class="dash-metric-icon">
                     <i class="bi bi-person-check"></i>
                 </div>
@@ -87,7 +87,7 @@
         </div>
 
         <div class="dash-info-card">
-            <h2 class="dash-info-title">Affectation</h2>
+            <h2 class="dash-info-title">Affectation tutorat</h2>
             <div class="dash-info-row">
                 <span class="dash-info-key">Tuteur</span>
                 <span class="dash-info-value">
@@ -139,7 +139,7 @@
                     <tr>
                         <th>Thème</th>
                         <th>Module</th>
-                        <th>Auto-validation</th>
+                        <th>Validation agents</th>
                         <th>Validation tuteur</th>
                         <th>Commentaire</th>
                     </tr>
@@ -166,12 +166,6 @@
                                             <i class="bi bi-check-circle"></i>
                                             {{ action.agentValidatedAt|date('d/m/Y') }}
                                         </span>
-                                        <form method="post" id="form_agent_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}" class="d-inline">
-                                            <input type="hidden" name="validation_type" value="agent">
-                                            <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_agent_{{ action.id|replace({'-': '_'}) }}">
-                                                <i class="bi bi-x-circle"></i>Dévalider
-                                            </button>
-                                        </form>
                                     {% else %}
                                         <span class="dash-badge dash-badge-secondary">Non validé</span>
                                     {% endif %}
@@ -253,12 +247,6 @@
                                     <span class="dash-badge dash-badge-success d-block mb-2">
                                         {{ action.agentValidatedAt|date('d/m/Y') }}
                                     </span>
-                                    <form method="post" id="form_agent_mobile_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}" class="d-inline">
-                                        <input type="hidden" name="validation_type" value="agent">
-                                        <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_agent_mobile_{{ action.id|replace({'-': '_'}) }}">
-                                            <i class="bi bi-x-circle"></i>Dévalider
-                                        </button>
-                                    </form>
                                 {% else %}
                                     <span class="dash-badge dash-badge-secondary">Non validé</span>
                                 {% endif %}
@@ -325,42 +313,6 @@
             {% endif %}
         {% endfor %}
         
-        {# Modal agent desktop #}
-        {% if action and action.agentValidatedAt %}
-            <div class="modal fade" id="modal_agent_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content dash-modal-confirm">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="bi bi-exclamation-triangle"></i>
-                                Confirmation de dévalidation
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <div class="dash-modal-icon">
-                                <i class="bi bi-x-octagon"></i>
-                            </div>
-                            <h6 class="dash-modal-heading">Supprimer l'auto-validation</h6>
-                            <div class="dash-modal-module">{{ module.title }}</div>
-                            <div class="dash-modal-date">
-                                <i class="bi bi-calendar-check"></i> Validé le {{ action.agentValidatedAt|date('d/m/Y') }}
-                            </div>
-                            <div class="dash-modal-warning">
-                                <p><strong>Attention :</strong> Cette action supprimera la validation de l'apprenant pour ce module.</p>
-                                <p class="mb-0 small">L'apprenant devra revalider le module si nécessaire.</p>
-                            </div>
-                            <p class="dash-modal-confirm-text">Confirmer la suppression ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="dash-modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
-                            <button type="button" class="dash-modal-btn-confirm" onclick="document.getElementById('form_agent_{{ action.id|replace({'-': '_'}) }}').submit();">Confirmer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        
         {# Modal mentor desktop #}
         {% if action and action.mentorValidatedAt %}
             <div class="modal fade" id="modal_mentor_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
@@ -391,39 +343,6 @@
                         <div class="modal-footer">
                             <button type="button" class="dash-modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
                             <button type="button" class="dash-modal-btn-confirm" onclick="document.getElementById('form_mentor_{{ action.id|replace({'-': '_'}) }}').submit();">Confirmer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        
-        {# Modal agent mobile #}
-        {% if action and action.agentValidatedAt %}
-            <div class="modal fade" id="modal_agent_mobile_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content dash-modal-confirm">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="bi bi-exclamation-triangle"></i>
-                                Confirmation
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <div class="dash-modal-icon">
-                                <i class="bi bi-x-octagon"></i>
-                            </div>
-                            <h6 class="dash-modal-heading">Supprimer auto-validation</h6>
-                            <div class="dash-modal-module">{{ module.title }}</div>
-                            <div class="dash-modal-date">{{ action.agentValidatedAt|date('d/m/Y') }}</div>
-                            <div class="dash-modal-warning">
-                                <p><strong>Attention :</strong> Suppression de la validation apprenant.</p>
-                            </div>
-                            <p class="dash-modal-confirm-text">Confirmer ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="dash-modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
-                            <button type="button" class="dash-modal-btn-confirm" onclick="document.getElementById('form_agent_mobile_{{ action.id|replace({'-': '_'}) }}').submit();">Confirmer</button>
                         </div>
                     </div>
                 </div>
