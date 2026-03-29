@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Controller\Admin\Progress;
 
 use App\Entity\User;
+use App\Repository\ActionRepository;
 use App\Repository\FeedbackRepository;
 use App\Repository\UserRepository;
 use App\Services\Admin\interfaces\FeedbackServiceInterface;
 use App\Services\Admin\interfaces\ProgressTrackingServiceInterface;
 use App\Services\Admin\interfaces\UserProgressServiceInterface;
 use App\Services\Admin\Progress\ProgressAccessService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -306,5 +308,63 @@ class ProgressController extends AbstractController
 
             return $this->redirectToRoute('admin_progress_dashboard');
         }
+    }
+
+    /** Dévalide un module (auto-validation ou validation tuteur). */
+    #[Route('/user/{userId}/action/{actionId}/invalidate', name: 'invalidate_action', methods: ['POST'])]
+    public function invalidateAction(
+        string $userId,
+        string $actionId,
+        Request $request,
+        UserRepository $userRepository,
+        ActionRepository $actionRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Récupérer l'utilisateur
+        $user = $userRepository->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+
+        // Vérifier les droits d'accès
+        if (!$this->userProgressService->canAccessUserData($user)) {
+            $this->addFlash('warning', 'Vous n\'avez pas accès aux informations de cet utilisateur.');
+
+            return $this->redirectToRoute('admin_progress_dashboard');
+        }
+
+        // Récupérer l'action
+        $action = $actionRepository->find($actionId);
+        if (!$action) {
+            throw $this->createNotFoundException('Action non trouvée');
+        }
+
+        // Vérifier que l'action appartient bien à l'utilisateur
+        if ($action->getUser() !== $user) {
+            $this->addFlash('error', 'Cette action n\'appartient pas à cet utilisateur.');
+
+            return $this->redirectToRoute('admin_progress_user_details', ['id' => $userId]);
+        }
+
+        // Vérifier que c'est bien une dévalidation tuteur
+        $validationType = $request->request->get('validation_type');
+
+        if ('mentor' !== $validationType) {
+            $this->addFlash('error', 'Type de validation invalide. Seule la validation tuteur peut être supprimée.');
+
+            return $this->redirectToRoute('admin_progress_user_details', ['id' => $userId]);
+        }
+
+        // Supprimer tous les champs liés à la validation tuteur pour assurer la cohérence
+        $action->setMentorValidatedAt(null);
+        $action->setMentorVisa(null);
+        $action->setMentorComment(null);
+        $action->setMentorCommentedAt(null);
+
+        $this->addFlash('success', 'La validation tuteur du module a été supprimée.');
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_progress_user_details', ['id' => $userId]);
     }
 }

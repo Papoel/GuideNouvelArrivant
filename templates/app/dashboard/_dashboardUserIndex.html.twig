@@ -51,24 +51,51 @@
                                             </span>
                                             {% set completedModules = 0 %}
                                             {% set modulesWithTutorComments = 0 %}
+                                            {% set validatedModules = 0 %}
                                             {% for module in theme.modules %}
                                                 {% set actionByCurrentUser = module.actions|filter(action => action.agentComment is not null and action.user == app.user) %}
                                                 {% set moduleCommented = module.actions|filter(action => action.mentorComment is not null and action.mentorValidatedAt is null and action.user == app.user) %}
+                                                {% set moduleValidated = module.actions|filter(action => action.mentorValidatedAt is not null and action.user == app.user) %}
                                                 {% if actionByCurrentUser|length > 0 %}
                                                     {% set completedModules = completedModules + 1 %}
                                                 {% endif %}
                                                 {% if moduleCommented|length > 0 %}
                                                     {% set modulesWithTutorComments = modulesWithTutorComments + 1 %}
                                                 {% endif %}
-                                            {% endfor %}
-                                            <div class="d-flex align-items-center gap-2">
-                                                {% if modulesWithTutorComments > 0 %}
-                                                    <span class="badge bg-warning text-dark rounded-pill d-flex align-items-center gap-1" title="{{ modulesWithTutorComments }} module(s) avec commentaire tuteur">
-                                                        <i class="bi bi-chat-left-text-fill"></i>
-                                                        {{ modulesWithTutorComments }}
-                                                    </span>
+                                                {% if moduleValidated|length > 0 %}
+                                                    {% set validatedModules = validatedModules + 1 %}
                                                 {% endif %}
-                                                <span class="badge {% if completedModules == theme.modules|length %}bg-success{% else %}bg-primary{% endif %} rounded-pill">{{ completedModules }} / {{ theme.modules|length }}</span>
+                                            {% endfor %}
+                                            <div class="d-flex align-items-center gap-3">
+                                                {% if modulesWithTutorComments > 0 %}
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <small class="text-muted fw-semibold">
+                                                            {% if modulesWithTutorComments == 1 %}
+                                                                Commentaire:
+                                                            {% else %}
+                                                                Commentaires:
+                                                            {% endif %}
+                                                        </small>
+                                                        <span class="badge bg-warning text-dark rounded-pill d-flex align-items-center gap-1" title="{{ modulesWithTutorComments }} module(s) avec commentaire tuteur">
+                                                            <i class="bi bi-chat-left-text-fill"></i>
+                                                            {{ modulesWithTutorComments }}
+                                                        </span>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <small class="text-muted fw-semibold">Renseignés:</small>
+                                                    <span class="badge {% if completedModules == theme.modules|length %}bg-info{% else %}bg-secondary{% endif %} rounded-pill d-flex align-items-center gap-1">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                        {{ completedModules }} / {{ theme.modules|length }}
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <small class="text-muted fw-semibold">Validés:</small>
+                                                    <span class="badge {% if validatedModules == theme.modules|length %}bg-success{% else %}bg-primary{% endif %} rounded-pill d-flex align-items-center gap-1">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                        {{ validatedModules }} / {{ theme.modules|length }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </button>
                                     </h2>

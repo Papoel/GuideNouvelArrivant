@@ -2,735 +2,385 @@
 
 {% block title %}Détails de progression - {{ user.fullName }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/manager/manager_view.css') }}">
+{% endblock %}
+
 {% block body %}
-    <style>
-        /* Style pour tous les modals */
-        [popover] {
-            /* Taille et positionnement */
-            max-width: min(500px, 90vw);
-            width: 100%;
-            padding: 0;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 10px 10px -5px rgba(0, 0, 0, 0.04),
-            0 0 0 1px rgba(0, 0, 0, 0.05);
+<div class="dash-container">
+    {# === HEADER === #}
+    <div class="dash-header">
+        <div class="dash-header-title">
+            <div class="dash-header-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+            <div>
+                <h1>{{ user.fullName }}</h1>
+                <p class="dash-header-subtitle">Tableau de bord de progression des modules</p>
+            </div>
+        </div>
+        <a href="{{ path('admin_progress_dashboard') }}" class="dash-btn-back">
+            <i class="bi bi-arrow-left"></i>
+            Retour au tableau
+        </a>
+    </div>
 
-            /* Couleurs et fond */
-            background: #ffffff;
-            color: #1f2937;
-
-            /* Empêche l'ancrage automatique */
-            anchor: none;
-
-            /* Position centrée */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.98);
-
-            /* Animation d'apparition */
-            opacity: 0;
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-
-            /* Supprime les styles par défaut */
-            outline: none;
-            margin: 0;
-
-        }
-
-        /* Animation d'ouverture */
-        [popover]:popover-open {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        /* Fond sombre (backdrop) */
-        [popover]::backdrop {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            transition: opacity 0.2s ease-out;
-        }
-
-        [popover]:popover-open::backdrop {
-            opacity: 1;
-        }
-
-        /* Header du modal */
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px 0 24px;
-            margin-bottom: 16px;
-        }
-
-        .modal-title {
-            position: relative;
-            font-size: 1.25rem;       /* ≈ 20px */
-            font-weight: 600;
-            color: #1f2937;           /* texte gris foncé */
-            margin: .5rem 0;
-            padding-left: 12px;       /* espace pour la barre */
-            line-height: 1.4;
-            letter-spacing: -0.01em;
-        }
-
-        .modal-title::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0.2em;
-            bottom: 0.2em;
-            width: 3px;
-            border-radius: 2px;
-        background: linear-gradient(45deg, #3d5f9e, #526fa8)
-            /* gris bleuté → vert pétrole */
-        }
-
-
-
-        /* Bouton de fermeture élégant */
-        .btn-close {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border: none;
-            border-radius: 50%;                  /* cercle pour plus de modernité */
-            background: transparent;
-            color: #475569;                      /* gris neutre */
-            font-size: 20px;                     /* croix un peu plus visible */
-            cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 0;
-            margin: 0;
-            line-height: 1;
-        }
-
-        /* Hover = contraste neutre, pro */
-        .btn-close:hover {
-            background: #f1f5f9;                 /* gris clair élégant */
-            color: #dc2626;                      /* rouge subtil pour alerter */
-            transform: scale(1.08);
-        }
-
-        /* Active = retour doux */
-        .btn-close:active {
-            transform: scale(0.95);
-            background: #e5e7eb;
-            color: #b91c1c;
-        }
-
-        /* Accessibilité : focus visible */
-        .btn-close:focus {
-            outline: 2px solid #94a3b8;          /* halo gris bleuté sobre */
-            outline-offset: 2px;
-        }
-
-        /* Contenu du modal */
-        .modal-content {
-            padding: 0 24px 24px 24px;
-            line-height: 1.6;
-            color: #4b5563;
-        }
-
-        .modal-content p {
-            margin: 0 0 12px 0;
-            font-size: 0.95rem;
-        }
-
-        .modal-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Bouton d'ouverture élégant */
-        .btn-open-modal {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            color: #475569;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-decoration: none;
-        }
-
-        .btn-open-modal:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            color: #334155;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-open-modal:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Icône dans le bouton */
-        .btn-open-modal i {
-            font-size: 0.875rem;
-            opacity: 0.7;
-        }
-
-        /* Version désactivée */
-        .btn-disabled {
-            color: #9ca3af;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .btn-disabled:hover {
-            background: #f8fafc;
-            border-color: #e2e8f0;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            [popover] {
-                max-width: 95vw;
-                margin: 20px auto;
-            }
-
-            .modal-header,
-            .modal-content {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-
-            .modal-header {
-                padding-top: 16px;
-            }
-
-            .modal-content {
-                padding-bottom: 16px;
-            }
-        }
-    </style>
-    <div class="container-fluid py-4">
-        <div class="dashboard-header">
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="d-flex align-items-center">
-                        <span class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3" style="width: 48px; height: 48px">
-                            <i class="bi bi-person-bounding-box fs-4"></i>
-                        </span>
-                        Progression de {{ user.fullName }}
-                    </h1>
-                    <p class="text-muted mt-2 mb-3 fs-sm">Détails de progression et validation des modules</p>
-
-                    <!-- Bouton de retour vers le tableau de bord - s'affiche sous le paragraphe sur mobile/tablette et à droite sur desktop -->
-                    <div class="d-flex d-lg-none mb-2">
-                        <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center w-100 justify-content-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
-                            <i class="bi bi-arrow-left me-2"></i>Tableau de bord
-                        </a>
-                    </div>
+    {# === METRICS === #}
+    <div class="dash-metrics">
+        <div class="dash-metric-card">
+            <div class="dash-metric-header">
+                <span class="dash-metric-label">Progression de l'agent</span>
+                <div class="dash-metric-icon">
+                    <i class="bi bi-person-check"></i>
                 </div>
-                <div class="col-12 d-none d-lg-flex justify-content-end">
-                    <a href="{{ path('admin_progress_dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 d-flex align-items-center" style="box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s ease;">
-                        <i class="bi bi-arrow-left me-2"></i>Tableau de bord
-                    </a>
+            </div>
+            <div class="dash-metric-value">{{ progress.agent_progress }}%</div>
+            <div class="dash-metric-detail">{{ progress.completed_by_agent }} modules validés</div>
+        </div>
+        
+        <div class="dash-metric-card">
+            <div class="dash-metric-header">
+                <span class="dash-metric-label">Validation tuteur</span>
+                <div class="dash-metric-icon">
+                    <i class="bi bi-award"></i>
                 </div>
+            </div>
+            <div class="dash-metric-value">{{ progress.mentor_progress }}%</div>
+            <div class="dash-metric-detail">{{ progress.validated_by_mentor }} modules validés</div>
+        </div>
+        
+        <div class="dash-metric-card">
+            <div class="dash-metric-header">
+                <span class="dash-metric-label">Total modules</span>
+                <div class="dash-metric-icon">
+                    <i class="bi bi-list-check"></i>
+                </div>
+            </div>
+            <div class="dash-metric-value">{{ progress.total_modules }}</div>
+            <div class="dash-metric-detail">{{ logbook.name }}</div>
+        </div>
+    </div>
+
+    {# === INFO GRID === #}
+    <div class="dash-info-grid">
+        <div class="dash-info-card">
+            <h2 class="dash-info-title">Informations générales</h2>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Email</span>
+                <span class="dash-info-value">{{ user.email }}</span>
+            </div>
+            <div class="dash-info-row">
+                <span class="dash-info-key">NNI</span>
+                <span class="dash-info-value">{{ user.nni }}</span>
+            </div>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Date embauche</span>
+                <span class="dash-info-value">
+                    {% if user.hiringAt %}
+                        {{ user.hiringAt|date('d/m/Y') }}
+                    {% else %}
+                        <span class="text-muted">Non renseigné</span>
+                    {% endif %}
+                </span>
             </div>
         </div>
 
-
-        {# Informations sur l'utilisateur #}
-        <div class="row g-4 mb-4">
-            <div class="col-md-6">
-                <div class="content-card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0 d-flex align-items-center">
-                            <i class="bi bi-person-fill me-2 text-warning"></i>Informations de l'apprenant
-                        </h5>
-                        <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1">
-                            <i class="bi bi-info-circle me-1"></i>Profil
-                        </span>
-                    </div>
-                    <div class="card-body p-4 p-sm-3">
-                        <!-- Version mobile optimisée avec disposition en liste verticale -->
-                        <div class="d-block d-md-none">
-                            <ul class="list-group list-group-flush user-info-mobile">
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-person me-2"></i>Nom complet</div>
-                                    <div class="user-info-mobile-value fw-medium">{{ user.fullName }}</div>
-                                </li>
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-envelope me-2"></i>Email</div>
-                                    <div class="user-info-mobile-value">{{ user.email }}</div>
-                                </li>
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-credit-card me-2"></i>NNI</div>
-                                    <div class="user-info-mobile-value">{{ user.nni }}</div>
-                                </li>
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-calendar-event me-2"></i>Date d'embauche</div>
-                                    <div class="user-info-mobile-value">
-                                        {% if user.hiringAt %}
-                                            {{ user.hiringAt|date('d/m/Y') }}
-                                        {% else %}
-                                            <span class="text-muted fst-italic">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-person-check me-2"></i>Tuteur</div>
-                                    <div class="user-info-mobile-value">
-                                        {% if user.mentor %}
-                                            {{ user.mentor.fullName }}
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                                <li class="list-group-item px-0 py-2 border-bottom">
-                                    <div class="user-info-mobile-label"><i class="bi bi-briefcase me-2"></i>Poste</div>
-                                    <div class="user-info-mobile-value">
-                                        {% if user.job %}
-                                            {{ user.job.name }}
-                                        {% else %}
-                                            <span class="text-muted fst-italic">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                                <li class="list-group-item px-0 py-2">
-                                    <div class="user-info-mobile-label"><i class="bi bi-award me-2"></i>Spécialité</div>
-                                    <div class="user-info-mobile-value">
-                                        {% if user.speciality %}
-                                            {{ user.speciality.name }}
-                                        {% else %}
-                                            <span class="text-muted fst-italic">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Version desktop avec disposition en grille -->
-                        <div class="d-none d-md-block">
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-person"></i>Nom complet:</div>
-                                    <div class="col-md-8 user-info-value">{{ user.fullName }}</div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-envelope"></i>Email:</div>
-                                    <div class="col-md-8 user-info-value">{{ user.email }}</div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-credit-card"></i>NNI:</div>
-                                    <div class="col-md-8 user-info-value">{{ user.nni }}</div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-calendar-event"></i>Date d'embauche:</div>
-                                    <div class="col-md-8 user-info-value">
-                                        {% if user.hiringAt %}
-                                            {{ user.hiringAt|date('d/m/Y') }}
-                                        {% else %}
-                                            <span class="text-muted">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-person-check"></i>Tuteur:</div>
-                                    <div class="col-md-8 user-info-value">
-                                        {% if user.mentor %}
-                                            {{ user.mentor.fullName }}
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark rounded-pill fw-light ls-1">Non assigné</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-briefcase"></i>Poste:</div>
-                                    <div class="col-md-8 user-info-value">
-                                        {% if user.job %}
-                                            {{ user.job.name }}
-                                        {% else %}
-                                            <span class="text-muted">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-info-row">
-                                <div class="row">
-                                    <div class="col-md-4 user-info-label"><i class="bi bi-award"></i>Spécialité:</div>
-                                    <div class="col-md-8 user-info-value">
-                                        {% if user.speciality %}
-                                            {{ user.speciality.name }}
-                                        {% else %}
-                                            <span class="text-muted">Non renseigné</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="dash-info-card">
+            <h2 class="dash-info-title">Affectation tutorat</h2>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Tuteur</span>
+                <span class="dash-info-value">
+                    {% if user.mentor %}
+                        {{ user.mentor.fullName }}
+                    {% else %}
+                        <span class="dash-badge dash-badge-warning">Non assigné</span>
+                    {% endif %}
+                </span>
             </div>
-            <div class="col-md-6">
-                <div class="content-card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0 d-flex align-items-center">
-                            <i class="bi bi-graph-up-arrow me-2 text-warning"></i>Résumé de progression
-                        </h5>
-                        <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1">
-                            <i class="bi bi-lightning-charge-fill me-1"></i>Temps réel
-                        </span>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="text-center mb-3">
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="progress-circle-container">
-                                        <h6 class="text-muted mb-2 fs-sm">Auto-validation</h6>
-                                        <div class="progress-circle mx-auto" data-value="{{ progress.agent_progress }}">
-                                            <span class="progress-circle-left">
-                                                <span class="progress-circle-bar border-primary"></span>
-                                            </span>
-                                            <span class="progress-circle-right">
-                                                <span class="progress-circle-bar border-primary"></span>
-                                            </span>
-                                            <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                                                <div class="h2 font-weight-bold">{{ progress.agent_progress }}<sup class="small">%</sup></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="progress-circle-container">
-                                        <h6 class="text-muted mb-2 fs-sm">Validation tuteur</h6>
-                                        <div class="progress-circle mx-auto" data-value="{{ progress.mentor_progress }}">
-                                            <span class="progress-circle-left">
-                                                <span class="progress-circle-bar border-success"></span>
-                                            </span>
-                                            <span class="progress-circle-right">
-                                                <span class="progress-circle-bar border-success"></span>
-                                            </span>
-                                            <div class="progress-circle-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                                                <div class="h2 font-weight-bold">{{ progress.mentor_progress }}<sup class="small">%</sup></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cartes statistiques avec disposition adaptative -->
-                        <div class="row g-2 g-md-3 text-center mt-2">
-                            <!-- Sur mobile: 3 colonnes plus compactes, sur tablette/desktop: disposition normale -->
-                            <div class="col-4 col-md-4">
-                                <div class="stat-card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <div class="rounded-circle bg-primary bg-opacity-10 p-2">
-                                                <i class="bi bi-list-ol text-primary" style="font-size: x-large"></i>
-                                            </div>
-                                        </div>
-                                        <div class="stat-value">{{ progress.total_modules }}</div>
-                                        <div class="stat-label">Modules</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4 col-md-4">
-                                <div class="stat-card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <div class="rounded-circle bg-success bg-opacity-10 p-2">
-                                                <i class="bi bi-person-check text-success" style="font-size: x-large"></i>
-                                            </div>
-                                        </div>
-                                        <div class="stat-value">{{ progress.completed_by_agent }}</div>
-                                        <div class="stat-label">Auto-validés</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4 col-md-4">
-                                <div class="stat-card">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <div class="rounded-circle bg-warning bg-opacity-10 p-2">
-                                                <i class="bi bi-award text-warning-emphasis" style="font-size: x-large"></i>
-                                            </div>
-                                        </div>
-                                        <div class="stat-value">{{ progress.validated_by_mentor }}</div>
-                                        <div class="stat-label">Validés</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Poste</span>
+                <span class="dash-info-value">
+                    {% if user.job %}
+                        {{ user.job.name }}
+                    {% else %}
+                        <span class="text-muted">Non renseigné</span>
+                    {% endif %}
+                </span>
             </div>
-        </div>
-
-        {# Détail du carnet #}
-        <div class="content-card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 d-flex align-items-center">
-                    <i class="bi bi-book-fill me-2 text-warning"></i>Détail du carnet: {{ logbook.name }}
-                </h5>
-                <div>
-                    <span class="badge bg-primary bg-opacity-10 text-white rounded-pill fw-normal ls-1 me-2">
-                        <i class="bi bi-bookmark-fill me-1"></i>{{ logbook.themes|length }} thèmes
-                    </span>
-                    <span class="badge bg-light text-primary rounded-pill fw-medium ls-1">
-                        <i class="bi bi-list-check me-1"></i>{{ progress.total_modules }} modules
-                    </span>
-                </div>
-            </div>
-            <div class="card-body p-0">
-                {# Vue desktop - tableau traditionnel #}
-                <div class="d-none d-lg-block">
-                    <div class="table-responsive">
-                        <table class="table table-hover data-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="ps-4">Thème</th>
-                                    <th>Module</th>
-                                    <th>Auto-validation</th>
-                                    <th>Validation tuteur</th>
-                                    <th>Commentaire agent</th>
-                                    <th>Commentaire tuteur</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for theme in logbook.themes %}
-                                    {% set first_theme_row = true %}
-                                    {% set theme_rowspan = theme.modules|length %}
-
-                                    {% for module in theme.modules %}
-                                        {% set action = null %}
-                                        {% for a in user.actions %}
-                                            {% if a.module.id == module.id %}
-                                                {% set action = a %}
-                                            {% endif %}
-                                        {% endfor %}
-
-                                        <tr>
-                                            {% if first_theme_row %}
-                                                <td rowspan="{{ theme_rowspan }}" class="align-middle ps-4">
-                                                    <strong class="text-dark">{{ theme.title }}</strong>
-                                                </td>
-                                                {% set first_theme_row = false %}
-                                            {% endif %}
-
-                                            <td>
-                                                <span class="fw-medium">{{ module.title }}</span>
-                                            </td>
-
-                                            <td>
-                                                {% if action and action.agentValidatedAt %}
-                                                    <span class="badge bg-success rounded-pill px-2 py-2 fw-light ls-1">
-                                                        <i class="bi bi-check-circle me-1"></i>
-                                                        {{ action.agentValidatedAt|date('d/m/Y') }}
-                                                    </span>
-                                                {% else %}
-                                                    <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
-                                                {% endif %}
-                                            </td>
-
-                                            <td>
-                                                {% if action and action.mentorValidatedAt %}
-                                                    <span class="badge bg-success rounded-pill px-3 py-2 fw-light ls-1">
-                                                        <i class="bi bi-check-circle me-1"></i>
-                                                        {{ action.mentorValidatedAt|date('d/m/Y') }}
-                                                    </span>
-                                                {% else %}
-                                                    <span class="badge bg-secondary rounded-pill px-3 py-2 fw-light ls-1">Non validé</span>
-                                                {% endif %}
-                                            </td>
-
-                                            <td>
-                                                {% if action and action.agentComment %}
-                                                    <!-- Modal -->
-                                                    <div popover id="modal-agent-{{ module.id }}">
-                                                        <div class="modal-header">
-                                                            <h3 class="modal-title">Commentaire de l'agent:</h3>
-                                                            <button class="btn-close" popovertarget="modal-agent-{{ module.id }}" title="Fermer">
-                                                                ×
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-content">
-                                                            <p>{{ action.agentComment }}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Bouton d'ouverture -->
-                                                    <button class="btn-open-modal" popovertarget="modal-agent-{{ module.id }}">
-                                                        <i class="bi bi-chat-dots"></i>
-                                                        Voir commentaire
-                                                    </button>
-                                                {% else %}
-                                                    <!-- Version désactivée -->
-                                                    <span class="btn-open-modal btn-disabled">
-                                                       <i class="bi bi-chat-dots"></i>
-                                                       Voir commentaire
-                                                   </span>
-                                                {% endif %}
-                                            </td>
-
-                                            <td>
-                                                {% if action and action.mentorComment %}
-                                                    <!-- Modal -->
-                                                    <div popover id="modal-mentor-{{ module.id }}">
-                                                        <div class="modal-header">
-                                                            <h3 class="modal-title">Commentaire du tuteur :</h3>
-                                                            <button class="btn-close" popovertarget="modal-mentor-{{ module.id }}" title="Fermer">
-                                                                ×
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-content">
-                                                            <p>{{ action.mentorComment }}</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Bouton d'ouverture -->
-                                                    <button class="btn-open-modal" popovertarget="modal-mentor-{{ module.id }}">
-                                                        <i class="bi bi-chat-dots"></i>
-                                                        Voir commentaire
-                                                    </button>
-                                                {% else %}
-                                                    <!-- Version désactivée -->
-                                                    <span class="btn-open-modal btn-disabled">
-                                                       <i class="bi bi-chat-dots"></i>
-                                                       Aucun commentaire
-                                                   </span>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {# Vue mobile/tablette - cartes par thème #}
-                <div class="d-block d-lg-none p-3">
-                    <div class="theme-cards">
-                        {% for theme in logbook.themes %}
-                            <div class="theme-card mb-4">
-                                <div class="theme-header p-3 rounded-top" style="background: linear-gradient(to right, var(--primary-light), rgba(248, 249, 250, 0.7)); border-left: 4px solid var(--primary-color);">
-                                    <h6 class="mb-0 fw-bold">
-                                        <i class="bi bi-bookmark-fill me-2 text-primary"></i>{{ theme.title }}
-                                    </h6>
-                                </div>
-
-                                <div class="theme-modules">
-                                    {% for module in theme.modules %}
-                                        {% set action = null %}
-                                        {% for a in user.actions %}
-                                            {% if a.module.id == module.id %}
-                                                {% set action = a %}
-                                            {% endif %}
-                                        {% endfor %}
-
-                                        <div class="module-card p-3 border-bottom" style="background-color: #fff;">
-                                            <h6 class="module-title fs-6 mb-2">
-                                                <i class="bi bi-list-check me-2 text-primary"></i>{{ module.title }}
-                                            </h6>
-
-                                            <div class="row g-2 fs-sm">
-                                                <div class="col-6">
-                                                    <div class="validation-item">
-                                                        <span class="text-muted fw-medium">Auto-validation:</span><br>
-                                                        {% if action and action.agentValidatedAt %}
-                                                            <span class="badge bg-success rounded-pill px-2 py-1 fw-light ls-1">
-                                                                <i class="bi bi-check-circle me-1"></i>
-                                                                {{ action.agentValidatedAt|date('d/m/Y') }}
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="badge bg-secondary rounded-pill px-2 py-1 fw-light ls-1">Non validé</span>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="validation-item">
-                                                        <span class="text-muted fw-medium">Validation tuteur:</span><br>
-                                                        {% if action and action.mentorValidatedAt %}
-                                                            <span class="badge bg-success rounded-pill px-2 py-1 fw-light ls-1">
-                                                                <i class="bi bi-check-circle me-1"></i>
-                                                                {{ action.mentorValidatedAt|date('d/m/Y') }}
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="badge bg-secondary rounded-pill px-2 py-1 fw-light ls-1">Non validé</span>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-12 mt-2">
-                                                    <div class="comments-section">
-                                                        <div class="accordion accordion-flush" id="comments-{{ module.id }}">
-                                                            {% if (action and action.agentComment) or (action and action.mentorComment) %}
-                                                                <div class="accordion-item border-0">
-                                                                    <h2 class="accordion-header" id="heading-{{ module.id }}">
-                                                                        <button class="accordion-button collapsed p-2 fs-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ module.id }}" aria-expanded="false" aria-controls="collapse-{{ module.id }}" style="background-color: rgba(248, 249, 250, 0.7);">
-                                                                            <i class="bi bi-chat-dots me-2"></i>Voir les commentaires
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapse-{{ module.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ module.id }}" data-bs-parent="#comments-{{ module.id }}">
-                                                                        <div class="accordion-body p-2 fs-sm">
-                                                                            {% if action and action.agentComment %}
-                                                                                <div class="comment-item mb-2">
-                                                                                    <div class="comment-header fw-medium text-primary">
-                                                                                        <i class="bi bi-person me-1"></i>Commentaire agent:
-                                                                                    </div>
-                                                                                    <div class="comment-content ps-3 pt-1">
-                                                                                        {{ action.agentComment }}
-                                                                                    </div>
-                                                                                </div>
-                                                                            {% endif %}
-
-                                                                            {% if action and action.mentorComment %}
-                                                                                <div class="comment-item">
-                                                                                    <div class="comment-header fw-medium text-primary">
-                                                                                        <i class="bi bi-person-check me-1"></i>Commentaire tuteur:
-                                                                                    </div>
-                                                                                    <div class="comment-content ps-3 pt-1">
-                                                                                        {{ action.mentorComment }}
-                                                                                    </div>
-                                                                                </div>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            {% else %}
-                                                                <div class="text-muted fst-italic fs-sm"><i class="bi bi-chat-dots me-1"></i>Aucun commentaire</div>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Spécialité</span>
+                <span class="dash-info-value">
+                    {% if user.speciality %}
+                        {{ user.speciality.name }}
+                    {% else %}
+                        <span class="text-muted">Non renseigné</span>
+                    {% endif %}
+                </span>
             </div>
         </div>
     </div>
+
+    {# === TABLE DESKTOP === #}
+    <div class="dash-table-section">
+        <div class="dash-table-header">
+            <h2 class="dash-table-title">
+                <i class="bi bi-book"></i>
+                Détail des modules
+            </h2>
+            <div>
+                <span class="dash-badge dash-badge-primary">{{ logbook.themes|length }} thèmes</span>
+            </div>
+        </div>
+
+        <div class="dash-table-wrapper d-none d-lg-block">
+            <table class="dash-table">
+                <thead>
+                    <tr>
+                        <th>Thème</th>
+                        <th>Module</th>
+                        <th>Validation agents</th>
+                        <th>Validation tuteur</th>
+                        <th>Commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for theme in logbook.themes %}
+                        {% set first = true %}
+                        {% for module in theme.modules %}
+                            {% set action = null %}
+                            {% for a in user.actions %}
+                                {% if a.module.id == module.id %}
+                                    {% set action = a %}
+                                {% endif %}
+                            {% endfor %}
+                            <tr>
+                                {% if first %}
+                                    <td rowspan="{{ theme.modules|length }}">{{ theme.title }}</td>
+                                    {% set first = false %}
+                                {% endif %}
+                                <td>{{ module.title }}</td>
+                                <td>
+                                    {% if action and action.agentValidatedAt %}
+                                        <span class="dash-badge dash-badge-success">
+                                            <i class="bi bi-check-circle"></i>
+                                            {{ action.agentValidatedAt|date('d/m/Y') }}
+                                        </span>
+                                    {% else %}
+                                        <span class="dash-badge dash-badge-secondary">Non validé</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if action and action.mentorValidatedAt %}
+                                        <span class="dash-badge dash-badge-success">
+                                            <i class="bi bi-check-circle"></i>
+                                            {{ action.mentorValidatedAt|date('d/m/Y') }}
+                                        </span>
+                                        <form method="post" id="form_mentor_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}" class="d-inline">
+                                            <input type="hidden" name="validation_type" value="mentor">
+                                            <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_mentor_{{ action.id|replace({'-': '_'}) }}">
+                                                <i class="bi bi-x-circle"></i>Dévalider
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="dash-badge dash-badge-secondary">Non validé</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if action and (action.agentComment or action.mentorComment) %}
+                                        <div popover id="popover_{{ module.id }}">
+                                            <div class="dash-popover-header">
+                                                <h3 class="dash-popover-title">Commentaires</h3>
+                                                <button class="dash-popover-close" popovertarget="popover_{{ module.id }}">×</button>
+                                            </div>
+                                            <div class="dash-popover-body">
+                                                {% if action.agentComment %}
+                                                    <strong>{{ user.firstName }} :</strong>
+                                                    <p class="mt-1 mb-3">{{ action.agentComment }}</p>
+                                                {% endif %}
+                                                {% if action.mentorComment %}
+                                                    <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% else %}Tuteur{% endif %} :</strong>
+                                                    <p class="mt-1">{{ action.mentorComment }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <button class="dash-btn dash-btn-comment" popovertarget="popover_{{ module.id }}">
+                                            <i class="bi bi-chat-text"></i>Voir
+                                        </button>
+                                    {% else %}
+                                        <button class="dash-btn dash-btn-comment" disabled>
+                                            <i class="bi bi-chat-text"></i>Aucun
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Mobile view #}
+        <div class="d-block d-lg-none">
+            {% for theme in logbook.themes %}
+                <div class="dash-mobile-theme">
+                    <h6>
+                        <i class="bi bi-bookmark"></i>
+                        {{ theme.title }}
+                    </h6>
+                </div>
+                <div class="dash-mobile-module">
+                    {% for module in theme.modules %}
+                        {% set action = null %}
+                        {% for a in user.actions %}
+                            {% if a.module.id == module.id %}
+                                {% set action = a %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <h6 class="dash-mobile-module-title">{{ module.title }}</h6>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <strong class="d-block mb-2 small">Auto-validation</strong>
+                                {% if action and action.agentValidatedAt %}
+                                    <span class="dash-badge dash-badge-success d-block mb-2">
+                                        {{ action.agentValidatedAt|date('d/m/Y') }}
+                                    </span>
+                                {% else %}
+                                    <span class="dash-badge dash-badge-secondary">Non validé</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <strong class="d-block mb-2 small">Validation tuteur</strong>
+                                {% if action and action.mentorValidatedAt %}
+                                    <span class="dash-badge dash-badge-success d-block mb-2">
+                                        {{ action.mentorValidatedAt|date('d/m/Y') }}
+                                    </span>
+                                    <form method="post" id="form_mentor_mobile_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}" class="d-inline">
+                                        <input type="hidden" name="validation_type" value="mentor">
+                                        <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_mentor_mobile_{{ action.id|replace({'-': '_'}) }}">
+                                            <i class="bi bi-x-circle"></i>Dévalider
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="dash-badge dash-badge-secondary">Non validé</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if action and (action.agentComment or action.mentorComment) %}
+                            <div class="accordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#comments_{{ module.id }}">
+                                            <i class="bi bi-chat-text me-2"></i>Commentaires
+                                        </button>
+                                    </h2>
+                                    <div id="comments_{{ module.id }}" class="accordion-collapse collapse">
+                                        <div class="accordion-body small">
+                                            {% if action.agentComment %}
+                                                <strong>{{ user.firstName }} :</strong>
+                                                <p>{{ action.agentComment }}</p>
+                                            {% endif %}
+                                            {% if action.mentorComment %}
+                                                <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% else %}Tuteur{% endif %} :</strong>
+                                                <p>{{ action.mentorComment }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        {% if not loop.last %}
+                            <hr class="my-4">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# === MODALS === #}
+{% for theme in logbook.themes %}
+    {% for module in theme.modules %}
+        {% set action = null %}
+        {% for a in user.actions %}
+            {% if a.module.id == module.id %}
+                {% set action = a %}
+            {% endif %}
+        {% endfor %}
+        
+        {# Modal mentor desktop #}
+        {% if action and action.mentorValidatedAt %}
+            <div class="modal fade" id="modal_mentor_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content dash-modal-confirm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Confirmation de dévalidation
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="dash-modal-icon">
+                                <i class="bi bi-x-octagon"></i>
+                            </div>
+                            <h6 class="dash-modal-heading">Supprimer la validation tuteur</h6>
+                            <div class="dash-modal-module">{{ module.title }}</div>
+                            <div class="dash-modal-date">
+                                <i class="bi bi-calendar-check"></i> Validé le {{ action.mentorValidatedAt|date('d/m/Y') }}
+                            </div>
+                            <div class="dash-modal-warning">
+                                <p><strong>Attention :</strong> Cette action supprimera la validation du tuteur pour ce module.</p>
+                                <p class="mb-0 small">Le tuteur devra revalider lors du prochain échange.</p>
+                            </div>
+                            <p class="dash-modal-confirm-text">Confirmer la suppression ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="dash-modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="dash-modal-btn-confirm" onclick="document.getElementById('form_mentor_{{ action.id|replace({'-': '_'}) }}').submit();">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        {# Modal mentor mobile #}
+        {% if action and action.mentorValidatedAt %}
+            <div class="modal fade" id="modal_mentor_mobile_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content dash-modal-confirm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Confirmation
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="dash-modal-icon">
+                                <i class="bi bi-x-octagon"></i>
+                            </div>
+                            <h6 class="dash-modal-heading">Supprimer validation tuteur</h6>
+                            <div class="dash-modal-module">{{ module.title }}</div>
+                            <div class="dash-modal-date">{{ action.mentorValidatedAt|date('d/m/Y') }}</div>
+                            <div class="dash-modal-warning">
+                                <p><strong>Attention :</strong> Suppression de la validation tuteur.</p>
+                            </div>
+                            <p class="dash-modal-confirm-text">Confirmer ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="dash-modal-btn-cancel" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="dash-modal-btn-confirm" onclick="document.getElementById('form_mentor_mobile_{{ action.id|replace({'-': '_'}) }}').submit();">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
 {% endblock %}
