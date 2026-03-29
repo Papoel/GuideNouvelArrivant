@@ -159,8 +159,8 @@
                                     <td rowspan="{{ theme.modules|length }}">{{ theme.title }}</td>
                                     {% set first = false %}
                                 {% endif %}
-                                <td>{{ module.title }}</td>
-                                <td>
+                                <td class="module-title">{{ module.title }}</td>
+                                <td class="validation-agent">
                                     {% if action and action.agentValidatedAt %}
                                         <span class="dash-badge dash-badge-success">
                                             <i class="bi bi-check-circle"></i>
@@ -171,20 +171,22 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if action and action.mentorValidatedAt %}
-                                        <span class="dash-badge dash-badge-success">
-                                            <i class="bi bi-check-circle"></i>
-                                            {{ action.mentorValidatedAt|date('d/m/Y') }}
-                                        </span>
-                                        <form method="post" id="form_mentor_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}" class="d-inline">
-                                            <input type="hidden" name="validation_type" value="mentor">
-                                            <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_mentor_{{ action.id|replace({'-': '_'}) }}">
-                                                <i class="bi bi-x-circle"></i>Dévalider
-                                            </button>
-                                        </form>
-                                    {% else %}
-                                        <span class="dash-badge dash-badge-secondary">Non validé</span>
-                                    {% endif %}
+                                    <div class="d-flex flex-column gap-2 align-items-center">
+                                        {% if action and action.mentorValidatedAt %}
+                                            <span class="dash-badge dash-badge-success">
+                                                <i class="bi bi-check-circle"></i>
+                                                {{ action.mentorValidatedAt|date('d/m/Y') }}
+                                            </span>
+                                            <form method="post" id="form_mentor_{{ action.id|replace({'-': '_'}) }}" action="{{ path('admin_progress_invalidate_action', {userId: user.id, actionId: action.id}) }}">
+                                                <input type="hidden" name="validation_type" value="mentor">
+                                                <button type="button" class="dash-btn dash-btn-danger" data-bs-toggle="modal" data-bs-target="#modal_mentor_{{ action.id|replace({'-': '_'}) }}">
+                                                    <i class="bi bi-x-circle"></i>Dévalider
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="dash-badge dash-badge-secondary">Non validé</span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     {% if action and (action.agentComment or action.mentorComment) %}

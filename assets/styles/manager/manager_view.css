@@ -2,7 +2,11 @@
    MANAGER DASHBOARD - Corporate Data Interface
    Design sobre, élégant, professionnel
    Palette monochrome + accent bleu
+   Font: Merriweather
    ============================================ */
+
+/* === BASE === */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
     /* Palette monochrome corporate */
@@ -79,11 +83,8 @@
     --dash-radius-lg: 8px;
 }
 
-/* === BASE === */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap');
-
 body {
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: "Montserrat", sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -93,7 +94,11 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: var(--dash-8) var(--dash-6);
-    background: linear-gradient(to bottom right, #F8FAFC, #EFF6FF);
+    background: linear-gradient(135deg, 
+        var(--dash-slate-50) 0%, 
+        var(--dash-blue-50) 40%, 
+        var(--dash-indigo-100) 70%, 
+        var(--dash-purple-100) 100%);
     min-height: 100vh;
 }
 
@@ -353,7 +358,7 @@ body {
 
 .dash-table th {
     padding: var(--dash-3) var(--dash-4);
-    text-align: left;
+    text-align: center;
     font-size: 0.6875rem;
     font-weight: 800;
     color: var(--dash-slate-600);
@@ -379,13 +384,47 @@ body {
     padding: var(--dash-4);
     font-size: 0.9375rem;
     color: var(--dash-slate-900);
-    vertical-align: middle;
-    line-height: 1.5;
+    vertical-align: top;
+    line-height: 1.6;
+    border-right: var(--dash-border);
 }
 
-.dash-table td:first-child,
-.dash-table td:nth-child(2) {
-    font-weight: 600;
+/* Colonne Thème - en gras */
+.dash-table td:first-child {
+    font-weight: 700;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Colonne Module - font-weight normal */
+.dash-table td.module-title {
+    font-weight: 400;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Aligner au milieu la colonne validation agent */
+.dash-table td.validation-agent {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Aligner au milieu la colonne commentaires (dernière colonne) */
+.dash-table td:last-child {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Améliorer l'espacement pour les cellules contenant badges et boutons */
+.dash-table td .dash-badge,
+.dash-table td .dash-btn {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* S'assurer que les éléments dans une cellule ne sont pas collés */
+.dash-table td > * + * {
+    margin-left: 0.5rem;
 }
 
 /* === BADGES === */
