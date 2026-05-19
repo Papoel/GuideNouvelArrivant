@@ -34,26 +34,25 @@ class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepo
         $qb = $this->createQueryBuilder('f')
             ->leftJoin('f.author', 'a')
             ->leftJoin('f.reviewedBy', 'r')
+            ->leftJoin('a.service', 's')  // Faire le join UNE SEULE FOIS
             ->addSelect('a')
             ->addSelect('r')
+            ->addSelect('s')  // Ajouter le select pour optimiser
             ->orderBy('f.createdAt', 'DESC');
 
         // Appliquer les critères de filtrage
         foreach ($criteria as $field => $value) {
             if ('serviceId' === $field) {
-                // Utiliser l'ID du service pour filtrer les feedbacks par auteur
-                // On utilise déjà l'alias 'a' pour author plus haut dans la requête
-                $qb->leftJoin('a.service', 'authorService')
-                    ->andWhere('authorService.id = :serviceId')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('s.id = :serviceId')
                     ->setParameter('serviceId', $value);
             } elseif ('serviceName' === $field) {
-                // Cas où on filtre par nom de service
-                $qb->leftJoin('a.service', 's')
-                    ->andWhere('LOWER(s.name) = LOWER(:serviceName)')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('LOWER(s.name) = LOWER(:serviceName)')
                     ->setParameter('serviceName', $value);
             } elseif ('service' === $field) {
-                // Cas où on passe directement l'objet Service
-                $qb->andWhere('a.service = :service')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('s = :service')
                     ->setParameter('service', $value);
             } else {
                 $qb->andWhere("f.$field = :$field")
@@ -73,7 +72,7 @@ class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepo
             ->setMaxResults($limit)
             ->getQuery();
 
-        $paginator = new Paginator($query);
+        $paginator = new Paginator($query, fetchJoinCollection: false);  // Ajouter fetchJoinCollection: false
         $totalItems = count($paginator);
         $totalPages = (int) ceil($totalItems / $limit);
 
@@ -95,25 +94,23 @@ class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepo
     public function countByCriteria(array $criteria = []): int
     {
         $qb = $this->createQueryBuilder('f')
-            ->select('COUNT(f.id)');
+            ->select('COUNT(f.id)')
+            ->leftJoin('f.author', 'a')
+            ->leftJoin('a.service', 's');
 
         // Appliquer les critères de filtrage
         foreach ($criteria as $field => $value) {
             if ('serviceId' === $field) {
-                $qb->leftJoin('f.author', 'a')
-                    ->leftJoin('a.service', 'authorService')
-                    ->andWhere('authorService.id = :serviceId')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('s.id = :serviceId')
                     ->setParameter('serviceId', $value);
             } elseif ('serviceName' === $field) {
-                // Cas où on filtre par nom de service
-                $qb->leftJoin('f.author', 'a')
-                    ->leftJoin('a.service', 's')
-                    ->andWhere('LOWER(s.name) = LOWER(:serviceName)')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('LOWER(s.name) = LOWER(:serviceName)')
                     ->setParameter('serviceName', $value);
             } elseif ('service' === $field) {
-                // Cas où on passe directement l'objet Service
-                $qb->leftJoin('f.author', 'a')
-                    ->andWhere('a.service = :service')
+                // Réutiliser l'alias 's' déjà créé
+                $qb->andWhere('s = :service')
                     ->setParameter('service', $value);
             } else {
                 $qb->andWhere("f.$field = :$field")
