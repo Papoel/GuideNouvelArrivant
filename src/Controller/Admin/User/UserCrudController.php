@@ -122,6 +122,7 @@ class UserCrudController extends AbstractCrudController
             ->onlyOnForms();
 
         yield TextField::new(propertyName: 'jobLabel', label: 'Métier')->hideOnForm();
+
         yield AssociationField::new(propertyName: 'job', label: 'Métier')
             ->setFormTypeOption('choice_label', 'name')
             ->setQueryBuilder(
@@ -174,7 +175,7 @@ class UserCrudController extends AbstractCrudController
             )
             ->setTemplatePath(path: 'admin/field/badge.html.twig');
 
-        yield DateTimeField::new(propertyName: 'hiringAt', label: 'Date d\'embauche')
+        yield DateTimeField::new(propertyName: 'hiringAt', label: 'Prise de poste')
             ->hideOnIndex()
             ->setColumns(cols: 'col-md-6 col-sm-12')
             ->setFormType(formTypeFqcn: DateType::class);
