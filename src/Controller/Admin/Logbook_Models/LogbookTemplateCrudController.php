@@ -25,7 +25,8 @@ class LogbookTemplateCrudController extends AbstractCrudController
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public static function getEntityFqcn(): string
     {
