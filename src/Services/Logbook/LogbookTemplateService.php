@@ -66,41 +66,43 @@ readonly class LogbookTemplateService
     public function findDefaultTemplateForJob(Job $job, ?Service $service = null): ?LogbookTemplate
     {
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
-
-        // Rechercher tous les modèles par défaut
         $defaultTemplates = $repository->findBy(['isDefault' => true]);
 
-        // Filtrer les modèles par métier et service
         $compatibleTemplates = [];
 
         foreach ($defaultTemplates as $template) {
-            // Vérifier d'abord la compatibilité avec le métier
             $jobMatch = $template->hasJob($job);
 
             if (!$jobMatch) {
                 continue;
             }
 
-            // Vérifier la compatibilité avec le service si spécifié
+            // Vérifier la compatibilité avec le service
             if ($service !== null) {
-                $templateService = $template->getService();
-
-                // Si le modèle a un service spécifié, il doit correspondre
-                if ($templateService !== null && $templateService !== $service) {
+                // Si le modèle est global, il est compatible
+                if ($template->isIsGlobal()) {
+                    $compatibleTemplates[] = $template;
                     continue;
                 }
 
-                // Priorité aux modèles avec service spécifié correspondant
-                if ($templateService === $service) {
-                    return $template; // Retourner immédiatement un modèle qui correspond exactement au service
+                $templateService = $template->getService();
+
+                // Si le modèle a un service, il doit correspondre exactement
+                if ($templateService !== null) {
+                    if ($templateService === $service) {
+                        // Priorité maximale : modèle avec service correspondant
+                        return $template;
+                    }
+                    continue; // Service ne correspond pas
                 }
+
+                // Modèle sans service et sans flag global = incompatible
+                continue;
             }
 
-            // Ajouter à la liste des modèles compatibles
             $compatibleTemplates[] = $template;
         }
 
-        // Retourner le premier modèle compatible trouvé, ou null si aucun
         return $compatibleTemplates[0] ?? null;
     }
 
@@ -117,24 +119,29 @@ readonly class LogbookTemplateService
         $repository = $this->entityManager->getRepository(LogbookTemplate::class);
         $allTemplates = $repository->findAll();
 
-        // Filtrer pour ne garder que les modèles compatibles avec le métier et le service
         return array_filter($allTemplates, function (LogbookTemplate $template) use ($job, $service) {
-            // Vérifier d'abord la compatibilité avec le métier
-            // Utiliser le code du métier pour la comparaison
+            // 1. Vérifier d'abord la compatibilité avec le métier
             $jobCode = $job->getCode() ?? '';
             $jobMatch = $template->hasJob($jobCode);
 
-            // Si pas de correspondance de métier, rejeter immédiatement
             if (!$jobMatch) {
                 return false;
             }
 
-            // Si un service est spécifié, vérifier la correspondance
+            // 2. Vérifier la compatibilité avec le service
             if ($service !== null) {
-                // Si le modèle a un service spécifié, il doit correspondre
-                if ($template->getService() !== null && $template->getService() !== $service) {
-                    return false;
+                // Si le modèle est global, il est compatible avec tous les services
+                if ($template->isIsGlobal()) {
+                    return true;
                 }
+
+                // Si le modèle a un service spécifié, il doit correspondre exactement
+                if ($template->getService() !== null) {
+                    return $template->getService() === $service;
+                }
+
+                // Si le modèle n'a ni service ni flag global, le rejeter
+                return false;
             }
 
             return true;
