@@ -13,8 +13,8 @@ enum JobEnum: string
     case CHARGE_AFFAIRES = "Chargé d'affaires";
     case CHARGE_AFFAIRES_PROJET = "Chargé d'affaires projet";
     case CHARGE_SURVEILLANCE = 'Chargé de surveillance';
-    case MANAGER_PREMIERE_LIGNE = 'Manager premiere ligne';
-    case MANAGER_PREMIERE_LIGNE_DELEGUE = 'Manager premiere ligne délégué';
+    case MANAGER_PREMIERE_LIGNE = 'Manager';
+    case MANAGER_PREMIERE_LIGNE_DELEGUE = 'Manager délégué';
 
     public function getAbbreviation(): string
     {

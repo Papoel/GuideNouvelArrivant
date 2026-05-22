@@ -37,8 +37,8 @@ class JobEnumTest extends TestCase
         self::assertEquals("Chargé d'affaires", JobEnum::CHARGE_AFFAIRES->value);
         self::assertEquals("Chargé d'affaires projet", JobEnum::CHARGE_AFFAIRES_PROJET->value);
         self::assertEquals('Chargé de surveillance', JobEnum::CHARGE_SURVEILLANCE->value);
-        self::assertEquals('Manager premiere ligne', JobEnum::MANAGER_PREMIERE_LIGNE->value);
-        self::assertEquals('Manager premiere ligne délégué', JobEnum::MANAGER_PREMIERE_LIGNE_DELEGUE->value);
+        self::assertEquals('Manager', JobEnum::MANAGER_PREMIERE_LIGNE->value);
+        self::assertEquals('Manager délégué', JobEnum::MANAGER_PREMIERE_LIGNE_DELEGUE->value);
     }
 
     #[DataProvider('abbreviationProvider')]

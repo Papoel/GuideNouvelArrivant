@@ -4,20 +4,19 @@ namespace App\Controller\Admin\Logbook_Models;
 
 use App\Entity\Job;
 use App\Entity\LogbookTemplate;
+use App\Enum\JobEnum;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
  * @template-extends AbstractCrudController<LogbookTemplate>
@@ -53,30 +52,28 @@ class LogbookTemplateCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        // Champs communs à toutes les pages
         if ($pageName === Crud::PAGE_INDEX) {
             yield TextField::new(propertyName: 'name', label: 'Nom du modèle');
+
+            yield BooleanField::new(propertyName: 'isGlobal', label: 'Global')
+                ->renderAsSwitch(isASwitch: false)
+                ->setHelp(help: 'Modèle disponible pour tous les services');
+
             yield TextField::new(propertyName: 'jobLabel', label: 'Métiers concernés')
                 ->formatValue(callable: function ($value, $entity) {
-                    if (empty($value)) {
+                    if (!$entity instanceof LogbookTemplate || empty($entity->getJobs())) {
                         return '';
                     }
 
-                    // Vérifier que l'entité est bien un LogbookTemplate
-                    if (!$entity instanceof LogbookTemplate) {
-                        return is_string($value) ? $value : '';
-                    }
-
-                    // Traitement des jobs
                     $jobCodes = $entity->getJobs();
 
-                    // Si les jobs sont vides, retourner une chaîne vide
-                    if (empty($jobCodes)) {
-                        return '';
-                    }
+                    // Filtrer les valeurs nulles
+                    $jobCodes = array_filter($jobCodes, fn($code) => $code !== null);
 
                     $badges = [];
-                    $classes = [
+
+                    // Mapping des abréviations vers les classes CSS
+                    $badgeClasses = [
                         'APP' => 'badge-info',
                         'TECH' => 'badge-info',
                         'AGENT' => 'badge-info',
@@ -88,51 +85,60 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         'MPLD' => 'badge-dark',
                     ];
 
-                    // Récupérer les entités Job correspondant aux codes
-                    $jobRepository = $this->entityManager->getRepository(Job::class);
-                    $jobs = $jobRepository->findBy(['code' => $jobCodes]);
+                    // Utiliser JobEnum pour récupérer les noms des métiers
+                    foreach ($jobCodes as $jobCode) {
+                        // Essayer de trouver le JobEnum correspondant
+                        $jobEnum = $this->findJobEnumByCode($jobCode);
 
-                    // Si aucun job n'est trouvé, essayer d'afficher les codes bruts
-                    if (empty($jobs)) {
-                        foreach ($jobCodes as $jobCode) {
-                            $badgeClass = $classes[$jobCode] ?? 'badge-secondary';
+                        if ($jobEnum) {
+                            $abbreviation = $jobEnum->getAbbreviation();
+                            $jobName = $jobEnum->value;
+                            $badgeClass = $badgeClasses[$abbreviation] ?? 'badge-secondary';
+
                             $badges[] = sprintf(
                                 '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
                                 $badgeClass,
-                                htmlspecialchars(string: (string)$jobCode)
+                                htmlspecialchars($jobName)
                             );
-                        }
-                    } else {
-                        // Afficher les noms des jobs trouvés
-                        foreach ($jobs as $job) {
-                            $jobCode = $job->getCode();
-                            $jobName = $job->getName();
-                            $badgeClass = $classes[$jobCode] ?? 'badge-secondary';
-
+                        } else {
+                            // Fallback si le code n'est pas trouvé dans l'enum
                             $badges[] = sprintf(
-                                '<span class="badge %s rounded-pill me-1 fw-light">%s</span>',
-                                $badgeClass,
-                                htmlspecialchars(string: (string)$jobName)
+                                '<span class="badge badge-secondary rounded-pill me-1 fw-light">%s</span>',
+                                htmlspecialchars((string)$jobCode)
                             );
                         }
                     }
 
-                    return implode(separator: '', array: $badges);
+                    return implode('', $badges);
+                })
+                ->onlyOnIndex();
+
+
+
+            yield AssociationField::new(propertyName: 'service', label: 'Service associé')
+                ->setCssClass(cssClass: 'text-center')
+                ->formatValue(callable: function ($value, $entity) {
+                    if (!$entity instanceof LogbookTemplate) {
+                        return $value;
+                    }
+
+                    if ($entity->isIsGlobal()) {
+                        return '<span class="badge bg-primary text-light rounded-pill">Tous les services</span>';
+                    }
+
+                    return $value ?: '<span class="badge bg-secondary rounded-pill">Non défini</span>';
                 });
-            yield AssociationField::new(propertyName: 'service', label: 'Service associé')->setCssClass(cssClass: 'text-center');
+
             yield AssociationField::new(propertyName: 'themes', label: 'Thèmes')->setCssClass(cssClass: 'text-center');
 
             return;
         }
 
-        // Pour les pages de détail
         if ($pageName === Crud::PAGE_DETAIL) {
-            // Panel Informations générales
             yield FormField::addPanel(label: 'Informations générales')
                 ->setCssClass(cssClass: 'panel panel-info')
                 ->setIcon(iconCssClass: 'fas fa-info-circle');
 
-            // yield IdField::new(propertyName: 'id')->setLabel(label: 'ID');
             yield TextField::new(propertyName: 'name', label: 'Nom du modèle')
                 ->setCssClass(cssClass: 'fw-bold fs-5');
             yield TextareaField::new(propertyName: 'description', label: 'Description')
@@ -140,14 +146,27 @@ class LogbookTemplateCrudController extends AbstractCrudController
             yield BooleanField::new(propertyName: 'isDefault', label: 'Modèle par défaut')
                 ->renderAsSwitch(isASwitch: false)
                 ->setHelp(help: 'Si activé, ce modèle est proposé par défaut');
+            yield BooleanField::new(propertyName: 'isGlobal', label: 'Modèle global')
+                ->renderAsSwitch(isASwitch: false)
+                ->setHelp(help: 'Si activé, ce modèle est disponible pour tous les services');
 
-            // Panel Service et Métiers
             yield FormField::addPanel(label: 'Service et Métiers')
                 ->setCssClass(cssClass: 'panel panel-secondary mt-3')
                 ->setIcon(iconCssClass: 'fas fa-building');
 
             yield AssociationField::new(propertyName: 'service', label: 'Service associé')
-                ->setTemplatePath('admin/field/service_detail.html.twig');
+                ->setTemplatePath('admin/field/service_detail.html.twig')
+                ->formatValue(callable: function ($value, $entity) {
+                    if (!$entity instanceof LogbookTemplate) {
+                        return $value;
+                    }
+
+                    if ($entity->isIsGlobal()) {
+                        return '<span class="badge bg-primary fs-6 px-3 py-2">Tous les services (Modèle global)</span>';
+                    }
+
+                    return $value;
+                });
 
             yield TextField::new(propertyName: 'jobLabel', label: 'Métiers concernés')
                 ->formatValue(callable: function ($value, $entity) {
@@ -170,7 +189,6 @@ class LogbookTemplateCrudController extends AbstractCrudController
                     $jobRepository = $this->entityManager->getRepository(Job::class);
                     $jobs = $jobRepository->findBy(['code' => $jobCodes]);
 
-                    // Si aucun job n'est trouvé, essayer d'afficher les codes bruts
                     if (empty($jobs)) {
                         foreach ($jobCodes as $jobCode) {
                             $badgeClass = $classes[$jobCode] ?? 'bg-secondary';
@@ -181,7 +199,6 @@ class LogbookTemplateCrudController extends AbstractCrudController
                             );
                         }
                     } else {
-                        // Afficher les noms des jobs trouvés
                         foreach ($jobs as $job) {
                             $jobCode = $job->getCode();
                             $jobName = $job->getName();
@@ -199,7 +216,6 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 })
                 ->setTextAlign('left');
 
-            // Panel Thèmes associés
             yield FormField::addPanel(label: 'Thèmes associés')
                 ->setCssClass(cssClass: 'panel panel-success mt-3')
                 ->setIcon(iconCssClass: 'fas fa-list-ul');
@@ -210,8 +226,6 @@ class LogbookTemplateCrudController extends AbstractCrudController
             return;
         }
 
-        // Pour les pages d'édition et de création
-        // Panel Informations de base
         yield FormField::addPanel(label: 'Informations générales')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-info-circle text-success');
@@ -241,20 +255,27 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->setColumns(cols: 'col-md-6')
             ->renderAsSwitch();
 
-        // Panel Associations
         yield FormField::addPanel(label: 'Service associé')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-building text-success');
 
         yield AssociationField::new(propertyName: 'service', label: 'Service')
             ->setRequired(isRequired: false)
-            ->setHelp(help: 'Service auquel ce modèle de carnet est associé')
+            ->setHelp(help: 'Service auquel ce modèle de carnet est associé (laissez vide si le modèle est global)')
             ->setColumns(cols: 'col-md-6')
             ->setFormTypeOption(optionName: 'attr', optionValue: [
-                'class' => 'form-select'
+                'class' => 'form-select',
+                'data-service-field' => 'true'
             ]);
 
-        // Panel Thèmes
+        yield BooleanField::new(propertyName: 'isGlobal', label: 'Modèle global (tous les services)')
+            ->setHelp(help: 'Cochez cette case si ce modèle doit être disponible pour tous les services (ex: managers)')
+            ->setColumns(cols: 'col-md-6')
+            ->renderAsSwitch()
+            ->setFormTypeOption(optionName: 'attr', optionValue: [
+                'data-toggle-service' => 'true'
+            ]);
+
         yield FormField::addPanel(label: 'Thèmes')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-list-alt text-success');
@@ -268,7 +289,6 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ])
             ->setTemplatePath('admin/field/themes_selection.html.twig');
 
-        // Panel Métiers concernés
         yield FormField::addPanel(label: 'Métiers concernés')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-user-tie text-success');
@@ -300,6 +320,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->add(propertyNameOrFilter: 'name')
             ->add(propertyNameOrFilter: 'service')
             ->add(propertyNameOrFilter: 'isDefault')
+            ->add(propertyNameOrFilter: 'isGlobal')
             ->add(propertyNameOrFilter: 'jobs');
     }
 
@@ -328,5 +349,18 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->update(pageName: Crud::PAGE_EDIT, actionName: Action::SAVE_AND_CONTINUE, callable: function (Action $action) {
                 return $action->setLabel(label: 'Enregistrer et continuer l\'édition');
             });
+    }
+
+    /**
+     * Trouve un JobEnum à partir de son code (abréviation)
+     */
+    private function findJobEnumByCode(string $code): ?JobEnum
+    {
+        foreach (JobEnum::cases() as $jobEnum) {
+            if ($jobEnum->getAbbreviation() === $code) {
+                return $jobEnum;
+            }
+        }
+        return null;
     }
 }

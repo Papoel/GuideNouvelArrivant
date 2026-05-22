@@ -57,6 +57,9 @@ class LogbookTemplate
     #[ORM\JoinColumn(nullable: true)]
     private ?Service $service = null;
 
+    #[ORM\Column(nullable: false, options: ['default' => false])]
+    private ?bool $isGlobal = false;
+
     public function __construct()
     {
         $this->themes = new ArrayCollection();
@@ -289,6 +292,18 @@ class LogbookTemplate
     public function removeTheme(Theme $theme): static
     {
         $this->themes->removeElement($theme);
+
+        return $this;
+    }
+
+    public function isIsGlobal(): ?bool
+    {
+        return $this->isGlobal;
+    }
+
+    public function setIsGlobal(?bool $isGlobal): self
+    {
+        $this->isGlobal = $isGlobal;
 
         return $this;
     }
