@@ -65,8 +65,6 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         $now = $this->clock->now();
         $diff = $now->diff($hiringDate);
 
-        assert(is_int($diff->days), 'Les jours calculés doivent être un entier');
-
         return $diff->days;
     }
 }
