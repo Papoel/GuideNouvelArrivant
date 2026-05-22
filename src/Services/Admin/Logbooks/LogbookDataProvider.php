@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Repository\Interfaces\ActionRepositoryInterface;
 use App\Repository\LogbookRepository;
 use App\Services\Admin\interfaces\LogbookDataProviderInterface;
+use Symfony\Component\Clock\ClockInterface;
 
 /** Service responsable de la récupération des données liées aux carnets des utilisateurs.
  * Implémente l'interface LogbookDataProviderInterface pour respecter le principe d'inversion de dépendance. */
@@ -16,7 +17,8 @@ class LogbookDataProvider implements LogbookDataProviderInterface
 {
     public function __construct(
         private readonly LogbookRepository $logbookRepository,
-        private readonly ActionRepositoryInterface $actionRepository
+        private readonly ActionRepositoryInterface $actionRepository,
+        private readonly ClockInterface $clock
     ) {
     }
 
@@ -61,9 +63,9 @@ class LogbookDataProvider implements LogbookDataProviderInterface
             return null;
         }
 
-        $now = new \DateTimeImmutable();
+        $now = $this->clock->now();
         $diff = $now->diff($hiringDate);
 
-        return is_int($diff->days) ? $diff->days : null;
+        return $diff->days !== false ? (int) $diff->days : null;
     }
 }
