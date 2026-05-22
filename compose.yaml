@@ -42,7 +42,7 @@ services:
 
   ######################## MariaDb (MySQL) ##########################
   database:
-    image: mariadb:latest
+    image: mariadb:12.2.2
     platform: linux/x86_64
     container_name: db_compagnonnage
     restart: always
