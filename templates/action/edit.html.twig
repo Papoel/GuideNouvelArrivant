@@ -11,7 +11,7 @@
         <section>
             <div class="row">
                 <div class="col-12">
-                    {% set route = app.request.get('_route') %}
+                    {% set route = app.current_route %}
                     {% if route == "mentor_logbook_action_edit" %}
                         {{ include('action/_formMentorAction.html.twig') }}
                     {% else %}
