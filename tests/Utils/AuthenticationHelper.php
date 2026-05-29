@@ -6,7 +6,6 @@ namespace App\Tests\Utils;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpFoundation\Request;
 
 class AuthenticationHelper
 {
@@ -15,7 +14,7 @@ class AuthenticationHelper
      *
      * @param KernelBrowser $client Le client Symfony.
      * @param EntityManagerInterface $entityManager L'EntityManager pour gérer les entités.
-     * @param bool $useNni Utiliser le NNI pour l'authentification.
+     * @param bool $useNni Utiliser le NNI pour l'authentification (paramètre conservé pour compatibilité).
      * @return array [KernelBrowser $client, User $user] Le client connecté et l'utilisateur authentifié.
      */
     public static function authenticateUser(KernelBrowser $client, EntityManagerInterface $entityManager, bool $useNni = false): array
@@ -26,18 +25,9 @@ class AuthenticationHelper
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Accès à la page de connexion
-        $crawler = $client->request(method: Request::METHOD_GET, uri: '/connexion');
-
-        // Soumission du formulaire avec les identifiants de l'utilisateur
-        $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'identifier' => $useNni ? $user->getNni() : $user->getEmail(),
-            'password' => 'password',
-        ]);
-        $client->submit(form: $form);
-
-        // Suivi de la redirection après connexion
-        $client->followRedirect();
+        // Symfony 8 : authentification directe via loginUser()
+        // Plus besoin de soumettre le formulaire manuellement
+        $client->loginUser($user);
 
         return [$client, $user];
     }

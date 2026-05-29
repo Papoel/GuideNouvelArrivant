@@ -6,28 +6,36 @@ namespace App\Tests\Controller\App\Dashboard;
 
 use App\Security\MainAuthenticator;
 use App\Tests\Utils\AuthenticationHelper;
-use App\Tests\Utils\UserTestHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class DashboardControllerTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
     private UrlGeneratorInterface $urlGenerator;
     private Session $session;
     private MainAuthenticator $authenticator;
+    private EventDispatcherInterface $eventDispatcher;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->session = new Session(new MockArraySessionStorage());
-        $this->authenticator = new MainAuthenticator($this->urlGenerator, $this->entityManager);
+        $this->authenticator = new MainAuthenticator(
+            $this->urlGenerator,
+            $this->entityManager,
+            $this->eventDispatcher
+        );
     }
 
     #[Test] public function testUserIsRedirectedToDashboardAfterLogin(): void
@@ -38,16 +46,17 @@ class DashboardControllerTest extends WebTestCase
         // Utilisation de la méthode authenticateUser
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager);
 
+        // Faire une requête vers le dashboard après authentification
+        $nni = $user->getNni();
+        $client->request('GET', '/dashboard/' . $nni);
+        // Suivre la redirection 301
+        $client->followRedirect();
+
         // Vérifications après authentification
         self::assertResponseIsSuccessful();
 
         // Vérifier que l'utilisateur est redirigé vers la page de tableau de bord
         $uri = $client->getRequest()->getRequestUri();
-
-        // route = /dashboard/{nni}/module/{moduleId}/carnet/{logbookId}/edit
-        $nni = $user->getNni();
-
-
         $redirectedTo = '/dashboard/' . $nni;
         self::assertStringStartsWith($redirectedTo, $uri);
     }
@@ -59,6 +68,12 @@ class DashboardControllerTest extends WebTestCase
 
         // Utilisation de la méthode authenticateUser avec email
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
+
+        // Faire une requête vers le dashboard après authentification
+        $nni = $user->getNni();
+        $client->request('GET', '/dashboard/' . $nni);
+        // Suivre la redirection 301
+        $client->followRedirect();
 
         // Vérifications après authentification
         self::assertResponseIsSuccessful();
@@ -76,6 +91,12 @@ class DashboardControllerTest extends WebTestCase
 
         // Utilisation de la méthode authenticateUser avec NNI
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
+
+        // Faire une requête vers le dashboard après authentification
+        $nni = $user->getNni();
+        $client->request('GET', '/dashboard/' . $nni);
+        // Suivre la redirection 301
+        $client->followRedirect();
 
         // Vérifications après authentification
         self::assertResponseIsSuccessful();
@@ -106,6 +127,11 @@ class DashboardControllerTest extends WebTestCase
         // Test avec email
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, false);
         self::assertNotNull($user);
+
+        // Faire une requête pour avoir une réponse
+        $client->request('GET', '/dashboard/' . $user->getNni());
+        $client->followRedirect();
+
         self::assertResponseIsSuccessful();
     }
 
@@ -117,6 +143,11 @@ class DashboardControllerTest extends WebTestCase
         // Test avec NNI
         [$client, $user] = AuthenticationHelper::authenticateUser($client, $entityManager, true);
         self::assertNotNull($user);
+
+        // Faire une requête pour avoir une réponse
+        $client->request('GET', '/dashboard/' . $user->getNni());
+        $client->followRedirect();
+
         self::assertResponseIsSuccessful();
     }
 

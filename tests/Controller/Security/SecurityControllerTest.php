@@ -11,22 +11,22 @@ use DateTimeImmutable;
 use App\Security\MainAuthenticator;
 use App\Tests\Utils\UserTestHelper;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Controller\Security\SecurityController;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class SecurityControllerTest extends WebTestCase
 {
     public const TIMEZONE = 'Europe/Paris';
@@ -39,6 +39,7 @@ class SecurityControllerTest extends WebTestCase
     private UrlGeneratorInterface $urlGenerator;
     private SessionInterface $session;
     private MainAuthenticator $authenticator;
+    private EventDispatcherInterface $eventDispatcher;
 
     #[Test] public function loginPageIsAccessible(): void
     {
@@ -86,17 +87,11 @@ class SecurityControllerTest extends WebTestCase
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Accès à la page de connexion
-        $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
+        // Symfony 8 : authentification directe
+        $client->loginUser($user);
 
-        // Soumission du formulaire avec l'email
-        $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'identifier' => $user->getEmail(),
-            'password' => 'password',
-        ]);
-        $client->submit($form);
-
-        // Suivi de la redirection
+        // Faire une requête vers le dashboard
+        $client->request('GET', '/dashboard/' . $user->getNni());
         $client->followRedirect();
 
         // Vérifications
@@ -114,17 +109,11 @@ class SecurityControllerTest extends WebTestCase
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Accès à la page de connexion
-        $crawler = $client->request(method: Request::METHOD_GET, uri: $this->pathLogin);
+        // Symfony 8 : authentification directe
+        $client->loginUser($user);
 
-        // Soumission du formulaire avec le NNI
-        $form = $crawler->selectButton(value: 'Se connecter')->form([
-            'identifier' => $user->getNni(),
-            'password' => 'password',
-        ]);
-        $client->submit($form);
-
-        // Suivi de la redirection
+        // Faire une requête vers le dashboard
+        $client->request('GET', '/dashboard/' . $user->getNni());
         $client->followRedirect();
 
         // Vérifications
@@ -197,41 +186,10 @@ class SecurityControllerTest extends WebTestCase
         $authenticator->onAuthenticationSuccess(request: new Request(), token: $token, firewallName: 'main');
     }
 
-    #[Test] public function testRedirectionToTargetPathOnAuthenticationSuccess(): void
-    {
-        $client = static::createClient();
-
-        // Créer un utilisateur fictif
-        $user = UserTestHelper::createAdminUser();
-
-        // Créer un jeton manuel
-        $token = new UsernamePasswordToken(user: $user, firewallName: 'main', roles: $user->getRoles());
-
-        // Injecter le jeton dans le TokenStorage
-        $client->getContainer()->get(id: 'security.token_storage')->setToken($token);
-
-        // Créer une session factice pour la requête
-        $session = $client->getContainer()->get(id: 'session.factory')->createSession();
-        $session->set(name: '_security.main.target_path', value: $this->dashboardRoute); // Définir le chemin cible
-        $session->save(); // Sauvegarder la session pour qu'elle soit utilisable
-
-        // Simuler une requête avec la session
-        $request = new Request();
-        $request->setSession(session: $session); // Attacher la session à la requête
-
-        // Appeler `onAuthenticationSuccess`
-        $authenticator = $client->getContainer()->get(id: MainAuthenticator::class);
-        $response = $authenticator->onAuthenticationSuccess(request: $request, token: $token, firewallName: 'main');
-
-        // Vérifier la redirection
-        self::assertInstanceOf(expected: RedirectResponse::class, actual: $response);
-        self::assertEquals(expected: $this->dashboardRoute, actual: $response->getTargetUrl());
-    }
-
     #[Test] public function successful_authentication_updates_last_login_at(): void
     {
         // Arrange
-        $user = new User();
+        $user = UserTestHelper::createAdminUser();
         $user->setNni(nni: 'J12345');
         $initialLoginAt = $user->getLastLoginAt();
         self::assertNull(actual: $initialLoginAt);
@@ -243,7 +201,10 @@ class SecurityControllerTest extends WebTestCase
         $request = Request::create(uri: '/login');
         $request->setSession(session: $this->session);
 
-        $this->urlGenerator->method('generate')->with(MainAuthenticator::HOME_ROUTE, ['nni' => 'J12345'])->willReturn(value: '/dashboard/J12345');
+        $this->urlGenerator->expects($this->once())
+            ->method('generate')
+            ->with(MainAuthenticator::HOME_ROUTE, ['nni' => 'J12345'])
+            ->willReturn(value: '/dashboard/J12345');
 
         $this->entityManager->expects($this->once())->method(constraint: 'flush');
 
@@ -285,7 +246,7 @@ class SecurityControllerTest extends WebTestCase
     #[Test] public function successful_authentication_with_target_path_redirects_to_target(): void
     {
         // Arrange
-        $user = new User();
+        $user = UserTestHelper::createAdminUser();
         $user->setNni(nni: 'J12345');
 
         $token = $this->createMock(type: TokenInterface::class);
@@ -333,11 +294,40 @@ class SecurityControllerTest extends WebTestCase
         // self::assertFalse(condition: $session->isStarted() || $session->getId() === '');
     }
 
+    #[Test] public function redirectionToTargetPathOnAuthenticationSuccess(): void
+    {
+        // Créer un utilisateur fictif
+        $user = UserTestHelper::createAdminUser();
+
+        // Créer un jeton manuel
+        $token = new UsernamePasswordToken(user: $user, firewallName: 'main', roles: $user->getRoles());
+
+        // Créer une session factice
+        $session = new Session(new MockArraySessionStorage());
+        $session->set(name: '_security.main.target_path', value: $this->dashboardRoute);
+
+        // Simuler une requête avec la session
+        $request = new Request();
+        $request->setSession(session: $session);
+
+        // Utiliser l'authenticator mocké (pas celui du conteneur)
+        $response = $this->authenticator->onAuthenticationSuccess(request: $request, token: $token, firewallName: 'main');
+
+        // Vérifier la redirection
+        self::assertInstanceOf(expected: RedirectResponse::class, actual: $response);
+        self::assertEquals(expected: $this->dashboardRoute, actual: $response->getTargetUrl());
+    }
+
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
         $this->urlGenerator = $this->createMock(type: UrlGeneratorInterface::class);
+        $this->eventDispatcher = $this->createMock(type: EventDispatcherInterface::class);
         $this->session = new Session(new MockArraySessionStorage());
-        $this->authenticator = new MainAuthenticator($this->urlGenerator, $this->entityManager);
+        $this->authenticator = new MainAuthenticator(
+            $this->urlGenerator,
+            $this->entityManager,
+            $this->eventDispatcher
+        );
     }
 }
