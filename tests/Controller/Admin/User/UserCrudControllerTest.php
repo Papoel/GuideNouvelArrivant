@@ -20,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +28,8 @@ use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+
+#[AllowMockObjectsWithoutExpectations]
 
 class UserCrudControllerTest extends TestCase
 {
@@ -288,7 +291,6 @@ class UserCrudControllerTest extends TestCase
 
         // Récupérer la configuration de format de date/heure
         $dateTimeFormatMethod = new ReflectionMethod(objectOrMethod: $this->controller, method: 'configureCrud');
-        $dateTimeFormatMethod->setAccessible(accessible: true);
 
         // Utiliser la réflexion pour vérifier les formats
         $crud = $dateTimeFormatMethod->invoke($this->controller, $crud);

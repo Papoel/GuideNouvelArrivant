@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Repository;
 
-use App\Entity\User;
 use App\Entity\Service;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\AbstractQuery;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Uid\Uuid;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
+#[AllowMockObjectsWithoutExpectations]
 class UserRepositoryTest extends TestCase
 {
     private MockObject|UserRepository $userRepository;
@@ -230,11 +230,9 @@ class UserRepositoryTest extends TestCase
         // Créer un mock de UserRepository qui ne mocke pas la méthode à tester
         $em = $this->createMock(EntityManagerInterface::class);
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManager')
+        $registry->method('getManager')
             ->willReturn($em);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
+        $registry->method('getManagerForClass')
             ->willReturn($em);
 
         // Utiliser une implémentation partielle pour mocker seulement findAll
@@ -279,11 +277,9 @@ class UserRepositoryTest extends TestCase
         // Créer un mock de UserRepository qui ne mocke pas la méthode findByRole
         $em = $this->createMock(EntityManagerInterface::class);
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManager')
+        $registry->method('getManager')
             ->willReturn($em);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
+        $registry->method('getManagerForClass')
             ->willReturn($em);
 
         // Utiliser une implémentation partielle pour mocker seulement findByRole
@@ -330,11 +326,9 @@ class UserRepositoryTest extends TestCase
         // Test avec un critère de service null
         $em = $this->createMock(EntityManagerInterface::class);
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManager')
+        $registry->method('getManager')
             ->willReturn($em);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
+        $registry->method('getManagerForClass')
             ->willReturn($em);
 
         $userRepo = $this->getMockBuilder(UserRepository::class)
@@ -369,11 +363,9 @@ class UserRepositoryTest extends TestCase
         // Test sans critères de filtrage
         $em = $this->createMock(EntityManagerInterface::class);
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
-            ->method('getManager')
+        $registry->method('getManager')
             ->willReturn($em);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
+        $registry->method('getManagerForClass')
             ->willReturn($em);
 
         $userRepo = $this->getMockBuilder(UserRepository::class)
@@ -398,7 +390,6 @@ class UserRepositoryTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertSame($usersWithRole, $result);
     }
-
 
     /**
      * Implémentation manuelle de la méthode findUsersWithoutLogbookByService du repository

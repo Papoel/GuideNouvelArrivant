@@ -7,6 +7,8 @@ namespace App\Tests\Enum;
 use App\Enum\UserRole;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
+
 class UserRoleTest extends TestCase
 {
     public function testAllRoleCasesExist(): void

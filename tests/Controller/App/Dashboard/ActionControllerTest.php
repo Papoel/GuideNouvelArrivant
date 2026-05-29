@@ -40,6 +40,7 @@ class ActionControllerTest extends WebTestCase
 
         $logbook = new Logbook();
         $logbook->setName('Test Logbook');
+        $logbook->setOwner($user);
         $entityManager->persist($logbook);
 
         $entityManager->flush();
@@ -56,7 +57,21 @@ class ActionControllerTest extends WebTestCase
         );
 
         $crawler = $client->request(Request::METHOD_GET, $url);
-        $form = $crawler->selectButton('Sauvegarder')->form();
+
+        // Vérifier que la page s'est chargée correctement
+        self::assertResponseIsSuccessful(
+            'La page d\'édition n\'a pas pu être chargée. Code: ' . $client->getResponse()->getStatusCode()
+        );
+
+        // Vérifier que le formulaire existe
+        $buttonNode = $crawler->selectButton('Sauvegarder');
+        if ($buttonNode->count() === 0) {
+            // Debug : afficher le contenu HTML
+            $html = $client->getResponse()->getContent();
+            self::fail('Le bouton "Sauvegarder" n\'a pas été trouvé. HTML reçu : ' . substr($html, 0, 500));
+        }
+
+        $form = $buttonNode->form();
         $token = $form->get('user_action[_token]')->getValue();
 
         $client->request(

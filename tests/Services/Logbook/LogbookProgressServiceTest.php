@@ -8,12 +8,15 @@ use App\Services\Logbook\LogbookProgressService;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use App\Entity\Logbook;
 use App\Entity\Theme;
 use App\Entity\Module;
 use App\Entity\User;
 use App\Entity\Action;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class LogbookProgressServiceTest extends TestCase
 {

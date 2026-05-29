@@ -7,10 +7,13 @@ namespace App\Tests\Form;
 use App\Entity\Action;
 use App\Form\UserActionType;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Validation;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class UserActionTypeTest extends TypeTestCase
 {

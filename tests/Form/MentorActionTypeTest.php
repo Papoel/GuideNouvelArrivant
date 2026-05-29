@@ -7,8 +7,11 @@ namespace App\Tests\Form;
 use App\Entity\Action;
 use App\Form\MentorActionType;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class MentorActionTypeTest extends TypeTestCase
 {

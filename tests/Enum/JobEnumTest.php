@@ -7,7 +7,10 @@ namespace App\Tests\Enum;
 use App\Enum\JobEnum;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class JobEnumTest extends TestCase
 {
