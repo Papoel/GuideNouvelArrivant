@@ -15,8 +15,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class MainAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -26,51 +28,74 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
     public const HOME_ROUTE = 'dashboard_index';
     public const TIMEZONE = 'Europe/Paris';
 
+    private ?Passport $lastPassport = null;
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly EntityManagerInterface $entityManager
-    ) {
-    }
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $eventDispatcher
+    ) {}
 
     public function authenticate(Request $request): Passport
     {
-        $identifier = $request->getPayload()->getString('identifier');
+        // Symfony 8 : utiliser request->request pour les données POST
+        $identifier = (string) $request->request->get('identifier', '');
+        $password = (string) $request->request->get('password', '');
+        $csrfToken = $request->request->getString('_csrf_token');
+
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $identifier);
 
-        return new Passport(
+        $this->lastPassport = new Passport(
             new UserBadge($identifier),
-            new PasswordCredentials($request->getPayload()->getString('password')),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $csrfToken),
                 new RememberMeBadge(),
             ]
         );
+
+        return $this->lastPassport;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $user = $token->getUser();
 
-        if ($user instanceof User) {
-            $userNni = $user->getNni();
-        } else {
-            // Gérer le cas où l'utilisateur est null ou n'est pas de la classe attendue
-            throw new \LogicException(message: 'L\'utilisateur doit être une instance de ' . User::class);
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur doit être une instance de ' . User::class);
         }
 
         // Mise à jour du lastLoginAt
         $user->setLastLoginAt(new \DateTimeImmutable(timezone: new \DateTimeZone(self::TIMEZONE)));
         $this->entityManager->flush();
 
-        if ($targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName)) {
-            return new RedirectResponse(url: $targetPath);
+        // Créer un nouveau passport pour l'événement (sans réutiliser les credentials)
+        $eventPassport = new Passport(
+            new UserBadge($user->getUserIdentifier(), function () use ($user) {
+                return $user;
+            }),
+            new PasswordCredentials('') // Credentials vides car déjà authentifié
+        );
+
+        $event = new LoginSuccessEvent($this, $eventPassport, $token, $request, null, $firewallName);
+        $this->eventDispatcher->dispatch($event);
+
+        // Si le subscriber a défini une réponse, l'utiliser
+        if ($event->getResponse() !== null) {
+            return $event->getResponse();
         }
 
-        return new RedirectResponse(url: $this->urlGenerator->generate(name: self::HOME_ROUTE, parameters: ['nni' => $userNni]));
+        // Sinon, utiliser la redirection par défaut
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        // Redirection par défaut vers le dashboard utilisateur
+        return new RedirectResponse($this->urlGenerator->generate(self::HOME_ROUTE, ['nni' => $user->getNni()]));
     }
 
     protected function getLoginUrl(Request $request): string
     {
-        return $this->urlGenerator->generate(name: self::LOGIN_ROUTE);
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }
