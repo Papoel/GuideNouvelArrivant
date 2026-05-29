@@ -29,7 +29,6 @@ trait EntityIdTestTrait
     {
         $reflection = new ReflectionClass($entity);
         $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($entity, $uuid);
     }
 

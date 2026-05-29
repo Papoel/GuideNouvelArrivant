@@ -75,10 +75,29 @@ class UserTestHelper
         return $letter . $numbers;
     }
 
-    public static function createAdminUser(): User
+    // Dans UserTestHelper.php
+    public static function createAdminUser($entityManager = null): User
     {
         $user = self::createUser(['email' => 'admin' . uniqid() . '@example.com']);
         $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+
+        if ($entityManager) {
+            // Persister les dépendances
+            $job = $user->getJob();
+            $speciality = $user->getSpeciality();
+
+            if ($job) {
+                $entityManager->persist($job);
+            }
+
+            if ($speciality) {
+                $entityManager->persist($speciality);
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
         return $user;
     }
 
