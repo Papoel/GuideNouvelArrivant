@@ -40,3 +40,7 @@ docs/pro_du_nuc/*
 ###> Datas PROD ###
 src/Services/Datas/prod/*
 ###< Datas PROD ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
