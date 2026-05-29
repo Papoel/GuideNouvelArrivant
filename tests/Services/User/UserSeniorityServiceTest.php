@@ -7,7 +7,10 @@ namespace App\Tests\Services\User;
 use App\Services\User\UserSeniorityService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class UserSeniorityServiceTest extends TestCase
 {

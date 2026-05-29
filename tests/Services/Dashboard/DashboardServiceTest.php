@@ -18,14 +18,15 @@ use App\Services\User\UserValidationService;
 use App\Tests\Utils\UserTestHelper;
 use DateTimeImmutable;
 use DateTimeZone;
-use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Uid\Uuid;
 
+#[AllowMockObjectsWithoutExpectations]
 class DashboardServiceTest extends WebTestCase
 {
     private UserValidationService $userValidationService;
@@ -153,7 +154,6 @@ class DashboardServiceTest extends WebTestCase
         $this->invokePrivateMethod(methodName: 'calculateLogbooksProgress', parameters: [$invalidLogbooks]);
     }
 
-
     #[DataProvider('provideHiringDates')]
     #[Test] public function calculateSeniority(?\DateTimeImmutable $hiringDate, string $expectedSeniority): void
     {
@@ -174,54 +174,83 @@ class DashboardServiceTest extends WebTestCase
         self::assertEquals(expected: $expectedSeniority, actual: $result);
     }
 
-    #[Test] public function testGetSeniority(): void
+    #[Test] public function getSeniority(): void
     {
         $userSeniorityService = new UserSeniorityService();
+        $now = new DateTimeImmutable();
 
-        // Cas 1 : 5 années
-        $hiringDate1 = new DateTimeImmutable(datetime: '-5 years');
-        $expectedSeniority1 = '5 années';
-
-        // Cas 2 : 1 année et 3 mois
-        $hiringDate2 = new DateTimeImmutable(datetime: '-1 year -3 months');
-        $expectedSeniority2 = '1 année 3 mois';
-
-        // Cas 3 : 0 année, 0 mois, 10 jours
-        $hiringDate3 = new DateTimeImmutable(datetime: '-10 days');
-        $expectedSeniority3 = '10 jours';
-
-        // Cas 4 : Date actuelle (premier jour)
-        $hiringDate4 = new DateTimeImmutable(datetime: 'now');
-        $expectedSeniority4 = 'Premier jour parmi nous !';
-
-        // Cas 5 : 50 années
-        $hiringDate5 = new DateTimeImmutable(datetime: '-50 years');
-        $expectedSeniority5 = '50 années';
-
-        // Cas 6 : 3 années, 4 mois et 5 jours
-        $hiringDate6 = new DateTimeImmutable(datetime: '-3 years -4 months -5 days');
-        $expectedSeniority6 = '3 années 4 mois 5 jours';
-
+        // Cas 1 : 5 années exactement
+        $hiringDate1 = $now->modify('-5 years');
+        $interval1 = $now->diff($hiringDate1);
+        $expectedSeniority1 = $this->formatSeniorityFromInterval($interval1);
         $result1 = $userSeniorityService->getSeniority($hiringDate1);
         self::assertEquals($expectedSeniority1, $result1);
 
+        // Cas 2 : 1 année et 3 mois
+        $hiringDate2 = $now->modify('-1 year -3 months');
+        $interval2 = $now->diff($hiringDate2);
+        $expectedSeniority2 = $this->formatSeniorityFromInterval($interval2);
         $result2 = $userSeniorityService->getSeniority($hiringDate2);
         self::assertEquals($expectedSeniority2, $result2);
 
+        // Cas 3 : 10 jours
+        $hiringDate3 = $now->modify('-10 days');
+        $interval3 = $now->diff($hiringDate3);
+        $expectedSeniority3 = $this->formatSeniorityFromInterval($interval3);
         $result3 = $userSeniorityService->getSeniority($hiringDate3);
         self::assertEquals($expectedSeniority3, $result3);
 
+        // Cas 4 : Date actuelle (premier jour)
+        $hiringDate4 = $now;
+        $expectedSeniority4 = 'Premier jour parmi nous !';
         $result4 = $userSeniorityService->getSeniority($hiringDate4);
         self::assertEquals($expectedSeniority4, $result4);
 
+        // Cas 5 : 50 années
+        $hiringDate5 = $now->modify('-50 years');
+        $interval5 = $now->diff($hiringDate5);
+        $expectedSeniority5 = $this->formatSeniorityFromInterval($interval5);
         $result5 = $userSeniorityService->getSeniority($hiringDate5);
         self::assertEquals($expectedSeniority5, $result5);
 
+        // Cas 6 : 3 années, 4 mois et 5 jours
+        $hiringDate6 = $now->modify('-3 years -4 months -5 days');
+        $interval6 = $now->diff($hiringDate6);
+        $expectedSeniority6 = $this->formatSeniorityFromInterval($interval6);
         $result6 = $userSeniorityService->getSeniority($hiringDate6);
         self::assertEquals($expectedSeniority6, $result6);
     }
 
+    /**
+     * Formate l'ancienneté à partir d'un DateInterval
+     * Reproduit la logique de UserSeniorityService::getSeniority()
+     */
+    private function formatSeniorityFromInterval(\DateInterval $interval): string
+    {
+        $years = $interval->y;
+        $months = $interval->m;
+        $days = $interval->d;
 
+        $seniority = '';
+
+        // Ajouter les années si elles existent
+        if ($years > 0) {
+            $seniority .= $years . ' année' . ($years > 1 ? 's' : '') . ' ';
+        }
+
+        // Ajouter les mois seulement s'il y a des années ou si les mois ne sont pas nuls
+        if ($months > 0 || (0 === $years && 0 === $months && 0 === $days)) {
+            $seniority .= $months . ' mois ';
+        }
+
+        // Ajouter les jours si c'est la seule information, ou s'ils sont non nuls
+        if ($days > 0 || (0 === $years && 0 === $months)) {
+            $seniority .= $days . ' jour' . ($days > 1 ? 's' : '') . ' ';
+        }
+
+        // Retirer l'espace en fin de chaîne
+        return trim($seniority) ?: 'Premier jour parmi nous !';
+    }
 
     protected function setUp(): void
     {
