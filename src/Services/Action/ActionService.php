@@ -35,8 +35,8 @@ readonly class ActionService
         // Rechercher une action par module en fonction de l'utilisateur connecté
         $action = $this->actionRepository->findOneBy(
             [
-            'module' => $module,
-            'user' => $currentUser,
+                'module' => $module,
+                'user' => $currentUser,
             ]
         );
 
@@ -78,7 +78,7 @@ readonly class ActionService
 
         // S'assurer que la requête n'est pas nulle avant d'appeler get()
         if ($currentRequest) {
-            $currentLogbookId = $currentRequest->get(key: 'logbookId');
+            $currentLogbookId = $currentRequest->attributes->get('logbookId');
         }
 
         // Récupérer le carnet de l'utilisateur à partir de l'ID fourni

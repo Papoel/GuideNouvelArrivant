@@ -19,7 +19,8 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         private readonly LogbookRepository $logbookRepository,
         private readonly ActionRepositoryInterface $actionRepository,
         private readonly ClockInterface $clock
-    ) {}
+    ) {
+    }
 
     /** Récupère le carnet d'un utilisateur.
      *
@@ -65,6 +66,6 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         $now = $this->clock->now();
         $diff = $now->diff($hiringDate);
 
-        return $diff->days;
+        return $diff->days !== false ? $diff->days : null;
     }
 }

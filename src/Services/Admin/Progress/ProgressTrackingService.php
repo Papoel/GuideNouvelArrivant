@@ -14,8 +14,8 @@ use App\Services\Admin\interfaces\ProgressTrackingServiceInterface;
 use App\Services\Admin\interfaces\StatisticsServiceInterface;
 use App\Services\Admin\interfaces\ThemeProgressServiceInterface;
 use App\Services\Logbook\LogbookProgressService;
-use DateTimeInterface;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 
 /** Service responsable du suivi de la progression des utilisateurs.
@@ -48,8 +48,8 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
      *         user: User,
      *         logbook: Logbook|null,
      *         mentor: User|null,
-     *         last_action_date: DateTimeInterface|null,
-     *         hiring_date: DateTimeInterface|null,
+     *         last_action_date: \DateTimeInterface|null,
+     *         hiring_date: \DateTimeImmutable|null,
      *         days_since_hiring: int,
      *         progress: array<string, int|string|float>
      *     }>,
@@ -133,14 +133,14 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
 
                 // Récupérer les utilisateurs avec carnet pour le service spécifié
                 $sql = '
-                    SELECT DISTINCT u.id 
-                    FROM users u 
-                    JOIN logbooks l ON l.owner_id = u.id 
+                    SELECT DISTINCT u.id
+                    FROM users u
+                    JOIN logbooks l ON l.owner_id = u.id
                     WHERE u.service_id = :serviceId
                 ';
 
                 $stmt = $conn->prepare($sql);
-                $stmt->bindValue(':serviceId', $binaryUuid, \PDO::PARAM_STR);
+                $stmt->bindValue(':serviceId', $binaryUuid, ParameterType::STRING);
                 $resultSet = $stmt->executeQuery();
                 $userIds = $resultSet->fetchFirstColumn();
 
@@ -157,7 +157,7 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
                 if (empty($allUsers)) {
                     $serviceSql = 'SELECT u.id FROM users u WHERE u.service_id = :serviceId';
                     $serviceStmt = $conn->prepare($serviceSql);
-                    $serviceStmt->bindValue(':serviceId', $binaryUuid, \PDO::PARAM_STR);
+                    $serviceStmt->bindValue(':serviceId', $binaryUuid, ParameterType::STRING);
                     $serviceResultSet = $serviceStmt->executeQuery();
                     $serviceUserIds = $serviceResultSet->fetchFirstColumn();
 
@@ -246,8 +246,8 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
      *      user: User,
      *      logbook: Logbook|null,
      *      mentor: User|null,
-     *      last_action_date: DateTimeInterface|null,
-     *      hiring_date: DateTimeInterface|null,
+     *      last_action_date: \DateTimeInterface|null,
+     *      hiring_date: \DateTimeImmutable|null,
      *      days_since_hiring: int,
      *      progress: array<string, int|string|float>
      *  }> Liste des utilisateurs avec leurs données de progression */
