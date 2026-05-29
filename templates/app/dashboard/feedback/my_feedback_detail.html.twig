@@ -3,152 +3,638 @@
 {% block title %}Détail du retour d'expérience{% endblock %}
 
 {% block body %}
-    <div class="container-fluid py-4">
-        <!-- En-tête avec bordure latérale élégante -->
-        <div class="dashboard-header d-flex justify-content-between align-items-center mb-4 border-start border-primary ps-3" style="border-left-width: 5px !important; border-left-color: #3d5f9e !important;">
-            <div>
-                <h1 class="text-dark fw-bold"><i class="fas fa-comment-dots me-3 text-primary"></i>Détail du retour d'expérience</h1>
-                <p class="text-muted mb-0 mt-2 fw-light">Consultez les détails de votre retour d'expérience</p>
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
+
+    <main id="main" class="main">
+        <!-- En-tête minimaliste -->
+        <div class="page-header mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="header-icon">
+                    {{ ux_icon('tabler:message-dots', {style: 'width: 28px; height: 28px;'}) }}
+                </div>
+                <div class="ms-3">
+                    <h1 class="page-title mb-0">Détail du retour d'expérience</h1>
+                    <p class="page-subtitle mb-0">Consultez le détail et le suivi de votre retour</p>
+                </div>
             </div>
-            <a href="{{ path('my_feedbacks_index', {'nni': nni}) }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm transition-all">
-                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
-            </a>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb custom-breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('dashboard_index', {'nni': nni}) }}">
+                            {{ ux_icon('tabler:home', {style: 'width: 14px; height: 14px;'}) }}
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('my_feedbacks_index', {'nni': nni}) }}">
+                            {{ ux_icon('tabler:message-dots', {style: 'width: 14px; height: 14px;'}) }}
+                            <span>Mes retours</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Détail</li>
+                </ol>
+            </nav>
         </div>
 
-        <!-- Carte principale avec ombre douce et coins arrondis -->
-        <div class="card border-0 shadow-sm mb-4" style="border-radius: 0.75rem;">
-            <!-- En-tête de carte élégant -->
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 px-4 border-0">
-                <h5 class="mb-0 fw-bold text-dark">{{ feedback.title }}</h5>
-                {% if feedback.isReviewed %}
-                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">
-                        <i class="fas fa-check-circle me-1"></i> Traité
-                    </span>
-                {% else %}
-                    <span class="badge rounded-pill bg-warning-subtle text-warning px-3 py-2">
-                        <i class="fas fa-clock me-1"></i> En attente
-                    </span>
-                {% endif %}
-            </div>
-            
-            <div class="card-body p-4">
-                <!-- Informations de base -->
-                <div class="row mb-4 g-4">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="text-primary me-3">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <div>
-                                <label class="text-muted fw-medium mb-1 small">Date de soumission</label>
-                                <div class="fw-bold">{{ feedback.createdAt|date('d/m/Y à H:i') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="text-primary me-3">
-                                <i class="fas fa-tag"></i>
-                            </div>
-                            <div>
-                                {% set category_labels = {
-                                    'integration_process': 'Processus d\'intégration',
-                                    'training': 'Formation',
-                                    'documentation': 'Documentation',
-                                    'tools': 'Outils',
-                                    'communication': 'Communication',
-                                    'other': 'Autre'
-                                } %}
-                                
-                                {% set category_icons = {
-                                    'integration_process': 'fas fa-users',
-                                    'training': 'fas fa-graduation-cap',
-                                    'documentation': 'fas fa-file-alt',
-                                    'tools': 'fas fa-tools',
-                                    'communication': 'fas fa-comments',
-                                    'other': 'fas fa-question-circle'
-                                } %}
-
-                                <label class="text-muted fw-medium mb-1 small">Catégorie</label>
-                                <div class="fw-bold">
-                                    <i class="{{ category_icons[feedback.category] }} me-1 small"></i>
+        <section class="section">
+            <div class="row g-4">
+                <!-- Colonne principale : Contenu -->
+                <div class="col-lg-8">
+                    <!-- Carte du retour -->
+                    <div class="detail-card">
+                        <div class="detail-card-header">
+                            <h2 class="detail-title">{{ feedback.title }}</h2>
+                            <div class="detail-meta">
+                                <span class="meta-item">
+                                    {{ ux_icon('tabler:calendar', {style: 'width: 16px; height: 16px;'}) }}
+                                    {{ feedback.createdAt|date('d/m/Y à H:i') }}
+                                </span>
+                                <span class="meta-separator">•</span>
+                                <span class="meta-item">
+                                    {{ ux_icon('tabler:category', {style: 'width: 16px; height: 16px;'}) }}
+                                    {% set category_labels = {
+                                        'integration_process': 'Processus d\'intégration',
+                                        'training': 'Formation',
+                                        'documentation': 'Documentation',
+                                        'tools': 'Outils',
+                                        'communication': 'Communication',
+                                        'other': 'Autre'
+                                    } %}
                                     {{ category_labels[feedback.category] }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="detail-card-body">
+                            <div class="content-section">
+                                <div class="section-header">
+                                    {{ ux_icon('tabler:file-text', {class: 'section-icon', style: 'width: 20px; height: 20px;'}) }}
+                                    <h3 class="section-title">Votre retour d'expérience</h3>
+                                </div>
+                                <div class="section-content">
+                                    {{ feedback.content|nl2br }}
                                 </div>
                             </div>
+
+                            {% if feedback.isReviewed %}
+                                <div class="content-section">
+                                    <div class="section-header">
+                                        {{ ux_icon('tabler:message-reply', {class: 'section-icon', style: 'width: 20px; height: 20px;'}) }}
+                                        <h3 class="section-title">Réponse du manager</h3>
+                                    </div>
+                                    <div class="manager-info">
+                                        {{ ux_icon('tabler:user-check', {style: 'width: 18px; height: 18px;'}) }}
+                                        <span>{{ feedback.reviewedBy.firstname }} {{ feedback.reviewedBy.lastname }}</span>
+                                        <span class="meta-separator">•</span>
+                                        {{ ux_icon('tabler:calendar-check', {style: 'width: 18px; height: 18px;'}) }}
+                                        <span>{{ feedback.reviewAt|date('d/m/Y') }}</span>
+                                    </div>
+                                    <div class="section-content manager-response">
+                                        {{ feedback.managerComment|nl2br }}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
 
-                <!-- Contenu du retour d'expérience -->
-                <div class="card bg-white border mb-4" style="border-radius: 0.5rem;">
-                    <div class="card-header bg-light py-3 px-4 border-bottom" style="border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
-                        <h6 class="mb-0 fw-bold">
-                            <i class="fas fa-quote-left text-primary me-2"></i>
-                            Votre retour d'expérience
-                        </h6>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="feedback-text lh-lg">
-                            {{ feedback.content|nl2br }}
+                <!-- Colonne latérale : Suivi -->
+                <div class="col-lg-4">
+                    <!-- Carte de suivi -->
+                    <div class="tracking-card">
+                        <div class="tracking-card-header">
+                            {{ ux_icon('tabler:timeline', {class: 'tracking-icon', style: 'width: 24px; height: 24px;'}) }}
+                            <h3 class="tracking-title">Suivi du traitement</h3>
                         </div>
-                    </div>
-                </div>
+                        <div class="tracking-card-body">
+                            <!-- Timeline verticale -->
+                            <div class="vertical-timeline">
+                                <div class="timeline-item {% if feedback.createdAt %}completed{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-info">
+                                        <p class="timeline-step">Étape 1</p>
+                                        <h4 class="timeline-title">Soumission</h4>
+                                        <p class="timeline-desc">Votre retour a été enregistré</p>
+                                        <p class="timeline-time">{{ feedback.createdAt|date('d/m/Y à H:i') }}</p>
+                                    </div>
+                                </div>
 
-                <!-- Réponse du manager -->
-                {% if feedback.isReviewed %}
-                    <div class="card bg-white border mb-0" style="border-radius: 0.5rem;">
-                        <div class="card-header bg-light py-3 px-4 border-bottom" style="border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0 fw-bold">
-                                    <i class="fas fa-reply text-primary me-2"></i>
-                                    Réponse du manager
-                                </h6>
-                                <div class="text-muted small">
-                                    <i class="fas fa-user-tie me-1"></i>
-                                    {{ feedback.reviewedBy.firstname }} {{ feedback.reviewedBy.lastname }}
-                                    <span class="ms-2 opacity-75">|</span>
-                                    <i class="fas fa-calendar-check ms-2 me-1"></i>
-                                    {{ feedback.reviewAt|date('d/m/Y') }}
+                                <div class="timeline-item {% if feedback.isReviewed %}completed{% else %}current{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-info">
+                                        <p class="timeline-step">Étape 2</p>
+                                        <h4 class="timeline-title">Analyse</h4>
+                                        <p class="timeline-desc">
+                                            {% if feedback.isReviewed %}
+                                                Votre retour a été analysé
+                                            {% else %}
+                                                En cours d'examen par un manager
+                                            {% endif %}
+                                        </p>
+                                        {% if feedback.isReviewed %}
+                                            <p class="timeline-time">Complété</p>
+                                        {% else %}
+                                            <p class="timeline-time">En cours...</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item {% if feedback.isReviewed %}completed{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-info">
+                                        <p class="timeline-step">Étape 3</p>
+                                        <h4 class="timeline-title">Réponse</h4>
+                                        <p class="timeline-desc">
+                                            {% if feedback.isReviewed %}
+                                                Réponse reçue du manager
+                                            {% else %}
+                                                Réponse sous 5 jours ouvrés
+                                            {% endif %}
+                                        </p>
+                                        {% if feedback.isReviewed %}
+                                            <p class="timeline-time">{{ feedback.reviewAt|date('d/m/Y') }}</p>
+                                        {% else %}
+                                            <p class="timeline-time">En attente</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body p-4">
-                            <div class="manager-comment lh-lg">
-                                {{ feedback.managerComment|nl2br }}
+                    </div>
+
+                    <!-- Carte d'information -->
+                    {% if not feedback.isReviewed %}
+                        <div class="info-card mt-4">
+                            <div class="info-card-header">
+                                {{ ux_icon('tabler:info-circle', {class: 'info-icon', style: 'width: 24px; height: 24px;'}) }}
+                                <h6 class="info-title">Information</h6>
+                            </div>
+                            <div class="info-card-body">
+                                <p class="info-text">
+                                    Votre retour d'expérience est actuellement en cours d'analyse.
+                                    Un manager vous apportera une réponse dans les meilleurs délais.
+                                </p>
                             </div>
                         </div>
-                    </div>
-                {% else %}
-                    <div class="alert alert-info d-flex align-items-center" style="border-radius: 0.5rem; background-color: rgba(61, 95, 158, 0.08); border-color: rgba(61, 95, 158, 0.2); color: #3d5f9e;">
-                        <i class="fas fa-info-circle me-3 fa-lg"></i>
-                        <div>
-                            Votre retour d'expérience est en cours d'analyse et sera traité prochainement par un manager.
-                        </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+
+                    <!-- Bouton retour -->
+                    <a href="{{ path('my_feedbacks_index', {'nni': nni}) }}" class="btn btn-secondary w-100 mt-4">
+                        {{ ux_icon('tabler:arrow-left', {class: 'me-2', style: 'width: 18px; height: 18px;'}) }}
+                        Retour à la liste
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
+
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
 {% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
 <style>
-    .transition-all {
-        transition: all 0.2s ease;
+    /* ========================================
+       VARIABLES
+       ======================================== */
+    :root {
+        --primary-color: #3d5f9e;
+        --primary-dark: #2d4f8e;
+        --primary-light: rgba(61, 95, 158, 0.08);
+        --text-dark: #2c384e;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
+        --bg-light: #f8f9fa;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --shadow-sm: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        --shadow-md: 0 0.5rem 1rem rgba(0,0,0,0.08);
+        --transition: all 0.2s ease;
     }
-    
-    .btn-outline-primary:hover {
-        transform: translateY(-2px);
+
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+    .page-header {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
     }
-    
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .header-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-sm);
     }
-    
-    .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+
+    .custom-breadcrumb {
+        background: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+
+    .custom-breadcrumb .breadcrumb-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .custom-breadcrumb .breadcrumb-item a:hover {
+        color: var(--primary-dark);
+    }
+
+    .custom-breadcrumb .breadcrumb-item.active {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text-dark);
+        border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg-light);
+        border-color: var(--text-muted);
+    }
+
+    /* ========================================
+       DETAIL CARD
+       ======================================== */
+    .detail-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .detail-card-header {
+        padding: 2rem;
+        background: linear-gradient(to bottom, var(--bg-light), white);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .detail-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .meta-separator {
+        opacity: 0.5;
+    }
+
+    .detail-card-body {
+        padding: 2rem;
+    }
+
+    /* ========================================
+       CONTENT SECTIONS
+       ======================================== */
+    .content-section {
+        margin-bottom: 2rem;
+    }
+
+    .content-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .section-icon {
+        color: var(--primary-color);
+    }
+
+    .section-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .section-content {
+        padding: 1.5rem;
+        background: var(--bg-light);
+        border-radius: var(--radius-sm);
+        border-left: 4px solid var(--primary-color);
+        line-height: 1.7;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .manager-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--primary-light);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .manager-response {
+        border-left-color: var(--success-color);
+    }
+
+    /* ========================================
+       TRACKING CARD
+       ======================================== */
+    .tracking-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .tracking-card-header {
+        padding: 1.25rem;
+        background: linear-gradient(135deg, var(--primary-light), white);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .tracking-icon {
+        color: var(--primary-color);
+    }
+
+    .tracking-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .tracking-card-body {
+        padding: 1.5rem;
+    }
+
+    /* ========================================
+       VERTICAL TIMELINE
+       ======================================== */
+    .vertical-timeline {
+        position: relative;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 32px;
+        width: 2px;
+        height: calc(100% + 1rem);
+        background: var(--border-color);
+    }
+
+    .timeline-item.completed:not(:last-child)::before {
+        background: var(--success-color);
+    }
+
+    .timeline-marker {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--border-color);
+        background: white;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+        transition: var(--transition);
+    }
+
+    .timeline-item.completed .timeline-marker {
+        border-color: var(--success-color);
+        background: var(--success-color);
+        box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    }
+
+    .timeline-item.completed .timeline-marker::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    .timeline-item.current .timeline-marker {
+        border-color: var(--warning-color);
+        background: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(255, 193, 7, 0);
+        }
+    }
+
+    .timeline-info {
+        flex: 1;
+    }
+
+    .timeline-step {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-desc {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .timeline-time {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* ========================================
+       INFO CARD
+       ======================================== */
+    .info-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .info-card-header {
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--primary-light), white);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-icon {
+        color: var(--primary-color);
+    }
+
+    .info-title {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .info-card-body {
+        padding: 1rem;
+    }
+
+    .info-text {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 768px) {
+        .detail-card-header {
+            padding: 1.5rem;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+        }
+
+        .detail-card-body {
+            padding: 1.5rem;
+        }
+
+        .section-content {
+            padding: 1rem;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+        }
+    }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .detail-card,
+    .tracking-card,
+    .info-card {
+        animation: fadeIn 0.3s ease;
     }
 </style>
 {% endblock %}

@@ -3,156 +3,531 @@
 {% block title %}Mes retours d'expérience{% endblock %}
 
 {% block body %}
-    <div class="container-fluid py-4">
-        <!-- En-tête avec bordure latérale élégante -->
-        <div class="dashboard-header d-flex justify-content-between align-items-center mb-4 border-start border-primary ps-3" style="border-left-width: 5px !important; border-left-color: #3d5f9e !important;">
-            <div>
-                <h1 class="text-dark fw-bold"><i class="fas fa-comment-dots me-3 text-primary"></i>Mes retours d'expérience</h1>
-                <p class="text-muted mb-0 mt-2 fw-light">Consultez l'historique de vos retours d'expérience et leur traitement</p>
-            </div>
-            <a href="{{ path('dashboard_index', {'nni': nni}) }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm transition-all">
-                <i class="fas fa-arrow-left me-2"></i>Retour au tableau de bord
-            </a>
-        </div>
+    {% include('app/dashboard/_dashboardHeader.html.twig') %}
+    {% include('app/dashboard/_dashboardAside.html.twig') %}
 
-        <!-- Carte principale avec ombre douce et coins arrondis -->
-        <div class="card border-0 shadow-sm mb-4" style="border-radius: 0.75rem;">
-            <!-- En-tête de carte élégant -->
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 px-4 border-0">
-                <h5 class="mb-0 fw-bold text-dark">
-                    <i class="fas fa-list text-primary me-2"></i>Liste de vos retours d'expérience
-                </h5>
-                <a href="{{ path('my_feedbacks_new', {'nni': nni}) }}" class="btn btn-primary rounded-pill px-3 py-2 shadow-sm transition-all">
-                    <i class="fas fa-plus me-2"></i>Nouveau retour
+    <main id="main" class="main">
+        <!-- En-tête minimaliste -->
+        <div class="page-header mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="header-icon">
+                        {{ ux_icon('tabler:message-dots', {style: 'width: 28px; height: 28px;'}) }}
+                    </div>
+                    <div class="ms-3">
+                        <h1 class="page-title mb-0">Mes retours d'expérience</h1>
+                        <p class="page-subtitle mb-0">Consultez l'historique et le suivi de vos retours</p>
+                    </div>
+                </div>
+                <a href="{{ path('my_feedbacks_new', {'nni': nni}) }}" class="btn btn-primary">
+                    {{ ux_icon('tabler:plus', {class: 'me-2', style: 'width: 18px; height: 18px;'}) }}
+                    <span>Nouveau retour</span>
                 </a>
             </div>
-            
-            <div class="card-body p-4">
-                {% if feedbacks is empty %}
-                    <div class="alert d-flex align-items-center" style="border-radius: 0.5rem; background-color: rgba(61, 95, 158, 0.08); border-color: rgba(61, 95, 158, 0.2); color: #3d5f9e;">
-                        <i class="fas fa-info-circle me-3 fa-lg"></i>
-                        <div>
-                            Vous n'avez pas encore soumis de retour d'expérience. Utilisez le bouton "Nouveau retour" pour partager votre expérience.
-                        </div>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb custom-breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('dashboard_index', {'nni': nni}) }}">
+                            {{ ux_icon('tabler:home', {style: 'width: 14px; height: 14px;'}) }}
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Mes retours</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            {% if feedbacks is empty %}
+                <!-- État vide -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        {{ ux_icon('tabler:message-off', {style: 'width: 64px; height: 64px;'}) }}
                     </div>
-                {% else %}
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle data-table">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="py-3">Date</th>
-                                    <th class="py-3">Titre</th>
-                                    <th class="py-3">Catégorie</th>
-                                    <th class="py-3">Statut</th>
-                                    <th class="py-3 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for feedback in feedbacks %}
-                                    <tr class="feedback-row transition-all">
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-calendar-alt text-primary me-2"></i>
+                    <h3 class="empty-state-title">Aucun retour d'expérience</h3>
+                    <p class="empty-state-text">
+                        Vous n'avez pas encore soumis de retour d'expérience.<br>
+                        Partagez votre expérience pour nous aider à améliorer nos processus.
+                    </p>
+                    <a href="{{ path('my_feedbacks_new', {'nni': nni}) }}" class="btn btn-primary">
+                        {{ ux_icon('tabler:plus', {class: 'me-2', style: 'width: 18px; height: 18px;'}) }}
+                        <span>Créer mon premier retour</span>
+                    </a>
+                </div>
+            {% else %}
+                <!-- Liste des retours -->
+                <div class="row g-4">
+                    {% for feedback in feedbacks %}
+                        <div class="col-12">
+                            <div class="feedback-card">
+                                <div class="feedback-card-header">
+                                    <div class="feedback-meta">
+                                        <h3 class="feedback-title">{{ feedback.title }}</h3>
+                                        <div class="feedback-info">
+                                            <span class="info-item">
+                                                {{ ux_icon('tabler:calendar', {style: 'width: 16px; height: 16px;'}) }}
                                                 {{ feedback.createdAt|date('d/m/Y') }}
-                                            </div>
-                                        </td>
-                                        <td class="fw-medium text-dark">{{ feedback.title }}</td>
-                                        <td>
-                                            {% set category_labels = {
-                                                'integration_process': 'Processus d\'intégration',
-                                                'training': 'Formation',
-                                                'documentation': 'Documentation',
-                                                'tools': 'Outils',
-                                                'communication': 'Communication',
-                                                'other': 'Autre'
-                                            } %}
-
-                                            {% set category_icons = {
-                                                'integration_process': 'fas fa-users',
-                                                'training': 'fas fa-graduation-cap',
-                                                'documentation': 'fas fa-file-alt',
-                                                'tools': 'fas fa-tools',
-                                                'communication': 'fas fa-comments',
-                                                'other': 'fas fa-question-circle'
-                                            } %}
-                                            
-                                            {% set badge_colors = {
-                                                'integration_process': '#3d5f9e',
-                                                'training': '#2e7d32',
-                                                'documentation': '#0288d1',
-                                                'tools': '#ed6c02',
-                                                'communication': '#d32f2f',
-                                                'other': '#546e7a'
-                                            } %}
-
-                                            <span class="badge rounded-pill px-3 py-2" style="background-color: {{ badge_colors[feedback.category] }}10; color: {{ badge_colors[feedback.category] }}; border: 1px solid {{ badge_colors[feedback.category] }}30;">
-                                                <i class="{{ category_icons[feedback.category] }} me-1"></i>
+                                            </span>
+                                            <span class="info-separator">•</span>
+                                            <span class="info-item">
+                                                {{ ux_icon('tabler:category', {style: 'width: 16px; height: 16px;'}) }}
+                                                {% set category_labels = {
+                                                    'integration_process': 'Processus d\'intégration',
+                                                    'training': 'Formation',
+                                                    'documentation': 'Documentation',
+                                                    'tools': 'Outils',
+                                                    'communication': 'Communication',
+                                                    'other': 'Autre'
+                                                } %}
                                                 {{ category_labels[feedback.category] }}
                                             </span>
-                                        </td>
-                                        <td>
-                                            {% if feedback.isReviewed %}
-                                                <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">
-                                                    <i class="fas fa-check-circle me-1"></i> Traité
-                                                </span>
-                                            {% else %}
-                                                <span class="badge rounded-pill bg-warning-subtle text-warning px-3 py-2">
-                                                    <i class="fas fa-clock me-1"></i> En attente
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{{ path('my_feedbacks_detail', {'nni': nni, 'id': feedback.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 shadow-sm transition-all">
-                                                <i class="fas fa-eye me-1"></i>Détails
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="feedback-actions">
+                                        <a href="{{ path('my_feedbacks_detail', {'nni': nni, 'id': feedback.id}) }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            {{ ux_icon('tabler:eye', {class: 'me-2', style: 'width: 16px; height: 16px;'}) }}
+                                            Voir les détails
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="feedback-card-body">
+                                    <!-- Timeline de suivi -->
+                                    <div class="feedback-timeline">
+                                        <div class="timeline-step {% if feedback.createdAt %}completed{% endif %}">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-content">
+                                                <p class="timeline-label">Soumission</p>
+                                                <p class="timeline-date">{{ feedback.createdAt|date('d/m/Y à H:i') }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="timeline-connector {% if feedback.isReviewed %}completed{% endif %}"></div>
+
+                                        <div class="timeline-step {% if feedback.isReviewed %}completed{% else %}pending{% endif %}">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-content">
+                                                <p class="timeline-label">Analyse</p>
+                                                <p class="timeline-date">
+                                                    {% if feedback.isReviewed %}
+                                                        Analysé
+                                                    {% else %}
+                                                        En cours...
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="timeline-connector {% if feedback.isReviewed %}completed{% endif %}"></div>
+
+                                        <div class="timeline-step {% if feedback.isReviewed %}completed{% else %}pending{% endif %}">
+                                            <div class="timeline-dot"></div>
+                                            <div class="timeline-content">
+                                                <p class="timeline-label">Réponse</p>
+                                                <p class="timeline-date">
+                                                    {% if feedback.isReviewed %}
+                                                        {{ feedback.reviewAt|date('d/m/Y') }}
+                                                    {% else %}
+                                                        En attente
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Extrait du contenu -->
+                                    <div class="feedback-excerpt">
+                                        {{ feedback.content|length > 150 ? feedback.content|slice(0, 150) ~ '...' : feedback.content }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    {{ include('app/dashboard/_dashboardFooter.html.twig') }}
 {% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
 <style>
-    .transition-all {
-        transition: all 0.2s ease;
+    /* ========================================
+       VARIABLES
+       ======================================== */
+    :root {
+        --primary-color: #3d5f9e;
+        --primary-dark: #2d4f8e;
+        --primary-light: rgba(61, 95, 158, 0.08);
+        --text-dark: #2c384e;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
+        --bg-light: #f8f9fa;
+        --success-color: #28a745;
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --shadow-sm: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        --shadow-md: 0 0.5rem 1rem rgba(0,0,0,0.08);
+        --transition: all 0.2s ease;
     }
-    
-    .btn-outline-primary:hover,
+
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+    .page-header {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+
+    .custom-breadcrumb {
+        background: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+
+    .custom-breadcrumb .breadcrumb-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .custom-breadcrumb .breadcrumb-item a:hover {
+        color: var(--primary-dark);
+    }
+
+    .custom-breadcrumb .breadcrumb-item.active {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
     .btn-primary:hover {
         transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(61, 95, 158, 0.3);
     }
-    
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .btn-outline-primary {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
     }
-    
-    .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+
+    .btn-outline-primary:hover {
+        background: var(--primary-color);
+        color: white;
     }
-    
-    .feedback-row:hover {
-        background-color: rgba(61, 95, 158, 0.04);
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
     }
-    
-    .data-table th {
+
+    /* ========================================
+       EMPTY STATE
+       ======================================== */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .empty-state-icon {
+        color: var(--text-muted);
+        opacity: 0.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-state-text {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* ========================================
+       FEEDBACK CARDS
+       ======================================== */
+    .feedback-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .feedback-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .feedback-card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .feedback-meta {
+        flex: 1;
+    }
+
+    .feedback-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .feedback-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
+
+    .info-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .info-separator {
+        opacity: 0.5;
+    }
+
+    .feedback-actions {
+        flex-shrink: 0;
+    }
+
+    .feedback-card-body {
+        padding: 1.5rem;
+    }
+
+    /* ========================================
+       TIMELINE
+       ======================================== */
+    .feedback-timeline {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: var(--bg-light);
+        border-radius: var(--radius-sm);
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    .timeline-dot {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--border-color);
+        background: white;
+        position: relative;
+        z-index: 2;
+        transition: var(--transition);
+    }
+
+    .timeline-step.completed .timeline-dot {
+        border-color: var(--success-color);
+        background: var(--success-color);
+        box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    }
+
+    .timeline-step.completed .timeline-dot::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: 700;
+        font-size: 0.875rem;
+    }
+
+    .timeline-step.pending .timeline-dot {
+        border-color: var(--border-color);
+        background: white;
+    }
+
+    .timeline-content {
+        text-align: center;
+    }
+
+    .timeline-label {
+        font-size: 0.875rem;
         font-weight: 600;
-        color: #2c384e;
-        border-top: none;
-        border-bottom-width: 1px;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
     }
-    
-    .data-table td {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        vertical-align: middle;
+
+    .timeline-date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .timeline-connector {
+        flex: 1;
+        height: 3px;
+        background: var(--border-color);
+        margin: 0 0.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .timeline-connector.completed {
+        background: var(--success-color);
+    }
+
+    /* ========================================
+       FEEDBACK EXCERPT
+       ======================================== */
+    .feedback-excerpt {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        padding: 1rem;
+        background: var(--bg-light);
+        border-radius: var(--radius-sm);
+        border-left: 3px solid var(--primary-color);
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 768px) {
+        .page-header .d-flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+
+        .feedback-card-header {
+            flex-direction: column;
+        }
+
+        .feedback-actions {
+            width: 100%;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .feedback-timeline {
+            padding: 1rem;
+        }
+
+        .timeline-label {
+            font-size: 0.75rem;
+        }
+
+        .timeline-date {
+            font-size: 0.7rem;
+        }
+
+        .timeline-dot {
+            width: 28px;
+            height: 28px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+        }
+    }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feedback-card {
+        animation: fadeIn 0.3s ease;
     }
 </style>
 {% endblock %}
