@@ -142,28 +142,45 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
      */
     public function hasActionsForThemeInLogbookNative(string $logbookId, string $themeId, ?string $userId = null): bool
     {
-        $sql = "
-            SELECT COUNT(a.id) as count_actions
-            FROM actions a
-            JOIN modules m ON m.id = a.module_id
-            WHERE a.logbook_id = UNHEX(REPLACE(:logbook_id, '-', ''))
-            AND m.theme_id = UNHEX(REPLACE(:theme_id, '-', ''))
-        ";
+        // Convertir les UUID en binaire avant la requête
+        $logbookIdBinary = hex2bin(str_replace('-', '', $logbookId));
+        $themeIdBinary = hex2bin(str_replace('-', '', $themeId));
 
-        $params = [
-            'logbook_id' => $logbookId,
-            'theme_id' => $themeId
-        ];
-
-        if ($userId !== null) {
-            $sql .= " AND a.user_id = UNHEX(REPLACE(:user_id, '-', ''))";
-            $params['user_id'] = $userId;
+        // Vérifier que la conversion a réussi
+        if ($logbookIdBinary === false || $themeIdBinary === false) {
+            return false;
         }
 
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $result = $stmt->executeQuery($params)->fetchAssociative();
+        $sql = "
+        SELECT COUNT(a.id) as count_actions
+        FROM actions a
+        JOIN modules m ON m.id = a.module_id
+        WHERE a.logbook_id = ?
+        AND m.theme_id = ?
+    ";
 
-        return $result !== false && isset($result['count_actions']) && $result['count_actions'] > 0;
+        $params = [$logbookIdBinary, $themeIdBinary];
+
+        if ($userId !== null) {
+            $userIdBinary = hex2bin(str_replace('-', '', $userId));
+            if ($userIdBinary === false) {
+                return false;
+            }
+            $sql .= " AND a.user_id = ?";
+            $params[] = $userIdBinary;
+        }
+
+        try {
+            $result = $this->getEntityManager()
+                ->getConnection()
+                ->executeQuery($sql, $params)
+                ->fetchAssociative();
+
+            return $result !== false && isset($result['count_actions']) && $result['count_actions'] > 0;
+        } catch (\Exception $e) {
+            // Log l'erreur si nécessaire
+            return false;
+        }
     }
 
     /**

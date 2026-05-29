@@ -108,13 +108,12 @@ class LogbookRepository extends ServiceEntityRepository
     {
         // Get logbook IDs using native SQL (workaround for UUID comparison issue)
         $conn = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT id FROM logbooks WHERE owner_id = :userId';
-        $stmt = $conn->prepare($sql);
         $userId = $user->getId();
         if ($userId === null) {
             return [];
         }
-        $resultSet = $stmt->executeQuery(['userId' => $userId->toBinary()]);
+        $sql = 'SELECT id FROM logbooks WHERE owner_id = ?';
+        $resultSet = $conn->executeQuery($sql, [$userId->toBinary()]);
         $logbookIds = $resultSet->fetchFirstColumn();
 
         if (empty($logbookIds)) {
