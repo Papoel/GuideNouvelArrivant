@@ -135,7 +135,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
         }
 
         if ($pageName === Crud::PAGE_DETAIL) {
-            yield FormField::addPanel(label: 'Informations générales')
+            yield FormField::addFieldset(label: 'Informations générales')
                 ->setCssClass(cssClass: 'panel panel-info')
                 ->setIcon(iconCssClass: 'fas fa-info-circle');
 
@@ -150,7 +150,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 ->renderAsSwitch(isASwitch: false)
                 ->setHelp(help: 'Si activé, ce modèle est disponible pour tous les services');
 
-            yield FormField::addPanel(label: 'Service et Métiers')
+            yield FormField::addFieldset(label: 'Service et Métiers')
                 ->setCssClass(cssClass: 'panel panel-secondary mt-3')
                 ->setIcon(iconCssClass: 'fas fa-building');
 
@@ -216,7 +216,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 })
                 ->setTextAlign('left');
 
-            yield FormField::addPanel(label: 'Thèmes associés')
+            yield FormField::addFieldset(label: 'Thèmes associés')
                 ->setCssClass(cssClass: 'panel panel-success mt-3')
                 ->setIcon(iconCssClass: 'fas fa-list-ul');
 
@@ -226,7 +226,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
             return;
         }
 
-        yield FormField::addPanel(label: 'Informations générales')
+        yield FormField::addFieldset(label: 'Informations générales')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-info-circle text-success');
 
@@ -255,7 +255,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->setColumns(cols: 'col-md-6')
             ->renderAsSwitch();
 
-        yield FormField::addPanel(label: 'Service associé')
+        yield FormField::addFieldset(label: 'Service associé')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-building text-success');
 
@@ -276,7 +276,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                 'data-toggle-service' => 'true'
             ]);
 
-        yield FormField::addPanel(label: 'Thèmes')
+        yield FormField::addFieldset(label: 'Thèmes')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-list-alt text-success');
 
@@ -289,7 +289,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ])
             ->setTemplatePath('admin/field/themes_selection.html.twig');
 
-        yield FormField::addPanel(label: 'Métiers concernés')
+        yield FormField::addFieldset(label: 'Métiers concernés')
             ->setCssClass(cssClass: 'panel-modern bg-light rounded p-4 mb-4')
             ->setIcon(iconCssClass: 'fas fa-user-tie text-success');
 
