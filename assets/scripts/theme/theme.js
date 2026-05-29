@@ -1,24 +1,9 @@
 /*----------------------------------------------
-# 1. Sidebar TOGGLE
+# 1. Sidebar TOGGLE - avec délégation d'événements
 ----------------------------------------------*/
-document.addEventListener("DOMContentLoaded", function () {
-    let sidebarToggle = document.querySelector("#sidebar-toggle");
-
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener("click", function () {
-            document.body.classList.toggle("toggle-sidebar");
-        });
-    }
-
-    // Initialize Bootstrap dropdowns
-    const dropdownElementList = document.querySelectorAll(
-        '[data-bs-toggle="dropdown"]',
-    );
-
-    if (typeof bootstrap !== "undefined") {
-        dropdownElementList.forEach(function (dropdownToggle) {
-            new bootstrap.Dropdown(dropdownToggle);
-        });
+document.addEventListener("click", function (e) {
+    if (e.target.closest("#sidebar-toggle")) {
+        document.body.classList.toggle("toggle-sidebar");
     }
 });
 /*----------------------------------------------
