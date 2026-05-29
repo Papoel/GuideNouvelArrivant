@@ -2,32 +2,39 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\Job\JobCrudController;
+use App\Controller\Admin\Logbook_Models\LogbookTemplateCrudController;
+use App\Controller\Admin\Logbook\LogbookCrudController;
+use App\Controller\Admin\Module\ModuleCrudController;
+use App\Controller\Admin\Service\ServiceCrudController;
+use App\Controller\Admin\Speciality\SpecialityCrudController;
+use App\Controller\Admin\Theme\ThemeCrudController;
+use App\Controller\Admin\User\UserCrudController;
 use App\Entity\Job;
-use App\Entity\User;
-use App\Entity\Theme;
-use App\Entity\Module;
 use App\Entity\Logbook;
+use App\Entity\LogbookTemplate;
+use App\Entity\Module;
 use App\Entity\Service;
 use App\Entity\Speciality;
-use App\Entity\LogbookTemplate;
+use App\Entity\Theme;
+use App\Entity\User;
 use App\Repository\JobRepository;
-use App\Repository\UserRepository;
-use App\Repository\ThemeRepository;
-use App\Repository\ModuleRepository;
 use App\Repository\LogbookRepository;
+use App\Repository\LogbookTemplateRepository;
+use App\Repository\ModuleRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\SpecialityRepository;
-use App\Repository\LogbookTemplateRepository;
-use Symfony\Component\HttpFoundation\Response;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use App\Controller\Admin\User\UserCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\ThemeRepository;
+use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
@@ -102,8 +109,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Utilisateurs')->setBadge(content: $totalUsers);
         yield MenuItem::subMenu(label: 'Utilisateurs', icon: 'fas fa-users')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des utilisateurs', icon: 'fas fa-list', entityFqcn: User::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer utilisateur', icon: 'fas fa-plus-circle', entityFqcn: User::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(UserCrudController::class, 'Liste des utilisateurs', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(UserCrudController::class, 'Créer utilisateur', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 
@@ -112,8 +119,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Modèles')->setBadge(content: $totalModels);
         yield MenuItem::subMenu(label: 'Modèles', icon: 'fas fa-book')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des modèles', icon: 'fas fa-list', entityFqcn: LogbookTemplate::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer un modèle', icon: 'fas fa-plus-circle', entityFqcn: LogbookTemplate::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(LogbookTemplateCrudController::class, 'Liste des modèles', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(LogbookTemplateCrudController::class, 'Créer un modèle', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
                 MenuItem::linkToRoute(label: 'Assignation en masse', icon: 'fas fa-address-book', routeName: 'admin_batch_assign_templates'),
             ]
         );
@@ -122,7 +129,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Carnet')->setBadge(content: $totalLogbooks);
         yield MenuItem::subMenu(label: 'Carnet', icon: 'fas fa-book')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des carnets', icon: 'fas fa-list', entityFqcn: Logbook::class)->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(LogbookCrudController::class, 'Liste des carnets', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
             ]
         );
 
@@ -130,8 +137,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Themes')->setBadge(content: $totalThemes);
         yield MenuItem::subMenu(label: 'Themes', icon: 'fas fa-box')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des themes', icon: 'fas fa-list', entityFqcn: Theme::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer themes', icon: 'fas fa-plus-circle', entityFqcn: Theme::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(ThemeCrudController::class, 'Liste des themes', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(ThemeCrudController::class, 'Créer themes', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 
@@ -139,8 +146,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Modules')->setBadge(content: $totalModules);
         yield MenuItem::subMenu(label: 'Modules', icon: 'fas fa-star')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des modules', icon: 'fas fa-list', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer modules', icon: 'fas fa-plus-circle', entityFqcn: Module::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(ModuleCrudController::class, 'Liste des modules', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(ModuleCrudController::class, 'Créer modules', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 
@@ -148,8 +155,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section(label: 'Services')->setBadge(content: $totalServices);
         yield MenuItem::subMenu(label: 'Services', icon: 'fas fa-box')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des services', icon: 'fas fa-list', entityFqcn: Service::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer services', icon: 'fas fa-plus-circle', entityFqcn: Service::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(ServiceCrudController::class, 'Liste des services', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(ServiceCrudController::class, 'Créer services', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 
@@ -160,10 +167,10 @@ class DashboardController extends AbstractDashboardController
             ->setBadge(content: sprintf('%d | %d', $totalJobs, $totalSpecialities));
         yield MenuItem::subMenu(label: 'Métier & Spé', icon: 'fas fa-user-tie')->setSubItems(
             subItems: [
-                MenuItem::linkToCrud(label: 'Liste des métiers', icon: 'fas fa-list', entityFqcn: Job::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer métier', icon: 'fas fa-plus-circle', entityFqcn: Job::class)->setAction(actionName: Crud::PAGE_NEW),
-                MenuItem::linkToCrud(label: 'Liste des spécialités', icon: 'fas fa-list', entityFqcn: Speciality::class)->setAction(actionName: Crud::PAGE_INDEX),
-                MenuItem::linkToCrud(label: 'Créer spécialité', icon: 'fas fa-plus-circle', entityFqcn: Speciality::class)->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(JobCrudController::class, 'Liste des métiers', icon: 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(JobCrudController::class, 'Créer métier', icon: 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
+                MenuItem::linkTo(SpecialityCrudController::class, 'Liste des spécialités', icon: 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
+                MenuItem::linkTo(SpecialityCrudController::class, 'Créer spécialité', icon: 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
         );
 

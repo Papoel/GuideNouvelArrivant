@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Enum\UserRole;
 use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -206,35 +207,45 @@ class UserCrudController extends AbstractCrudController
                 dateFormatOrPattern: DateTimeField::FORMAT_LONG,
                 timeFormat: DateTimeField::FORMAT_SHORT
             )
-
+            // Ajouter le template personnalisé pour la page détail
+            ->overrideTemplate('crud/detail', 'admin/user/detail.html.twig')
             ->addFormTheme(themePath: 'admin/crud/delete_confirmation_modal.html.twig');
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        // $actions = parent::configureActions($actions);
+        // Désactiver l'action DELETE par défaut
+        $actions = $actions->disable(Action::DELETE);
 
-        // Désactiver complètement les actions par défaut
-        $actions = $actions
-            ->disable(Action::DELETE);
+        // Ajouter l'action DETAIL (Voir) en premier
+        $actions = $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
 
-        // Mettre à jour l'action de modification existante
+        // Configurer l'action DETAIL
+        $actions = $actions->update(
+            pageName: Crud::PAGE_INDEX,
+            actionName: Action::DETAIL,
+            callable: function (Action $action) {
+                return $action
+                    ->setIcon(icon: 'fa fa-eye')
+                    ->setLabel(label: 'Voir');
+            }
+        );
+
+        // Configurer l'action EDIT pour qu'elle soit cohérente avec les autres
         $actions = $actions->update(
             pageName: Crud::PAGE_INDEX,
             actionName: Action::EDIT,
             callable: function (Action $action) {
                 return $action
-                    ->setIcon(icon: 'fa fa-edit text-primary')
-                    ->setLabel(label: 'Modifier')
-                    ->addCssClass(cssClass: 'btn btn-sm btn-outline-primary');
+                    ->setIcon(icon: 'fa fa-edit')
+                    ->setLabel(label: 'Modifier');
             }
         );
 
-        // Add custom actions
+        // Actions personnalisées de suppression
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
-            ->setIcon(icon: 'fa fa-user-times text-danger')
+            ->setIcon(icon: 'fa fa-user-times')
             ->linkToCrudAction(crudActionName: 'deleteUserOnly')
-            ->setCssClass(cssClass: 'text-danger')
             ->displayIf(
                 static function ($user) {
                     return true;
@@ -262,12 +273,15 @@ class UserCrudController extends AbstractCrudController
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteAll)
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly);
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly)
+            // Réorganiser l'ordre des actions dans le menu
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, self::DELETE_LOGBOOKS_ONLY, self::DELETE_USER_ONLY, self::DELETE_ALL]);
     }
 
     /**
      * @param AdminContext<User> $context
      */
+    #[AdminRoute('/admin/users/delete-user-only')]
     public function deleteUserOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -301,6 +315,7 @@ class UserCrudController extends AbstractCrudController
     /**
      * @param AdminContext<User> $context
      */
+    #[AdminRoute('/admin/users/delete-all')]
     public function deleteAll(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -334,6 +349,7 @@ class UserCrudController extends AbstractCrudController
     /**
      * @param AdminContext<User> $context
      */
+    #[AdminRoute('/admin/users/delete-logbooks-only')]
     public function deleteLogbooksOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
