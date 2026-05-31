@@ -57,18 +57,32 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
             throw new \LogicException('L\'utilisateur doit être une instance de ' . User::class);
         }
 
-        // Fix : DateTime mutable pour le type Doctrine "datetime"
         $user->setLastLoginAt(new \DateTimeImmutable('now', new \DateTimeZone(self::TIMEZONE)));
         $this->entityManager->flush();
 
-        // Redirection vers l'URL demandée avant l'authentification (ex: accès direct à une page protégée)
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
+        $roles = $token->getRoleNames();
+
+        // ROLE_MENTOR prioritaire
+        if (in_array('ROLE_MENTOR', $roles, true)) {
+            $nni = $user->getNni();
+            if (!$nni) {
+                throw new \RuntimeException('Le tuteur n\'a pas de NNI défini.');
+            }
+            return new RedirectResponse($this->urlGenerator->generate('mentor_dashboard_index', ['nni' => $nni]));
         }
 
-        // Redirection par défaut vers le dashboard utilisateur
-        // La redirection par rôle est gérée par LoginRedirectSubscriber
-        return new RedirectResponse($this->urlGenerator->generate(self::HOME_ROUTE, ['nni' => $user->getNni()]));
+        // ROLE_ADMIN → EasyAdmin dashboard
+        if (in_array('ROLE_SUPER_ADMIN', $roles, true) || in_array('ROLE_ADMIN', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin'));
+        }
+
+        // ROLE_MANAGER → dashboard de progression
+        if (in_array('ROLE_MANAGER', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_progress_dashboard'));
+        }
+
+        // ROLE_USER par défaut
+        return new RedirectResponse($this->urlGenerator->generate('home_index'));
     }
 
     protected function getLoginUrl(Request $request): string

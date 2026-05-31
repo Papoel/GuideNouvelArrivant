@@ -7,11 +7,11 @@ security:
     role_hierarchy:
         ROLE_SERVICE_HEAD: ROLE_USER
         ROLE_SERVICE_HEAD_DELEGATE: ROLE_USER
-        ROLE_MANAGER: [ROLE_USER, ROLE_ADMIN]
+        ROLE_MANAGER: ROLE_USER
         ROLE_MANAGER_DELEGATE: ROLE_USER
         ROLE_MENTOR: ROLE_USER
         ROLE_NEWCOMER: ROLE_USER
-        ROLE_ADMIN: [ROLE_SERVICE_HEAD, ROLE_MANAGER]
+        ROLE_ADMIN: [ROLE_SERVICE_HEAD, ROLE_SERVICE_HEAD_DELEGATE, ROLE_MANAGER_DELEGATE]
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
@@ -50,7 +50,7 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/admin/progress, roles: ROLE_MANAGER }
 
 when@test:
     security:

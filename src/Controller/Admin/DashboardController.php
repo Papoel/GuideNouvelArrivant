@@ -50,8 +50,7 @@ class DashboardController extends AbstractDashboardController
         private readonly LogbookTemplateRepository $LogbookTemplateRepository,
         private readonly JobRepository $JobRepository,
         private readonly SpecialityRepository $SpecialityRepository,
-    ) {
-    }
+    ) {}
 
     public function configureAssets(): Assets
     {
@@ -165,7 +164,7 @@ class DashboardController extends AbstractDashboardController
         $totalSpecialities = $this->SpecialityRepository->count();
         yield MenuItem::section(label: 'Métier & Spécialité')
             ->setBadge(content: sprintf('%d | %d', $totalJobs, $totalSpecialities));
-        yield MenuItem::subMenu(label: 'Métier & Spé', icon: 'fas fa-user-tie')->setSubItems(
+        yield MenuItem::subMenu(label: 'Métier & Spé', icon: 'fas fa-network-wired')->setSubItems(
             subItems: [
                 MenuItem::linkTo(JobCrudController::class, 'Liste des métiers', icon: 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
                 MenuItem::linkTo(JobCrudController::class, 'Créer métier', icon: 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
@@ -175,12 +174,15 @@ class DashboardController extends AbstractDashboardController
         );
 
         // Section Tableau de bord de progression
-        yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
-        yield MenuItem::linkToRoute(
-            label: 'Tableau de bord de progression',
-            icon: 'fas fa-chart-pie',
-            routeName: 'admin_progress_dashboard'
-        );
+        // TODO: Uniquement si ROLE_MANAGER
+        if (in_array('ROLE_MANAGER', $this->getUser()->getRoles())) {
+            yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
+            yield MenuItem::linkToRoute(
+                label: 'Mananger',
+                icon: 'fas fa-user-tie',
+                routeName: 'admin_progress_dashboard'
+            );
+        }
 
         yield MenuItem::section(label: 'Guides', icon: 'fas fa-folder-open');
         yield MenuItem::subMenu(label: 'Guides', icon: 'fas fa-folder-open')->setSubItems(

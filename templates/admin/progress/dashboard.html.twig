@@ -14,10 +14,17 @@
 				</h1>
 				<p class="page-subtitle mb-0">Suivez en temps réel l'avancement des apprenants et la validation des tuteurs</p>
 			</div>
-			<a href="{{ path('admin') }}" class="btn btn-outline-secondary">
-				<twig:ux:icon name="bi:arrow-left" class="me-2"/>
-				Administration
-			</a>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <a href="{{ path('admin') }}" class="btn btn-outline-secondary">
+                    <twig:ux:icon name="bi:arrow-left" class="me-2"/>
+                    Administration
+                </a>
+            {% else %}
+                <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">
+                    <twig:ux:icon name="bi:box-arrow-right" class="me-2"/>
+                    Se déconnecter
+                </a>
+            {% endif %}
 		</div>
 	</div>
 

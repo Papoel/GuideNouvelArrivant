@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_MANAGER')]
-#[Route('/admin/progress', name: 'admin_progress_')]
+#[Route('/manager/progress', name: 'admin_progress_')]
 class ProgressController extends AbstractController
 {
     public function __construct(
@@ -28,8 +28,7 @@ class ProgressController extends AbstractController
         private readonly ProgressAccessService $progressAccessService,
         private readonly UserProgressServiceInterface $userProgressService,
         private readonly FeedbackServiceInterface $feedbackService
-    ) {
-    }
+    ) {}
 
     /** Affiche le tableau de bord global de progression. */
     #[Route('/', name: 'dashboard', methods: ['GET'])]
