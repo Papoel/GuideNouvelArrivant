@@ -17,7 +17,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
 
         if ($user instanceof User) {

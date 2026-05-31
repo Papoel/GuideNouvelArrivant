@@ -86,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Assert\Type(type: \DateTimeImmutable::class)]
-    private ?\DateTimeInterface $lastLoginAt = null;
+    private ?\DateTimeImmutable $lastLoginAt = null;
 
 
     #[ORM\ManyToOne(targetEntity: Job::class, cascade: ['persist'])]
