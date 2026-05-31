@@ -84,8 +84,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private string $password;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Assert\Type(type: \DateTimeInterface::class)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[Assert\Type(type: \DateTimeImmutable::class)]
     private ?\DateTimeInterface $lastLoginAt = null;
 
 
@@ -238,12 +238,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getLastLoginAt(): ?\DateTimeInterface
+    public function getLastLoginAt(): ?\DateTimeImmutable
     {
         return $this->lastLoginAt;
     }
 
-    public function setLastLoginAt(?\DateTimeInterface $lastLoginAt): static
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
     {
         $this->lastLoginAt = $lastLoginAt;
 

@@ -14,8 +14,7 @@ class LoginRedirectSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator
-    ) {
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -26,7 +25,7 @@ class LoginRedirectSubscriber implements EventSubscriberInterface
 
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
-        $user = $event->getUser();
+        $user = $event->getAuthenticatedToken()->getUser();
 
         if (!$user instanceof User) {
             return;
@@ -36,19 +35,19 @@ class LoginRedirectSubscriber implements EventSubscriberInterface
 
         // Ordre de priorité : SUPER_ADMIN/ADMIN/MANAGER > MENTOR > USER
 
-        // Si l'utilisateur a un rôle administratif, rediriger vers le dashboard de progression
+        // Rôle administratif → dashboard de progression
         if (
             in_array('ROLE_SUPER_ADMIN', $roles, true)
             || in_array('ROLE_ADMIN', $roles, true)
             || in_array('ROLE_MANAGER', $roles, true)
         ) {
-            $targetUrl = $this->urlGenerator->generate('admin_progress_dashboard');
-            $response = new RedirectResponse($targetUrl);
-            $event->setResponse($response);
+            $event->setResponse(
+                new RedirectResponse($this->urlGenerator->generate('admin_progress_dashboard'))
+            );
             return;
         }
 
-        // Si l'utilisateur est uniquement tuteur (sans rôle admin)
+        // Rôle tuteur (sans rôle admin) → dashboard mentor
         if (in_array('ROLE_MENTOR', $roles, true)) {
             $nni = $user->getNni();
 
@@ -56,14 +55,13 @@ class LoginRedirectSubscriber implements EventSubscriberInterface
                 throw new \RuntimeException('Le tuteur n\'a pas de NNI défini.');
             }
 
-            $targetUrl = $this->urlGenerator->generate('mentor_dashboard_index', [
-                'nni' => $nni
-            ]);
-            $response = new RedirectResponse($targetUrl);
-            $event->setResponse($response);
+            $event->setResponse(
+                new RedirectResponse($this->urlGenerator->generate('mentor_dashboard_index', ['nni' => $nni]))
+            );
             return;
         }
 
-        // ROLE_USER : redirection par défaut (home_index)
+        // ROLE_USER → redirection par défaut gérée par onAuthenticationSuccess dans l'authenticator
+        // Pas de setResponse ici : Symfony utilisera la réponse retournée par onAuthenticationSuccess
     }
 }
