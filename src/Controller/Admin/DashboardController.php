@@ -50,7 +50,8 @@ class DashboardController extends AbstractDashboardController
         private readonly LogbookTemplateRepository $LogbookTemplateRepository,
         private readonly JobRepository $JobRepository,
         private readonly SpecialityRepository $SpecialityRepository,
-    ) {}
+    ) {
+    }
 
     public function configureAssets(): Assets
     {
@@ -175,10 +176,11 @@ class DashboardController extends AbstractDashboardController
 
         // Section Tableau de bord de progression
         // TODO: Uniquement si ROLE_MANAGER
-        if (in_array('ROLE_MANAGER', $this->getUser()->getRoles())) {
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User && in_array('ROLE_MANAGER', $currentUser->getRoles())) {
             yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
             yield MenuItem::linkToRoute(
-                label: 'Mananger',
+                label: 'Manager',
                 icon: 'fas fa-user-tie',
                 routeName: 'admin_progress_dashboard'
             );
