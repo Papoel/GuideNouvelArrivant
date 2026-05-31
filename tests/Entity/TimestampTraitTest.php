@@ -11,6 +11,8 @@ use DateTime;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
+
 class TimestampTraitTest extends TestCase
 {
     use TimestampTrait;

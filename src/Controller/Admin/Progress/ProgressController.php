@@ -19,8 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_ADMIN')]
-#[Route('/admin/progress', name: 'admin_progress_')]
+#[IsGranted('ROLE_MANAGER')]
+#[Route('/manager/progress', name: 'admin_progress_')]
 class ProgressController extends AbstractController
 {
     public function __construct(

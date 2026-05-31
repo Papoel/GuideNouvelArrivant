@@ -6,10 +6,13 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\User\UserValidationService;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class UserValidationServiceTest extends TestCase
 {

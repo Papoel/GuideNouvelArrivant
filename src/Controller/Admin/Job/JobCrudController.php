@@ -71,7 +71,7 @@ class JobCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            FormField::addPanel('Informations du métier')
+            FormField::addFieldset('Informations du métier')
                 ->setIcon('fa fa-briefcase')
                 ->setHelp('Définissez les informations du métier.')
                 ->setCssClass('content-panel'),

@@ -505,7 +505,6 @@ HELP
                 try {
                     $reflection = new \ReflectionClass($entity);
                     $property = $reflection->getProperty('id');
-                    $property->setAccessible(true);
                     $property->setValue($entity, $newUuid);
                 } catch (\ReflectionException $e) {
                     $io->warning(sprintf('Impossible de définir l\'ID : %s', $e->getMessage()));

@@ -8,6 +8,9 @@ use App\Entity\ResetPasswordRequest;
 use App\Entity\User;
 use App\Tests\Abstract\EntityTestCase;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class ResetPasswordRequestTest extends EntityTestCase
 {

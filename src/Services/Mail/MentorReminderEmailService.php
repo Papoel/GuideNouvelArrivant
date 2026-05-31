@@ -45,7 +45,7 @@ final class MentorReminderEmailService
 
         /** @var array<string, array{mentor_email: string, mentor_firstname: string, owner_fullname: string, pending_modules_count: int, mentor_nni: ?string}> $mentorsData */
         $mentorsData = $mentorsWithPending['mentors_with_pending_modules'];
-        foreach ($mentorsData as $mentorEmail => $mentorData) {
+        foreach ($mentorsData as $mentorData) {
             $reminders[] = $this->prepareReminderData($mentorData);
         }
 

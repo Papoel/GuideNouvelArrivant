@@ -6,16 +6,15 @@ namespace App\Services\User;
 
 class UserSeniorityService
 {
-    public function getSeniority(\DateTimeInterface $hiringAt): string
+    public function getSeniority(\DateTimeInterface $hiringAt, ?\DateTimeInterface $now = null): string
     {
-        $now = new \DateTime();
+        $now = $now ?? new \DateTime();
 
-        // Si la date d'embauche est aujourd'hui, on retourne un message sympathique
         if ($hiringAt->format(format: 'Y-m-d') === $now->format(format: 'Y-m-d')) {
             return 'Premier jour parmi nous !';
         }
 
-        $interval = $now->diff($hiringAt);
+        $interval = $hiringAt->diff($now);
 
         $years = $interval->y;
         $months = $interval->m;

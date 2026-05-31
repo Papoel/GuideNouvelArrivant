@@ -13,6 +13,7 @@ use App\Services\Action\ActionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use LogicException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+#[AllowMockObjectsWithoutExpectations]
 class ActionServiceTest extends TestCase
 {
     private ActionService $actionService;
@@ -75,9 +77,11 @@ class ActionServiceTest extends TestCase
 
         // Simuler la recherche d'une action existante
         $existingAction = $this->createAction(user: $user, module: $module);
-        $this->actionRepository->method(constraint: 'findOneBy')
+        $this->actionRepository
+            ->expects($this->once())
+            ->method(constraint: 'findOneBy')
             ->with(['module' => $module, 'user' => $user])
-            ->willReturn(value: $existingAction);
+            ->willReturn(value: $existingAction);  // ✅ Retourne l'action existante
 
         // Appel à la méthode
         $action = $this->actionService->findOrCreateAction(module: $module);
@@ -95,20 +99,19 @@ class ActionServiceTest extends TestCase
         $this->security->method(constraint: 'getUser')->willReturn($user);
 
         // Simuler l'absence d'une action existante
-        $this->actionRepository->method(constraint: 'findOneBy')
+        $this->actionRepository
+            ->expects($this->once())
+            ->method(constraint: 'findOneBy')
             ->with(['module' => $module, 'user' => $user])
             ->willReturn(null);
-
-        // Créer une nouvelle action
-        $newAction = $this->createMock(type: Action::class);
-        $newAction->method(constraint: 'setModule')->with($module);
-        $newAction->method(constraint: 'setUser')->with($user);
 
         // Appel à la méthode
         $action = $this->actionService->findOrCreateAction(module: $module);
 
-        // Vérifier que l'action est bien créée
+        // Vérifier que l'action est bien créée (instance réelle)
         $this->assertInstanceOf(expected: Action::class, actual: $action);
+        $this->assertSame(expected: $module, actual: $action->getModule());
+        $this->assertSame(expected: $user, actual: $action->getUser());
     }
 
     #[Test] public function findOrCreateActionThrowsExceptionWhenUserIsInvalid()
@@ -192,16 +195,21 @@ class ActionServiceTest extends TestCase
         // Simuler un utilisateur valide
         $this->security->method(constraint: 'getUser')->willReturn(value: $user);
 
-        // Simuler la requête actuelle
-        $request = $this->createMock(type: Request::class);
-        $request->method(constraint: 'get')->with('logbookId')->willReturn(value: $logbookId);
-        $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $request);
+        // Simuler la requête actuelle avec un vrai objet Request
+        $request = new Request();
+        $request->attributes->set('logbookId', $logbookId); // Utiliser attributes au lieu de get()
+        $this->requestStack
+            ->expects($this->once())
+            ->method(constraint: 'getCurrentRequest')
+            ->willReturn(value: $request);
 
         // Simuler la récupération du carnet
         $logbook = $this->createMock(type: Logbook::class);
         $this->entityManager->method(constraint: 'getRepository')
             ->willReturn($this->createMock(type: EntityRepository::class));
-        $this->entityManager->getRepository(className: Logbook::class)->method('find')
+        $this->entityManager->getRepository(className: Logbook::class)
+            ->expects($this->once())
+            ->method('find')
             ->with($logbookId)
             ->willReturn($logbook);
 

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Twig;
 
 use App\Twig\RoleExtension;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class RoleExtensionTest extends TestCase
 {
     private RoleExtension $extension;
@@ -16,9 +18,7 @@ class RoleExtensionTest extends TestCase
     protected function setUp(): void
     {
         $parameterBag = $this->createMock(ParameterBagInterface::class);
-        $parameterBag->method('get')
-            ->with('security.role_hierarchy.roles')
-            ->willReturn([]); // tu peux tester plus tard avec une vraie hiérarchie
+        $parameterBag->method('get')->willReturn([]);
 
         $this->extension = new RoleExtension($parameterBag);
     }

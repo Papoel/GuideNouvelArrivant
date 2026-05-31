@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use LogicException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+#[AllowMockObjectsWithoutExpectations]
 class MentorServiceTest extends TestCase
 {
     private UserRepository $userRepository;
@@ -106,9 +108,9 @@ class MentorServiceTest extends TestCase
         $apprenantMock = $this->createConfiguredMock(User::class, []);
 
         // Simulez le comportement du repository pour renvoyer un apprenant associé au mentor
-        $this->userRepository->method(constraint: 'findApprenantByMentorNni')
+        $this->userRepository->expects($this->once())->method(constraint: 'findApprenantByMentorNni')
             ->with($mentorNni)
-            ->willReturn(value: [$apprenantMock]);
+            ->willReturn([$apprenantMock]);
 
         // Instanciation du service avec les mocks
         $mentorService = new MentorService(
@@ -131,7 +133,7 @@ class MentorServiceTest extends TestCase
         $mentorNni = $mentor->getNni();
 
         // Simuler le comportement du repository pour renvoyer une liste vide
-        $this->userRepository->method(constraint: 'findApprenantByMentorNni')
+        $this->userRepository->expects($this->once())->method(constraint: 'findApprenantByMentorNni')
             ->with($mentorNni)
             ->willReturn([]);
 
@@ -423,8 +425,7 @@ class MentorServiceTest extends TestCase
 
         // Créez un mock de ParameterBag pour les attributs de la requête
         $parameterBag = $this->createMock(type: ParameterBag::class);
-        $parameterBag->method(constraint: 'get')->with('actionId')->willReturn(value: $action->getId());
-
+        $parameterBag->expects($this->once())->method(constraint: 'get')->with('actionId')->willReturn(value: $action->getId());
         // Associez le ParameterBag au mock Request
         $request->attributes = $parameterBag;
 

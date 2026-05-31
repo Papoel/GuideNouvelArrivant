@@ -62,7 +62,6 @@ class UserTestHelper
         return $user;
     }
 
-
     private static function generateUniqueEmail(): string
     {
         return 'user' . uniqid(prefix: '', more_entropy: true) . '@gotham.city';
@@ -75,10 +74,28 @@ class UserTestHelper
         return $letter . $numbers;
     }
 
-    public static function createAdminUser(): User
+    public static function createAdminUser($entityManager = null): User
     {
         $user = self::createUser(['email' => 'admin' . uniqid() . '@example.com']);
         $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+
+        if ($entityManager) {
+            // Persister les dépendances
+            $job = $user->getJob();
+            $speciality = $user->getSpeciality();
+
+            if ($job) {
+                $entityManager->persist($job);
+            }
+
+            if ($speciality) {
+                $entityManager->persist($speciality);
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
         return $user;
     }
 
@@ -87,6 +104,34 @@ class UserTestHelper
         $mentor = self::createUser(['email' => 'mentor' . uniqid() . '@example.com']);
         $mentor->setRoles(['ROLE_USER', 'ROLE_MENTOR']);
         return $mentor;
+    }
+
+    public static function createManagerUser(): User
+    {
+        $user = self::createUser(['email' => 'manager' . uniqid() . '@example.com']);
+        $user->setRoles(['ROLE_USER', 'ROLE_MANAGER']);
+        return $user;
+    }
+
+    public static function createSuperAdminUser(): User
+    {
+        $user = self::createUser(['email' => 'superadmin' . uniqid() . '@example.com']);
+        $user->setRoles(['ROLE_USER', 'ROLE_SUPER_ADMIN']);
+        return $user;
+    }
+
+    public static function createMentorAdminUser(): User
+    {
+        $user = self::createUser(['email' => 'mentoradmin' . uniqid() . '@example.com']);
+        $user->setRoles(['ROLE_USER', 'ROLE_MENTOR', 'ROLE_ADMIN']);
+        return $user;
+    }
+
+    public static function createAdminManagerUser(): User
+    {
+        $user = self::createUser(['email' => 'adminmanager' . uniqid() . '@example.com']);
+        $user->setRoles(['ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER']);
+        return $user;
     }
 
     public static function getUser(KernelBrowser $client)

@@ -73,7 +73,7 @@ readonly class MentorService
             if (null === $theme) {
                 continue; // ou gérez cette situation comme vous le souhaitez
             }
-            $themeTitle = $theme->getTitle();
+            $themeTitle = $theme->getTitle() ?? 'Sans titre.';
             $actionsByTheme[$themeTitle][] = $action;
         }
 

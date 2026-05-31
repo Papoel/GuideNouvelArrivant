@@ -1,0 +1,313 @@
+{% extends '@EasyAdmin/crud/detail.html.twig' %}
+
+{% block content_title %}
+    <div class="d-flex align-items-center gap-3">
+        <div class="user-avatar-large">
+            {{ entity.instance.firstname|first }}{{ entity.instance.lastname|first }}
+        </div>
+        <div>
+            <h1 class="mb-1">{{ entity.instance.fullName }}</h1>
+            <p class="text-muted mb-0">
+                <i class="fa fa-envelope me-2"></i>{{ entity.instance.email }}
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="row g-4">
+        {# Informations principales #}
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fa fa-user me-2 text-primary"></i>Informations personnelles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Prénom</label>
+                                <div class="detail-value">{{ entity.instance.firstname }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Nom</label>
+                                <div class="detail-value">{{ entity.instance.lastname }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">NNI</label>
+                                <div class="detail-value">{{ entity.instance.nni }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Email</label>
+                                <div class="detail-value">
+                                    <a href="mailto:{{ entity.instance.email }}" class="text-decoration-none">
+                                        {{ entity.instance.email }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Informations professionnelles #}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fa fa-briefcase me-2 text-primary"></i>Informations professionnelles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Service</label>
+                                <div class="detail-value">
+                                    {% if entity.instance.service %}
+                                        <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                                            {{ entity.instance.service.name }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">Non assigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Métier</label>
+                                <div class="detail-value">
+                                    {% if entity.instance.job %}
+                                        {{ entity.instance.job.name }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Spécialité</label>
+                                <div class="detail-value">
+                                    {% if entity.instance.speciality %}
+                                        {{ entity.instance.speciality.name }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseignée</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label class="detail-label">Prise de poste</label>
+                                <div class="detail-value">
+                                    {% if entity.instance.hiringAt %}
+                                        <i class="fa fa-calendar me-2"></i>{{ entity.instance.hiringAt|date('d/m/Y') }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseignée</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Tuteur #}
+            {% if entity.instance.mentor %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0">
+                            <i class="fa fa-user-tie me-2 text-primary"></i>Tuteur
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="mentor-avatar">
+                                {{ entity.instance.mentor.firstname|first }}{{ entity.instance.mentor.lastname|first }}
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ entity.instance.mentor.fullName }}</div>
+                                <div class="text-muted small">
+                                    <i class="fa fa-envelope me-1"></i>{{ entity.instance.mentor.email }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {# Sidebar #}
+        <div class="col-lg-4">
+            {# Rôles #}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fa fa-shield-alt me-2 text-primary"></i>Rôles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for role in entity.instance.roles %}
+                            {% set roleClass = 'secondary' %}
+                            {% if role == 'ROLE_SUPER_ADMIN' %}
+                                {% set roleClass = 'danger' %}
+                            {% elseif role == 'ROLE_ADMIN' %}
+                                {% set roleClass = 'warning' %}
+                            {% elseif role == 'ROLE_MANAGER' %}
+                                {% set roleClass = 'info' %}
+                            {% endif %}
+                            <span class="badge bg-{{ roleClass }}-subtle text-{{ roleClass }} px-3 py-2">
+                                {{ role|replace({'ROLE_': '', '_': ' '}) }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {# Carnets #}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fa fa-book me-2 text-primary"></i>Carnets de compagnonnage
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if entity.instance.logbooks|length > 0 %}
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="stat-circle bg-success-subtle text-success">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ entity.instance.logbooks|length }} carnet{{ entity.instance.logbooks|length > 1 ? 's' : '' }}</div>
+                                <div class="text-muted small">Actif{{ entity.instance.logbooks|length > 1 ? 's' : '' }}</div>
+                            </div>
+                        </div>
+                        <a href="{{ path('admin_progress_user_details', {'id': entity.instance.id}) }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fa fa-eye me-2"></i>Voir la progression
+                        </a>
+                    {% else %}
+                        <div class="text-center py-3">
+                            <div class="stat-circle bg-danger-subtle text-danger mx-auto mb-3">
+                                <i class="fa fa-times"></i>
+                            </div>
+                            <p class="text-muted mb-3">Aucun carnet assigné</p>
+                            <a href="{{ path('admin_user_assign_template', {'id': entity.instance.id}) }}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus me-2"></i>Assigner un carnet
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Activité #}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fa fa-clock me-2 text-primary"></i>Activité
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="detail-item mb-3">
+                        <label class="detail-label">Dernière connexion</label>
+                        <div class="detail-value">
+                            {% if entity.instance.lastLoginAt %}
+                                {{ entity.instance.lastLoginAt|date('d/m/Y à H:i') }}
+                            {% else %}
+                                <span class="text-muted">Jamais connecté</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    <style>
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3d5f9e, #2d4a7c);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(61, 95, 158, 0.2);
+        }
+
+        .mentor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .detail-item {
+            padding: 0.75rem 0;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: #2c384e;
+            font-weight: 500;
+        }
+
+        .stat-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .badge {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+    </style>
+{% endblock %}

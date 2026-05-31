@@ -305,7 +305,6 @@ class LogbookTemplateTest extends EntityTestCase
         $entity = new LogbookTemplate();
         $reflection = new \ReflectionClass($entity);
         $property = $reflection->getProperty('name');
-        $property->setAccessible(true);
         $property->setValue($entity, '');
 
         self::assertEquals('', (string)$entity);

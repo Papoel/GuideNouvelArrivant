@@ -28,20 +28,23 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function authenticate(Request $request): Passport
     {
-        $identifier = $request->getPayload()->getString('identifier');
+        $identifier = (string) $request->request->get('identifier', '');
+        $password = (string) $request->request->get('password', '');
+        $csrfToken = $request->request->getString('_csrf_token');
+
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $identifier);
 
         return new Passport(
             new UserBadge($identifier),
-            new PasswordCredentials($request->getPayload()->getString('password')),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $csrfToken),
                 new RememberMeBadge(),
             ]
         );
@@ -51,26 +54,40 @@ class MainAuthenticator extends AbstractLoginFormAuthenticator
     {
         $user = $token->getUser();
 
-        if ($user instanceof User) {
-            $userNni = $user->getNni();
-        } else {
-            // Gérer le cas où l'utilisateur est null ou n'est pas de la classe attendue
-            throw new \LogicException(message: 'L\'utilisateur doit être une instance de ' . User::class);
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur doit être une instance de ' . User::class);
         }
 
-        // Mise à jour du lastLoginAt
-        $user->setLastLoginAt(new \DateTimeImmutable(timezone: new \DateTimeZone(self::TIMEZONE)));
+        $user->setLastLoginAt(new \DateTimeImmutable('now', new \DateTimeZone(self::TIMEZONE)));
         $this->entityManager->flush();
 
-        if ($targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName)) {
-            return new RedirectResponse(url: $targetPath);
+        $roles = $token->getRoleNames();
+
+        // ROLE_MENTOR prioritaire
+        if (in_array('ROLE_MENTOR', $roles, true)) {
+            $nni = $user->getNni();
+            if (!$nni) {
+                throw new \RuntimeException('Le tuteur n\'a pas de NNI défini.');
+            }
+            return new RedirectResponse($this->urlGenerator->generate('mentor_dashboard_index', ['nni' => $nni]));
         }
 
-        return new RedirectResponse(url: $this->urlGenerator->generate(name: self::HOME_ROUTE, parameters: ['nni' => $userNni]));
+        // ROLE_ADMIN → EasyAdmin dashboard
+        if (in_array('ROLE_SUPER_ADMIN', $roles, true) || in_array('ROLE_ADMIN', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin'));
+        }
+
+        // ROLE_MANAGER → dashboard de progression
+        if (in_array('ROLE_MANAGER', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_progress_dashboard'));
+        }
+
+        // ROLE_USER par défaut
+        return new RedirectResponse($this->urlGenerator->generate('home_index'));
     }
 
     protected function getLoginUrl(Request $request): string
     {
-        return $this->urlGenerator->generate(name: self::LOGIN_ROUTE);
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }

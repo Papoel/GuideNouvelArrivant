@@ -118,8 +118,15 @@ class UserLogbookController extends AbstractController
             return $this->redirectToRoute('admin_batch_assign_templates');
         }
 
+        $stats = [
+            'total_users_in_service' => count($this->userRepository->findBy(['service' => $currentAdmin->getService()])),
+            'users_without_logbook' => count($usersWithoutLogbook),
+            'eligible_users' => count($eligibleUsers),
+        ];
+
         return $this->render('admin/user/batch_assign_templates.html.twig', [
             'users' => $eligibleUsers,
+            'stats' => $stats,
         ]);
     }
 }

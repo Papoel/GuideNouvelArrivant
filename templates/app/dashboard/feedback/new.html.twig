@@ -7,69 +7,193 @@
     {% include('app/dashboard/_dashboardAside.html.twig') %}
 
     <main id="main" class="main">
-        <!-- En-tête avec bordure latérale élégante -->
-        <div class="dashboard-header mb-4 border-start border-primary ps-3" style="border-left-width: 5px !important; border-left-color: #3d5f9e !important;">
-            <h1 class="text-dark fw-bold"><i class="fas fa-comment-dots me-3 text-primary"></i>Nouveau retour d'expérience</h1>
-            <nav class="mt-2">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="text-decoration-none">Accueil</a></li>
-                    <li class="breadcrumb-item active">Nouveau REX</li>
+        <!-- En-tête minimaliste -->
+        <div class="page-header mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="header-icon">
+                    {{ ux_icon('tabler:message-dots', {style: 'width: 28px; height: 28px;'}) }}
+                </div>
+                <div class="ms-3">
+                    <h1 class="page-title mb-0">Nouveau retour d'expérience</h1>
+                    <p class="page-subtitle mb-0">Partagez votre expérience pour améliorer nos processus</p>
+                </div>
+            </div>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb custom-breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}">
+                            {{ ux_icon('tabler:home', {style: 'width: 14px; height: 14px;'}) }}
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Nouveau REX</li>
                 </ol>
             </nav>
         </div>
 
         <section class="section">
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <!-- Carte principale avec ombre douce et coins arrondis -->
-                    <div class="card border-0 shadow-sm" style="border-radius: 0.75rem;">
-                        <div class="card-header bg-white py-3 px-4 border-0" style="border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem;">
-                            <h5 class="mb-0 fw-bold text-dark">
-                                <i class="fas fa-pen-fancy text-primary me-2"></i>Partagez votre retour d'expérience
-                            </h5>
-                            <p class="text-muted mb-0 mt-2 fw-light">Votre retour d'expérience nous aide à améliorer continuellement nos processus</p>
+            <div class="row g-4">
+                <!-- Colonne principale : Formulaire -->
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <!-- Indicateur de progression -->
+                        <div class="form-progress">
+                            <div class="progress-step active">
+                                <div class="step-number">1</div>
+                                <span class="step-label">Informations</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step">
+                                <div class="step-number">2</div>
+                                <span class="step-label">Détails</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step">
+                                <div class="step-number">3</div>
+                                <span class="step-label">Validation</span>
+                            </div>
                         </div>
-                        
-                        <div class="card-body p-4">
-                            <div class="alert d-flex align-items-center mb-4" style="border-radius: 0.5rem; background-color: rgba(61, 95, 158, 0.08); border-color: rgba(61, 95, 158, 0.2); color: #3d5f9e;">
-                                <i class="fas fa-info-circle me-3 fa-lg"></i>
-                                <div>
-                                    Tous les champs marqués d'un astérisque (*) sont obligatoires. Votre retour sera examiné par un manager qui pourra vous apporter une réponse.
+
+                        {{ form_start(form, {'attr': {'class': 'feedback-form', 'novalidate': 'novalidate'}}) }}
+
+                        <div class="form-content">
+                            <!-- Champ Titre -->
+                            <div class="form-group">
+                                <label for="{{ form.title.vars.id }}" class="form-label">
+                                    {{ ux_icon('tabler:heading', {class: 'label-icon', style: 'width: 18px; height: 18px;'}) }}
+                                    <span>Titre de votre retour d'expérience</span>
+                                    <span class="required">*</span>
+                                </label>
+                                {{ form_widget(form.title, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: Amélioration du processus d\'intégration'
+                                    }
+                                }) }}
+                                <div class="form-hint">
+                                    {{ ux_icon('tabler:info-circle', {style: 'width: 14px; height: 14px;'}) }}
+                                    <span>Choisissez un titre clair et concis</span>
                                 </div>
+                                {{ form_errors(form.title) }}
                             </div>
 
-                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                            
-                            <div class="mb-4">
-                                {{ form_label(form.title, 'Titre de votre retour d\'expérience *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                {{ form_widget(form.title, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Donnez un titre explicite à votre retour'}}) }}
-                                <div class="form-text">Un titre clair permettra une meilleure prise en compte de votre retour.</div>
-                                {{ form_errors(form.title, {'attr': {'class': 'invalid-feedback'}}) }}
+                            <!-- Champ Catégorie -->
+                            <div class="form-group">
+                                <label for="{{ form.category.vars.id }}" class="form-label">
+                                    {{ ux_icon('tabler:category', {class: 'label-icon', style: 'width: 18px; height: 18px;'}) }}
+                                    <span>Catégorie</span>
+                                    <span class="required">*</span>
+                                </label>
+                                {{ form_widget(form.category, {
+                                    'attr': {'class': 'form-select'}
+                                }) }}
+                                <div class="form-hint">
+                                    {{ ux_icon('tabler:info-circle', {style: 'width: 14px; height: 14px;'}) }}
+                                    <span>Sélectionnez la catégorie la plus appropriée</span>
+                                </div>
+                                {{ form_errors(form.category) }}
                             </div>
-                            
-                            <div class="mb-4">
-                                {{ form_label(form.category, 'Catégorie *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                {{ form_widget(form.category, {'attr': {'class': 'form-select form-select-lg'}}) }}
-                                <div class="form-text">Sélectionnez la catégorie qui correspond le mieux à votre retour.</div>
-                                {{ form_errors(form.category, {'attr': {'class': 'invalid-feedback'}}) }}
+
+                            <!-- Champ Contenu -->
+                            <div class="form-group">
+                                <label for="{{ form.content.vars.id }}" class="form-label">
+                                    {{ ux_icon('tabler:file-text', {class: 'label-icon', style: 'width: 18px; height: 18px;'}) }}
+                                    <span>Détail de votre retour d'expérience</span>
+                                    <span class="required">*</span>
+                                </label>
+                                {{ form_widget(form.content, {
+                                    'attr': {
+                                        'class': 'form-control form-textarea',
+                                        'rows': '10',
+                                        'placeholder': 'Décrivez votre expérience de manière détaillée...\n\n• Points positifs\n• Difficultés rencontrées\n• Suggestions d\'amélioration'
+                                    }
+                                }) }}
+                                <div class="form-hint">
+                                    {{ ux_icon('tabler:info-circle', {style: 'width: 14px; height: 14px;'}) }}
+                                    <span>Soyez précis et constructif dans votre description</span>
+                                </div>
+                                {{ form_errors(form.content) }}
                             </div>
-                            
-                            <div class="mb-4">
-                                {{ form_label(form.content, 'Détail de votre retour d\'expérience *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': '6', 'placeholder': 'Décrivez votre expérience, les points positifs, les difficultés rencontrées et vos suggestions d\'amélioration...'}}) }}
-                                <div class="form-text">Soyez aussi précis que possible pour nous permettre de mieux comprendre votre retour.</div>
-                                {{ form_errors(form.content, {'attr': {'class': 'invalid-feedback'}}) }}
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center mt-5">
-                                <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="btn btn-outline-secondary rounded-pill px-4 py-2 shadow-sm transition-all">
-                                    <i class="fas fa-times me-2"></i>Annuler
+
+                            <!-- Actions -->
+                            <div class="form-actions">
+                                <a href="{{ path('dashboard_index', {'nni': app.user.nni}) }}" class="btn btn-secondary">
+                                    {{ ux_icon('tabler:arrow-left', {class: 'me-2', style: 'width: 18px; height: 18px;'}) }}
+                                    Annuler
                                 </a>
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm transition-all">
-                                    <i class="fas fa-paper-plane me-2"></i>Envoyer mon retour
+                                <button type="submit" class="btn btn-primary">
+                                    <span>Envoyer mon retour</span>
+                                    {{ ux_icon('tabler:send', {class: 'ms-2', style: 'width: 18px; height: 18px;'}) }}
                                 </button>
                             </div>
-                            {{ form_end(form) }}
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <!-- Colonne latérale : Aide et conseils -->
+                <div class="col-lg-4">
+                    <!-- Carte d'information -->
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            {{ ux_icon('tabler:bulb', {class: 'info-icon', style: 'width: 24px; height: 24px;'}) }}
+                            <h6 class="info-title">Conseils pratiques</h6>
+                        </div>
+                        <div class="info-card-body">
+                            <div class="info-item">
+                                <div class="info-number">1</div>
+                                <div class="info-content">
+                                    <h6>Soyez spécifique</h6>
+                                    <p>Décrivez des situations concrètes avec des exemples précis</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-number">2</div>
+                                <div class="info-content">
+                                    <h6>Restez constructif</h6>
+                                    <p>Proposez des solutions ou pistes d'amélioration</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-number">3</div>
+                                <div class="info-content">
+                                    <h6>Soyez factuel</h6>
+                                    <p>Basez-vous sur des faits observables et vérifiables</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carte de statut -->
+                    <div class="info-card mt-4">
+                        <div class="info-card-header">
+                            {{ ux_icon('tabler:clock', {class: 'info-icon', style: 'width: 24px; height: 24px;'}) }}
+                            <h6 class="info-title">Traitement de votre retour</h6>
+                        </div>
+                        <div class="info-card-body">
+                            <div class="timeline-item">
+                                <div class="timeline-dot active"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-title">Soumission</p>
+                                    <p class="timeline-desc">Votre retour est enregistré</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-title">Analyse</p>
+                                    <p class="timeline-desc">Examen par un manager</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-title">Réponse</p>
+                                    <p class="timeline-desc">Retour sous 5 jours ouvrés</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,45 +207,518 @@
 {% block stylesheets %}
 {{ parent() }}
 <style>
-    .transition-all {
-        transition: all 0.2s ease;
+    /* ========================================
+       VARIABLES & BASE
+       ======================================== */
+    :root {
+        --primary-color: #3d5f9e;
+        --primary-dark: #2d4f8e;
+        --primary-light: rgba(61, 95, 158, 0.08);
+        --text-dark: #2c384e;
+        --text-muted: #6c757d;
+        --border-color: #e9ecef;
+        --bg-light: #f8f9fa;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+        --shadow-sm: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        --shadow-md: 0 0.5rem 1rem rgba(0,0,0,0.08);
+        --transition: all 0.2s ease;
     }
-    
-    .btn-outline-secondary:hover,
+
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+    .page-header {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+
+    .custom-breadcrumb {
+        background: none;
+        padding: 0;
+        margin-top: 1rem;
+    }
+
+    .custom-breadcrumb .breadcrumb-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .custom-breadcrumb .breadcrumb-item a:hover {
+        color: var(--primary-dark);
+    }
+
+    .custom-breadcrumb .breadcrumb-item.active {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* ========================================
+       FORM CARD
+       ======================================== */
+    .form-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .form-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    /* ========================================
+       PROGRESS INDICATOR
+       ======================================== */
+    .form-progress {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 2rem 1.5rem;
+        background: linear-gradient(to bottom, var(--bg-light), white);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 0 0 auto;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--text-muted);
+        transition: var(--transition);
+    }
+
+    .progress-step.active .step-number {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .step-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .progress-step.active .step-label {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .progress-line {
+        flex: 1;
+        height: 2px;
+        background: var(--border-color);
+        margin: 0 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ========================================
+       FORM CONTENT
+       ======================================== */
+    .form-content {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+    }
+
+    .label-icon {
+        color: var(--primary-color);
+    }
+
+    .required {
+        color: var(--danger-color);
+        font-weight: 700;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        background: white;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--primary-light);
+        outline: none;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 200px;
+        line-height: 1.6;
+        font-family: inherit;
+    }
+
+    .form-hint {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .form-hint svg {
+        flex-shrink: 0;
+        opacity: 0.7;
+    }
+
+    /* ========================================
+       FORM ACTIONS
+       ======================================== */
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
     .btn-primary:hover {
         transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(61, 95, 158, 0.3);
     }
-    
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .btn-secondary {
+        background: white;
+        color: var(--text-dark);
+        border: 2px solid var(--border-color);
     }
-    
-    .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+
+    .btn-secondary:hover {
+        background: var(--bg-light);
+        border-color: var(--text-muted);
     }
-    
-    /* Style pour les champs de formulaire */
-    .form-control, .form-select {
-        padding: 0.6rem 0.75rem;
-        border-color: #e9ecef;
-        transition: all 0.2s ease;
+
+    /* ========================================
+       INFO CARDS
+       ======================================== */
+    .info-card {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
     }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: #3d5f9e;
-        box-shadow: 0 0 0 0.25rem rgba(61, 95, 158, 0.25);
+
+    .info-card-header {
+        padding: 1.25rem;
+        background: linear-gradient(135deg, var(--primary-light), white);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
-    
-    .form-label {
-        font-size: 0.95rem;
-        color: #2c384e;
+
+    .info-icon {
+        color: var(--primary-color);
     }
-    
-    .form-text {
+
+    .info-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .info-card-body {
+        padding: 1.25rem;
+    }
+
+    /* ========================================
+       INFO ITEMS
+       ======================================== */
+    .info-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .info-content h6 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .info-content p {
         font-size: 0.85rem;
-        color: #6c757d;
-        margin-top: 0.25rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* ========================================
+       TIMELINE
+       ======================================== */
+    .timeline-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 11px;
+        top: 24px;
+        width: 2px;
+        height: calc(100% + 0.5rem);
+        background: var(--border-color);
+    }
+
+    .timeline-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 3px solid var(--border-color);
+        background: white;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .timeline-dot.active {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .timeline-content {
+        flex: 1;
+    }
+
+    .timeline-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* ========================================
+       FORM ERRORS
+       ======================================== */
+    .invalid-feedback {
+        display: block;
+        color: var(--danger-color);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 992px) {
+        .form-progress {
+            padding: 1.5rem 1rem 1rem;
+        }
+
+        .progress-line {
+            margin: 0 0.5rem;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.5rem;
+        }
+
+        .form-content {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .form-progress {
+            padding: 1rem;
+        }
+
+        .step-label {
+            display: none;
+        }
+
+        .progress-line {
+            margin: 0 0.25rem;
+            margin-bottom: 0;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+        }
+    }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-card,
+    .info-card {
+        animation: fadeIn 0.3s ease;
+    }
+
+    .form-group {
+        animation: fadeIn 0.4s ease;
+    }
+
+    /* ========================================
+       ACCESSIBILITY
+       ======================================== */
+    .btn:focus,
+    .form-control:focus,
+    .form-select:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation: none !important;
+            transition: none !important;
+        }
     }
 </style>
 {% endblock %}

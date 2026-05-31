@@ -17,23 +17,24 @@ class SecurityController extends AbstractController
     #[Route(path: '/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
 
-        if ($this->getUser()) {
-            return $this->redirectToRoute(
-                route: 'dashboard_index',
-                parameters: [
-                'nni' => $user->getNni(),
-                flash()->warning(
-                    message: 'Bonjour ' . $user->getFirstname() . ', vous avez était redirigé vers votre tableau de bord.',
-                    options: [
-                        'position' => 'top-left',
-                        'timer' => 9000 * 5,
-                    ]
-                ),
-                ]
-            );
+        if ($user instanceof User) {
+            $roles = $user->getRoles();
+
+            if (in_array('ROLE_MENTOR', $roles, true)) {
+                return $this->redirectToRoute('mentor_dashboard_index', ['nni' => $user->getNni()]);
+            }
+
+            if (in_array('ROLE_SUPER_ADMIN', $roles, true) || in_array('ROLE_ADMIN', $roles, true)) {
+                return $this->redirectToRoute('admin');
+            }
+
+            if (in_array('ROLE_MANAGER', $roles, true)) {
+                return $this->redirectToRoute('admin_progress_dashboard');
+            }
+
+            return $this->redirectToRoute('dashboard_index', ['nni' => $user->getNni()]);
         }
 
         // get the login error if there is one

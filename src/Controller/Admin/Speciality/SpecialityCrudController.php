@@ -71,7 +71,7 @@ class SpecialityCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            FormField::addPanel('Informations de la spécialité')
+            FormField::addFieldset('Informations de la spécialité')
                 ->setIcon('fa fa-tag')
                 ->setHelp('Définissez les informations de la spécialité.')
                 ->setCssClass('content-panel'),

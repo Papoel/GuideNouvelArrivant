@@ -10,10 +10,13 @@ use App\Repository\LogbookRepository;
 use App\Services\Logbook\LogbookReplacementService;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+
+#[AllowMockObjectsWithoutExpectations]
 
 class LogbookCreationSubscriberTest extends TestCase
 {
@@ -64,11 +67,13 @@ class LogbookCreationSubscriberTest extends TestCase
 
         // Simulation du carnet déjà existant
         $this->logbookReplacementService
+            ->expects($this->once())
             ->method('handleExistingLogbook')
             ->with(value: $logbook)
             ->willReturn(value: true);
 
         $this->logbookRepository
+            ->expects($this->once())
             ->method('findOneBy')
             ->with(value: ['owner' => $logbook->getOwner()])
             ->willReturn(value: $existingLogbook);
@@ -92,8 +97,9 @@ class LogbookCreationSubscriberTest extends TestCase
         // Vérification de la suppression du carnet existant
         $this->logbookReplacementService
             ->expects($this->once())
-            ->method(constraint: 'deleteExistingLogbook')
-            ->with(value: $logbook);
+            ->method('handleExistingLogbook')
+            ->with($logbook)
+            ->willReturn(value: true);
 
         $event = new BeforeEntityPersistedEvent(entityInstance: $logbook);
         $this->subscriber->checkExistingLogbook(event: $event);
@@ -106,6 +112,7 @@ class LogbookCreationSubscriberTest extends TestCase
 
         // Simulation : handleExistingLogbook retourne true, mais aucun carnet existant n'est trouvé
         $this->logbookReplacementService
+            ->expects($this->once())
             ->method('handleExistingLogbook')
             ->with($logbook)
             ->willReturn(value: true);
@@ -147,5 +154,4 @@ class LogbookCreationSubscriberTest extends TestCase
             actual: LogbookCreationSubscriber::getSubscribedEvents()
         );
     }
-
 }

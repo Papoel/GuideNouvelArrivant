@@ -11,10 +11,12 @@ use App\Services\Logbook\LogbookReplacementService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[AllowMockObjectsWithoutExpectations]
 class LogbookReplacementServiceTest extends TestCase
 {
     private LogbookReplacementService $service;
@@ -29,12 +31,10 @@ class LogbookReplacementServiceTest extends TestCase
 
         // Configure le mock pour que getRepository retourne le mock de EntityRepository
         $this->entityManager->method(constraint: 'getRepository')
-            ->with(Logbook::class)
             ->willReturn(value: $this->logbookRepository);
 
         $this->service = new LogbookReplacementService(entityManager: $this->entityManager);
     }
-
     private function createLogbookWithOwner(User $owner, array $themes = []): Logbook
     {
         return $this->createConfiguredMock(Logbook::class, [
@@ -49,7 +49,7 @@ class LogbookReplacementServiceTest extends TestCase
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'un logbook existant pour le même owner
-        $this->logbookRepository->method(constraint: 'findOneBy')
+        $this->logbookRepository->expects($this->once())->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
             ->willReturn(value: $this->createConfiguredMock(Logbook::class, []));
 
@@ -64,7 +64,7 @@ class LogbookReplacementServiceTest extends TestCase
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'aucun logbook existant pour le même owner
-        $this->logbookRepository->method(constraint: 'findOneBy')
+        $this->logbookRepository->expects($this->once())->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
             ->willReturn(value: null);
 
@@ -81,7 +81,7 @@ class LogbookReplacementServiceTest extends TestCase
         $existingLogbook = $this->createConfiguredMock(Logbook::class, []);
 
         // Simulation d'un logbook existant
-        $this->logbookRepository->method(constraint: 'findOneBy')
+        $this->logbookRepository->expects($this->once())->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
             ->willReturn(value: $existingLogbook);
 
@@ -99,7 +99,7 @@ class LogbookReplacementServiceTest extends TestCase
         $newLogbook = $this->createLogbookWithOwner(owner: $owner);
 
         // Simulation d'aucun logbook existant pour le même owner
-        $this->logbookRepository->method(constraint: 'findOneBy')
+        $this->logbookRepository->expects($this->once())->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
             ->willReturn(value: null);
 

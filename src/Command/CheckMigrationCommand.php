@@ -23,7 +23,7 @@ class CheckMigrationCommand extends Command
         parent::__construct('app:check-migration');
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Insère la dernière version de migration dans doctrine_migration_versions si la table est vide.');
     }
