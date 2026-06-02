@@ -25,10 +25,10 @@ interface LogbookDataProviderInterface
      * @return \DateTimeInterface|null La date de la dernière action ou null si aucune action n'existe */
     public function getLastActionDate(User $user): ?\DateTimeInterface;
 
-    /** Calcule le nombre de jours depuis l'embauche d'un utilisateur.
+    /** Calcule le nombre de jours depuis la prise de poste d'un utilisateur.
      *
      * @param User $user L'utilisateur pour lequel on calcule l'ancienneté
      *
-     * @return int|null Le nombre de jours depuis l'embauche ou null si la date d'embauche n'est pas définie */
+     * @return int|null Le nombre de jours depuis la prise de poste ou null si la date de prise de poste n'est pas définie */
     public function getDaysSinceHiring(User $user): ?int;
 }

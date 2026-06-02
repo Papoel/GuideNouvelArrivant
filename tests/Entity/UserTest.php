@@ -48,11 +48,11 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName('Technicien');
         $job->setCode('TECH');
-        
+
         $speciality = new Speciality();
         $speciality->setName('Chaudronnerie');
         $speciality->setCode('CHA');
-        
+
         $user = new User();
         $user->setFirstname(firstname: "Noémi");
         $user->setLastname(lastname: "Colin");
@@ -198,7 +198,7 @@ class UserTest extends EntityTestCase
         $speciality = new Speciality();
         $speciality->setName('Chaudronnerie');
         $speciality->setCode('CHA');
-        
+
         $this->entity->setSpeciality($speciality);
 
         // Vérifie que getSpecialityAbbreviation renvoie l'abréviation correcte
@@ -216,7 +216,7 @@ class UserTest extends EntityTestCase
         $speciality = new Speciality();
         $speciality->setName('Chaudronnerie');
         $speciality->setCode('CHA');
-        
+
         $this->entity->setSpeciality($speciality);
 
         // Vérifie que getSpecialityLabel renvoie le label de la spécialité
@@ -270,7 +270,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName('Technicien');
         $job->setCode('TECH');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -288,7 +288,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName('Technicien');
         $job->setCode('TECH');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -306,7 +306,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName('Ingénieur');
         $job->setCode('ING');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -324,7 +324,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName("Chargé d'affaires");
         $job->setCode('CA');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -342,7 +342,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName("Chargé d'affaires projet");
         $job->setCode('CAP');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -360,7 +360,7 @@ class UserTest extends EntityTestCase
         $job = new Job();
         $job->setName("Chargé de surveillance");
         $job->setCode('CSI');
-        
+
         $this->entity->setJob($job);
 
         // Vérifie que getJobLabel renvoie le label de l'emploi correctement
@@ -417,7 +417,7 @@ class UserTest extends EntityTestCase
         $user->setHiringAt(hiringAt: null);
         $this->assertNull(
             $user->getSeniority(),
-            message: "La méthode getSeniority() devrait retourner null lorsque la date d'embauche est null."
+            message: "La méthode getSeniority() devrait retourner null lorsque la date de prise de poste est null."
         );
 
         // Cas où l'utilisateur est embauché depuis 2 ans, 3 mois et 15 jours
@@ -467,14 +467,14 @@ class UserTest extends EntityTestCase
             message: "L'identifiant de l'utilisateur devrait être l'email '{$email}'."
         );
     }
-    
+
     #[Test]
     public function getUserIdentifierWithNullEmail(): void
     {
         // Créer un utilisateur avec un email vide
         $user = new User();
         $user->setEmail('');
-        
+
         // Vérifie que getUserIdentifier gère correctement le cas où l'email est vide
         $identifier = $user->getUserIdentifier();
         $this->assertStringStartsWith('user_', $identifier, "L'identifiant devrait commencer par 'user_' lorsque l'email est vide.");
@@ -612,7 +612,7 @@ class UserTest extends EntityTestCase
         $this->assertCount(expectedCount: 0, haystack: $this->entity->getLogbooks(), message: "Le logbook devrait être supprimé de la collection.");
         $this->assertNull(actual: $logbook->getOwner(), message: "L'utilisateur dans le logbook devrait être null après suppression.");
     }
-    
+
     #[Test]
     public function hasLogbooks(): void
     {
@@ -621,84 +621,84 @@ class UserTest extends EntityTestCase
             $this->entity->hasLogbooks(),
             message: "Un nouvel utilisateur ne devrait pas avoir de logbooks."
         );
-        
+
         // Ajout d'un logbook
         $logbook = new Logbook();
         $this->entity->addLogbook($logbook);
-        
+
         // Vérifie que hasLogbooks retourne true après l'ajout
         $this->assertTrue(
             $this->entity->hasLogbooks(),
             message: "hasLogbooks() devrait retourner true après l'ajout d'un logbook."
         );
-        
+
         // Suppression du logbook
         $this->entity->removeLogbook($logbook);
-        
+
         // Vérifie que hasLogbooks retourne false après la suppression
         $this->assertFalse(
             $this->entity->hasLogbooks(),
             message: "hasLogbooks() devrait retourner false après la suppression du logbook."
         );
     }
-    
+
     // Tester la Collection Feedback
     #[Test]
     public function getFeedback(): void
     {
         $feedbacks = $this->entity->getFeedback();
-        
+
         // Vérifie que getFeedback renvoie une Collection et qu'elle est initialement vide
         $this->assertInstanceOf(expected: Collection::class, actual: $feedbacks, message: "getFeedback() devrait retourner une Collection.");
         $this->assertCount(expectedCount: 0, haystack: $feedbacks, message: "La collection de feedbacks devrait être vide au départ.");
     }
-    
+
     #[Test]
     public function addFeedback(): void
     {
         $feedback = new Feedback();
-        
+
         // Ajoute un feedback
         $this->entity->addFeedback($feedback);
-        
+
         // Vérifie que le feedback a été ajouté
         $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être ajouté à la collection.");
         $this->assertTrue($this->entity->getFeedback()->contains($feedback), message: "Le feedback devrait être présent dans la collection.");
-        
+
         // Vérifie que l'utilisateur est bien défini dans l'entité Feedback
         $this->assertSame($this->entity, $feedback->getAuthor(), message: "L'utilisateur devrait être défini comme auteur dans le feedback.");
     }
-    
+
     #[Test]
     public function addFeedbackDoesNotDuplicate(): void
     {
         $feedback = new Feedback();
-        
+
         // Ajout du même feedback deux fois
         $this->entity->addFeedback($feedback);
         $this->entity->addFeedback($feedback);
-        
+
         // Vérifie qu'il n'y a pas de doublon dans la collection
         $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback ne devrait pas être ajouté en double.");
     }
-    
+
     #[Test]
     public function removeFeedback(): void
     {
         $feedback = new Feedback();
         $this->entity->addFeedback($feedback);
-        
+
         // Vérifie que le feedback est bien ajouté
         $this->assertCount(expectedCount: 1, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être présent dans la collection avant suppression.");
-        
+
         // Supprime le feedback
         $this->entity->removeFeedback($feedback);
-        
+
         // Vérifie que le feedback a été supprimé
         $this->assertCount(expectedCount: 0, haystack: $this->entity->getFeedback(), message: "Le feedback devrait être supprimé de la collection.");
         $this->assertNull(actual: $feedback->getAuthor(), message: "L'auteur dans le feedback devrait être null après suppression.");
     }
-    
+
     #[Test]
     public function getService(): void
     {
@@ -708,7 +708,7 @@ class UserTest extends EntityTestCase
             message: "Un nouvel utilisateur ne devrait pas avoir de service par défaut."
         );
     }
-    
+
     #[Test]
     public function setService(): void
     {
@@ -716,17 +716,17 @@ class UserTest extends EntityTestCase
         $service = new Service();
         $service->setName('SRV-TEST');
         $service->setDescription('Service de test');
-        
+
         // Assigner le service à l'utilisateur
         $this->entity->setService($service);
-        
+
         // Vérifie que le service est correctement assigné
         $this->assertSame(
             $service,
             $this->entity->getService(),
             message: "Le service devrait être correctement assigné à l'utilisateur."
         );
-        
+
         // Test avec null
         $this->entity->setService(null);
         $this->assertNull(

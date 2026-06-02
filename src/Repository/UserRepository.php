@@ -91,7 +91,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         // 2. Définir la date seuil: il y a un an
         $oneYearAgo = new \DateTimeImmutable('-1 year');
 
-        // 3. Filtrer manuellement par service ET par date d'embauche (<= 1 an)
+        // 3. Filtrer manuellement par service ET prise de poste (<= 1 an)
         $serviceIdString = $serviceId->__toString();
         $filteredUsers = [];
 
@@ -103,7 +103,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 $hiringAt = $user->getHiringAt();
 
                 // Inclure uniquement les utilisateurs embauchés depuis un an ou moins
-                // (ou dont la date d'embauche est inconnue)
+                // (ou dont la date de prise de poste est inconnue)
                 if ($hiringAt === null || $hiringAt >= $oneYearAgo) {
                     $filteredUsers[] = $user;
                 }

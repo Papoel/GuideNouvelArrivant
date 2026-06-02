@@ -38,7 +38,7 @@
             <div class="dash-metric-value">{{ progress.agent_progress }}%</div>
             <div class="dash-metric-detail">{{ progress.completed_by_agent }} modules validés</div>
         </div>
-        
+
         <div class="dash-metric-card">
             <div class="dash-metric-header">
                 <span class="dash-metric-label">Validation tuteur</span>
@@ -49,7 +49,7 @@
             <div class="dash-metric-value">{{ progress.mentor_progress }}%</div>
             <div class="dash-metric-detail">{{ progress.validated_by_mentor }} modules validés</div>
         </div>
-        
+
         <div class="dash-metric-card">
             <div class="dash-metric-header">
                 <span class="dash-metric-label">Total modules</span>
@@ -75,7 +75,7 @@
                 <span class="dash-info-value">{{ user.nni }}</span>
             </div>
             <div class="dash-info-row">
-                <span class="dash-info-key">Date embauche</span>
+                <span class="dash-info-key">Prise de poste</span>
                 <span class="dash-info-value">
                     {% if user.hiringAt %}
                         {{ user.hiringAt|date('d/m/Y') }}
@@ -239,9 +239,9 @@
                                 {% set action = a %}
                             {% endif %}
                         {% endfor %}
-                        
+
                         <h6 class="dash-mobile-module-title">{{ module.title }}</h6>
-                        
+
                         <div class="row g-3 mb-3">
                             <div class="col-6">
                                 <strong class="d-block mb-2 small">Auto-validation</strong>
@@ -270,7 +270,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         {% if action and (action.agentComment or action.mentorComment) %}
                             <div class="accordion">
                                 <div class="accordion-item">
@@ -294,7 +294,7 @@
                                 </div>
                             </div>
                         {% endif %}
-                        
+
                         {% if not loop.last %}
                             <hr class="my-4">
                         {% endif %}
@@ -314,7 +314,7 @@
                 {% set action = a %}
             {% endif %}
         {% endfor %}
-        
+
         {# Modal mentor desktop #}
         {% if action and action.mentorValidatedAt %}
             <div class="modal fade" id="modal_mentor_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">
@@ -350,7 +350,7 @@
                 </div>
             </div>
         {% endif %}
-        
+
         {# Modal mentor mobile #}
         {% if action and action.mentorValidatedAt %}
             <div class="modal fade" id="modal_mentor_mobile_{{ action.id|replace({'-': '_'}) }}" tabindex="-1">

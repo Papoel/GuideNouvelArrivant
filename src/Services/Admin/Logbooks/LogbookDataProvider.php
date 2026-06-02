@@ -19,8 +19,7 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         private readonly LogbookRepository $logbookRepository,
         private readonly ActionRepositoryInterface $actionRepository,
         private readonly ClockInterface $clock
-    ) {
-    }
+    ) {}
 
     /** Récupère le carnet d'un utilisateur.
      *
@@ -48,14 +47,14 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         return $this->actionRepository->getLastActionDateForUser($user);
     }
 
-    /** Calcule le nombre de jours depuis l'embauche d'un utilisateur.
+    /** Calcule le nombre de jours depuis la prise de poste d'un utilisateur.
      *
      * Cette méthode calcule la différence entre la date actuelle et
-     * la date d'embauche de l'utilisateur pour déterminer son ancienneté.
+     * la date de prise de poste de l'utilisateur pour déterminer son ancienneté.
      *
      * @param User $user L'utilisateur pour lequel on calcule l'ancienneté
      *
-     * @return int|null Le nombre de jours depuis l'embauche ou null si la date d'embauche n'est pas définie */
+     * @return int|null Le nombre de jours depuis la prise de poste ou null si la date de prise de poste n'est pas définie */
     public function getDaysSinceHiring(User $user): ?int
     {
         $hiringDate = $user->getHiringAt();

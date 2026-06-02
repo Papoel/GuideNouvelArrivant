@@ -382,7 +382,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Calcul de l'ancienneté de l'utilisateur depuis sa date d'embauche (complete, avec jours, mois et années)
+    // Calcul de l'ancienneté de l'utilisateur depuis sa date de prise de poste (complete, avec jours, mois et années)
     public function getSeniority(): ?string
     {
         if (null === $this->hiringAt) {

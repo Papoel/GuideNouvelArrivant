@@ -29,8 +29,8 @@
                 <div class="ps-3">
                         <h5 class="card-title">{{ user.getFullname() }}</h5>
                         <h6>{{ user.job.name }}</h6>
-                    <!-- Date d'embauche -->
-                    <span class="text-success small pt-1 fw-bold">Embauche:</span>
+                    <!-- Date de prise de poste -->
+                    <span class="text-success small pt-1 fw-bold">Prise de poste:</span>
                     {% if user.hiringAt is not null %}
                         <span class="text-muted small pt-2 ps-1">{{ user.hiringAt|date('d/m/Y') }}</span>
                     {% else %}

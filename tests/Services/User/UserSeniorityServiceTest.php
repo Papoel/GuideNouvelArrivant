@@ -23,7 +23,7 @@ class UserSeniorityServiceTest extends TestCase
     }
 
     /**
-     * Fournit différentes dates d'embauche et leur ancienneté attendue
+     * Fournit différentes dates de prise de poste et leur ancienneté attendue
      */
     public static function seniorityProvider(): array
     {
