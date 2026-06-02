@@ -93,6 +93,22 @@ curl -s -X POST \
 
 ---
 
+## Etape 6 — Création des Labels
+
+Créer les labels dans le dépôt (côté GitHub)
+Via le GitHub CLI :
+
+```bash
+gh label create dependencies   --color "0366d6" --description "Mises à jour de dépendances"
+gh label create composer        --color "885630" --description "Dépendances PHP / Composer"
+gh label create github-actions  --color "2088ff" --description "Dépendances GitHub Actions"
+``` 
+
+Ou via l'interface web de GitHub :
+1. Aller dans Settings > Labels
+2. Click sur "Add label"
+3. Entrer le nom, la couleur et la description
+
 ## Limites à garder en tête
 
 Seules les PRs de mise à jour de version déclenchent ce workflow. Les alertes de sécurité Dependabot (CVE) n'ouvrent pas forcément de PR immédiate ; pour les suivre, il faudrait un workflow distinct basé sur l'API GitHub Security Advisories.
