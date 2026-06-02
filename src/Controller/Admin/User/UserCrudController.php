@@ -24,6 +24,10 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\UserRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use App\Services\Logbook\LogbookProgressService;
+use App\Services\Admin\interfaces\UserProgressServiceInterface;
 
 /** @extends AbstractCrudController<User> */
 #[IsGranted('ROLE_ADMIN')]
@@ -36,8 +40,10 @@ class UserCrudController extends AbstractCrudController
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserDeletionService $userDeletionService,
-    ) {
-    }
+        private readonly UserRepository $userRepository,
+        private readonly LogbookProgressService $logbookProgressService,
+        private readonly UserProgressServiceInterface $userProgressService,
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -189,8 +195,9 @@ class UserCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular(label: 'Utilisateur')
             ->setEntityLabelInPlural(label: 'Utilisateurs')
+            ->setDefaultRowAction(Action::DETAIL)
             ->setPageTitle(pageName: 'index', title: '⚡️ Liste des agents')
-            ->setPaginatorPageSize(maxResultsPerPage: 20)
+            ->setPaginatorPageSize(maxResultsPerPage: 50)
             ->setPageTitle(
                 pageName: 'detail',
                 title: fn(User $user) => '👁️ Détails - ' . $user->getFullName()
@@ -277,6 +284,31 @@ class UserCrudController extends AbstractCrudController
             // Réorganiser l'ordre des actions dans le menu
             ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, self::DELETE_LOGBOOKS_ONLY, self::DELETE_USER_ONLY, self::DELETE_ALL]);
     }
+
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+{
+    if (Crud::PAGE_DETAIL === $responseParameters->get('pageName')) {
+        
+        $user = $responseParameters->get('entity')->getInstance();
+        
+        if ($user instanceof User) {
+    $responseParameters->set('canAccessProgress', $this->userProgressService->canAccessUserData($user));
+}
+
+        if ($user instanceof User && null !== $user->getNni()) {
+            $responseParameters->set('mentees', $this->userRepository->findApprenantByMentorNni($user->getNni()));
+        }
+
+        if ($user instanceof User && !$user->getLogbooks()->isEmpty()) {
+            $responseParameters->set(
+                'logbookProgress',
+                $this->logbookProgressService->calculateLogbookProgress($user->getLogbooks()->first())
+            );
+        }
+    }
+
+    return $responseParameters;
+}
 
     /**
      * @param AdminContext<User> $context
