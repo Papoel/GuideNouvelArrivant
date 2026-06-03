@@ -62,10 +62,15 @@
         </div>
     </div>
 
-    {# === INFO GRID === #}
+        {# === INFO GRID === #}
     <div class="dash-info-grid">
+        {# --- Carte Apprenant --- #}
         <div class="dash-info-card">
-            <h2 class="dash-info-title">Informations générales</h2>
+            <h2 class="dash-info-title">Apprenant</h2>
+            <div class="dash-info-row">
+                <span class="dash-info-key">Nom complet</span>
+                <span class="dash-info-value">{{ user.fullName }}</span>
+            </div>
             <div class="dash-info-row">
                 <span class="dash-info-key">Email</span>
                 <span class="dash-info-value">{{ user.email }}</span>
@@ -81,20 +86,6 @@
                         {{ user.hiringAt|date('d/m/Y') }}
                     {% else %}
                         <span class="text-muted">Non renseigné</span>
-                    {% endif %}
-                </span>
-            </div>
-        </div>
-
-        <div class="dash-info-card">
-            <h2 class="dash-info-title">Affectation tutorat</h2>
-            <div class="dash-info-row">
-                <span class="dash-info-key">Tuteur</span>
-                <span class="dash-info-value">
-                    {% if user.mentor %}
-                        {{ user.mentor.fullName }}
-                    {% else %}
-                        <span class="dash-badge dash-badge-warning">Non assigné</span>
                     {% endif %}
                 </span>
             </div>
@@ -118,6 +109,61 @@
                     {% endif %}
                 </span>
             </div>
+        </div>
+
+        {# --- Carte Tuteur --- #}
+        <div class="dash-info-card">
+            <h2 class="dash-info-title">Tuteur</h2>
+            {% if user.mentor %}
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Nom complet</span>
+                    <span class="dash-info-value">{{ user.mentor.fullName }}</span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Email</span>
+                    <span class="dash-info-value">{{ user.mentor.email }}</span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">NNI</span>
+                    <span class="dash-info-value">{{ user.mentor.nni }}</span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Prise de poste</span>
+                    <span class="dash-info-value">
+                        {% if user.mentor.hiringAt %}
+                            {{ user.mentor.hiringAt|date('d/m/Y') }}
+                        {% else %}
+                            <span class="text-muted">Non renseigné</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Poste</span>
+                    <span class="dash-info-value">
+                        {% if user.mentor.job %}
+                            {{ user.mentor.job.name }}
+                        {% else %}
+                            <span class="text-muted">Non renseigné</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Spécialité</span>
+                    <span class="dash-info-value">
+                        {% if user.mentor.speciality %}
+                            {{ user.mentor.speciality.name }}
+                        {% else %}
+                            <span class="text-muted">Non renseigné</span>
+                        {% endif %}
+                    </span>
+                </div>
+            {% else %}
+                <div class="dash-info-row">
+                    <span class="dash-info-value">
+                        <span class="dash-badge dash-badge-warning">Aucun tuteur assigné</span>
+                    </span>
+                </div>
+            {% endif %}
         </div>
     </div>
 
