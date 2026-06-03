@@ -238,7 +238,7 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
      * - Le carnet de l'utilisateur
      * - Les données de progression
      * - La date de la dernière action
-     * - Le nombre de jours depuis l'embauche.
+     * - Le nombre de jours depuis la prise de poste.
      *
      * @param list<User> $users
      *

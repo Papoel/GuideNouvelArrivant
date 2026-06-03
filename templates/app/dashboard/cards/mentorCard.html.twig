@@ -25,8 +25,8 @@
                         {% else %}
                             <h5 class="card-title">Tuteur non défini</h5>
                         {% endif %}
-                        <!-- Date d'embauche -->
-                        <span class="text-success small pt-1 fw-bold">Embauche:</span>
+                        <!-- Date de poste -->
+                        <span class="text-success small pt-1 fw-bold">Prise de poste:</span>
                         {% if user.mentor.hiringAt is not null %}
                             <span class="text-muted small pt-2 ps-1">{{ user.mentor.hiringAt|date('d/m/Y') }}</span>
                         {% else %}

@@ -52,7 +52,7 @@
                         <span class="value">{{ user.service ? user.service.name : 'Non renseigné' }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="label">Date d'embauche :</span>
+                        <span class="label">Date de prise de poste :</span>
                         <span class="value">{{ user.hiringAt ? user.hiringAt|date('d/m/Y') : 'Non renseignée' }}</span>
                     </div>
                     <div class="info-row">
@@ -64,11 +64,11 @@
                         <span class="value">{{ user.hiringAt|date_modify("+364 days")|date("d/m/Y") }}</span>
                     </div>
                 </div>
-                
+
                 <div class="completion-certificate">
                     <div class="certificate-text">
                         <p class="certificate-statement">
-                            Nous certifions que <strong>{{ user.fullname }}</strong> a terminé avec succès 
+                            Nous certifions que <strong>{{ user.fullname }}</strong> a terminé avec succès
                             son parcours de professionalisation pour le métier de <strong>{{ user.job ? user.job.name : 'non spécifié' }}</strong>
                             {% if user.speciality %} avec spécialisation en <strong>{{ user.speciality.name }}</strong>{% endif %}.
                         </p>
@@ -98,7 +98,7 @@
 
         <div class="content-section">
             <h2>Progression par domaine de compétences</h2>
-            
+
             {% if logbook.themes is defined and logbook.themes|length > 0 %}
                 {% for theme in logbook.themes %}
                     <div class="domain-section">
@@ -145,7 +145,7 @@
 
     <!-- Nouvelle page pour les actions -->
     <div class="page-break"></div>
-    
+
     <div class="content-page">
         <div class="page-header">
             <h1>Journal des actions réalisées</h1>
@@ -217,7 +217,7 @@
 
     <!-- Page de signatures -->
     <div class="page-break"></div>
-    
+
     <div class="signature-page">
         <div class="signature-header">
             <h1>Validation du parcours de compagnonnage</h1>

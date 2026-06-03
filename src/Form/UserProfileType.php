@@ -71,7 +71,7 @@ class UserProfileType extends AbstractType
                 child: 'hiringAt',
                 type: DateType::class,
                 options: [
-                    'label' => 'Date d\'embauche',
+                    'label' => 'Prise de poste',
                     'widget' => 'single_text',
                     'attr' => [
                         'class' => 'form-control',

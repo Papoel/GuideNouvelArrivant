@@ -284,7 +284,7 @@ class ImportUsersCommand extends Command
             }
         }
 
-        // Date d'embauche
+        // Date de prise de poste
         if (isset($data['hiring_at']) && !empty($data['hiring_at']) && $data['hiring_at'] !== 'null') {
             try {
                 $user->setHiringAt(new \DateTimeImmutable($data['hiring_at']));

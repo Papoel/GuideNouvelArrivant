@@ -3,8 +3,6 @@
 namespace App\Tests\Controller\Admin\User;
 
 use App\Controller\Admin\User\UserCrudController;
-use App\Entity\Job;
-use App\Entity\Speciality;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\Admin\Users\UserDeletionService;
@@ -27,10 +25,10 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
+use App\Services\Logbook\LogbookProgressService;
+use App\Services\Admin\interfaces\UserProgressServiceInterface;
 
 #[AllowMockObjectsWithoutExpectations]
-
 class UserCrudControllerTest extends TestCase
 {
     private UserPasswordHasherInterface $passwordHasher;
@@ -38,6 +36,8 @@ class UserCrudControllerTest extends TestCase
     private UserRepository $userRepository;
     private UserCrudController $controller;
     private array $fields;
+    private LogbookProgressService $logbookProgressService;
+    private UserProgressServiceInterface $userProgressService;
 
     /** @var AdminUrlGenerator&MockObject */
     private AdminUrlGenerator $adminUrlGenerator;
@@ -54,12 +54,15 @@ class UserCrudControllerTest extends TestCase
         $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
         $this->userDeletionService = $this->createMock(UserDeletionService::class);
         $this->userRepository = $this->createMock(UserRepository::class);
-
+        $this->logbookProgressService = $this->createMock(LogbookProgressService::class);
+        $this->userProgressService = $this->createMock(UserProgressServiceInterface::class);
         // Initialize the controller with mocked dependencies
         $this->controller = new UserCrudController(
             $this->passwordHasher,
             $this->userDeletionService,
-            $this->userRepository
+            $this->userRepository,
+            $this->logbookProgressService,
+            $this->userProgressService
         );
         // Convert iterable to array for testing
         $this->fields = iterator_to_array(iterator: $this->controller->configureFields(pageName: 'form'));
@@ -70,7 +73,9 @@ class UserCrudControllerTest extends TestCase
         $controller = new UserCrudController(
             $this->passwordHasher,
             $this->userDeletionService,
-            $this->userRepository
+            $this->userRepository,
+            $this->logbookProgressService,
+            $this->userProgressService
         );
 
         $this->assertInstanceOf(expected: UserCrudController::class, actual: $controller);
@@ -306,7 +311,7 @@ class UserCrudControllerTest extends TestCase
 
         $crudDto = $configuredCrud->getAsDto();
 
-        self::assertEquals(expected: 20, actual: $crudDto->getPaginator()->getPageSize());
+        self::assertEquals(expected: 50, actual: $crudDto->getPaginator()->getPageSize());
     }
 
     #[Test]
