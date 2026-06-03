@@ -19,7 +19,8 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         private readonly LogbookRepository $logbookRepository,
         private readonly ActionRepositoryInterface $actionRepository,
         private readonly ClockInterface $clock
-    ) {}
+    ) {
+    }
 
     /** Récupère le carnet d'un utilisateur.
      *

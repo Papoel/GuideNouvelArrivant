@@ -31,7 +31,8 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
         private ProgressAccessServiceInterface $progressAccessService,
         private LogbookProgressService $logbookProgressService,
         private EntityManagerInterface $entityManager,
-    ) {}
+    ) {
+    }
 
     /** Récupère les données de progression pour tous les utilisateurs avec pagination et recherche.
      * Cette méthode coordonne la récupération des données de progression des utilisateurs

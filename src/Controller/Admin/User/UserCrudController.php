@@ -43,7 +43,8 @@ class UserCrudController extends AbstractCrudController
         private readonly UserRepository $userRepository,
         private readonly LogbookProgressService $logbookProgressService,
         private readonly UserProgressServiceInterface $userProgressService,
-    ) {}
+    ) {
+    }
 
     public static function getEntityFqcn(): string
     {
@@ -286,29 +287,28 @@ class UserCrudController extends AbstractCrudController
     }
 
     public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
-{
-    if (Crud::PAGE_DETAIL === $responseParameters->get('pageName')) {
-        
-        $user = $responseParameters->get('entity')->getInstance();
-        
-        if ($user instanceof User) {
-    $responseParameters->set('canAccessProgress', $this->userProgressService->canAccessUserData($user));
-}
+    {
+        if (Crud::PAGE_DETAIL === $responseParameters->get('pageName')) {
+            $user = $responseParameters->get('entity')->getInstance();
 
-        if ($user instanceof User && null !== $user->getNni()) {
-            $responseParameters->set('mentees', $this->userRepository->findApprenantByMentorNni($user->getNni()));
+            if ($user instanceof User) {
+                $responseParameters->set('canAccessProgress', $this->userProgressService->canAccessUserData($user));
+            }
+
+            if ($user instanceof User && null !== $user->getNni()) {
+                $responseParameters->set('mentees', $this->userRepository->findApprenantByMentorNni($user->getNni()));
+            }
+
+            if ($user instanceof User && !$user->getLogbooks()->isEmpty()) {
+                $responseParameters->set(
+                    'logbookProgress',
+                    $this->logbookProgressService->calculateLogbookProgress($user->getLogbooks()->first())
+                );
+            }
         }
 
-        if ($user instanceof User && !$user->getLogbooks()->isEmpty()) {
-            $responseParameters->set(
-                'logbookProgress',
-                $this->logbookProgressService->calculateLogbookProgress($user->getLogbooks()->first())
-            );
-        }
+        return $responseParameters;
     }
-
-    return $responseParameters;
-}
 
     /**
      * @param AdminContext<User> $context
