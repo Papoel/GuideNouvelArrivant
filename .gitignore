@@ -25,6 +25,7 @@
 
 ###> phpstorm ###
 /.idea/
+/.vscode/
 ###< phpstorm ###
 
 ###> PROD ###
