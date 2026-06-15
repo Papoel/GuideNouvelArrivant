@@ -3,15 +3,21 @@
 namespace App\Controller\Admin\User;
 
 use App\Entity\User;
+use App\Entity\Logbook;
 use App\Enum\UserRole;
+use App\Repository\UserRepository;
+use App\Services\Admin\interfaces\UserProgressServiceInterface;
 use App\Services\Admin\Users\UserDeletionService;
+use App\Services\Logbook\LogbookProgressService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -24,10 +30,6 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Repository\UserRepository;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use App\Services\Logbook\LogbookProgressService;
-use App\Services\Admin\interfaces\UserProgressServiceInterface;
 
 /** @extends AbstractCrudController<User> */
 #[IsGranted('ROLE_ADMIN')]
@@ -289,7 +291,11 @@ class UserCrudController extends AbstractCrudController
     public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
     {
         if (Crud::PAGE_DETAIL === $responseParameters->get('pageName')) {
-            $user = $responseParameters->get('entity')->getInstance();
+            $entityDto = $responseParameters->get('entity');
+            if (!$entityDto instanceof EntityDto) {
+                return $responseParameters;
+            }
+            $user = $entityDto->getInstance();
 
             if ($user instanceof User) {
                 $responseParameters->set('canAccessProgress', $this->userProgressService->canAccessUserData($user));
@@ -300,10 +306,14 @@ class UserCrudController extends AbstractCrudController
             }
 
             if ($user instanceof User && !$user->getLogbooks()->isEmpty()) {
-                $responseParameters->set(
-                    'logbookProgress',
-                    $this->logbookProgressService->calculateLogbookProgress($user->getLogbooks()->first())
-                );
+                $logbook = $user->getLogbooks()->first();
+
+                if ($logbook instanceof Logbook) {
+                    $responseParameters->set(
+                        'logbookProgress',
+                        $this->logbookProgressService->calculateLogbookProgress($logbook)
+                    );
+                }
             }
         }
 

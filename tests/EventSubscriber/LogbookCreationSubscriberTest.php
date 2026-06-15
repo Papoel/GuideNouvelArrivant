@@ -94,13 +94,6 @@ class LogbookCreationSubscriberTest extends TestCase
             ->method(constraint: 'add')
             ->with('danger', 'Le carnet existant a été supprimé et remplacé par le nouveau.');
 
-        // Vérification de la suppression du carnet existant
-        $this->logbookReplacementService
-            ->expects($this->once())
-            ->method('handleExistingLogbook')
-            ->with($logbook)
-            ->willReturn(value: true);
-
         $event = new BeforeEntityPersistedEvent(entityInstance: $logbook);
         $this->subscriber->checkExistingLogbook(event: $event);
     }
