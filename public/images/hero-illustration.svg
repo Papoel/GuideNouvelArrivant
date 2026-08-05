@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Shapes -->
+    <circle cx="400" cy="300" r="250" fill="#6366F1" fill-opacity="0.1"/>
+    <circle cx="400" cy="300" r="200" fill="#818CF8" fill-opacity="0.15"/>
+    
+    <!-- Document Icon -->
+    <g transform="translate(300,200)">
+        <!-- Main Document -->
+        <rect x="0" y="0" width="200" height="250" rx="10" fill="#F9FAFB" stroke="#4F46E5" stroke-width="4"/>
+        
+        <!-- Document Lines -->
+        <rect x="30" y="40" width="140" height="8" rx="4" fill="#818CF8"/>
+        <rect x="30" y="70" width="100" height="8" rx="4" fill="#818CF8"/>
+        <rect x="30" y="100" width="120" height="8" rx="4" fill="#818CF8"/>
+        
+        <!-- Checkmarks -->
+        <circle cx="50" cy="150" r="15" fill="#4F46E5"/>
+        <path d="M45 150 L48 153 L55 146" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        
+        <circle cx="50" cy="190" r="15" fill="#4F46E5"/>
+        <path d="M45 190 L48 193 L55 186" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        
+        <!-- Progress Bar -->
+        <rect x="30" y="220" width="140" height="10" rx="5" fill="#E0E7FF"/>
+        <rect x="30" y="220" width="100" height="10" rx="5" fill="#4F46E5"/>
+    </g>
+    
+    <!-- Decorative Elements -->
+    <circle cx="150" cy="150" r="10" fill="#4F46E5"/>
+    <circle cx="650" cy="450" r="8" fill="#818CF8"/>
+    <circle cx="700" cy="200" r="12" fill="#6366F1"/>
+    <circle cx="100" cy="400" r="15" fill="#818CF8"/>
+</svg>

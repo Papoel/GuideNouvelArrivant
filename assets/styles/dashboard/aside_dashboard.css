@@ -12,7 +12,7 @@
     overflow-x: hidden;
     position: fixed;
     top: 60px;
-    left: 0;
+    left: -300px; /* Cachée par défaut sur tous les écrans */
     width: 300px;
     z-index: 996;
     transition: left 0.3s ease;
@@ -45,7 +45,7 @@
 }
 
 .sidebar-header::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: -1px;
@@ -145,7 +145,7 @@
 }
 
 .sidebar-nav .nav-item::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: #f9fafb;
@@ -522,25 +522,19 @@
     .sidebar-content {
         padding: 20px 14px;
     }
-    
-    #sidebar {
-        left: -300px;
-    }
-    
-    body.toggle-sidebar #sidebar {
-        left: 0;
-        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
-    }
 }
 
+/* Sidebar visible sur tous les écrans quand toggle-sidebar actif */
+body.toggle-sidebar #sidebar {
+    left: 0;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Sur desktop uniquement, décaler le contenu quand sidebar visible */
 @media (min-width: 1200px) {
-    body.toggle-sidebar #sidebar {
-        left: -300px;
-    }
-    
     body.toggle-sidebar #main,
     body.toggle-sidebar #footer {
-        margin-left: 0;
+        margin-left: 300px;
     }
 }
 
@@ -548,59 +542,59 @@
     .sidebar-header {
         padding: 20px 16px;
     }
-    
+
     .sidebar-content {
         padding: 18px 12px;
         gap: 20px;
     }
-    
+
     .brand-icon {
         width: 42px;
         height: 42px;
     }
-    
+
     .brand-icon i {
         font-size: 1.25rem;
     }
-    
+
     .brand-title {
         font-size: 1rem;
     }
-    
+
     .brand-subtitle {
         font-size: 0.6875rem;
     }
-    
+
     .sidebar-nav .nav-item {
         padding: 10px 12px;
     }
-    
+
     .sidebar-nav .nav-icon {
         width: 32px;
         height: 32px;
     }
-    
+
     .sidebar-nav .nav-icon i {
         font-size: 0.875rem;
     }
-    
+
     .progress-header {
         padding: 14px 16px;
     }
-    
+
     .progress-icon {
         width: 36px;
         height: 36px;
     }
-    
+
     .progress-icon i {
         font-size: 1rem;
     }
-    
+
     .progress-title {
         font-size: 0.875rem;
     }
-    
+
     .progress-section {
         padding: 16px;
     }
@@ -611,12 +605,12 @@
         width: 100%;
         left: -100%;
     }
-    
+
     .sidebar-content {
         padding: 16px 12px;
         gap: 16px;
     }
-    
+
     .progress-card {
         border-radius: 10px;
     }
