@@ -1,31 +1,31 @@
 /*--------------------------------------------------------------
 # Speciality User
 --------------------------------------------------------------*/
-.ribbon{
-    line-height:30px;
-    height:30px;
+.ribbon {
+    line-height: 30px;
+    height: 30px;
     background: #363636;
-    position:relative;
-    display:inline-block;
+    position: relative;
+    display: inline-block;
     left: -20px;
     margin-right: -1.2em;
-    padding-left: calc( 1rem + 1.2em);
+    padding-left: calc(1rem + 1.2em);
     padding-right: 1.2em;
-    vertical-align:baseline;
-    border-radius:0 4px 4px 0;
-    color:white;
+    vertical-align: baseline;
+    border-radius: 0 4px 4px 0;
+    color: white;
 }
 
-div.ribbon:after{
-    position:absolute;
-    width:0;
-    height:0;
-    top:100%;
-    left:0;
-    content:'';
-    border-style:solid;
-    border-color:transparent;
-    border-width:0 20px 20px 0;
+div.ribbon:after {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 100%;
+    left: 0;
+    content: "";
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0 20px 20px 0;
     border-right-color: #004433;
 }
 
@@ -34,7 +34,7 @@ div.ribbon:after{
     background: #3d9d85; /* Couleur pour Chaudronnerie */
 }
 
-div.ribbon-cha:after{
+div.ribbon-cha:after {
     border-right-color: #2e7a66;
 }
 
@@ -42,7 +42,7 @@ div.ribbon-cha:after{
     background: #d9534f; /* Couleur pour Levage */
 }
 
-div.ribbon-mec:after{
+div.ribbon-mec:after {
     border-right-color: #a94442;
 }
 
@@ -50,7 +50,7 @@ div.ribbon-mec:after{
     background: #f0ad4e; /* Couleur pour Mécanique */
 }
 
-div.ribbon-lev:after{
+div.ribbon-lev:after {
     border-right-color: #eea236;
 }
 
@@ -58,7 +58,7 @@ div.ribbon-lev:after{
     background: #5bc0de; /* Couleur pour Robinetterie */
 }
 
-div.ribbon-rob:after{
+div.ribbon-rob:after {
     border-right-color: #46b8da;
 }
 
@@ -66,20 +66,27 @@ div.ribbon-rob:after{
     background: #5b21b6; /* Couleur pour le Soudage */
 }
 
-div.ribbon-sou:after{
+div.ribbon-sou:after {
     border-right-color: #3f157f;
 }
 
 .ribbon-end {
-    background: #23cea9; 
+    background: #23cea9;
 }
 
-div.ribbon-end:after{
+div.ribbon-end:after {
     border-right-color: #1e9c8f;
 }
 
 .ribbon-mentor {
-    background: linear-gradient(70deg, #FFD700, #FFEC8B, #FFD700, #FFEC8B, #FFD700);
+    background: linear-gradient(
+        70deg,
+        #ffd700,
+        #ffec8b,
+        #ffd700,
+        #ffec8b,
+        #ffd700
+    );
     background-size: 200%;
     animation: gradient 3s ease infinite;
     text-align: center;
@@ -90,8 +97,8 @@ div.ribbon-end:after{
     letter-spacing: 1px;
 }
 
-div.ribbon-mentor:after{
-    border-right-color: #FFD700;
+div.ribbon-mentor:after {
+    border-right-color: #ffd700;
 }
 
 @keyframes gradient {
@@ -116,10 +123,9 @@ div.ribbon-mentor:after{
     color: white;
 }
 
-div.ribbon-no-mentor:after{
+div.ribbon-no-mentor:after {
     border-right-color: #8f2421;
 }
-
 
 .card-icon i {
     font-size: 2rem;
@@ -129,11 +135,14 @@ div.ribbon-no-mentor:after{
 #btn-assign--mentor {
     background-color: #d9534f;
     border-color: #d9534f;
-    color: #E8F1F8;
+    color: #e8f1f8;
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+    transition:
+        background-color 0.3s,
+        border-color 0.3s,
+        transform 0.2s;
     text-decoration: none;
     display: inline-block;
     cursor: default;
@@ -144,14 +153,13 @@ div.ribbon-no-mentor:after{
     box-shadow: 0 0 0 0.2rem rgba(217, 83, 79, 0.5);
 }
 
-
 /*--------------------------------------------------------------
 # Callouts
 --------------------------------------------------------------*/
 .callout {
     padding: 1rem;
     margin: 1rem 0;
-    border-radius: .375rem; /* Rounded corners */
+    border-radius: 0.375rem; /* Rounded corners */
     border: 1px solid transparent;
     width: 100%;
 }
@@ -196,7 +204,7 @@ div.ribbon-no-mentor:after{
 /* Optional: Add icons for callouts (if desired) */
 .callout .icon {
     font-size: 1.5rem;
-    margin-right: .75rem;
+    margin-right: 0.75rem;
 }
 
 /*--------------------------------------------------------------
@@ -206,7 +214,9 @@ div.ribbon-no-mentor:after{
 .custom-collapse-content {
     display: none;
     overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
+    transition:
+        max-height 0.5s ease,
+        opacity 0.5s ease;
     opacity: 0;
     max-height: 0;
 }
@@ -231,7 +241,7 @@ div.ribbon-no-mentor:after{
 .sidebar {
     position: fixed;
     top: 60px;
-    left: 0;
+    left: -300px;
     bottom: 0;
     width: 300px;
     z-index: 996;
@@ -244,12 +254,6 @@ div.ribbon-no-mentor:after{
     background-color: #fff;
 }
 
-@media (max-width: 1199px) {
-    .sidebar {
-        left: -300px;
-    }
-}
-
 .sidebar::-webkit-scrollbar {
     width: 5px;
     height: 8px;
@@ -258,14 +262,6 @@ div.ribbon-no-mentor:after{
 
 .sidebar::-webkit-scrollbar-thumb {
     background-color: #aab7cf;
-}
-
-@media (min-width: 1200px) {
-
-    #main,
-    #footer {
-        margin-left: 300px;
-    }
 }
 
 /* Sidebar Toggle Button */
@@ -288,11 +284,13 @@ div.ribbon-no-mentor:after{
 .sidebar-toggle-btn .toggle-sidebar-btn {
     font-size: 1.4rem;
     color: #3d5f9e;
-    transition: transform 0.3s ease, color 0.2s ease;
+    transition:
+        transform 0.3s ease,
+        color 0.2s ease;
 }
 
 /* Rotation en croix quand sidebar visible */
-body:not(.toggle-sidebar) .sidebar-toggle-btn .toggle-sidebar-btn {
+body.toggle-sidebar .sidebar-toggle-btn .toggle-sidebar-btn {
     transform: rotate(90deg);
 }
 
@@ -301,22 +299,17 @@ body:not(.toggle-sidebar) .sidebar-toggle-btn .toggle-sidebar-btn {
     color: #2c4a7c;
 }
 
-@media (max-width: 1199px) {
-    .toggle-sidebar .sidebar {
-        left: 0;
+/* Sur desktop uniquement, décaler le contenu quand sidebar visible */
+@media (min-width: 1200px) {
+    .toggle-sidebar #main,
+    .toggle-sidebar #footer {
+        margin-left: 300px; /* ← était margin-left: 0 */
     }
 }
 
-@media (min-width: 1200px) {
-
-    .toggle-sidebar #main,
-    .toggle-sidebar #footer {
-        margin-left: 0;
-    }
-
-    .toggle-sidebar .sidebar {
-        left: -300px;
-    }
+/* Sidebar visible sur tous les écrans quand toggle-sidebar actif */
+.toggle-sidebar .sidebar {
+    left: 0;
 }
 
 .sidebar-nav {
@@ -510,7 +503,7 @@ aside.sidebar div {
     font-size: 15px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #03346E;
+    color: #03346e;
     letter-spacing: 1px;
     position: relative;
     display: inline-block;
@@ -520,13 +513,13 @@ aside.sidebar div {
 
 /* Soulignement progressif sous le titre */
 .custom-title::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     bottom: 0;
     height: 3px;
     width: 0;
-    background-color: #03346E;
+    background-color: #03346e;
     transition: width 0.4s ease;
 }
 
@@ -579,7 +572,7 @@ aside.sidebar div {
 
 /* Effet de soulignement progressif au survol des liens */
 .sidebar-nav .nav-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -606,7 +599,7 @@ aside.sidebar div {
 
 /* Survol de l'icône, elle se déplace légèrement vers la droite */
 .sidebar-nav .nav-link:hover i {
-    transform: translateX(.25em);
+    transform: translateX(0.25em);
 }
 
 .without-link {
@@ -621,7 +614,9 @@ aside.sidebar div {
     max-height: 0; /* Hauteur maximale initiale à 0 */
     opacity: 0; /* L'élément est invisible */
     overflow: hidden; /* Masquer le contenu qui dépasse */
-    transition: max-height 0.5s ease, opacity 0.5s ease; /* Transition fluide pour la hauteur et l'opacité */
+    transition:
+        max-height 0.5s ease,
+        opacity 0.5s ease; /* Transition fluide pour la hauteur et l'opacité */
     visibility: hidden; /* Assurer que l'élément est caché */
 }
 
@@ -631,7 +626,6 @@ aside.sidebar div {
     opacity: 1; /* Rendre l'élément visible */
     visibility: visible; /* Assurer que l'élément est visible */
 }
-
 
 /*----------------------------------------------
 # Dropdown
@@ -703,7 +697,9 @@ aside.sidebar div {
 .collapse {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
+    transition:
+        max-height 0.5s ease,
+        opacity 0.5s ease;
     opacity: 0;
 }
 
@@ -757,7 +753,11 @@ aside.sidebar div {
 # Custom Modal Header
 ----------------------------------------------*/
 .custom-modal-header {
-    background: linear-gradient(135deg, #007bff, #0056b3); /* Dégradé de couleur bleu pour un aspect moderne */
+    background: linear-gradient(
+        135deg,
+        #007bff,
+        #0056b3
+    ); /* Dégradé de couleur bleu pour un aspect moderne */
     color: #fff; /* Texte en blanc pour contraster avec le fond */
     display: flex; /* Utilisation de Flexbox pour aligner les éléments */
     align-items: center; /* Centre les éléments verticalement */
@@ -776,7 +776,12 @@ aside.sidebar div {
 }
 
 .custom-btn-close {
-    background: rgba(255, 255, 255, 0.2); /* Fond légèrement transparent pour un effet moderne */
+    background: rgba(
+        255,
+        255,
+        255,
+        0.2
+    ); /* Fond légèrement transparent pour un effet moderne */
     border-radius: 50%; /* Forme ronde pour le bouton */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile pour un effet de profondeur */
     width: 1.5rem; /* Taille du bouton */
@@ -785,7 +790,10 @@ aside.sidebar div {
     display: flex; /* Utilise flexbox pour centrer le contenu */
     align-items: center; /* Centre verticalement le contenu */
     justify-content: center; /* Centre horizontalement le contenu */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; /* Animation douce pour les propriétés */
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease; /* Animation douce pour les propriétés */
     position: relative; /* Position relative pour le positionnement absolu des enfants */
 }
 
@@ -794,11 +802,18 @@ aside.sidebar div {
     font-size: 1.5rem; /* Taille du 'X' */
     color: #f5f5f5; /* Couleur du 'X' pour un bon contraste */
     font-weight: 700; /* Rend le 'X' plus épais pour plus de visibilité */
-    transition: color 0.3s ease, transform 0.3s ease; /* Animation douce pour la couleur et la transformation */
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease; /* Animation douce pour la couleur et la transformation */
 }
 
 .custom-btn-close:hover {
-    background: rgba(255, 255, 255, 0.3); /* Fond légèrement plus transparent au survol */
+    background: rgba(
+        255,
+        255,
+        255,
+        0.3
+    ); /* Fond légèrement plus transparent au survol */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée au survol */
 }
 
@@ -834,7 +849,7 @@ aside.sidebar div {
     border-radius: 10px;
     padding: 15px 20px;
     /*color: #ffffff;*/
-    color: #3D5F9E;
+    color: #3d5f9e;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -1078,7 +1093,7 @@ aside.sidebar div {
 
 .floating-icon {
     position: absolute;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 255, 255, 0.6);
     animation: float 6s ease-in-out infinite;
 }
 
@@ -1089,45 +1104,81 @@ aside.sidebar div {
     transform: translate(-50%, -50%);
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, rgba(15, 52, 96, 0.6) 0%, transparent 70%);
+    background: radial-gradient(
+        circle,
+        rgba(15, 52, 96, 0.6) 0%,
+        transparent 70%
+    );
     opacity: 0.7;
     filter: blur(10px);
     animation: hologram 5s infinite alternate;
 }
 
 .particle-system::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-image: radial-gradient(
+        rgba(255, 255, 255, 0.1) 1px,
+        transparent 1px
+    );
     background-size: 30px 30px;
 }
 
 @keyframes glitch-anim {
-    0% { clip: rect(14px, 9999px, 76px, 0); }
-    20% { clip: rect(38px, 9999px, 33px, 0); }
-    40% { clip: rect(6px, 9999px, 98px, 0); }
-    60% { clip: rect(74px, 9999px, 71px, 0); }
-    80% { clip: rect(46px, 9999px, 40px, 0); }
-    100% { clip: rect(66px, 9999px, 64px, 0); }
+    0% {
+        clip: rect(14px, 9999px, 76px, 0);
+    }
+    20% {
+        clip: rect(38px, 9999px, 33px, 0);
+    }
+    40% {
+        clip: rect(6px, 9999px, 98px, 0);
+    }
+    60% {
+        clip: rect(74px, 9999px, 71px, 0);
+    }
+    80% {
+        clip: rect(46px, 9999px, 40px, 0);
+    }
+    100% {
+        clip: rect(66px, 9999px, 64px, 0);
+    }
 }
 
 @keyframes subtle-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
 @keyframes hologram {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.9; }
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.9;
+    }
 }
 
 /*----------------------------------------------
@@ -1146,7 +1197,7 @@ aside.sidebar div {
     background: #f0f0f0;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-progress {
@@ -1195,7 +1246,7 @@ a:hover {
     color: #a020f0;
 }
 .hero {
-    background: linear-gradient(135deg, #4A90E2, #A2DFF7); /* Dégradé de bleu */
+    background: linear-gradient(135deg, #4a90e2, #a2dff7); /* Dégradé de bleu */
     color: #fff; /* Couleur du texte en blanc */
     padding: 50px 30px; /* Espacement intérieur */
     border-radius: 15px; /* Coins arrondis */
@@ -1215,7 +1266,12 @@ a:hover {
 }
 
 .hero a {
-    background: rgba(255, 255, 255, 0.2); /* Couleur de fond légèrement blanche */
+    background: rgba(
+        255,
+        255,
+        255,
+        0.2
+    ); /* Couleur de fond légèrement blanche */
     color: #fff; /* Couleur du texte en blanc */
     padding: 12px 30px; /* Espacement intérieur */
     border-radius: 25px; /* Coins arrondis pour le bouton */
