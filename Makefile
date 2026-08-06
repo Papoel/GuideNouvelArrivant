@@ -675,7 +675,7 @@ backup-test: ## Créer une sauvegarde de test et l'afficher
 	@echo "💡 Pour restaurer: make backup-restore-latest"
 
 ## —— 📜 Autres ————————————————————————————————————————————
-show-wip: ## Affiche les add effectués sur la branche | # git log main..emails --name-status --pretty=format:"Commit %h - %s%nAuthor: %an%nDate: %ad" --date=short
+show-wip: ## Affiche les add effectués sur la branche
 	@echo "$(GREEN)Affichage des commits WIP...$(NC)"
 	@BRANCH_NAME=$$(git rev-parse --abbrev-ref HEAD) && \
-	git log main..$$BRANCH_NAME --name-status --pretty=format:"Commit %h - %s%nAuthor: %an%nDate: %ad" --date=short
+	git --no-pager log main..$$BRANCH_NAME --name-status --pretty=format:"Commit %h - %s%nAuthor: %an%nDate: %ad" --date=short
