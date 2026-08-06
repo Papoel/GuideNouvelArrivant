@@ -139,7 +139,7 @@ class WeeklyMentorReportTest extends Command
         }
 
         // ── 9. Rendu du template Twig avec les données réelles ────────────────
-        $html = $this->twig->render('mail/mentorReminderEmailTemplate.html.twig', [
+        $html = $this->twig->render('emails_maizzle/weekly_mentor_report.html', [
             'subject'               => $data['subject'],
             'mentor_firstname'      => $data['mentor_firstname'],
             'mentor_email'          => $data['mentor_email'],

@@ -1,67 +1,40 @@
-<script setup>
-// ─────────────────────────────────────────────────────────────────────────────
-// Données de prévisualisation (exemple statique pour le build Maizzle)
-// En production, le template Twig injecte les vraies valeurs dynamiques
-// ─────────────────────────────────────────────────────────────────────────────
-const mentorFirstname = "Laurent";
-const ownerFullname = "Marie Dupont";
-const pendingCount = 3;
-const weekDate = "4 août 2025";
-const mentorNni = "AB123456";
-
-// Niveau d'urgence selon pendingCount : normal | important | urgent
-const urgency = {
-  label: "Normal",
-  bg: "#ECFDF5",
-  color: "#065F46",
-};
-</script>
-
 <template>
   <Layout lang="fr" body-class="bg-[#EDEEF0]">
-    <!-- ░░░ Texte d'aperçu — invisible dans l'email ░░░ -->
     <Preheader>
-      Vous avez {{ pendingCount }} modules en attente de validation —
-      connectez-vous pour les traiter.
+      Vous avez <span v-pre>{{ pending_modules_count }}</span> modules en
+      attente de validation — connectez-vous pour les traiter.
     </Preheader>
 
-    <!-- ░░░ Enveloppe centrée 600 px ░░░ -->
     <Container class="max-w-[600px] bg-white">
-      <!-- ════════════════════════════════════════════ -->
-      <!--  BARRE SUPÉRIEURE                           -->
-      <!-- ════════════════════════════════════════════ -->
       <Section class="bg-[#22244D] px-10 py-5">
         <Row>
           <Column>
             <span
               class="text-white text-xs font-bold tracking-[0.2em] uppercase"
-              >GNA</span
             >
+              GNA
+            </span>
           </Column>
           <Column class="text-right">
-            <span class="text-[#8491C7] text-[10px] tracking-[0.14em] uppercase"
-              >Rapport hebdomadaire</span
+            <span
+              class="text-[#8491C7] text-[10px] tracking-[0.14em] uppercase"
             >
+              Rapport hebdomadaire
+            </span>
           </Column>
         </Row>
       </Section>
 
-      <!-- Filet doré de signature -->
       <Section class="bg-[#C4A256] h-[3px]" />
 
-      <!-- ════════════════════════════════════════════ -->
-      <!--  ZONE HÉRO                                  -->
-      <!-- ════════════════════════════════════════════ -->
       <Section class="bg-white px-10 pt-10 pb-7">
-        <!-- Pastille de priorité -->
         <span
           class="inline-block text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-[2px]"
-          :style="`background-color: ${urgency.bg}; color: ${urgency.color};`"
+          style="background-color: #ecfdf5; color: #065f46"
         >
-          ● {{ urgency.label }} — Action requise
+          ● <span v-pre>{{ urgency_level.text }}</span> — Action requise
         </span>
 
-        <!-- Titre principal -->
         <Heading
           level="1"
           class="text-[#22244D] text-[26px] font-bold leading-tight tracking-tight mt-4 mb-2.5"
@@ -69,7 +42,6 @@ const urgency = {
           Validation des modules<br />en attente
         </Heading>
 
-        <!-- Texte d'introduction -->
         <Text class="text-[#64748B] text-[15px] leading-relaxed m-0">
           Des activités de formation requièrent votre attention. Prenez quelques
           instants pour les valider afin de maintenir la progression de votre
@@ -77,17 +49,15 @@ const urgency = {
         </Text>
       </Section>
 
-      <!-- ════════════════════════════════════════════ -->
-      <!--  CORPS PRINCIPAL                            -->
-      <!-- ════════════════════════════════════════════ -->
       <Section class="bg-white px-10 pb-9">
-        <!-- Formule de salutation -->
         <Text class="text-[#1E293B] text-base leading-[1.7] mt-0 mb-6">
           Bonjour
-          <strong class="font-semibold text-[#22244D]">{{ mentorFirstname }}</strong>,
+          <strong class="font-semibold text-[#22244D]" v-pre>{{
+            mentor_firstname
+          }}</strong
+          >,
         </Text>
 
-        <!-- ┄ Encart compteur ┄ -->
         <div
           style="
             background-color: #22244d;
@@ -98,6 +68,7 @@ const urgency = {
           "
         >
           <p
+            v-pre
             style="
               font-size: 52px;
               font-weight: 800;
@@ -107,7 +78,7 @@ const urgency = {
               margin: 0;
             "
           >
-            {{ pendingCount }}
+            {{ pending_modules_count }}
           </p>
           <p
             style="
@@ -123,7 +94,6 @@ const urgency = {
           </p>
         </div>
 
-        <!-- ┄ Tableau d'informations ┄ -->
         <table
           role="presentation"
           cellspacing="0"
@@ -137,7 +107,6 @@ const urgency = {
             margin-bottom: 28px;
           "
         >
-          <!-- Apprenant -->
           <tr>
             <td
               style="
@@ -165,11 +134,10 @@ const urgency = {
                 border-bottom: 1px solid #e2e8f0;
               "
             >
-              {{ ownerFullname }}
+              <span v-pre>{{ owner_fullname }}</span>
             </td>
           </tr>
 
-          <!-- Priorité -->
           <tr>
             <td
               style="
@@ -202,15 +170,15 @@ const urgency = {
                   letter-spacing: 0.15em;
                   padding: 3px 10px;
                   border-radius: 2px;
+                  background-color: #ecfdf5;
+                  color: #065f46;
                 "
-                :style="`background-color: ${urgency.bg}; color: ${urgency.color};`"
               >
-                {{ urgency.label }}
+                <span v-pre>{{ urgency_level.text }}</span>
               </span>
             </td>
           </tr>
 
-          <!-- Semaine du -->
           <tr>
             <td
               style="
@@ -237,11 +205,10 @@ const urgency = {
                 border-bottom: 1px solid #e2e8f0;
               "
             >
-              {{ weekDate }}
+              <span v-pre>{{ triggeredAt | date("d F Y") }}</span>
             </td>
           </tr>
 
-          <!-- NNI tuteur -->
           <tr>
             <td
               style="
@@ -266,14 +233,13 @@ const urgency = {
                 background-color: #ffffff;
               "
             >
-              {{ mentorNni }}
+              <span v-pre>{{ mentor_nni }}</span>
             </td>
           </tr>
         </table>
 
-        <!-- Bouton d'action principal -->
         <Button
-          href="https://gna.papoel.fr/dashboard"
+          href="https://gna.papoel.fr/dashboard/{{ mentor_nni }}"
           align="center"
           class="bg-[#8491C7] text-white text-[12px] font-bold tracking-[0.08em] uppercase rounded-[3px]"
         >
@@ -281,14 +247,8 @@ const urgency = {
         </Button>
       </Section>
 
-      <!-- ════════════════════════════════════════════ -->
-      <!--  SÉPARATEUR                                 -->
-      <!-- ════════════════════════════════════════════ -->
       <Hr class="bg-[#E2E8F0] mx-10 my-0" />
 
-      <!-- ════════════════════════════════════════════ -->
-      <!--  NOTE DE BAS DE CONTENU                     -->
-      <!-- ════════════════════════════════════════════ -->
       <Section class="px-10 py-6">
         <Text class="text-[#94A3B8] text-xs leading-[1.7] m-0">
           Ce message est envoyé automatiquement chaque semaine lorsque des
@@ -297,11 +257,6 @@ const urgency = {
         </Text>
       </Section>
 
-      <!-- ════════════════════════════════════════════ -->
-      <!--  PIED DE PAGE                               -->
-      <!-- ════════════════════════════════════════════ -->
-
-      <!-- Filet doré au-dessus du footer -->
       <Section class="bg-[#C4A256] h-px" />
 
       <Section class="bg-[#22244D] px-10 py-6">
@@ -309,16 +264,17 @@ const urgency = {
           <Column>
             <span
               class="text-white text-[11px] font-bold tracking-[0.2em] uppercase"
-              >Guide Nouvel Arrivant</span
             >
-            <Text class="text-[#8491C7] text-[11px] mt-1 mb-0"
-              >Plateforme de suivi d'intégration</Text
-            >
+              Guide Nouvel Arrivant
+            </span>
+            <Text class="text-[#8491C7] text-[11px] mt-1 mb-0">
+              Plateforme de suivi d'intégration
+            </Text>
           </Column>
           <Column class="text-right" style="vertical-align: bottom">
-            <Text class="text-[#8491C7] text-[11px] m-0"
-              >no-reply@gna.papoel.fr</Text
-            >
+            <Text class="text-[#8491C7] text-[11px] m-0">
+              no-reply@gna.papoel.fr
+            </Text>
           </Column>
         </Row>
       </Section>
