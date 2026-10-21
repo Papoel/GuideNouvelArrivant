@@ -121,7 +121,7 @@ class LogbookNameSubscriberTest extends TestCase
         // On s'assure que persist et flush sont bien appelés
         $this->entityManager->expects($this->once())
             ->method(constraint: 'persist')
-            ->with(value: $logbook);
+            ->with($logbook);
         $this->entityManager->expects($this->once())
             ->method(constraint: 'flush');
 

@@ -21,7 +21,6 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -420,14 +419,9 @@ class MentorServiceTest extends TestCase
         self::assertNotNull(actual: $action->getMentorComment()); // Vérifiez que le commentaire existe
         self::assertNotNull(actual: $action->getMentorCommentedAt()); // Vérifiez que la date de commentaire est renseignée
 
-        // Simuler la requête
-        $request = $this->createMock(type: Request::class);
-
-        // Créez un mock de ParameterBag pour les attributs de la requête
-        $parameterBag = $this->createMock(type: ParameterBag::class);
-        $parameterBag->expects($this->once())->method(constraint: 'get')->with('actionId')->willReturn(value: $action->getId());
-        // Associez le ParameterBag au mock Request
-        $request->attributes = $parameterBag;
+        // Créer un vrai Request avec un ParameterBag réel
+        $request = new Request();
+        $request->attributes->set('actionId', $action->getId());
 
         // Simuler le comportement de getCurrentRequest()
         $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $request);
@@ -481,15 +475,9 @@ class MentorServiceTest extends TestCase
      */
     #[Test] public function deleteCommentThrowsAccessDeniedWhenActionNotFound(): void
     {
-        // Créer un mock pour Request
-        $requestMock = $this->createMock(type: Request::class);
-
-        // Simuler un attribut 'actionId' dans la requête
-        $parameterBagMock = $this->createMock(type: ParameterBag::class);
-        $parameterBagMock->method(constraint: 'get')->willReturn(value: null);  // Simuler l'absence de 'actionId'
-
-        // Assigner les attributs simulés à la requête
-        $requestMock->attributes = $parameterBagMock;
+        // Créer un vrai Request avec un ParameterBag réel
+        $requestMock = new Request();
+        $requestMock->attributes->set('actionId', null);
 
         // Simuler le comportement de getCurrentRequest
         $this->requestStack->method(constraint: 'getCurrentRequest')->willReturn(value: $requestMock);

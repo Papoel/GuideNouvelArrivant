@@ -69,13 +69,13 @@ class LogbookCreationSubscriberTest extends TestCase
         $this->logbookReplacementService
             ->expects($this->once())
             ->method('handleExistingLogbook')
-            ->with(value: $logbook)
+            ->with($logbook)
             ->willReturn(value: true);
 
         $this->logbookRepository
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(value: ['owner' => $logbook->getOwner()])
+            ->with(['owner' => $logbook->getOwner()])
             ->willReturn(value: $existingLogbook);
 
         // Vérification des appels de la session avec un map

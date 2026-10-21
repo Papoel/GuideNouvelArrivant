@@ -57,7 +57,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $this->entityManager->method('getUnitOfWork')->willReturn(value: $unitOfWork);
 
         // Vérifier les appels à persist et flush
-        $this->entityManager->expects($this->once())->method(constraint: 'persist')->with(value: $mentor);
+        $this->entityManager->expects($this->once())->method(constraint: 'persist')->with($mentor);
         $this->entityManager->expects($this->once())->method(constraint: 'flush');
 
         $this->subscriber->onBeforeEntityUpdated(event: $event);
@@ -79,7 +79,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $unitOfWork = $this->createMock(type: UnitOfWork::class);
         $unitOfWork->expects($this->once())
             ->method(constraint: 'getOriginalEntityData')
-            ->with(value: $user)
+            ->with($user)
             ->willReturn(value: ['mentor' => $previousMentor]);
 
         // Configuration de l'EntityManager
@@ -97,7 +97,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $previousMentor
             ->expects($this->once())
             ->method(constraint: 'setRoles')
-            ->with(value: ['ROLE_USER']);
+            ->with(['ROLE_USER']);
 
         // Configuration du comportement du nouveau mentor
         $newMentor
@@ -108,7 +108,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $newMentor
             ->expects($this->once())
             ->method(constraint: 'setRoles')
-            ->with(value: ['ROLE_USER', 'ROLE_MENTOR']);
+            ->with(['ROLE_USER', 'ROLE_MENTOR']);
 
         // Configuration des appels persist/flush
         $this->entityManager
@@ -144,7 +144,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $unitOfWork = $this->createMock(type: UnitOfWork::class);
         $unitOfWork->expects($this->once())
             ->method(constraint: 'getOriginalEntityData')
-            ->with(value: $user)
+            ->with($user)
             ->willReturn(value: ['mentor' => $previousMentor]);
 
         $this->entityManager
@@ -161,13 +161,13 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
         $previousMentor
             ->expects($this->once())
             ->method(constraint: 'setRoles')
-            ->with(value: ['ROLE_USER']);
+            ->with(['ROLE_USER']);
 
         // Configuration des appels persist/flush
         $this->entityManager
             ->expects($this->once())
             ->method(constraint: 'persist')
-            ->with(value: $previousMentor);
+            ->with($previousMentor);
 
         $this->entityManager
             ->expects($this->once())
