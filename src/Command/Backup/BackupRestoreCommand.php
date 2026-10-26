@@ -130,11 +130,10 @@ class BackupRestoreCommand extends Command
 
         $answer = $io->askQuestion($question);
 
-        if ($answer === 'Annuler') {
+        if ($answer === 'cancel') {
             return null;
         }
 
-        $selectedIndex = array_search($answer, $choices);
-        return $backupMap[$selectedIndex] ?? null;
+        return $backupMap[(int)$answer] ?? null;
     }
 }
