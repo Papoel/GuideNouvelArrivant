@@ -38,7 +38,7 @@ class AuditFlushListenerTest extends KernelTestCase
     private function auditRowsFor(string $entityId): array
     {
         $rows = $this->em->getRepository(AuditLog::class)->findBy(
-            ['entityClass' => Service::class, 'entityId' => $entityId],
+            ['entityId' => $entityId],
             ['id' => 'ASC']
         );
         foreach ($rows as $row) {
@@ -101,6 +101,45 @@ class AuditFlushListenerTest extends KernelTestCase
         // Aucune ligne d'audit ne doit tracer l'entité AuditLog elle-même
         $selfRows = $this->em->getRepository(AuditLog::class)->findBy(['entityClass' => AuditLog::class]);
         $this->assertCount(0, $selfRows);
+    }
+
+    public function testCollectionDiffIsMergedIntoEntityUpdate(): void
+    {
+        $theme = new \App\Entity\Theme();
+        $theme->setTitle('AUDIT_THEME');
+        $theme->setDescription('desc');
+        $this->em->persist($theme);
+
+        $template = new \App\Entity\LogbookTemplate();
+        $template->setName('AUDIT_TPL');
+        $template->setDescription('avant');
+        $this->em->persist($template);
+        $this->em->flush();
+
+        $templateId = $template->getId()->toRfc4122();
+
+        // Modification scalaire + diff de collection dans le même flush :
+        // une seule ligne UPDATE doit contenir les deux champs.
+        $template->setDescription('après');
+        $template->addTheme($theme);
+        $this->em->flush();
+
+        $rows = $this->auditRowsFor($templateId);
+        $updates = array_filter($rows, static fn (AuditLog $r): bool => AuditLog::ACTION_UPDATE === $r->getAction());
+        $collectionUpdates = array_filter($rows, static fn (AuditLog $r): bool => AuditLog::ACTION_COLLECTION_UPDATE === $r->getAction());
+
+        $this->assertCount(1, $updates);
+        $this->assertCount(0, $collectionUpdates);
+
+        $changeset = current($updates)->getChangeset();
+        $this->assertArrayHasKey('description', $changeset);
+        $this->assertArrayHasKey('themes', $changeset);
+        $this->assertContains('AUDIT_THEME', $changeset['themes']['added']);
+
+        $this->em->remove($template);
+        $this->em->remove($theme);
+        $this->em->flush();
+        $this->auditRowsFor($templateId);
     }
 
     public function testPasswordNeverLogged(): void

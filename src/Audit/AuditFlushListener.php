@@ -36,32 +36,11 @@ final readonly class AuditFlushListener
         $uow = $em->getUnitOfWork();
         $auditMeta = $em->getClassMetadata(AuditLog::class);
 
-        foreach ($uow->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof AuditLog) {
-                continue;
-            }
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_INSERT, $entity, $this->sanitize($uow->getEntityChangeSet($entity)));
-        }
-
-        foreach ($uow->getScheduledEntityUpdates() as $entity) {
-            if ($entity instanceof AuditLog) {
-                continue;
-            }
-            $changeset = $this->sanitize($uow->getEntityChangeSet($entity));
-            if ([] === $changeset) {
-                continue;
-            }
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_UPDATE, $entity, $changeset);
-        }
-
-        foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof AuditLog) {
-                continue;
-            }
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_DELETE, $entity, $this->snapshot($entity, $uow));
-        }
-
-        // Modifications de collections (ex. retrait d'un thème d'un carnet)
+        // 1. Pré-indexe les diffs de collections par entité propriétaire :
+        // ils seront fusionnés dans l'entrée UPDATE de l'entité quand elle
+        // existe (une seule ligne d'audit par entité par flush).
+        /** @var array<int, array{owner: object, fields: array<string, array{added: array, removed: array}>}> $collectionDiffs */
+        $collectionDiffs = [];
         foreach ($uow->getScheduledCollectionUpdates() as $collection) {
             if (!$collection instanceof PersistentCollection) {
                 continue;
@@ -78,9 +57,51 @@ final readonly class AuditFlushListener
             }
 
             $field = $collection->getMapping()['fieldName'] ?? 'collection';
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_COLLECTION_UPDATE, $owner, [
-                $field => ['added' => $added, 'removed' => $removed],
-            ]);
+            $collectionDiffs[spl_object_id($owner)]['owner'] = $owner;
+            $collectionDiffs[spl_object_id($owner)]['fields'][$field] = ['added' => $added, 'removed' => $removed];
+        }
+
+        foreach ($uow->getScheduledEntityInsertions() as $entity) {
+            if ($entity instanceof AuditLog) {
+                continue;
+            }
+            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_INSERT, $entity, $this->sanitize($uow->getEntityChangeSet($entity)));
+        }
+
+        foreach ($uow->getScheduledEntityUpdates() as $entity) {
+            if ($entity instanceof AuditLog) {
+                continue;
+            }
+            $changeset = $this->sanitize($uow->getEntityChangeSet($entity));
+
+            // Fusionne les diffs de collections du même objet dans cette entrée
+            $ownerId = spl_object_id($entity);
+            foreach ($collectionDiffs[$ownerId]['fields'] ?? [] as $field => $diff) {
+                $changeset[$field] = $diff;
+            }
+            unset($collectionDiffs[$ownerId]);
+
+            if ([] === $changeset) {
+                continue;
+            }
+            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_UPDATE, $entity, $changeset);
+        }
+
+        foreach ($uow->getScheduledEntityDeletions() as $entity) {
+            if ($entity instanceof AuditLog) {
+                continue;
+            }
+            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_DELETE, $entity, $this->snapshot($entity, $uow));
+        }
+
+        // 2. Diffs de collections restants, sans UPDATE d'entité associé
+        //    (ex. retrait d'un thème d'un carnet sans autre modification)
+        foreach ($collectionDiffs as $diff) {
+            foreach ($diff['fields'] as $field => $change) {
+                $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_COLLECTION_UPDATE, $diff['owner'], [
+                    $field => $change,
+                ]);
+            }
         }
     }
 
@@ -93,6 +114,7 @@ final readonly class AuditFlushListener
             'action' => $action,
             'entityClass' => $em->getClassMetadata($entity::class)->getName(),
             'entityId' => $this->entityId($entity, $em),
+            'entityLabel' => $this->entityLabel($entity),
             'changeset' => $changeset,
             'actorType' => $actor['type'],
             'actorId' => $actor['id'],
@@ -162,9 +184,29 @@ final readonly class AuditFlushListener
         };
     }
 
-    /** Référence compacte "Classe#id" pour une entité ou un objet quelconque. */
+    /** Libellé lisible d'une entité (__toString / getName / getTitle / getFullname). */
+    private function entityLabel(object $value): ?string
+    {
+        foreach (['__toString', 'getName', 'getTitle', 'getLabel', 'getFullname'] as $method) {
+            if (method_exists($value, $method)) {
+                $result = $value->{$method}();
+                if (is_string($result) && '' !== $result) {
+                    return $result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /** Référence lisible d'une entité : libellé métier, sinon "Classe#id". */
     private function entityRef(object $value): string
     {
+        $label = $this->entityLabel($value);
+        if (null !== $label) {
+            return $label;
+        }
+
         $class = $value::class;
         $short = ($pos = strrpos($class, '\\')) !== false ? substr($class, $pos + 1) : $class;
 

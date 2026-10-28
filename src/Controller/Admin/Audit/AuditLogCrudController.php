@@ -115,7 +115,7 @@ class AuditLogCrudController extends AbstractCrudController
                 AuditLog::ACTION_COLLECTION_UPDATE => 'warning',
             ]);
 
-        yield TextField::new('entityShortClass', 'Entité');
+        yield TextField::new('entityDisplay', 'Entité');
         yield TextField::new('entityId', 'ID entité')->hideOnIndex();
 
         // Propriété virtuelle : résolue via AuditLog::getChangesSummary()

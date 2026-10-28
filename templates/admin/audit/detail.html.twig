@@ -107,11 +107,10 @@
                     <i class="fas fa-cube me-1 text-muted"></i> Entité concernée
                 </div>
                 <div class="card-body">
-                    <div class="fw-semibold">{{ log.entityShortClass }}</div>
+                    <div class="fw-semibold">{{ log.entityLabel ?? log.entityShortClass }}</div>
+                    <div class="text-muted small">{{ log.entityClass }}</div>
                     {% if log.entityId %}
                         <div class="text-muted small text-break">{{ log.entityId }}</div>
-                    {% else %}
-                        <div class="text-muted small fst-italic">Identifiant non disponible</div>
                     {% endif %}
                 </div>
             </div>

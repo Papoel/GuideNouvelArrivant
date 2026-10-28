@@ -45,6 +45,9 @@ class AuditLog
     #[ORM\Column(name: 'entity_id', length: 64, nullable: true)]
     private ?string $entityId = null;
 
+    #[ORM\Column(name: 'entity_label', length: 255, nullable: true)]
+    private ?string $entityLabel = null;
+
     /** @var array<string, mixed>|null Différences avant/après ou snapshot de l'entité */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $changeset = null;
@@ -71,6 +74,7 @@ class AuditLog
         $this->action = $data['action'];
         $this->entityClass = $data['entityClass'];
         $this->entityId = $data['entityId'];
+        $this->entityLabel = $data['entityLabel'] ?? null;
         $this->changeset = $data['changeset'];
         $this->actorType = $data['actorType'];
         $this->actorId = $data['actorId'];
@@ -109,6 +113,17 @@ class AuditLog
     public function getEntityId(): ?string
     {
         return $this->entityId;
+    }
+
+    public function getEntityLabel(): ?string
+    {
+        return $this->entityLabel;
+    }
+
+    /** Affichage compact "Classe · Libellé" pour les listes. */
+    public function getEntityDisplay(): string
+    {
+        return null === $this->entityLabel ? $this->getEntityShortClass() : $this->getEntityShortClass() . ' · ' . $this->entityLabel;
     }
 
     /** @return array<string, mixed>|null */
