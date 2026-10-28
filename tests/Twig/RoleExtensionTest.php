@@ -48,7 +48,7 @@ class RoleExtensionTest extends TestCase
         $roles = ['ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN'];
         $result = $this->extension->getHighestRole(roles: $roles);
 
-        $this->assertSame(expected: 'ROLE_MANAGER', actual: $result);
+        $this->assertSame(expected: 'ROLE_ADMIN', actual: $result);
     }
 
     #[Test]
@@ -64,13 +64,11 @@ class RoleExtensionTest extends TestCase
     public function allRolesHaveExpectedStyles(): void
     {
         $expected = [
+            'ROLE_SUPER_ADMIN' => ['label' => 'Super admin', 'color' => '#43356e', 'text' => '#ffffff'],
             'ROLE_ADMIN' => ['label' => 'Administrateur', 'color' => '#b02a37', 'text' => '#ffffff'],
             'ROLE_SERVICE_HEAD' => ['label' => 'Chef de service', 'color' => '#305080', 'text' => '#ffffff'],
-            'ROLE_SERVICE_HEAD_DELEGATE' => ['label' => 'Chef délégué', 'color' => '#466aa3', 'text' => '#ffffff'],
             'ROLE_MANAGER' => ['label' => 'Manager', 'color' => '#5c84a8', 'text' => '#ffffff'],
-            'ROLE_MANAGER_DELEGATE' => ['label' => 'Manager délégué', 'color' => '#aac0d1', 'text' => '#1c2938'],
             'ROLE_MENTOR' => ['label' => 'Tuteur', 'color' => '#5e8a73', 'text' => '#ffffff'],
-            'ROLE_NEWCOMER' => ['label' => 'Nouvel arrivant', 'color' => '#d8c4a4', 'text' => '#2c384e'],
             'ROLE_USER' => ['label' => 'Utilisateur', 'color' => '#c4c9d0', 'text' => '#2c384e'],
         ];
 

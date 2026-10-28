@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -29,6 +30,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -72,6 +74,7 @@ class UserCrudController extends AbstractCrudController
             ->hideOnIndex();
 
         yield TextField::new(propertyName: 'fullname', label: 'Nom complet')
+            ->setTemplatePath(path: 'admin/field/user_fullname.html.twig')
             ->addCssClass(cssClass: 'text-capitalize')
             ->onlyOnIndex();
 
@@ -208,6 +211,15 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new(propertyName: 'lastLoginAt', label: 'Dernière connexion')->hideOnIndex()->hideOnForm();
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(EntityFilter::new('service', 'Service'))
+            ->add(EntityFilter::new('mentor', 'Tuteur'))
+            ->add(EntityFilter::new('job', 'Métier'))
+            ->add(EntityFilter::new('speciality', 'Spécialité'));
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -215,7 +227,11 @@ class UserCrudController extends AbstractCrudController
             ->setEntityLabelInPlural(label: 'Utilisateurs')
             ->setDefaultRowAction(Action::DETAIL)
             ->setPageTitle(pageName: 'index', title: '⚡️ Liste des agents')
+            ->setDefaultSort(['lastname' => 'ASC', 'firstname' => 'ASC'])
+            ->setSearchFields(['lastname', 'firstname', 'nni', 'email'])
             ->setPaginatorPageSize(maxResultsPerPage: 50)
+            ->setEntityPermission('ROLE_ADMIN')
+            ->overrideTemplate('crud/index', 'admin/user/index.html.twig')
             ->setPageTitle(
                 pageName: 'detail',
                 title: fn(User $user) => '👁️ Détails - ' . $user->getFullName()
