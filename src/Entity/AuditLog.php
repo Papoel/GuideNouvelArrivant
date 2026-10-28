@@ -165,7 +165,8 @@ class AuditLog
             if ('_cascade' === $field && is_array($change)) {
                 $parts[] = 'Cascade : ' . implode(', ', array_map(
                     static fn (string $class, array $info): string => sprintf('%s ×%d', $class, $info['count'] ?? 1),
-                    array_keys($change), $change
+                    array_keys($change),
+                    $change
                 ));
                 continue;
             }
