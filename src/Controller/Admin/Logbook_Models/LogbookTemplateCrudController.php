@@ -337,6 +337,8 @@ class LogbookTemplateCrudController extends AbstractCrudController
             ->update(pageName: Crud::PAGE_INDEX, actionName: Action::DELETE, callable: function (Action $action) {
                 return $action->setIcon(icon: 'fa fa-trash')->setLabel(label: 'Supprimer');
             })
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN')
             ->update(pageName: Crud::PAGE_INDEX, actionName: Action::DETAIL, callable: function (Action $action) {
                 return $action->setIcon(icon: 'fa fa-eye')->setLabel(label: 'Voir');
             })

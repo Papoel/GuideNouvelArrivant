@@ -3,6 +3,8 @@
 namespace App\Controller\Admin\Action;
 
 use App\Entity\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action as EaAction;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -16,6 +18,14 @@ class ActionCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Action::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        // Actions liées aux carnets : suppression réservée au SUPER_ADMIN
+        return $actions
+            ->setPermission(EaAction::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(EaAction::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
     }
 
     public function configureFields(string $pageName): iterable

@@ -72,7 +72,9 @@ class LogbookCrudController extends AbstractCrudController
             })
             ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action->setIcon('fa fa-trash')->setLabel('Supprimer');
-            });
+            })
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
     }
 
     public function edit(AdminContext $context): Response
