@@ -9,9 +9,9 @@ class RoleExtension extends AbstractExtension
 {
     /** @var array<string, array{label: string, color: string, text: string}> */
     private array $roleStyles = [
-        'ROLE_ADMIN' => [
-            'label' => 'Administrateur',
-            'color' => '#b02a37', // Rouge foncé désaturé
+        'ROLE_SUPER_ADMIN' => [
+            'label' => 'Super admin',
+            'color' => '#43356e', // Indigo profond
             'text' => '#ffffff',
         ],
         'ROLE_SERVICE_HEAD' => [
@@ -19,9 +19,9 @@ class RoleExtension extends AbstractExtension
             'color' => '#305080', // Bleu foncé institutionnel
             'text' => '#ffffff',
         ],
-        'ROLE_SERVICE_HEAD_DELEGATE' => [
-            'label' => 'Chef délégué',
-            'color' => '#466aa3', // Bleu moyen désaturé
+        'ROLE_ADMIN' => [
+            'label' => 'Administrateur',
+            'color' => '#b02a37', // Rouge foncé désaturé
             'text' => '#ffffff',
         ],
         'ROLE_MANAGER' => [
@@ -29,20 +29,10 @@ class RoleExtension extends AbstractExtension
             'color' => '#5c84a8', // Bleu clair/gris
             'text' => '#ffffff',
         ],
-        'ROLE_MANAGER_DELEGATE' => [
-            'label' => 'Manager délégué',
-            'color' => '#aac0d1', // Bleu-gris doux
-            'text' => '#1c2938',
-        ],
         'ROLE_MENTOR' => [
             'label' => 'Tuteur',
             'color' => '#5e8a73', // Vert désaturé sérieux
             'text' => '#ffffff',
-        ],
-        'ROLE_NEWCOMER' => [
-            'label' => 'Nouvel arrivant',
-            'color' => '#d8c4a4', // Beige doux
-            'text' => '#2c384e',
         ],
         'ROLE_USER' => [
             'label' => 'Utilisateur',
@@ -69,15 +59,12 @@ class RoleExtension extends AbstractExtension
     public function getHighestRole(array $roles): string
     {
         // Ordre de priorité des rôles (du plus élevé au plus bas)
-        // Ordre spécifique demandé : l'admin n'est affiché que si l'utilisateur n'est pas chef de service ou manager
         $priorityOrder = [
+            'ROLE_SUPER_ADMIN',
             'ROLE_SERVICE_HEAD',
-            'ROLE_SERVICE_HEAD_DELEGATE',
-            'ROLE_MANAGER',
-            'ROLE_MANAGER_DELEGATE',
             'ROLE_ADMIN',
+            'ROLE_MANAGER',
             'ROLE_MENTOR',
-            'ROLE_NEWCOMER',
             'ROLE_USER',
         ];
 
