@@ -139,7 +139,7 @@ class UserCrudController extends AbstractCrudController
                 function ($queryBuilder) {
                     // Ensure we're working with a QueryBuilder object
                     if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
-                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                        return $queryBuilder->orderBy('entity.name', \SortDirection::Ascending);
                     }
                     return $queryBuilder;
                 }
@@ -153,7 +153,7 @@ class UserCrudController extends AbstractCrudController
             ->setQueryBuilder(
                 function ($queryBuilder) {
                     if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
-                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                        return $queryBuilder->orderBy('entity.name', \SortDirection::Ascending);
                     }
                     return $queryBuilder;
                 }
@@ -167,7 +167,7 @@ class UserCrudController extends AbstractCrudController
             ->setQueryBuilder(
                 function ($queryBuilder) {
                     if (is_object($queryBuilder) && method_exists($queryBuilder, 'orderBy')) {
-                        return $queryBuilder->orderBy('entity.name', 'ASC');
+                        return $queryBuilder->orderBy('entity.name', \SortDirection::Ascending);
                     }
                     return $queryBuilder;
                 }

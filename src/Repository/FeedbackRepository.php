@@ -38,7 +38,7 @@ class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepo
             ->addSelect('a')
             ->addSelect('r')
             ->addSelect('s')  // Ajouter le select pour optimiser
-            ->orderBy('f.createdAt', 'DESC');
+            ->orderBy('f.createdAt', \SortDirection::Descending);
 
         // Appliquer les critères de filtrage
         foreach ($criteria as $field => $value) {
@@ -136,7 +136,7 @@ class FeedbackRepository extends ServiceEntityRepository implements FeedbackRepo
             ->addSelect('a')
             ->where('LOWER(s.name) = LOWER(:serviceName)')
             ->setParameter('serviceName', $serviceName)
-            ->orderBy('f.createdAt', 'DESC')
+            ->orderBy('f.createdAt', \SortDirection::Descending)
             ->setFirstResult($offset)
             ->setMaxResults($limit);
 

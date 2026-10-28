@@ -28,7 +28,7 @@ class FeedbackController extends AbstractController
             ->join('f.author', 'u')
             ->where('u.nni = :nni')
             ->setParameter('nni', $user->getNni())
-            ->orderBy('f.createdAt', 'DESC')
+            ->orderBy('f.createdAt', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
         // Si aucun feedback n'est trouvé, essayons une autre approche

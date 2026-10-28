@@ -63,7 +63,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         /** @var array<int, User> $result */
         $result = $qb->leftJoin(join: Logbook::class, alias: 'l', conditionType: 'WITH', condition: 'l.owner = u.id')
             ->where($qb->expr()->isNull(x: 'l.id'))
-            ->orderBy(sort: 'u.lastname', order: 'ASC')
+            ->orderBy(sort: 'u.lastname', order: \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
 
@@ -222,8 +222,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         // Tri par nom
-        $qb->orderBy('u.lastname', 'ASC')
-            ->addOrderBy('u.firstname', 'ASC');
+        $qb->orderBy('u.lastname', \SortDirection::Ascending)
+            ->addOrderBy('u.firstname', \SortDirection::Ascending);
 
         // Exécution de la requête pour obtenir tous les utilisateurs (sans la pagination)
         /** @var User[] $allUsers */

@@ -28,7 +28,7 @@ class LogbookThemesType extends AbstractType
                 'mapped' => false, // Ne pas mapper directement à l'entité
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('t')
-                        ->orderBy('t.title', 'ASC');
+                        ->orderBy('t.title', \SortDirection::Ascending);
                 },
                 'choice_filter' => function (?Theme $theme) use ($logbook) {
                     // Si le thème ou le carnet sont null, ou si leurs IDs sont null, inclure le thème dans la liste

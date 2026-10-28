@@ -98,7 +98,7 @@ class ActionRepository extends ServiceEntityRepository implements ActionReposito
             ->andWhere('a.user = :user')
             ->andWhere('a.agentValidatedAt IS NOT NULL')
             ->setParameter('user', $user)
-            ->orderBy('a.agentValidatedAt', 'DESC')
+            ->orderBy('a.agentValidatedAt', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

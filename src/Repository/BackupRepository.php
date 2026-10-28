@@ -24,7 +24,7 @@ class BackupRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('b')
             ->andWhere('b.type = :type')
             ->setParameter('type', $type)
-            ->orderBy('b.createdAt', 'DESC');
+            ->orderBy('b.createdAt', \SortDirection::Descending);
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
@@ -43,7 +43,7 @@ class BackupRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('b')
             ->where('b.type = :type')
             ->setParameter('type', $type)
-            ->orderBy('b.createdAt', 'ASC')
+            ->orderBy('b.createdAt', \SortDirection::Ascending)
             ->setFirstResult($skip)
             ->getQuery()
             ->getResult();
@@ -58,7 +58,7 @@ class BackupRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('b')
             ->where('b.type = :type')
             ->setParameter('type', $type)
-            ->orderBy('b.createdAt', 'DESC')
+            ->orderBy('b.createdAt', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -71,7 +71,7 @@ class BackupRepository extends ServiceEntityRepository
     {
         /** @var Backup|null */
         return $this->createQueryBuilder('b')
-            ->orderBy('b.createdAt', 'DESC')
+            ->orderBy('b.createdAt', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
