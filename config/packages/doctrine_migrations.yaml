@@ -1,5 +1,5 @@
 doctrine_migrations:
-    enable_service_migrations: true
+    enable_service_migrations: false      # sinon les migrations doivent être des services
     migrations_paths:
-        'App\Migrations': '%kernel.project_dir%/src/Migrations'
+        'DoctrineMigrations': '%kernel.project_dir%/migrations'   # le vrai dossier
     enable_profiler: false
