@@ -4,14 +4,14 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
     # Définition de la hiérarchie des rôles
+    # CHEF_DE_SERVICE = ADMIN + MANAGER (périmètre : son service)
+    # SUPER_ADMIN = ADMIN + MANAGER (périmètre : tous les services)
     role_hierarchy:
-        ROLE_SERVICE_HEAD: ROLE_USER
-        ROLE_SERVICE_HEAD_DELEGATE: ROLE_USER
-        ROLE_MANAGER: ROLE_USER
-        ROLE_MANAGER_DELEGATE: ROLE_USER
         ROLE_MENTOR: ROLE_USER
-        ROLE_NEWCOMER: ROLE_USER
-        ROLE_ADMIN: [ROLE_SERVICE_HEAD, ROLE_SERVICE_HEAD_DELEGATE, ROLE_MANAGER_DELEGATE]
+        ROLE_MANAGER: ROLE_USER
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SERVICE_HEAD: [ROLE_ADMIN, ROLE_MANAGER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_MANAGER]
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
@@ -48,9 +48,10 @@ security:
             # switch_user: true
 
     # Note: Only the *first* matching rule is applied
+    # Ordre : du plus spécifique au plus général
     access_control:
+         - { path: ^/manager, roles: ROLE_MANAGER }
          - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/admin/progress, roles: ROLE_MANAGER }
 
 when@test:
     security:

@@ -6,11 +6,15 @@ use App\Entity\User;
 use App\Entity\Logbook;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use App\Services\Admin\interfaces\UserProgressServiceInterface;
 use App\Services\Admin\Users\UserDeletionService;
 use App\Services\Logbook\LogbookProgressService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -18,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -25,10 +30,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /** @extends AbstractCrudController<User> */
@@ -45,6 +54,9 @@ class UserCrudController extends AbstractCrudController
         private readonly UserRepository $userRepository,
         private readonly LogbookProgressService $logbookProgressService,
         private readonly UserProgressServiceInterface $userProgressService,
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -95,8 +107,9 @@ class UserCrudController extends AbstractCrudController
             ->onlyOnIndex();
 
         // Champ pour l'édition des rôles dans le formulaire
+        // Un ADMIN ne peut attribuer que les rôles non privilégiés
         yield ChoiceField::new(propertyName: 'roles', label: 'Rôles')
-            ->setChoices(choiceGenerator: UserRole::getChoices())
+            ->setChoices(choiceGenerator: $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN') ? UserRole::getChoices() : UserRole::getLimitedChoices())
             ->allowMultipleChoices()
             ->renderExpanded(expanded: false)
             ->renderAsBadges(UserRole::getBadgeMapping())
@@ -118,7 +131,9 @@ class UserCrudController extends AbstractCrudController
             ->onlyOnIndex();
 
         // Utilisation d'un AssociationField pour le formulaire
+        // Réservé au SUPER_ADMIN : un ADMIN gère uniquement son propre service
         yield AssociationField::new(propertyName: 'service', label: 'Service')
+            ->setPermission('ROLE_SUPER_ADMIN')
             ->setColumns(cols: 'col-md-3 col-sm-12')
             ->setQueryBuilder(
                 function ($queryBuilder) {
@@ -252,33 +267,24 @@ class UserCrudController extends AbstractCrudController
             }
         );
 
-        // Actions personnalisées de suppression
+        // La suppression par lot est réservée au SUPER_ADMIN
+        $actions = $actions->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
+
+        // Actions personnalisées de suppression (réservées au SUPER_ADMIN, POST + CSRF)
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
             ->setIcon(icon: 'fa fa-user-times')
-            ->linkToCrudAction(crudActionName: 'deleteUserOnly')
-            ->displayIf(
-                static function ($user) {
-                    return true;
-                }
-            );
+            ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_USER_ONLY, user: $user))
+            ->displayIf(fn (): bool => $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
             ->setIcon(icon: 'fa fa-trash-alt')
-            ->linkToCrudAction(crudActionName: 'deleteAll')
-            ->displayIf(
-                static function ($user) {
-                    return $user instanceof User && $user->hasLogbooks();
-                }
-            );
+            ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_ALL, user: $user))
+            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer le carnet')
             ->setIcon(icon: 'fa fa-book')
-            ->linkToCrudAction(crudActionName: 'deleteLogbooksOnly')
-            ->displayIf(
-                static function ($user) {
-                    return $user instanceof User && $user->hasLogbooks();
-                }
-            );
+            ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_LOGBOOKS_ONLY, user: $user))
+            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
@@ -323,30 +329,19 @@ class UserCrudController extends AbstractCrudController
     /**
      * @param AdminContext<User> $context
      */
-    #[AdminRoute('/admin/users/delete-user-only')]
+    #[AdminRoute('/admin/users/delete-user-only', options: ['methods' => ['POST']])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteUserOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
-        EntityManagerInterface $entityManager
     ): Response {
         try {
-            // Récupérer l'ID de l'utilisateur à partir de la requête
-            $request = $context->getRequest();
-            $userId = $request->query->get(key: 'entityId');
-
-            if (!$userId) {
-                throw new \RuntimeException(message: 'ID utilisateur manquant');
-            }
-
-            // Récupérer l'utilisateur directement depuis la base de données
-            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
-
-            if (!$user instanceof User) {
-                throw new \RuntimeException(message: 'Utilisateur introuvable');
-            }
+            $user = $this->resolveUserForDeletion($context, self::DELETE_USER_ONLY);
 
             $this->userDeletionService->deleteUserOnly($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
+        } catch (AccessDeniedException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
@@ -357,30 +352,19 @@ class UserCrudController extends AbstractCrudController
     /**
      * @param AdminContext<User> $context
      */
-    #[AdminRoute('/admin/users/delete-all')]
+    #[AdminRoute('/admin/users/delete-all', options: ['methods' => ['POST']])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteAll(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
-        EntityManagerInterface $entityManager
     ): Response {
         try {
-            // Récupérer l'ID de l'utilisateur à partir de la requête
-            $request = $context->getRequest();
-            $userId = $request->query->get(key: 'entityId');
-
-            if (!$userId) {
-                throw new \RuntimeException(message: 'ID utilisateur manquant');
-            }
-
-            // Récupérer l'utilisateur directement depuis la base de données
-            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
-
-            if (!$user instanceof User) {
-                throw new \RuntimeException(message: 'Utilisateur introuvable');
-            }
+            $user = $this->resolveUserForDeletion($context, self::DELETE_ALL);
 
             $this->userDeletionService->deleteUserAndLogbooks($user);
             $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
+        } catch (AccessDeniedException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
@@ -391,35 +375,148 @@ class UserCrudController extends AbstractCrudController
     /**
      * @param AdminContext<User> $context
      */
-    #[AdminRoute('/admin/users/delete-logbooks-only')]
+    #[AdminRoute('/admin/users/delete-logbooks-only', options: ['methods' => ['POST']])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteLogbooksOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
-        EntityManagerInterface $entityManager
     ): Response {
         try {
-            // Récupérer l'ID de l'utilisateur à partir de la requête
-            $request = $context->getRequest();
-            $userId = $request->query->get(key: 'entityId');
-
-            if (!$userId) {
-                throw new \RuntimeException(message: 'ID utilisateur manquant');
-            }
-
-            // Récupérer l'utilisateur directement depuis la base de données
-            $user = $entityManager->getRepository(className: User::class)->find(id: $userId);
-
-            if (!$user instanceof User) {
-                throw new \RuntimeException(message: 'Utilisateur introuvable');
-            }
+            $user = $this->resolveUserForDeletion($context, self::DELETE_LOGBOOKS_ONLY);
 
             $this->userDeletionService->deleteLogbooksOnly($user);
             $this->addFlash(type: 'success', message: sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
+        } catch (AccessDeniedException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
         }
 
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
+    }
+
+    /** Génère l'URL d'une action de suppression avec jeton CSRF. */
+    private function generateDeleteUrl(string $action, User $user): string
+    {
+        return $this->adminUrlGenerator
+            ->setAction(action: $action)
+            ->setEntityId(entityId: $user->getId())
+            ->set('token', $this->csrfTokenManager->getToken(tokenId: $action . '-' . $user->getId())->getValue())
+            ->generateUrl();
+    }
+
+    /** Résout l'utilisateur cible et valide le jeton CSRF de la requête.
+     *
+     * @param AdminContext<User> $context
+     */
+    private function resolveUserForDeletion(AdminContext $context, string $action): User
+    {
+        $request = $context->getRequest();
+        $userId = $request->query->get(key: 'entityId');
+
+        if (!$userId) {
+            throw new \RuntimeException(message: 'ID utilisateur manquant');
+        }
+
+        $token = $request->request->get(key: 'token');
+        if (!is_string($token) || !$this->isCsrfTokenValid($action . '-' . $userId, $token)) {
+            throw $this->createAccessDeniedException(message: 'Jeton CSRF invalide.');
+        }
+
+        $user = $this->userRepository->find($userId);
+
+        if (!$user instanceof User) {
+            throw new \RuntimeException(message: 'Utilisateur introuvable');
+        }
+
+        return $user;
+    }
+
+    /** Un ADMIN ne voit que les utilisateurs de son service ; le SUPER_ADMIN les voit tous. */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            return $qb;
+        }
+
+        $currentUser = $this->getUser();
+        $service = $currentUser instanceof User ? $currentUser->getService() : null;
+
+        if (null === $service) {
+            // Un administrateur sans service ne voit aucun utilisateur
+            return $qb->andWhere('entity.id IS NULL');
+        }
+
+        // Les IDs sont des UUID stockés en BINARY(16) : lier la valeur binaire
+        // (laisser Doctrine convertir l'entité/l'Uuid donne une comparaison fausse)
+        return $qb
+            ->andWhere('entity.service = :currentAdminService')
+            ->setParameter('currentAdminService', $service->getId()?->toBinary());
+    }
+
+    public function detail(AdminContext $context): KeyValueStore|Response
+    {
+        $instance = $context->getEntity()->getInstance();
+        if ($instance instanceof User) {
+            $this->denyAccessUnlessGranted(UserVoter::VIEW, $instance);
+        }
+
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context): KeyValueStore|Response
+    {
+        $instance = $context->getEntity()->getInstance();
+        if ($instance instanceof User) {
+            $this->denyAccessUnlessGranted(UserVoter::EDIT, $instance);
+        }
+
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context): KeyValueStore|Response
+    {
+        $instance = $context->getEntity()->getInstance();
+        if ($instance instanceof User) {
+            $this->denyAccessUnlessGranted(UserVoter::DELETE, $instance);
+        }
+
+        return parent::delete($context);
+    }
+
+    /** Un ADMIN crée des utilisateurs rattachés à son propre service. */
+    public function createEntity(string $entityFqcn): object
+    {
+        $entity = parent::createEntity($entityFqcn);
+
+        if ($entity instanceof User && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof User && null !== $currentUser->getService()) {
+                $entity->setService($currentUser->getService());
+            }
+        }
+
+        return $entity;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof User && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            // Un ADMIN ne peut attribuer que les rôles non privilégiés ;
+            // les rôles déjà détenus par l'utilisateur sont préservés.
+            $original = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
+            $originalRoles = $original['roles'] ?? [];
+            if (is_string($originalRoles)) {
+                $originalRoles = '' === $originalRoles ? [] : explode(',', $originalRoles);
+            }
+
+            $allowed = array_unique([...UserRole::getLimitedRoleValues(), ...$originalRoles]);
+            $entityInstance->setRoles(array_values(array_intersect($entityInstance->getRoles(), $allowed)));
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 
     /** @param User $entityInstance */
@@ -438,6 +535,21 @@ class UserCrudController extends AbstractCrudController
         // Si les rôles sont vides ou contiennent uniquement ROLE_USER (qui est ajouté par getRoles)
         if (count($roles) <= 1 && in_array(needle: 'ROLE_USER', haystack: $roles)) {
             $entityInstance->setRoles(roles: ['ROLE_USER']);
+        }
+
+        // Garde-fous applicables aux administrateurs de service (le SUPER_ADMIN
+        // conserve la main sur l'ensemble des utilisateurs)
+        if (!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+            // Un ADMIN ne peut attribuer que les rôles non privilégiés
+            $entityInstance->setRoles(
+                array_values(array_intersect($entityInstance->getRoles(), UserRole::getLimitedRoleValues()))
+            );
+
+            // Le service du nouvel utilisateur est forcé à celui de l'ADMIN
+            $currentUser = $this->getUser();
+            if ($currentUser instanceof User && null !== $currentUser->getService() && null === $entityInstance->getService()) {
+                $entityInstance->setService($currentUser->getService());
+            }
         }
 
         parent::persistEntity($entityManager, $entityInstance);

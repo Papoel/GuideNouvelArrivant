@@ -15,7 +15,7 @@ use Symfony\Component\Mime\Part\File;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[isGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 final class MailController extends AbstractController
 {
     public function __construct(

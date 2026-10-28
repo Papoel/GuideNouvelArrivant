@@ -55,8 +55,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('confirmDelete').addEventListener('click', function() {
-        if (deleteUrl) {
-            window.location.href = deleteUrl;
+        if (!deleteUrl) {
+            return;
         }
+
+        // Les actions de suppression exigent un POST + jeton CSRF :
+        // on soumet un formulaire au lieu de naviguer en GET.
+        const url = new URL(deleteUrl, window.location.origin);
+        const token = url.searchParams.get('token');
+        url.searchParams.delete('token');
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url.toString();
+        form.style.display = 'none';
+
+        if (token) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'token';
+            input.value = token;
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
     });
 });
