@@ -274,16 +274,19 @@ class UserCrudController extends AbstractCrudController
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
             ->setIcon(icon: 'fa fa-user-times')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_USER_ONLY, user: $user))
+            ->setHtmlAttributes(['data-action' => 'deleteUserOnly'])
             ->displayIf(fn (): bool => $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
             ->setIcon(icon: 'fa fa-trash-alt')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_ALL, user: $user))
+            ->setHtmlAttributes(['data-action' => 'deleteAll'])
             ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer le carnet')
             ->setIcon(icon: 'fa fa-book')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_LOGBOOKS_ONLY, user: $user))
+            ->setHtmlAttributes(['data-action' => 'deleteLogbooksOnly'])
             ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
 
         return $actions
