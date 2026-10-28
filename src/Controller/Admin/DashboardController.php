@@ -186,6 +186,14 @@ class DashboardController extends AbstractDashboardController
             );
         }
 
+        // Journal d'audit — réservé au SUPER_ADMIN
+        yield MenuItem::section(label: 'Audit')->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkTo(
+            \App\Controller\Admin\Audit\AuditLogCrudController::class,
+            'Journal d\'audit',
+            'fas fa-scroll'
+        )->setPermission('ROLE_SUPER_ADMIN');
+
         yield MenuItem::section(label: 'Guides', icon: 'fas fa-folder-open');
         yield MenuItem::subMenu(label: 'Guides', icon: 'fas fa-folder-open')->setSubItems(
             subItems: [
