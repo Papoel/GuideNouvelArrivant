@@ -164,7 +164,7 @@ class AuditLogCrudController extends AbstractCrudController
         }
 
         $count = $this->em->getRepository(AuditLog::class)->count([]);
-        $this->em->createQuery('DELETE FROM '.AuditLog::class.' a')->execute();
+        $this->em->createQuery('DELETE FROM ' . AuditLog::class . ' a')->execute();
 
         $this->auditLogger->warning('Audit journal purged', [
             'entries' => $count,
