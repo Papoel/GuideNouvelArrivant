@@ -142,6 +142,49 @@ class AuditFlushListenerTest extends KernelTestCase
         $this->auditRowsFor($templateId);
     }
 
+    public function testCascadeDeletionIsConsolidatedInOneEntry(): void
+    {
+        $user = new \App\Entity\User();
+        $user->setFirstname('Cascade');
+        $user->setLastname('Delete');
+        $user->setEmail('cascade-delete@test.local');
+        $user->setNni('CASC1');
+        $user->setPassword('password');
+        $this->em->persist($user);
+
+        $logbook = new \App\Entity\Logbook();
+        $logbook->setOwner($user);
+        $logbook->setName('Carnet CASC');
+        $this->em->persist($logbook);
+
+        $action = new \App\Entity\Action();
+        $action->setUser($user);
+        $action->setLogbook($logbook);
+        $action->setDescription('Action CASC');
+        $this->em->persist($action);
+
+        $this->em->flush();
+        $userId = $user->getId()->toRfc4122();
+
+        // Cascade : user + logbook + action supprimés dans le même flush
+        $this->em->remove($action);
+        $this->em->remove($logbook);
+        $this->em->remove($user);
+        $this->em->flush();
+
+        $rows = $this->auditRowsFor($userId);
+        $deletes = array_filter($rows, static fn (AuditLog $r): bool => AuditLog::ACTION_DELETE === $r->getAction());
+
+        // Une seule entrée DELETE sur l'utilisateur, résumant la cascade
+        $this->assertCount(1, $deletes);
+        $changeset = current($deletes)->getChangeset();
+        $this->assertArrayHasKey('_cascade', $changeset);
+        $this->assertArrayHasKey('Logbook', $changeset['_cascade']);
+        $this->assertArrayHasKey('Action', $changeset['_cascade']);
+        $this->assertSame(1, $changeset['_cascade']['Logbook']['count']);
+        $this->assertSame(1, $changeset['_cascade']['Action']['count']);
+    }
+
     public function testPasswordNeverLogged(): void
     {
         $service = new Service();

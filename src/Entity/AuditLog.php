@@ -162,6 +162,13 @@ class AuditLog
 
         $parts = [];
         foreach ($this->changeset as $field => $change) {
+            if ('_cascade' === $field && is_array($change)) {
+                $parts[] = 'Cascade : ' . implode(', ', array_map(
+                    static fn (string $class, array $info): string => sprintf('%s ×%d', $class, $info['count'] ?? 1),
+                    array_keys($change), $change
+                ));
+                continue;
+            }
             $label = \App\Audit\FieldLabels::label($this->entityClass, (string) $field);
             if (is_array($change) && array_key_exists('added', $change)) {
                 $parts[] = sprintf('%s (+%d/-%d)', $label, count((array) $change['added']), count((array) $change['removed']));
@@ -201,6 +208,18 @@ class AuditLog
 
         $lines = [];
         foreach ($this->changeset as $field => $change) {
+            if ('_cascade' === $field && is_array($change)) {
+                $parts = [];
+                foreach ($change as $class => $info) {
+                    $part = sprintf('%s (%d)', $class, $info['count'] ?? 1);
+                    if (!empty($info['items'])) {
+                        $part .= ' : ' . implode(', ', $info['items']);
+                    }
+                    $parts[] = $part;
+                }
+                $lines[] = 'Suppressions en cascade : ' . implode(' · ', $parts);
+                continue;
+            }
             $label = \App\Audit\FieldLabels::label($this->entityClass, (string) $field);
             if (is_array($change) && array_key_exists('added', $change)) {
                 $lines[] = sprintf('%s : +%s | -%s', $label, implode(', ', (array) $change['added']), implode(', ', (array) $change['removed']));
@@ -226,6 +245,10 @@ class AuditLog
 
         $changes = [];
         foreach ($this->changeset as $field => $change) {
+            if ('_cascade' === $field && is_array($change)) {
+                $changes[] = ['field' => 'Suppressions en cascade', 'type' => 'cascade', 'summary' => $change];
+                continue;
+            }
             $label = \App\Audit\FieldLabels::label($this->entityClass, (string) $field);
 
             if (is_array($change) && array_key_exists('added', $change)) {

@@ -36,6 +36,16 @@ final readonly class AuditFlushListener
         $uow = $em->getUnitOfWork();
         $auditMeta = $em->getClassMetadata(AuditLog::class);
 
+        // 0. Suppressions planifiées — indexées d'abord pour filtrer les diffs
+        //    de collections qui ne font que retirer une entité supprimée
+        //    (bruit redondant : la suppression est déjà journalisée).
+        $deletions = [];
+        foreach ($uow->getScheduledEntityDeletions() as $entity) {
+            if (!$entity instanceof AuditLog) {
+                $deletions[spl_object_id($entity)] = $entity;
+            }
+        }
+
         // 1. Pré-indexe les diffs de collections par entité propriétaire :
         // ils seront fusionnés dans l'entrée UPDATE de l'entité quand elle
         // existe (une seule ligne d'audit par entité par flush).
@@ -51,7 +61,12 @@ final readonly class AuditFlushListener
             }
 
             $added = array_map($this->entityRef(...), array_values($collection->getInsertDiff()));
-            $removed = array_map($this->entityRef(...), array_values($collection->getDeleteDiff()));
+            $removed = [];
+            foreach (array_values($collection->getDeleteDiff()) as $removedEntity) {
+                if (!isset($deletions[spl_object_id($removedEntity)])) {
+                    $removed[] = $this->entityRef($removedEntity);
+                }
+            }
             if ([] === $added && [] === $removed) {
                 continue;
             }
@@ -87,11 +102,22 @@ final readonly class AuditFlushListener
             $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_UPDATE, $entity, $changeset);
         }
 
-        foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof AuditLog) {
-                continue;
+        // Suppressions : si le flush supprime plusieurs entités liées en cascade
+        // (ex. utilisateur → carnet → modules → actions), on consolide en une
+        // seule entrée sur la racine avec un résumé des suppressions filles.
+        if (count($deletions) > 1) {
+            $root = $this->cascadeRoot($em, $deletions);
+            if (null !== $root) {
+                $children = array_diff_key($deletions, [spl_object_id($root) => true]);
+                $changeset = $this->snapshot($em, $uow, $root);
+                $changeset['_cascade'] = $this->cascadeSummary($children);
+                $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_DELETE, $root, $changeset);
+                $deletions = [];
             }
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_DELETE, $entity, $this->snapshot($entity, $uow));
+        }
+
+        foreach ($deletions as $entity) {
+            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_DELETE, $entity, $this->snapshot($em, $uow, $entity));
         }
 
         // 2. Diffs de collections restants, sans UPDATE d'entité associé
@@ -157,15 +183,62 @@ final readonly class AuditFlushListener
         return $clean;
     }
 
-    /** Snapshot de l'entité supprimée (valeurs originales en base). */
-    private function snapshot(object $entity, UnitOfWork $uow): array
+    /** Racine d'une cascade : l'entité supprimée dont aucune autre n'est enfant
+     *  (celle vers laquelle pointent les associations des autres). */
+    private function cascadeRoot(EntityManagerInterface $em, array $deletions): ?object
     {
+        $roots = [];
+        foreach ($deletions as $candidateId => $candidate) {
+            $meta = $em->getClassMetadata($candidate::class);
+            $isChild = false;
+            foreach ($meta->getAssociationNames() as $assoc) {
+                if (!$meta->isSingleValuedAssociation($assoc)) {
+                    continue;
+                }
+                foreach ($deletions as $otherId => $other) {
+                    if ($otherId !== $candidateId && $other instanceof ($meta->getAssociationTargetClass($assoc))) {
+                        $isChild = true;
+                    }
+                }
+            }
+            if (!$isChild) {
+                $roots[] = $candidate;
+            }
+        }
+
+        return 1 === count($roots) ? $roots[0] : null;
+    }
+
+    /** Résumé des suppressions filles : classe courte → {count, premiers libellés}. */
+    private function cascadeSummary(array $children): array
+    {
+        $summary = [];
+        foreach ($children as $child) {
+            $class = $child::class;
+            $short = ($pos = strrpos($class, '\\')) !== false ? substr($class, $pos + 1) : $class;
+            $summary[$short]['count'] = ($summary[$short]['count'] ?? 0) + 1;
+            $label = $this->entityLabel($child);
+            if (null !== $label && count($summary[$short]['items'] ?? []) < 5) {
+                $summary[$short]['items'][] = $label;
+            }
+        }
+
+        return $summary;
+    }
+
+    /** Snapshot de l'entité supprimée (valeurs originales en base). */
+    private function snapshot(EntityManagerInterface $em, UnitOfWork $uow, object $entity): array
+    {
+        $meta = $em->getClassMetadata($entity::class);
         $snapshot = [];
         foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
             if (in_array($field, self::IGNORED_FIELDS, true)) {
                 continue;
             }
-            $snapshot[$field] = $this->normalize($value);
+            if ($meta->isCollectionValuedAssociation($field)) {
+                continue;
+            }
+            $snapshot[$field] = is_object($value) ? $this->entityRef($value) : $this->normalize($value);
         }
 
         return $snapshot;

@@ -70,6 +70,17 @@
                                             {% for item in change.removed %}
                                                 <span class="badge text-bg-danger-subtle text-danger me-1">− {{ item }}</span>
                                             {% endfor %}
+                                        {% elseif change.type == 'cascade' %}
+                                            <span class="d-flex flex-column gap-1">
+                                                {% for class, info in change.summary %}
+                                                    <span>
+                                                        <span class="badge text-bg-danger-subtle text-danger">{{ class }} ×{{ info.count }}</span>
+                                                        {% if info.items is defined and info.items is not empty %}
+                                                            <span class="text-muted small">{{ info.items|join(', ') }}</span>
+                                                        {% endif %}
+                                                    </span>
+                                                {% endfor %}
+                                            </span>
                                         {% else %}
                                             <span class="text-muted">{{ change.value }}</span>
                                         {% endif %}
