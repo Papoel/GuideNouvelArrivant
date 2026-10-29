@@ -286,24 +286,26 @@ class UserCrudController extends AbstractCrudController
         // La suppression par lot est réservée au SUPER_ADMIN
         $actions = $actions->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
 
-        // Actions personnalisées de suppression (réservées au SUPER_ADMIN, POST + CSRF)
+        // Actions personnalisées de suppression (POST + CSRF) : visibles si
+        // l'utilisateur courant peut supprimer la cible (UserVoter : ADMIN →
+        // son service, SUPER_ADMIN → transverse)
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
             ->setIcon(icon: 'fa fa-user-times')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_USER_ONLY, user: $user))
             ->setHtmlAttributes(['data-action' => 'deleteUserOnly'])
-            ->displayIf(fn (): bool => $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
+            ->displayIf(fn ($user): bool => $user instanceof User && $this->authorizationChecker->isGranted(UserVoter::DELETE, $user));
 
         $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
             ->setIcon(icon: 'fa fa-trash-alt')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_ALL, user: $user))
             ->setHtmlAttributes(['data-action' => 'deleteAll'])
-            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
+            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted(UserVoter::DELETE, $user));
 
         $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer le carnet')
             ->setIcon(icon: 'fa fa-book')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_LOGBOOKS_ONLY, user: $user))
             ->setHtmlAttributes(['data-action' => 'deleteLogbooksOnly'])
-            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN'));
+            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted(UserVoter::DELETE, $user));
 
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
@@ -349,7 +351,7 @@ class UserCrudController extends AbstractCrudController
      * @param AdminContext<User> $context
      */
     #[AdminRoute('/admin/users/delete-user-only', options: ['methods' => ['POST']])]
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteUserOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -372,7 +374,7 @@ class UserCrudController extends AbstractCrudController
      * @param AdminContext<User> $context
      */
     #[AdminRoute('/admin/users/delete-all', options: ['methods' => ['POST']])]
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAll(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -395,7 +397,7 @@ class UserCrudController extends AbstractCrudController
      * @param AdminContext<User> $context
      */
     #[AdminRoute('/admin/users/delete-logbooks-only', options: ['methods' => ['POST']])]
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteLogbooksOnly(
         AdminContext $context,
         AdminUrlGenerator $adminUrlGenerator,
@@ -447,6 +449,9 @@ class UserCrudController extends AbstractCrudController
         if (!$user instanceof User) {
             throw new \RuntimeException(message: 'Utilisateur introuvable');
         }
+
+        // Un ADMIN ne peut supprimer que les utilisateurs de son propre service
+        $this->denyAccessUnlessGranted(UserVoter::DELETE, $user);
 
         return $user;
     }
@@ -538,8 +543,12 @@ class UserCrudController extends AbstractCrudController
             }
             $originalRoles = array_map(static fn (mixed $role): string => is_string($role) ? $role : '', $originalRoles);
 
-            $allowed = array_unique([...UserRole::getLimitedRoleValues(), ...$originalRoles]);
-            $entityInstance->setRoles(array_values(array_intersect($entityInstance->getRoles(), $allowed)));
+            $limited = UserRole::getLimitedRoleValues();
+            // Les rôles privilégiés déjà détenus sont préservés : le formulaire
+            // ADMIN ne peut pas les soumettre, l'intersection les perdrait.
+            $privileged = array_diff($originalRoles, $limited);
+            $submitted = array_intersect($entityInstance->getRoles(), $limited);
+            $entityInstance->setRoles(array_values(array_unique([...$submitted, ...$privileged])));
         }
 
         parent::updateEntity($entityManager, $entityInstance);
