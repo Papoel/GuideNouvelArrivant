@@ -68,6 +68,7 @@ class AuditLog
     /**
      * @param array{action: string, entityClass: string, entityId: ?string, changeset: ?array, actorType: string, actorId: ?string, actorLabel: ?string, context: ?array} $data
      */
+    /** @param array{action: string, entityClass: string, entityId: string|null, entityLabel?: string|null, changeset: array<string, mixed>|null, actorType: string, actorId: string|null, actorLabel: string|null, context: array<string, mixed>|null} $data */
     public function __construct(array $data)
     {
         $this->occurredAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
@@ -164,7 +165,10 @@ class AuditLog
         foreach ($this->changeset as $field => $change) {
             if ('_cascade' === $field && is_array($change)) {
                 $parts[] = 'Cascade : ' . implode(', ', array_map(
-                    static fn (string $class, array $info): string => sprintf('%s ×%d', $class, $info['count'] ?? 1),
+                    static function (mixed $class, mixed $info): string {
+                        $count = is_array($info) && is_numeric($info['count'] ?? null) ? (int) $info['count'] : 1;
+                        return sprintf('%s ×%d', (string) $class, $count);
+                    },
                     array_keys($change),
                     $change
                 ));
@@ -212,9 +216,12 @@ class AuditLog
             if ('_cascade' === $field && is_array($change)) {
                 $parts = [];
                 foreach ($change as $class => $info) {
-                    $part = sprintf('%s (%d)', $class, $info['count'] ?? 1);
-                    if (!empty($info['items'])) {
-                        $part .= ' : ' . implode(', ', $info['items']);
+                    if (!is_array($info)) {
+                        continue;
+                    }
+                    $part = sprintf('%s (%d)', (string) $class, is_numeric($info['count'] ?? null) ? (int) $info['count'] : 1);
+                    if (!empty($info['items']) && is_array($info['items'])) {
+                        $part .= ' : ' . implode(', ', array_map(static fn (mixed $item): string => is_string($item) ? $item : '', $info['items']));
                     }
                     $parts[] = $part;
                 }
@@ -223,7 +230,7 @@ class AuditLog
             }
             $label = \App\Audit\FieldLabels::label($this->entityClass, (string) $field);
             if (is_array($change) && array_key_exists('added', $change)) {
-                $lines[] = sprintf('%s : +%s | -%s', $label, implode(', ', (array) $change['added']), implode(', ', (array) $change['removed']));
+                $lines[] = sprintf('%s : +%s | -%s', $label, implode(', ', array_map(static fn (mixed $v): string => is_string($v) ? $v : '', (array) $change['added'])), implode(', ', array_map(static fn (mixed $v): string => is_string($v) ? $v : '', (array) $change['removed'])));
             } elseif (is_array($change) && array_key_exists('old', $change)) {
                 $lines[] = sprintf('%s : %s → %s', $label, $this->shortValue($change['old']), $this->shortValue($change['new']));
             } else {
@@ -236,7 +243,7 @@ class AuditLog
 
     /** Changements normalisés pour l'affichage détaillé.
      *
-     * @return list<array{field: string, type: 'added'|'removed'|'update'|'collection'|'value', old?: mixed, new?: mixed, value?: mixed, added?: array, removed?: array}>
+     * @return list<array{field: string, type: 'added'|'removed'|'update'|'collection'|'value'|'cascade', old?: mixed, new?: mixed, value?: mixed, added?: array<int|string, mixed>, removed?: array<int|string, mixed>, summary?: array<int|string, mixed>}>
      */
     public function getNormalizedChanges(): array
     {

@@ -9,7 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 
 /** Journalise toutes les modifications ORM (insert / update / delete / collections
@@ -49,21 +48,21 @@ final readonly class AuditFlushListener
         // 1. Pré-indexe les diffs de collections par entité propriétaire :
         // ils seront fusionnés dans l'entrée UPDATE de l'entité quand elle
         // existe (une seule ligne d'audit par entité par flush).
-        /** @var array<int, array{owner: object, fields: array<string, array{added: array, removed: array}>}> $collectionDiffs */
+        /** @var array<int, array{owner: object, fields: array<string, array{added: list<string>, removed: list<string>}>}> $collectionDiffs */
         $collectionDiffs = [];
         foreach ($uow->getScheduledCollectionUpdates() as $collection) {
-            if (!$collection instanceof PersistentCollection) {
-                continue;
-            }
             $owner = $collection->getOwner();
             if ($owner instanceof AuditLog || null === $owner) {
                 continue;
             }
 
-            $added = array_map($this->entityRef(...), array_values($collection->getInsertDiff()));
+            $added = array_map(
+                fn (mixed $value): string => is_object($value) ? $this->entityRef($value) : 'Ø',
+                array_values($collection->getInsertDiff())
+            );
             $removed = [];
             foreach (array_values($collection->getDeleteDiff()) as $removedEntity) {
-                if (!isset($deletions[spl_object_id($removedEntity)])) {
+                if (is_object($removedEntity) && !isset($deletions[spl_object_id($removedEntity)])) {
                     $removed[] = $this->entityRef($removedEntity);
                 }
             }
@@ -71,7 +70,8 @@ final readonly class AuditFlushListener
                 continue;
             }
 
-            $field = $collection->getMapping()['fieldName'] ?? 'collection';
+            $mappingName = $collection->getMapping()['fieldName'] ?? 'collection';
+            $field = is_string($mappingName) ? $mappingName : 'collection';
             $collectionDiffs[spl_object_id($owner)]['owner'] = $owner;
             $collectionDiffs[spl_object_id($owner)]['fields'][$field] = ['added' => $added, 'removed' => $removed];
         }
@@ -131,7 +131,8 @@ final readonly class AuditFlushListener
         }
     }
 
-    /** @param array<string, mixed> $changeset */
+    /** @param \Doctrine\ORM\Mapping\ClassMetadata<AuditLog> $auditMeta
+     *  @param array<string, mixed> $changeset */
     private function writeLog(EntityManagerInterface $em, UnitOfWork $uow, object $auditMeta, string $action, object $entity, array $changeset): void
     {
         $actor = $this->auditContext->actor();
@@ -166,17 +167,22 @@ final readonly class AuditFlushListener
         return $id instanceof \Stringable ? (string) $id : (is_scalar($id) ? (string) $id : null);
     }
 
-    /** Transforme le changeset Doctrine [champ => [avant, après]] en structure lisible. */
+    /** Transforme le changeset Doctrine [champ => [avant, après]] en structure lisible.
+     * @param array<string, mixed> $changeset
+     * @return array<string, array{old: mixed, new: mixed}> */
     private function sanitize(array $changeset): array
     {
         $clean = [];
-        foreach ($changeset as $field => [$old, $new]) {
+        foreach ($changeset as $field => $pair) {
+            if (!is_array($pair) || !array_key_exists(0, $pair) || !array_key_exists(1, $pair)) {
+                continue;
+            }
             if (in_array($field, self::IGNORED_FIELDS, true)) {
                 continue;
             }
             $clean[$field] = [
-                'old' => $this->normalize($old),
-                'new' => $this->normalize($new),
+                'old' => $this->normalize($pair[0]),
+                'new' => $this->normalize($pair[1]),
             ];
         }
 
@@ -184,7 +190,8 @@ final readonly class AuditFlushListener
     }
 
     /** Racine d'une cascade : l'entité supprimée dont aucune autre n'est enfant
-     *  (celle vers laquelle pointent les associations des autres). */
+     *  (celle vers laquelle pointent les associations des autres).
+     * @param array<int, object> $deletions */
     private function cascadeRoot(EntityManagerInterface $em, array $deletions): ?object
     {
         $roots = [];
@@ -209,7 +216,9 @@ final readonly class AuditFlushListener
         return 1 === count($roots) ? $roots[0] : null;
     }
 
-    /** Résumé des suppressions filles : classe courte → {count, premiers libellés}. */
+    /** Résumé des suppressions filles : classe courte → {count, premiers libellés}.
+     * @param array<int, object> $children
+     * @return array<string, array{count: int, items?: list<string>}> */
     private function cascadeSummary(array $children): array
     {
         $summary = [];
@@ -226,12 +235,14 @@ final readonly class AuditFlushListener
         return $summary;
     }
 
-    /** Snapshot de l'entité supprimée (valeurs originales en base). */
+    /** Snapshot de l'entité supprimée (valeurs originales en base).
+     * @return array<string, mixed> */
     private function snapshot(EntityManagerInterface $em, UnitOfWork $uow, object $entity): array
     {
         $meta = $em->getClassMetadata($entity::class);
         $snapshot = [];
         foreach ($uow->getOriginalEntityData($entity) as $field => $value) {
+            $field = (string) $field;
             if (in_array($field, self::IGNORED_FIELDS, true)) {
                 continue;
             }

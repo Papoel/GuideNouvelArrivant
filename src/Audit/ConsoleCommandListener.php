@@ -23,7 +23,7 @@ final readonly class ConsoleCommandListener
     public function __invoke(ConsoleCommandEvent $event): void
     {
         $argv = $_SERVER['argv'] ?? [];
-        $commandLine = implode(' ', $argv) ?: 'console';
+        $commandLine = is_array($argv) ? (implode(' ', array_map(static fn (mixed $arg): string => is_string($arg) ? $arg : '', $argv)) ?: 'console') : 'console';
 
         $this->auditContext->setConsoleCommand($commandLine);
     }

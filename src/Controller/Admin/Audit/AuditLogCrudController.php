@@ -133,14 +133,12 @@ class AuditLogCrudController extends AbstractCrudController
      * channel Monolog `audit` (hors de la table — survit à la purge). */
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof AuditLog) {
-            $this->auditLogger->warning('Audit log entry deleted', [
-                'entryId' => $entityInstance->getId(),
-                'entity' => $entityInstance->getEntityClass(),
-                'actor' => $this->getUser()?->getUserIdentifier(),
-                'ip' => $this->requestStack->getCurrentRequest()?->getClientIp(),
-            ]);
-        }
+        $this->auditLogger->warning('Audit log entry deleted', [
+            'entryId' => $entityInstance->getId(),
+            'entity' => $entityInstance->getEntityClass(),
+            'actor' => $this->getUser()?->getUserIdentifier(),
+            'ip' => $this->requestStack->getCurrentRequest()?->getClientIp(),
+        ]);
 
         parent::deleteEntity($entityManager, $entityInstance);
     }

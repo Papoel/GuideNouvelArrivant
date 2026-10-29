@@ -509,8 +509,11 @@ class UserCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): object
     {
         $entity = parent::createEntity($entityFqcn);
+        if (!$entity instanceof User) {
+            throw new \LogicException('createEntity() should return a User.');
+        }
 
-        if ($entity instanceof User && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+        if (!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
             $currentUser = $this->getUser();
             if ($currentUser instanceof User && null !== $currentUser->getService()) {
                 $entity->setService($currentUser->getService());
@@ -522,7 +525,7 @@ class UserCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof User && !$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
+        if (!$this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
             // Un ADMIN ne peut attribuer que les rôles non privilégiés ;
             // les rôles déjà détenus par l'utilisateur sont préservés.
             $original = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
@@ -530,6 +533,10 @@ class UserCrudController extends AbstractCrudController
             if (is_string($originalRoles)) {
                 $originalRoles = '' === $originalRoles ? [] : explode(',', $originalRoles);
             }
+            if (!is_array($originalRoles)) {
+                $originalRoles = [];
+            }
+            $originalRoles = array_map(static fn (mixed $role): string => is_string($role) ? $role : '', $originalRoles);
 
             $allowed = array_unique([...UserRole::getLimitedRoleValues(), ...$originalRoles]);
             $entityInstance->setRoles(array_values(array_intersect($entityInstance->getRoles(), $allowed)));

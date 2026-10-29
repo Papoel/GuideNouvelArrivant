@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Audit;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -37,7 +38,12 @@ final readonly class AuditNotificationSubscriber
             return;
         }
 
-        $request->getSession()->getFlashBag()->add(
+        $session = $request->getSession();
+        if (!$session instanceof FlashBagAwareSessionInterface) {
+            return;
+        }
+
+        $session->getFlashBag()->add(
             'info',
             sprintf('%d modification(s) tracée(s) dans le journal d\'audit.', $count)
         );
