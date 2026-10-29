@@ -18,7 +18,8 @@ readonly class LogbookTemplateService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LogbookReplacementService $replacementService
+        private LogbookReplacementService $replacementService,
+        private \App\Audit\AuditContext $auditContext
     ) {
     }
 
@@ -33,6 +34,9 @@ readonly class LogbookTemplateService
      */
     public function createLogbookFromTemplate(User $user, LogbookTemplate $template, bool $replaceExisting = false): Logbook
     {
+        // Trace le modèle utilisé dans le contexte des entrées d'audit
+        $this->auditContext->mergeContext(['template' => $template->getName()]);
+
         // Créer un nouveau carnet
         $logbook = new Logbook();
         $logbook->setOwner($user);

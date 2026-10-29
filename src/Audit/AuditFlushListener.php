@@ -45,6 +45,18 @@ final readonly class AuditFlushListener
             }
         }
 
+        // Insertions planifiées — indexées pour consolider sur l'entrée INSERT
+        // les diffs qui rattachent une entité insérée dans le même flush
+        // (ex. carnet créé depuis un modèle → "Thèmes rattachés ×12").
+        $insertions = [];
+        foreach ($uow->getScheduledEntityInsertions() as $entity) {
+            if (!$entity instanceof AuditLog) {
+                $insertions[spl_object_id($entity)] = $entity;
+            }
+        }
+        /** @var array<int, array<string, array{count: int, items?: list<string>}>> $insertAttachments */
+        $insertAttachments = [];
+
         // 1. Pré-indexe les diffs de collections par entité propriétaire :
         // ils seront fusionnés dans l'entrée UPDATE de l'entité quand elle
         // existe (une seule ligne d'audit par entité par flush).
@@ -56,10 +68,20 @@ final readonly class AuditFlushListener
                 continue;
             }
 
-            $added = array_map(
-                fn (mixed $value): string => is_object($value) ? $this->entityRef($value) : 'Ø',
-                array_values($collection->getInsertDiff())
-            );
+            $added = [];
+            foreach (array_values($collection->getInsertDiff()) as $addedEntity) {
+                if (!is_object($addedEntity)) {
+                    continue;
+                }
+                // Une entité insérée dans ce flush n'est pas un "UPDATE" du
+                // propriétaire : elle est résumée sur son entrée INSERT.
+                if (isset($insertions[$insertedId = spl_object_id($addedEntity)])) {
+                    $insertAttachments[$insertedId] ??= [];
+                    $this->appendToSummary($insertAttachments[$insertedId], $owner);
+                    continue;
+                }
+                $added[] = $this->entityRef($addedEntity);
+            }
             $removed = [];
             foreach (array_values($collection->getDeleteDiff()) as $removedEntity) {
                 if (is_object($removedEntity) && !isset($deletions[spl_object_id($removedEntity)])) {
@@ -76,11 +98,13 @@ final readonly class AuditFlushListener
             $collectionDiffs[spl_object_id($owner)]['fields'][$field] = ['added' => $added, 'removed' => $removed];
         }
 
-        foreach ($uow->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof AuditLog) {
-                continue;
+        foreach ($insertions as $entity) {
+            $changeset = $this->sanitize($uow->getEntityChangeSet($entity));
+            $attachments = $insertAttachments[spl_object_id($entity)] ?? null;
+            if (null !== $attachments) {
+                $changeset['_attached'] = $attachments;
             }
-            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_INSERT, $entity, $this->sanitize($uow->getEntityChangeSet($entity)));
+            $this->writeLog($em, $uow, $auditMeta, AuditLog::ACTION_INSERT, $entity, $changeset);
         }
 
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
@@ -223,16 +247,23 @@ final readonly class AuditFlushListener
     {
         $summary = [];
         foreach ($children as $child) {
-            $class = $child::class;
-            $short = ($pos = strrpos($class, '\\')) !== false ? substr($class, $pos + 1) : $class;
-            $summary[$short]['count'] = ($summary[$short]['count'] ?? 0) + 1;
-            $label = $this->entityLabel($child);
-            if (null !== $label && count($summary[$short]['items'] ?? []) < 5) {
-                $summary[$short]['items'][] = $label;
-            }
+            $this->appendToSummary($summary, $child);
         }
 
         return $summary;
+    }
+
+    /** Ajoute une entité à un résumé groupé par classe courte : {count, items}.
+     * @param array<string, array{count: int, items?: list<string>}> $summary */
+    private function appendToSummary(array &$summary, object $entity): void
+    {
+        $class = $entity::class;
+        $short = ($pos = strrpos($class, '\\')) !== false ? substr($class, $pos + 1) : $class;
+        $summary[$short]['count'] = ($summary[$short]['count'] ?? 0) + 1;
+        $label = $this->entityLabel($entity);
+        if (null !== $label && count($summary[$short]['items'] ?? []) < 5) {
+            $summary[$short]['items'][] = $label;
+        }
     }
 
     /** Snapshot de l'entité supprimée (valeurs originales en base).

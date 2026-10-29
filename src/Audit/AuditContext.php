@@ -18,6 +18,8 @@ final class AuditContext
 {
     private ?string $consoleCommand = null;
     private int $flushedCount = 0;
+    /** @var array<string, mixed> Contexte métier additionnel (ex. modèle utilisé). */
+    private array $extraContext = [];
 
     public function __construct(
         private readonly TokenStorageInterface $tokenStorage,
@@ -39,6 +41,14 @@ final class AuditContext
     public function getFlushedCount(): int
     {
         return $this->flushedCount;
+    }
+
+    /** Enrichit le contexte des entrées d'audit écrites ensuite dans la requête
+     *  (ex. nom du modèle de carnet utilisé). Les clés `route`/`ip` sont préservées.
+     * @param array<string, mixed> $data */
+    public function mergeContext(array $data): void
+    {
+        $this->extraContext = array_merge($this->extraContext, $data);
     }
 
     /** @return array{type: string, id: ?string, label: ?string} */
@@ -64,14 +74,16 @@ final class AuditContext
         return ['type' => AuditLog::ACTOR_ANONYMOUS, 'id' => null, 'label' => null];
     }
 
-    /** @return array{route?: mixed, ip?: ?string} */
+    /** @return array<string, mixed> */
     public function context(): array
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return null === $request ? [] : [
+        $requestContext = null === $request ? [] : [
             'route' => $request->attributes->get('_route'),
             'ip' => $request->getClientIp(),
         ];
+
+        return $requestContext + $this->extraContext;
     }
 }

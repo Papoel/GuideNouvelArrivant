@@ -163,8 +163,9 @@ class AuditLog
 
         $parts = [];
         foreach ($this->changeset as $field => $change) {
-            if ('_cascade' === $field && is_array($change)) {
-                $parts[] = 'Cascade : ' . implode(', ', array_map(
+            if (in_array($field, ['_cascade', '_attached'], true) && is_array($change)) {
+                $prefix = '_attached' === $field ? 'Rattaché : ' : 'Cascade : ';
+                $parts[] = $prefix . implode(', ', array_map(
                     static function (mixed $class, mixed $info): string {
                         $count = is_array($info) && is_numeric($info['count'] ?? null) ? (int) $info['count'] : 1;
                         return sprintf('%s ×%d', (string) $class, $count);
@@ -213,7 +214,7 @@ class AuditLog
 
         $lines = [];
         foreach ($this->changeset as $field => $change) {
-            if ('_cascade' === $field && is_array($change)) {
+            if (in_array($field, ['_cascade', '_attached'], true) && is_array($change)) {
                 $parts = [];
                 foreach ($change as $class => $info) {
                     if (!is_array($info)) {
@@ -225,7 +226,7 @@ class AuditLog
                     }
                     $parts[] = $part;
                 }
-                $lines[] = 'Suppressions en cascade : ' . implode(' · ', $parts);
+                $lines[] = ('_attached' === $field ? 'Éléments rattachés : ' : 'Suppressions en cascade : ') . implode(' · ', $parts);
                 continue;
             }
             $label = \App\Audit\FieldLabels::label($this->entityClass, (string) $field);
@@ -243,7 +244,7 @@ class AuditLog
 
     /** Changements normalisés pour l'affichage détaillé.
      *
-     * @return list<array{field: string, type: 'added'|'removed'|'update'|'collection'|'value'|'cascade', old?: mixed, new?: mixed, value?: mixed, added?: array<int|string, mixed>, removed?: array<int|string, mixed>, summary?: array<int|string, mixed>}>
+     * @return list<array{field: string, type: 'added'|'removed'|'update'|'collection'|'value'|'cascade'|'attached', old?: mixed, new?: mixed, value?: mixed, added?: array<int|string, mixed>, removed?: array<int|string, mixed>, summary?: array<int|string, mixed>}>
      */
     public function getNormalizedChanges(): array
     {
@@ -253,6 +254,10 @@ class AuditLog
 
         $changes = [];
         foreach ($this->changeset as $field => $change) {
+            if ('_attached' === $field && is_array($change)) {
+                $changes[] = ['field' => 'Éléments rattachés', 'type' => 'attached', 'summary' => $change];
+                continue;
+            }
             if ('_cascade' === $field && is_array($change)) {
                 $changes[] = ['field' => 'Suppressions en cascade', 'type' => 'cascade', 'summary' => $change];
                 continue;
