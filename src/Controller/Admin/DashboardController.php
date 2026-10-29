@@ -194,7 +194,7 @@ class DashboardController extends AbstractDashboardController
             'fas fa-scroll'
         )->setPermission('ROLE_SUPER_ADMIN');
 
-        yield MenuItem::section(label: 'Guides', icon: 'fas fa-folder-open');
+        yield MenuItem::section(label: 'Guides');
         yield MenuItem::subMenu(label: 'Guides', icon: 'fas fa-folder-open')->setSubItems(
             subItems: [
                 MenuItem::linkToRoute(
