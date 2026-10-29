@@ -151,20 +151,22 @@ class DashboardController extends AbstractDashboardController
             ]
         );
 
+        // Référentiels réservés au SUPER_ADMIN
         $totalServices = $this->ServiceRepository->count();
-        yield MenuItem::section(label: 'Services')->setBadge(content: $totalServices);
+        yield MenuItem::section(label: 'Services')->setBadge(content: $totalServices)->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::subMenu(label: 'Services', icon: 'fas fa-box')->setSubItems(
             subItems: [
                 MenuItem::linkTo(ServiceCrudController::class, 'Liste des services', 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
                 MenuItem::linkTo(ServiceCrudController::class, 'Créer services', 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
-        );
+        )->setPermission('ROLE_SUPER_ADMIN');
 
-        // Job et Spécialité
+        // Job et Spécialité — référentiels réservés au SUPER_ADMIN
         $totalJobs = $this->JobRepository->count();
         $totalSpecialities = $this->SpecialityRepository->count();
         yield MenuItem::section(label: 'Métier & Spécialité')
-            ->setBadge(content: sprintf('%d | %d', $totalJobs, $totalSpecialities));
+            ->setBadge(content: sprintf('%d | %d', $totalJobs, $totalSpecialities))
+            ->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::subMenu(label: 'Métier & Spé', icon: 'fas fa-network-wired')->setSubItems(
             subItems: [
                 MenuItem::linkTo(JobCrudController::class, 'Liste des métiers', icon: 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
@@ -172,12 +174,10 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkTo(SpecialityCrudController::class, 'Liste des spécialités', icon: 'fas fa-list')->setAction(actionName: Crud::PAGE_INDEX),
                 MenuItem::linkTo(SpecialityCrudController::class, 'Créer spécialité', icon: 'fas fa-plus-circle')->setAction(actionName: Crud::PAGE_NEW),
             ]
-        );
+        )->setPermission('ROLE_SUPER_ADMIN');
 
-        // Section Tableau de bord de progression
-        // TODO: Uniquement si ROLE_MANAGER
-        $currentUser = $this->getUser();
-        if ($currentUser instanceof User && in_array('ROLE_MANAGER', $currentUser->getRoles())) {
+        // Section Tableau de bord de progression (MANAGER, SERVICE_HEAD et SUPER_ADMIN via hiérarchie)
+        if ($this->isGranted('ROLE_MANAGER')) {
             yield MenuItem::section(label: 'Suivi', icon: 'fas fa-chart-line');
             yield MenuItem::linkToRoute(
                 label: 'Manager',
@@ -186,7 +186,15 @@ class DashboardController extends AbstractDashboardController
             );
         }
 
-        yield MenuItem::section(label: 'Guides', icon: 'fas fa-folder-open');
+        // Journal d'audit — réservé au SUPER_ADMIN
+        yield MenuItem::section(label: 'Audit')->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkTo(
+            \App\Controller\Admin\Audit\AuditLogCrudController::class,
+            'Journal d\'audit',
+            'fas fa-scroll'
+        )->setPermission('ROLE_SUPER_ADMIN');
+
+        yield MenuItem::section(label: 'Guides');
         yield MenuItem::subMenu(label: 'Guides', icon: 'fas fa-folder-open')->setSubItems(
             subItems: [
                 MenuItem::linkToRoute(

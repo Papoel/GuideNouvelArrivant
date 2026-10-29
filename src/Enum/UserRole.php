@@ -65,6 +65,32 @@ enum UserRole: string
     }
 
     /**
+     * Rôles qu'un ADMIN de service peut attribuer (rôles non privilégiés).
+     * Les rôles ADMIN, SUPER_ADMIN et SERVICE_HEAD restent réservés au SUPER_ADMIN.
+     *
+     * @return array<string, string>
+     */
+    public static function getLimitedChoices(): array
+    {
+        return [
+            self::USER->getLabel() => self::USER->value,
+            self::NEWCOMER->getLabel() => self::NEWCOMER->value,
+            self::MENTOR->getLabel() => self::MENTOR->value,
+            self::MANAGER->getLabel() => self::MANAGER->value,
+        ];
+    }
+
+    /**
+     * Valeurs des rôles attribuables par un ADMIN de service.
+     *
+     * @return list<string>
+     */
+    public static function getLimitedRoleValues(): array
+    {
+        return array_values(self::getLimitedChoices());
+    }
+
+    /**
      * Retourne le mapping des badges pour EasyAdmin
      * Format: ['ROLE_VALUE' => 'color']
      *

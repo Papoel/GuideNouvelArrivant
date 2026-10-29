@@ -1,0 +1,210 @@
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{% macro ucfirst(text) %}{{ (text|upper)[:1] ~ text[1:] }}{% endmacro %}
+{% import _self as ui %}
+
+{# ── Liste des agents - design dédié ───────────────────────────────────
+   Tableau dans une carte en filet discret : avatars teintés par
+   utilisateur, badges sobres, actions révélées au survol.
+   Styles scopés à cette page (préfixe .agents-*). #}
+
+{% block datagrid %}
+    <style>
+        .agents-card {
+            background: #fff;
+            border: 1px solid #e9eff5;
+            border-radius: .7rem;
+            box-shadow: 0 1px 2px rgba(28,43,62,.05);
+            overflow: hidden;
+        }
+        .agents-table { margin: 0; font-size: .875rem; }
+        .agents-table thead th {
+            background: #f8fafc;
+            border-bottom: 1px solid #e9eff5;
+            color: #64748b;
+            font-size: .67rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: .85rem 1rem;
+            white-space: nowrap;
+        }
+        .agents-table tbody td {
+            border-bottom: 1px solid #f1f5f9;
+            padding: .7rem 1rem;
+            vertical-align: middle;
+        }
+        .agents-table tbody tr:last-child td { border-bottom: none; }
+        .agents-table tbody tr { transition: background-color .13s ease; }
+        .agents-table tbody tr:hover { background: rgba(48,80,128,.055); }
+
+        .agents-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: .78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .agents-name { font-weight: 600; color: #1c2b3e; }
+        .agents-link { color: inherit; text-decoration: none; }
+        .agents-link:hover .agents-name { color: #305080; }
+        .agents-sub { font-size: .78rem; color: #94a3b8; }
+
+        .agents-pill {
+            display: inline-flex; align-items: center; gap: .3rem;
+            border-radius: 999px; padding: .28em .7em;
+            font-size: .73rem; font-weight: 500;
+        }
+        .agents-pill-service {
+            background: rgba(48,80,128,.08); color: #305080;
+            border: 1px solid rgba(48,80,128,.14);
+        }
+        .agents-pill-yes { background: rgba(63,125,92,.1); color: #3f7d5c; }
+        .agents-pill-no  { background: rgba(100,116,139,.09); color: #8a95a5; }
+
+        .agents-actions { opacity: .35; transition: opacity .15s ease; }
+        tr:hover .agents-actions { opacity: 1; }
+        .agents-actions a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 30px; height: 30px; border-radius: .45rem;
+            color: #64748b; text-decoration: none;
+            transition: background-color .13s ease, color .13s ease;
+        }
+        .agents-actions a:hover { background: rgba(48,80,128,.08); color: #305080; }
+
+        .agents-sort {
+            color: inherit; text-decoration: none;
+            display: inline-flex; align-items: center; gap: .35rem;
+        }
+        .agents-sort:hover { color: #305080; }
+        .agents-sort i { font-size: .65rem; color: #94a3b8; }
+        .agents-sort.active i { color: #305080; }
+    </style>
+
+    {% set sortState = ea.request.query.all('sort')|default({}) %}
+    {% set sortUrl = ea_url()
+        .setController(ea.request.attributes.get('crudControllerFqcn'))
+        .setAction('index')
+        .set('page', 1) %}
+
+    <div class="agents-card">
+        <div class="table-responsive">
+            <table class="table agents-table">
+                <thead>
+                    <tr>
+                        <th class="ps-4">
+                            {% set dir = sortState['lastname']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {lastname: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Agent <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['nni']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {nni: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                NNI <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['mentor']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {mentor: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Tuteur <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['roles']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {roles: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Rôle <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['service']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {service: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Service <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['job']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {job: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Métier <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>
+                            {% set dir = sortState['speciality']|default(null) %}
+                            <a class="agents-sort {{ dir ? 'active' }}" href="{{ sortUrl.set('sort', {speciality: dir == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Spécialité <i class="fas fa-{{ dir == 'ASC' ? 'sort-up' : (dir == 'DESC' ? 'sort-down' : 'sort') }}"></i>
+                            </a>
+                        </th>
+                        <th>Carnets</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entity in entities %}
+                        {% set user = entity.instance %}
+                        {% set detailUrl = entity.defaultActionUrl %}
+                        {% set editUrl = ea_url().setAction('edit').setEntityId(entity.primaryKeyValueAsString) %}
+                        {% set initials = ((user.firstname|default('')|first) ~ (user.lastname|default('')|first))|upper %}
+                        {% set highestRole = user.roles is defined ? get_highest_role(user.roles) : 'ROLE_USER' %}
+                        {% set roleStyle = get_role_style(highestRole) %}
+                        <tr>
+                            <td class="ps-4">
+                                <a href="{{ detailUrl }}" class="agents-link d-flex align-items-center gap-2">
+                                    <span class="agents-avatar" style="background:{{ roleStyle.color }}1f;color:{{ roleStyle.color }};">{{ initials }}</span>
+                                    <span class="lh-sm">
+                                        <span class="agents-name d-block">{{ user.fullname }}</span>
+                                        <span class="agents-sub">{{ user.email }}</span>
+                                    </span>
+                                </a>
+                            </td>
+                            <td><code class="small text-muted" style="background:#f1f5f9;padding:.15em .5em;border-radius:.35rem;">{{ user.nni }}</code></td>
+                            <td>
+                                {% if user.mentor %}
+                                    <span class="text-body">{{ user.mentor.fullname }}</span>
+                                {% else %}
+                                    <span class="text-muted fst-italic small">/</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="agents-pill" style="background:{{ roleStyle.color }}1f;color:{{ roleStyle.color }};">
+                                    <span style="width:.45rem;height:.45rem;border-radius:50%;background:{{ roleStyle.color }};"></span>
+                                    {{ roleStyle.label }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.service %}
+                                    <span class="agents-pill agents-pill-service">{{ user.service }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted">{{ ui.ucfirst(user.jobLabel|default('-')) }}</td>
+                            <td class="text-muted">{{ ui.ucfirst(user.specialityLabel|default('-')) }}</td>
+                            <td>
+                                {% if user.hasLogbooks %}
+                                    <span class="agents-pill agents-pill-yes"><i class="fas fa-check" style="font-size:.6rem;"></i>Oui</span>
+                                {% else %}
+                                    <span class="agents-pill agents-pill-no">Non</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <span class="agents-actions">
+                                    {% for action in entity.actions %}
+                                        <a href="{{ action.linkUrl }}"
+                                           {% for attrName, attrValue in action.htmlAttributes %}{{ attrName }}="{{ attrValue }}" {% endfor %}
+                                           title="{{ action.label|trans }}"
+                                           class="{{ action.cssClass }}">
+                                            <i class="{{ action.icon ?: 'fas fa-ellipsis' }}"></i>
+                                        </a>
+                                    {% endfor %}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock datagrid %}

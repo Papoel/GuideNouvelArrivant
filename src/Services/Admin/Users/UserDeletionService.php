@@ -30,17 +30,17 @@ readonly class UserDeletionService
 
     public function deleteUserAndLogbooks(User $user): void
     {
-        // Supprimer d'abord les logbooks
-        $logbooks = $user->getLogbooks();
-        foreach ($logbooks as $logbook) {
-            // Supprimer les thèmes associés si nécessaire
-            foreach ($logbook->getThemes() as $theme) {
-                $this->entityManager->remove($theme);
+        foreach ($user->getLogbooks() as $logbook) {
+            // Les thèmes sont des entités du modèle de carnet, partagées entre
+            // tous les logbooks : on les détache (liaison seule) — les
+            // supprimer détruirait les carnets des autres utilisateurs.
+            // Les actions du carnet, elles, sont supprimées via cascade remove.
+            foreach ($logbook->getThemes()->toArray() as $theme) {
+                $logbook->removeTheme($theme);
             }
             $this->entityManager->remove($logbook);
         }
 
-        // Ensuite supprimer l'utilisateur
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }

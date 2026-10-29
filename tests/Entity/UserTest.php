@@ -87,7 +87,7 @@ class UserTest extends EntityTestCase
     public function getLastname(): void
     {
         $entity = $this->getEntityUser();
-        self::assertEquals(expected: "Colin", actual: $entity->getLastname());
+        self::assertEquals(expected: "COLIN", actual: $entity->getLastname());
         $this->assertValidationErrorsCount($entity, count: 0);
     }
 

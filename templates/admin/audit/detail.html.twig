@@ -1,0 +1,152 @@
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% set log = entity.instance %}
+{% set action_color = {
+    (constant('App\\Entity\\AuditLog::ACTION_INSERT')): 'success',
+    (constant('App\\Entity\\AuditLog::ACTION_UPDATE')): 'info',
+    (constant('App\\Entity\\AuditLog::ACTION_DELETE')): 'danger',
+    (constant('App\\Entity\\AuditLog::ACTION_COLLECTION_UPDATE')): 'warning'
+}[log.action] ?? 'secondary' %}
+{% set actor_color = {
+    (constant('App\\Entity\\AuditLog::ACTOR_USER')): 'primary',
+    (constant('App\\Entity\\AuditLog::ACTOR_CONSOLE')): 'dark',
+    (constant('App\\Entity\\AuditLog::ACTOR_ANONYMOUS')): 'secondary'
+}[log.actorType] ?? 'secondary' %}
+
+{% block content_title %}Entrée d'audit #{{ log.id }}{% endblock %}
+
+{% block main %}
+<div class="container-fluid px-0">
+
+    {# ── En-tête résumé ─────────────────────────────────────────── #}
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+        <a href="{{ path('admin_audit_log_index') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Journal
+        </a>
+        <span class="badge text-bg-{{ action_color }} fs-6">{{ log.actionLabel }}</span>
+        <div>
+            <div class="fw-semibold">{{ log.entityShortClass }}</div>
+            <div class="text-muted small">{{ log.entityClass }}</div>
+        </div>
+        <div class="ms-auto text-muted small">
+            <i class="far fa-clock"></i> {{ log.occurredAt|date('d/m/Y à H:i:s') }}
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        {# ── Modifications ──────────────────────────────────────── #}
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent fw-semibold">
+                    <i class="fas fa-pen-fancy me-1 text-muted"></i> Modifications
+                </div>
+                <div class="card-body p-0">
+                    {% set changes = log.normalizedChanges %}
+                    {% if changes is empty %}
+                        <p class="text-muted p-3 mb-0">Aucune modification enregistrée.</p>
+                    {% else %}
+                        <ul class="list-group list-group-flush">
+                            {% for change in changes %}
+                                <li class="list-group-item d-flex align-items-start gap-3">
+                                    <span class="fw-semibold text-nowrap" style="min-width: 11rem">{{ change.field }}</span>
+                                    <span class="flex-grow-1 text-break">
+                                        {% if change.type == 'update' %}
+                                            <span class="text-danger text-decoration-line-through">{{ change.old }}</span>
+                                            <i class="fas fa-arrow-right text-muted mx-2 small"></i>
+                                            <span class="text-success">{{ change.new }}</span>
+                                        {% elseif change.type == 'added' %}
+                                            <span class="badge text-bg-success-subtle text-success me-1">+</span>
+                                            <span>{{ change.new }}</span>
+                                        {% elseif change.type == 'removed' %}
+                                            <span class="badge text-bg-danger-subtle text-danger me-1">−</span>
+                                            <span class="text-muted">{{ change.old }}</span>
+                                        {% elseif change.type == 'collection' %}
+                                            {% for item in change.added %}
+                                                <span class="badge text-bg-success-subtle text-success me-1">+ {{ item }}</span>
+                                            {% endfor %}
+                                            {% for item in change.removed %}
+                                                <span class="badge text-bg-danger-subtle text-danger me-1">− {{ item }}</span>
+                                            {% endfor %}
+                                        {% elseif change.type == 'cascade' or change.type == 'attached' %}
+                                            <span class="d-flex flex-column gap-1">
+                                                {% for class, info in change.summary %}
+                                                    <span>
+                                                        <span class="badge text-bg-{{ change.type == 'attached' ? 'success-subtle text-success' : 'danger-subtle text-danger' }}">{{ class }} ×{{ info.count }}</span>
+                                                        {% if info.items is defined and info.items is not empty %}
+                                                            <span class="text-muted small">{{ info.items|join(', ') }}</span>
+                                                        {% endif %}
+                                                    </span>
+                                                {% endfor %}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">{{ change.value }}</span>
+                                        {% endif %}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# ── Colonne latérale ───────────────────────────────────── #}
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent fw-semibold">
+                    <i class="fas fa-user me-1 text-muted"></i> Auteur
+                </div>
+                <div class="card-body">
+                    <span class="badge text-bg-{{ actor_color }} mb-2">{{ log.actorTypeLabel }}</span>
+                    {% if log.actorLabel %}
+                        <div class="fw-semibold">{{ log.actorLabel }}</div>
+                    {% else %}
+                        <div class="text-muted fst-italic">Auteur non identifié</div>
+                    {% endif %}
+                    {% if log.actorId %}
+                        <div class="text-muted small text-break mt-1">{{ log.actorId }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent fw-semibold">
+                    <i class="fas fa-cube me-1 text-muted"></i> Entité concernée
+                </div>
+                <div class="card-body">
+                    <div class="fw-semibold">{{ log.entityLabel ?? log.entityShortClass }}</div>
+                    <div class="text-muted small">{{ log.entityClass }}</div>
+                    {% if log.entityId %}
+                        <div class="text-muted small text-break">{{ log.entityId }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent fw-semibold">
+                    <i class="fas fa-location-arrow me-1 text-muted"></i> Contexte
+                </div>
+                <div class="card-body p-0">
+                    {% if log.context is empty %}
+                        <p class="text-muted p-3 mb-0">Aucun contexte enregistré.</p>
+                    {% else %}
+                        <ul class="list-group list-group-flush">
+                            {% for key, value in log.context %}
+                                <li class="list-group-item">
+                                    <span class="text-muted small d-block">{{ key == 'route' ? 'Route' : (key == 'ip' ? 'Adresse IP' : key|capitalize) }}</span>
+                                    <span class="text-break">{{ value is null ? '—' : value }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock main %}

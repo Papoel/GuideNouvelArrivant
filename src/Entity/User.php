@@ -153,7 +153,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setFirstname(string $firstname): static
     {
-        $this->firstname = $firstname;
+        $this->firstname = self::normalizeFirstname($firstname);
 
         return $this;
     }
@@ -165,9 +165,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setLastname(string $lastname): static
     {
-        $this->lastname = $lastname;
+        $this->lastname = mb_strtoupper(trim($lastname));
 
         return $this;
+    }
+
+    /** Prénom : 1re lettre de chaque partie composée en majuscule (Jean-Yves). */
+    public static function normalizeFirstname(string $firstname): string
+    {
+        return implode('-', array_map(
+            static fn (string $part): string => mb_ucfirst(mb_strtolower(trim($part))),
+            explode('-', $firstname)
+        ));
     }
 
     public function getEmail(): ?string

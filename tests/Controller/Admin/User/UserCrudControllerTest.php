@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\Exception;
@@ -25,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use App\Services\Logbook\LogbookProgressService;
 use App\Services\Admin\interfaces\UserProgressServiceInterface;
 
@@ -39,8 +42,14 @@ class UserCrudControllerTest extends TestCase
     private LogbookProgressService $logbookProgressService;
     private UserProgressServiceInterface $userProgressService;
 
-    /** @var AdminUrlGenerator&MockObject */
-    private AdminUrlGenerator $adminUrlGenerator;
+    /** @var AdminUrlGeneratorInterface&MockObject */
+    private AdminUrlGeneratorInterface $adminUrlGenerator;
+
+    /** @var CsrfTokenManagerInterface&MockObject */
+    private CsrfTokenManagerInterface $csrfTokenManager;
+
+    /** @var AuthorizationCheckerInterface&MockObject */
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     /** @var AdminContext&MockObject */
     private AdminContext $adminContext;
@@ -56,13 +65,19 @@ class UserCrudControllerTest extends TestCase
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->logbookProgressService = $this->createMock(LogbookProgressService::class);
         $this->userProgressService = $this->createMock(UserProgressServiceInterface::class);
+        $this->adminUrlGenerator = $this->createMock(AdminUrlGeneratorInterface::class);
+        $this->csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         // Initialize the controller with mocked dependencies
         $this->controller = new UserCrudController(
             $this->passwordHasher,
             $this->userDeletionService,
             $this->userRepository,
             $this->logbookProgressService,
-            $this->userProgressService
+            $this->userProgressService,
+            $this->adminUrlGenerator,
+            $this->csrfTokenManager,
+            $this->authorizationChecker
         );
         // Convert iterable to array for testing
         $this->fields = iterator_to_array(iterator: $this->controller->configureFields(pageName: 'form'));
@@ -75,7 +90,10 @@ class UserCrudControllerTest extends TestCase
             $this->userDeletionService,
             $this->userRepository,
             $this->logbookProgressService,
-            $this->userProgressService
+            $this->userProgressService,
+            $this->adminUrlGenerator,
+            $this->csrfTokenManager,
+            $this->authorizationChecker
         );
 
         $this->assertInstanceOf(expected: UserCrudController::class, actual: $controller);

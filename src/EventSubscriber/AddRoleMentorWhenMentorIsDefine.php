@@ -52,20 +52,24 @@ readonly class AddRoleMentorWhenMentorIsDefine implements EventSubscriberInterfa
     private function addRoleMentor(User $mentor): void
     {
         $roles = $mentor->getRoles();
+        if (in_array('ROLE_MENTOR', $roles, true)) {
+            return;
+        }
         $roles[] = 'ROLE_MENTOR';
         // Utiliser array_values pour garantir que le tableau est une liste (indices numériques consécutifs)
         $mentor->setRoles(array_values(array_unique(array: $roles)));
         $this->entityManager->persist(object: $mentor);
-        $this->entityManager->flush();
     }
 
     private function removeRoleMentor(User $mentor): void
     {
         $roles = $mentor->getRoles();
+        if (!in_array('ROLE_MENTOR', $roles, true)) {
+            return;
+        }
         $updatedRoles = array_diff($roles, ['ROLE_MENTOR']);
         // Utiliser array_values pour garantir que le tableau est une liste (indices numériques consécutifs)
         $mentor->setRoles(roles: array_values($updatedRoles));
         $this->entityManager->persist(object: $mentor);
-        $this->entityManager->flush();
     }
 }

@@ -58,7 +58,8 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
 
         // Vérifier les appels à persist et flush
         $this->entityManager->expects($this->once())->method(constraint: 'persist')->with($mentor);
-        $this->entityManager->expects($this->once())->method(constraint: 'flush');
+        // Le flush est porté par updateEntity, pas par le subscriber
+        $this->entityManager->expects($this->never())->method(constraint: 'flush');
 
         $this->subscriber->onBeforeEntityUpdated(event: $event);
     }
@@ -119,9 +120,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
                 [$newMentor]
             ]);
 
-        $this->entityManager
-            ->expects($this->exactly(count: 2))
-            ->method(constraint: 'flush');
+        $this->entityManager->expects($this->never())->method(constraint: 'flush');
 
         // Création et exécution de l'événement
         $event = new BeforeEntityUpdatedEvent(entityInstance: $user);
@@ -169,9 +168,7 @@ class AddRoleMentorWhenMentorIsDefineTest extends TestCase
             ->method(constraint: 'persist')
             ->with($previousMentor);
 
-        $this->entityManager
-            ->expects($this->once())
-            ->method(constraint: 'flush');
+        $this->entityManager->expects($this->never())->method(constraint: 'flush');
 
         // Act
         $event = new BeforeEntityUpdatedEvent(entityInstance: $user);

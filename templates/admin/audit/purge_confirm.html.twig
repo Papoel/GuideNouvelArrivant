@@ -1,0 +1,33 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block content_title %}Purger le journal d'audit{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-danger">
+                    <i class="fas fa-exclamation-triangle me-1"></i> Action irréversible
+                </h5>
+                <p class="card-text">
+                    Vous êtes sur le point de supprimer <strong>{{ total }} entrée(s)</strong>
+                    du journal d'audit. Cette action est irréversible.
+                </p>
+                <p class="card-text text-muted small">
+                    La purge sera elle-même consignée dans le fichier de log <code>var/log/audit-*.log</code>.
+                </p>
+                <form method="post" action="{{ path('admin_audit_log_purge') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('audit-purge') }}">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-broom me-1"></i> Confirmer la purge
+                        </button>
+                        <a href="{{ path('admin_audit_log_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

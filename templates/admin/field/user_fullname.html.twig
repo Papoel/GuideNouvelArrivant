@@ -1,0 +1,20 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% set user = entity.instance %}
+{% if user is defined and user %}
+    {% set initials = (user.firstname|default('')|first ~ user.lastname|default('')|first)|upper %}
+    <div class="d-flex align-items-center gap-2">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-semibold flex-shrink-0"
+              style="width:34px;height:34px;background:linear-gradient(135deg,#305080,#5c84a8);font-size:.8rem;">
+            {{ initials }}
+        </span>
+        <div class="lh-sm">
+            <div class="fw-semibold">{{ user.fullname }}</div>
+            {% if user.email %}
+                <div class="text-muted small">{{ user.email }}</div>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    {{ field.formattedValue|default(field.value) }}
+{% endif %}

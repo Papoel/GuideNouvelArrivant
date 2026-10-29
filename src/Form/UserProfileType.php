@@ -87,7 +87,7 @@ class UserProfileType extends AbstractType
                     'choice_label' => 'name',
                     'query_builder' => function (JobRepository $repository) {
                         return $repository->createQueryBuilder('j')
-                            ->orderBy('j.name', 'ASC');
+                            ->orderBy('j.name', \SortDirection::Ascending);
                     },
                     'attr' => [
                         'class' => 'form-select',
@@ -103,7 +103,7 @@ class UserProfileType extends AbstractType
                     'choice_label' => 'name',
                     'query_builder' => function (SpecialityRepository $repository) {
                         return $repository->createQueryBuilder('s')
-                            ->orderBy('s.name', 'ASC');
+                            ->orderBy('s.name', \SortDirection::Ascending);
                     },
                     'attr' => [
                         'class' => 'form-select',

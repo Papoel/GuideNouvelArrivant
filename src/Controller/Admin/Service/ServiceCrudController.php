@@ -75,6 +75,8 @@ class ServiceCrudController extends AbstractCrudController
                 function (Action $action) {
                     return $action->setIcon('fa fa-trash');
                 }
-            );
+            )
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
     }
 }
