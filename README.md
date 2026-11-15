@@ -7,7 +7,7 @@
 ![Dev Time](https://img.shields.io/badge/dev_time-~300_hours-orange.svg)
 ![Commits](https://img.shields.io/badge/commits-358-green.svg)
 [![Quality Analysis](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/quality.yaml/badge.svg)](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/quality.yaml)
-[![Security Audit](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/audit.yml/badge.svg)](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/audit.yml)
+[![Security Audit](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/security-audit.yml/badge.svg)](https://github.com/Papoel/GuideNouvelArrivant/actions/workflows/security-audit.yml)
 
 **GNA - Guide du Nouvel Arrivant** est une application web conçue pour faciliter l'intégration des nouveaux arrivants au sein d'une entreprise en leur proposant un livret de compagnonnage interactif. Ce livret permet aux tuteurs (mentors) de suivre, valider et commenter les actions des nouveaux membres, tout en offrant une expérience utilisateur optimisée et moderne.
 

@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Audit;
 
+use App\Audit\FieldLabels;
 use App\Entity\AuditLog;
+use App\Repository\AuditLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -24,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -34,9 +42,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_SUPER_ADMIN')]
 class AuditLogCrudController extends AbstractCrudController
 {
+    /** Canaux purgeables : valeur soumise => [libellé affiché, icône] ('all' = journal complet, en dernier). */
+    private const PURGE_CHANNELS = [
+        AuditLog::ACTOR_USER => ['Utilisateur', 'fas fa-user'],
+        AuditLog::ACTOR_CONSOLE => ['Console', 'fas fa-terminal'],
+        AuditLog::ACTOR_ANONYMOUS => ['Anonyme', 'fas fa-user-secret'],
+        'all' => ['Tout le journal', 'fas fa-broom'],
+    ];
+
     public function __construct(
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
-        private readonly EntityManagerInterface $em,
+        private readonly AuditLogRepository $auditLogRepository,
         private readonly RequestStack $requestStack,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         #[Autowire(service: 'monolog.logger.audit')]
@@ -63,19 +79,31 @@ class AuditLogCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $purge = Action::new('purgeJournal', 'Purger le journal', 'fas fa-broom')
-            ->linkToUrl(fn (): string => $this->adminUrlGenerator
-                ->setRoute('admin_audit_log_purge_confirm')
-                ->generateUrl())
-            ->createAsGlobalAction()
-            ->setCssClass('btn-outline-danger');
+        // Menu déroulant "Purger" : une entrée par canal + la purge complète.
+        // Chaque entrée ouvre la page de confirmation pré-ciblée (?channel=...).
+        $purgeGroup = ActionGroup::new('purgeJournal', 'Purger le journal', 'fas fa-broom')
+            ->createAsGlobalActionGroup()
+            ->asDangerActionGroup()
+            ->addHeader('Purger par canal');
+
+        foreach (self::PURGE_CHANNELS as $channel => [$label, $icon]) {
+            if ('all' === $channel) {
+                $purgeGroup->addDivider();
+            }
+            $purgeGroup->addAction(
+                Action::new('purge_' . $channel, 'all' === $channel ? $label : 'Canal ' . $label, $icon)
+                    ->linkToUrl(fn (): string => $this->adminUrlGenerator
+                        ->setRoute('admin_audit_log_purge_confirm', ['channel' => $channel])
+                        ->generateUrl())
+            );
+        }
 
         return $actions
             // Suppression possible uniquement via l'action DELETE native (confirmée,
-            // POST + CSRF) ou la purge globale dédiée — pas de batch delete anonyme.
+            // POST + CSRF) ou la purge dédiée — pas de batch delete anonyme.
             ->disable(Action::NEW, Action::EDIT, Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->add(Crud::PAGE_INDEX, $purge)
+            ->add(Crud::PAGE_INDEX, $purgeGroup)
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
             ->setPermission('purgeJournal', 'ROLE_SUPER_ADMIN');
     }
@@ -129,6 +157,41 @@ class AuditLogCrudController extends AbstractCrudController
         yield TextareaField::new('contextPrettyJson', 'Contexte')->onlyOnDetail();
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(DateTimeFilter::new('occurredAt', 'Date'))
+            ->add(ChoiceFilter::new('action', 'Action')->setChoices([
+                'Création' => AuditLog::ACTION_INSERT,
+                'Modification' => AuditLog::ACTION_UPDATE,
+                'Suppression' => AuditLog::ACTION_DELETE,
+                'Liaisons modifiées' => AuditLog::ACTION_COLLECTION_UPDATE,
+            ]))
+            ->add(ChoiceFilter::new('actorType', 'Canal')->setChoices([
+                'Utilisateur' => AuditLog::ACTOR_USER,
+                'Console' => AuditLog::ACTOR_CONSOLE,
+                'Anonyme' => AuditLog::ACTOR_ANONYMOUS,
+            ]))
+            ->add(ChoiceFilter::new('entityClass', 'Entité')->setChoices($this->entityClassChoices()))
+            ->add(TextFilter::new('actorLabel', 'Auteur'))
+            ->add(TextFilter::new('entityId', 'ID entité'));
+    }
+
+    /** @return array<string, string> Nom court de classe => FQCN, pour le filtre "Entité".
+     *  Base : les entités couvertes par FieldLabels (le filtre exige des choix non
+     *  vides, même sur un journal vide) + les classes réellement présentes. */
+    private function entityClassChoices(): array
+    {
+        $choices = [];
+        foreach (array_merge(FieldLabels::entities(), $this->auditLogRepository->findDistinctEntityClasses()) as $class) {
+            $pos = strrpos($class, '\\');
+            $choices[false === $pos ? $class : substr($class, $pos + 1)] = $class;
+        }
+        ksort($choices);
+
+        return $choices;
+    }
+
     /** Journalise forensiquement toute suppression d'entrée d'audit dans le
      * channel Monolog `audit` (hors de la table — survit à la purge). */
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
@@ -144,12 +207,19 @@ class AuditLogCrudController extends AbstractCrudController
     }
 
     #[AdminRoute(path: '/purge', name: 'purge_confirm', options: ['methods' => ['GET']])]
-    public function purgeConfirm(): Response
+    public function purgeConfirm(Request $request): Response
     {
-        $total = $this->em->getRepository(AuditLog::class)->count([]);
+        // Canal pré-ciblé depuis le menu "Purger" de l'index (?channel=...)
+        $channel = (string) $request->query->get('channel', 'all');
+        if (!array_key_exists($channel, self::PURGE_CHANNELS)) {
+            $channel = 'all';
+        }
 
         return $this->render('admin/audit/purge_confirm.html.twig', [
-            'total' => $total,
+            'total' => $this->auditLogRepository->count([]),
+            'counts' => $this->auditLogRepository->countByActorType(),
+            'channels' => self::PURGE_CHANNELS,
+            'channel' => $channel,
         ]);
     }
 
@@ -157,20 +227,31 @@ class AuditLogCrudController extends AbstractCrudController
     public function purgeEntries(Request $request): RedirectResponse
     {
         $submittedToken = $request->request->get('_token');
-        if (!$this->csrfTokenManager->isTokenValid(new \Symfony\Component\Security\Csrf\CsrfToken('audit-purge', (string) $submittedToken))) {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('audit-purge', (string) $submittedToken))) {
             throw new InvalidCsrfTokenException();
         }
 
-        $count = $this->em->getRepository(AuditLog::class)->count([]);
-        $this->em->createQuery('DELETE FROM ' . AuditLog::class . ' a')->execute();
+        $channel = (string) $request->request->get('channel', 'all');
+        if (!array_key_exists($channel, self::PURGE_CHANNELS)) {
+            throw $this->createNotFoundException(sprintf('Canal de purge inconnu : "%s".', $channel));
+        }
+
+        $count = 'all' === $channel
+            ? $this->auditLogRepository->deleteAll()
+            : $this->auditLogRepository->deleteByActorType($channel);
 
         $this->auditLogger->warning('Audit journal purged', [
+            'channel' => $channel,
             'entries' => $count,
             'actor' => $this->getUser()?->getUserIdentifier(),
             'ip' => $request->getClientIp(),
         ]);
 
-        $this->addFlash('success', sprintf('%d entrée(s) d\'audit purgée(s).', $count));
+        $this->addFlash('success', sprintf(
+            '%d entrée(s) d\'audit purgée(s) — %s.',
+            $count,
+            self::PURGE_CHANNELS[$channel][0]
+        ));
 
         return $this->redirect($this->adminUrlGenerator->setAction('index')->generateUrl());
     }

@@ -65,9 +65,6 @@ class AuditLog
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $context = null;
 
-    /**
-     * @param array{action: string, entityClass: string, entityId: ?string, changeset: ?array, actorType: string, actorId: ?string, actorLabel: ?string, context: ?array} $data
-     */
     /** @param array{action: string, entityClass: string, entityId: string|null, entityLabel?: string|null, changeset: array<string, mixed>|null, actorType: string, actorId: string|null, actorLabel: string|null, context: array<string, mixed>|null} $data */
     public function __construct(array $data)
     {
