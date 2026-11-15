@@ -26,8 +26,8 @@ class Action
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $agentComment = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $agentValidatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $agentValidatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $agentVisa = null;
@@ -35,11 +35,11 @@ class Action
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $mentorComment = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $mentorValidatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $mentorValidatedAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $mentorCommentedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $mentorCommentedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $mentorVisa = null;
@@ -89,12 +89,12 @@ class Action
         return $this;
     }
 
-    public function getAgentValidatedAt(): ?\DateTime
+    public function getAgentValidatedAt(): ?\DateTimeImmutable
     {
         return $this->agentValidatedAt;
     }
 
-    public function setAgentValidatedAt(?\DateTime $agentValidatedAt): static
+    public function setAgentValidatedAt(?\DateTimeImmutable $agentValidatedAt): static
     {
         $this->agentValidatedAt = $agentValidatedAt;
 
@@ -125,24 +125,24 @@ class Action
         return $this;
     }
 
-    public function getMentorValidatedAt(): ?\DateTime
+    public function getMentorValidatedAt(): ?\DateTimeImmutable
     {
         return $this->mentorValidatedAt;
     }
 
-    public function setMentorValidatedAt(?\DateTime $mentorValidatedAt): static
+    public function setMentorValidatedAt(?\DateTimeImmutable $mentorValidatedAt): static
     {
         $this->mentorValidatedAt = $mentorValidatedAt;
 
         return $this;
     }
 
-    public function getMentorCommentedAt(): ?\DateTime
+    public function getMentorCommentedAt(): ?\DateTimeImmutable
     {
         return $this->mentorCommentedAt;
     }
 
-    public function setMentorCommentedAt(?\DateTime $mentorCommentedAt): static
+    public function setMentorCommentedAt(?\DateTimeImmutable $mentorCommentedAt): static
     {
         $this->mentorCommentedAt = $mentorCommentedAt;
 

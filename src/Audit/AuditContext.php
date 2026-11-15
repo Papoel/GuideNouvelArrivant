@@ -8,13 +8,14 @@ use App\Entity\AuditLog;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /** Fournit le contexte d'acteur pour le journal d'audit :
  * - HTTP : l'utilisateur connecté (type `user`)
  * - CLI  : la commande en cours (type `console`), renseignée par ConsoleCommandListener
  * - Fallback : `anonymous` (HTTP sans utilisateur) ou `console` (CLI).
  */
-final class AuditContext
+final class AuditContext implements ResetInterface
 {
     private ?string $consoleCommand = null;
     private int $flushedCount = 0;
@@ -45,10 +46,22 @@ final class AuditContext
 
     /** Enrichit le contexte des entrées d'audit écrites ensuite dans la requête
      *  (ex. nom du modèle de carnet utilisé). Les clés `route`/`ip` sont préservées.
+     *  Réinitialisé entre deux requêtes/messages via kernel.reset.
      * @param array<string, mixed> $data */
     public function mergeContext(array $data): void
     {
         $this->extraContext = array_merge($this->extraContext, $data);
+    }
+
+    /** Réinitialise l'état accumulé durant la requête : sans cela, en runtime
+     *  worker (FrankenPHP, Messenger), le contexte d'un mergeContext() et le
+     *  compteur de flush fuiteraient sur les requêtes/messages suivants.
+     *  La commande console est conservée : elle identifie le processus entier.
+     */
+    public function reset(): void
+    {
+        $this->flushedCount = 0;
+        $this->extraContext = [];
     }
 
     /** @return array{type: string, id: ?string, label: ?string} */

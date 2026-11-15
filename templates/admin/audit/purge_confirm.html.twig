@@ -11,20 +11,31 @@
                     <i class="fas fa-exclamation-triangle me-1"></i> Action irréversible
                 </h5>
                 <p class="card-text">
-                    Vous êtes sur le point de supprimer <strong>{{ total }} entrée(s)</strong>
-                    du journal d'audit. Cette action est irréversible.
+                    Confirmez le canal à purger. Cette action est irréversible.
                 </p>
                 <p class="card-text text-muted small">
                     La purge sera elle-même consignée dans le fichier de log <code>var/log/audit-*.log</code>.
                 </p>
                 <form method="post" action="{{ path('admin_audit_log_purge') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('audit-purge') }}">
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-broom me-1"></i> Confirmer la purge
-                        </button>
-                        <a href="{{ path('admin_audit_log_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    <div class="d-grid gap-2 mb-3">
+                        {% for value, data in channels %}
+                            {% set count = value == 'all' ? total : (counts[value] ?? 0) %}
+                            {% set primary = value == channel %}
+                            <button type="submit" name="channel" value="{{ value }}"
+                                    class="btn {{ primary ? 'btn-danger' : 'btn-outline-danger btn-sm' }} d-flex justify-content-between align-items-center"
+                                    {{ 0 == count ? 'disabled' }}>
+                                <span>
+                                    <i class="fas {{ data.1 }} me-1"></i>
+                                    {{ value == 'all' ? 'Purger tout le journal' : 'Purger le canal ' ~ data.0 }}
+                                </span>
+                                <span class="badge {{ primary ? 'text-bg-light' : 'text-bg-danger' }}">
+                                    {{ count }}
+                                </span>
+                            </button>
+                        {% endfor %}
                     </div>
+                    <a href="{{ path('admin_audit_log_index') }}" class="btn btn-outline-secondary">Annuler</a>
                 </form>
             </div>
         </div>

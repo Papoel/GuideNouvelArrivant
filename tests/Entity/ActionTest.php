@@ -40,7 +40,7 @@ class ActionTest extends EntityTestCase
         $action->setAgentValidatedAt(agentValidatedAt: null);
         $action->setAgentVisa(agentVisa: "Visa de l'agent");
         $action->setMentorComment(mentorComment: "Commentaire du mentor");
-        $action->setMentorValidatedAt(mentorValidatedAt: new \DateTime(datetime: "2021-09-01"));
+        $action->setMentorValidatedAt(mentorValidatedAt: new \DateTimeImmutable(datetime: "2021-09-01"));
         $action->setMentorCommentedAt(mentorCommentedAt: null);
         $action->setMentorVisa(mentorVisa: "Visa du mentor");
         return $action;

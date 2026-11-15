@@ -12,7 +12,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Services\Mentor\MentorService;
 use App\Tests\Utils\UserTestHelper;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -413,7 +413,7 @@ class MentorServiceTest extends TestCase
 
         // Ajouter un commentaire à l'action
         $action->setMentorComment(mentorComment: 'Commentaire du mentor');
-        $action->setMentorCommentedAt(mentorCommentedAt: new DateTime()); // Date de commentaire
+        $action->setMentorCommentedAt(mentorCommentedAt: new DateTimeImmutable()); // Date de commentaire
 
         // Avant la suppression
         self::assertNotNull(actual: $action->getMentorComment()); // Vérifiez que le commentaire existe

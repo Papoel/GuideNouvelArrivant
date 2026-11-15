@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
-use DateTime;
 use DateTimeImmutable;
 use App\Entity\Feedback;
 use App\Tests\Abstract\EntityTestCase;
@@ -210,7 +209,7 @@ class FeedbackTest extends EntityTestCase
         
         // Vérifier que les timestamps sont définis
         self::assertInstanceOf(DateTimeImmutable::class, $entity->getCreatedAt());
-        self::assertInstanceOf(\DateTime::class, $entity->getUpdatedAt()); // DateTime et non DateTimeImmutable
+        self::assertInstanceOf(\DateTimeImmutable::class, $entity->getUpdatedAt());
         
         $this->assertValidationErrorsCount($entity, count: 0);
     }

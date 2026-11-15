@@ -86,7 +86,7 @@ class MentorLogbookController extends AbstractController
             $logbookId = $logbook->getId();
 
             // Enregistrer les commentaires
-            $date = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+            $date = new \DateTimeImmutable(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
             $formattedDate = $date->format(format: 'd/m/Y');
             $action->setMentorCommentedAt($date);
 
@@ -142,11 +142,11 @@ class MentorLogbookController extends AbstractController
         if (!is_string($fullName)) {
             $fullName = 'Utilisateur'; // Valeur par défaut si getFullName() ne retourne pas une chaîne
         }
-        $mentorVisa = 'Validation numérique de ' . $fullName . ' le ' . (new \DateTime())->format(format: 'd/m/Y');
+        $mentorVisa = 'Validation numérique de ' . $fullName . ' le ' . (new \DateTimeImmutable())->format(format: 'd/m/Y');
         $action->setMentorVisa($mentorVisa);
 
         // Récupérer la date actuelle et la définir pour l'action
-        $date = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+        $date = new \DateTimeImmutable(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
         $action->setMentorValidatedAt($date);
 
         // Sauvegarder l'action après vérification

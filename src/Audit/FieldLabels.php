@@ -117,6 +117,13 @@ final class FieldLabels
         'email' => 'Email',
     ];
 
+    /** Classes d'entités pour lesquelles des libellés métier existent.
+     * @return list<class-string> */
+    public static function entities(): array
+    {
+        return array_keys(self::MAP);
+    }
+
     public static function label(string $entityClass, string $field): string
     {
         return self::MAP[$entityClass][$field]

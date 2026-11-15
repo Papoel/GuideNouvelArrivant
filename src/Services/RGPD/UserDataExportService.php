@@ -51,7 +51,7 @@ class UserDataExportService
      *     professional: array{job: string, speciality: string, service: string, hiringAt: ?\DateTimeImmutable, mentor: string},
      *     account: array{roles: list<string>, createdAt: ?\DateTimeImmutable, lastLoginAt: ?\DateTimeInterface},
      *     logbooks: list<array{name: string, themesCount: int<0, max>}>,
-     *     actions: list<array{module: string, description: ?string, agentComment: ?string, agentValidatedAt: ?\DateTime, mentorComment: ?string, mentorValidatedAt: ?\DateTime}>,
+     *     actions: list<array{module: string, description: ?string, agentComment: ?string, agentValidatedAt: ?\DateTimeInterface, mentorComment: ?string, mentorValidatedAt: ?\DateTimeInterface}>,
      *     feedbacks: list<array{title: ?string, content: ?string, category: ?string, createdAt: ?\DateTimeImmutable, isReviewed: ?bool}>
      * }
      */

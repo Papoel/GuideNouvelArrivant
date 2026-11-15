@@ -7,7 +7,6 @@ namespace App\Tests\Entity;
 
 use App\Entity\Traits\TimestampTrait;
 use DateTimeImmutable;
-use DateTime;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +24,7 @@ class TimestampTraitTest extends TestCase
 
         // Test des mutateurs
         $createdAt = new DateTimeImmutable(datetime: '2023-05-01 10:00:00', timezone: new DateTimeZone(timezone: 'Europe/Paris'));
-        $updatedAt = new DateTime(datetime: '2023-05-15 15:30:00', timezone: new DateTimeZone(timezone: 'Europe/Paris'));
+        $updatedAt = new DateTimeImmutable(datetime: '2023-05-15 15:30:00', timezone: new DateTimeZone(timezone: 'Europe/Paris'));
 
         $this->setCreatedAt(createdAt: $createdAt);
         $this->setUpdatedAt(updatedAt: $updatedAt);
@@ -49,9 +48,9 @@ class TimestampTraitTest extends TestCase
         $this->updatedTimestamps();
 
         $updatedAt = $this->getUpdatedAt();
-        $this->assertInstanceOf(expected: DateTime::class, actual: $updatedAt);
+        $this->assertInstanceOf(expected: DateTimeImmutable::class, actual: $updatedAt);
         $this->assertEquals(expected: 'Europe/Paris', actual: $updatedAt->getTimezone()->getName());
-        $this->assertLessThanOrEqual(maximum: new DateTime(datetime: 'now', timezone: new DateTimeZone(timezone: 'Europe/Paris')), actual: $updatedAt);
+        $this->assertLessThanOrEqual(maximum: new DateTimeImmutable(datetime: 'now', timezone: new DateTimeZone(timezone: 'Europe/Paris')), actual: $updatedAt);
     }
 
     public function testEventTriggering(): void

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Services\Logbook;
 
 use App\Services\Logbook\LogbookProgressService;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -47,7 +47,7 @@ class LogbookProgressServiceTest extends TestCase
         return $this->createConfiguredMock(Logbook::class, $logbookConfig);
     }
 
-    private function createAction(Module $module, ?DateTime $agentValidatedAt = null, ?DateTime $mentorValidatedAt = null): Action
+    private function createAction(Module $module, ?DateTimeImmutable $agentValidatedAt = null, ?DateTimeImmutable $mentorValidatedAt = null): Action
     {
         return $this->createConfiguredMock(Action::class, [
             'getModule' => $module,
@@ -77,7 +77,7 @@ class LogbookProgressServiceTest extends TestCase
     #[Test] public function calculateLogbookProgressWithCompletedActions(): void
     {
         $module = $this->createMock(type: Module::class);
-        $action = $this->createAction($module, new DateTime(), new DateTime());
+        $action = $this->createAction($module, new DateTimeImmutable(), new DateTimeImmutable());
         $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
@@ -99,7 +99,7 @@ class LogbookProgressServiceTest extends TestCase
     #[Test] public function calculateLogbookProgressWithAgentValidatedButMentorNot(): void
     {
         $module = $this->createMock(type: Module::class);
-        $action = $this->createAction(module: $module, agentValidatedAt: new DateTime());
+        $action = $this->createAction(module: $module, agentValidatedAt: new DateTimeImmutable());
         $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module], actions: [$action], user: $user);
 
@@ -157,7 +157,7 @@ class LogbookProgressServiceTest extends TestCase
     {
         $module1 = $this->createMock(type: Module::class);
         $module2 = $this->createMock(type: Module::class);
-        $action1 = $this->createAction(module: $module1, agentValidatedAt: new DateTime(), mentorValidatedAt: new DateTime());
+        $action1 = $this->createAction(module: $module1, agentValidatedAt: new DateTimeImmutable(), mentorValidatedAt: new DateTimeImmutable());
         $action2 = $this->createAction(module: $module2);
         $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: [$module1, $module2], actions: [$action1, $action2], user: $user);
@@ -171,7 +171,7 @@ class LogbookProgressServiceTest extends TestCase
     #[Test] public function calculateLogbookProgressClassAbove75Percent(): void
     {
         $modules = [$this->createMock(type: Module::class), $this->createMock(type: Module::class), $this->createMock(type: Module::class)];
-        $actions = array_map(fn($module) => $this->createAction($module, new DateTime(), new DateTime()), $modules);
+        $actions = array_map(fn($module) => $this->createAction($module, new DateTimeImmutable(), new DateTimeImmutable()), $modules);
         $user = $this->createMock(type: User::class);
         $logbook = $this->createLogbookWithModules(modules: $modules, actions: $actions, user: $user);
 
@@ -233,8 +233,8 @@ class LogbookProgressServiceTest extends TestCase
         $module3 = $this->createMock(type: Module::class);
 
         $actions = [
-            $this->createAction(module: $module1, agentValidatedAt: new DateTime(), mentorValidatedAt: new DateTime()),
-            $this->createAction(module: $module2, agentValidatedAt: new DateTime(), mentorValidatedAt: null),
+            $this->createAction(module: $module1, agentValidatedAt: new DateTimeImmutable(), mentorValidatedAt: new DateTimeImmutable()),
+            $this->createAction(module: $module2, agentValidatedAt: new DateTimeImmutable(), mentorValidatedAt: null),
             $this->createAction(module: $module3)
         ];
 

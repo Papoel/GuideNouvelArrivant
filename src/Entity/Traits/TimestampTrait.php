@@ -12,8 +12,8 @@ trait TimestampTrait
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTime $updatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -27,12 +27,12 @@ trait TimestampTrait
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTime $updatedAt): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
@@ -50,6 +50,6 @@ trait TimestampTrait
     public function updatedTimestamps(): void
     {
         $timezone = new \DateTimeZone(timezone: 'Europe/Paris');
-        $this->setUpdatedAt(new \DateTime(datetime: 'now', timezone: $timezone));
+        $this->setUpdatedAt(new \DateTimeImmutable(datetime: 'now', timezone: $timezone));
     }
 }
