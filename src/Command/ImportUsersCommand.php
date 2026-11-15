@@ -278,7 +278,7 @@ class ImportUsersCommand extends Command
         // Date de dernière connexion
         if (isset($data['last_login_at']) && !empty($data['last_login_at']) && $data['last_login_at'] !== 'null') {
             try {
-                $user->setLastLoginAt(new \DateTime($data['last_login_at']));
+                $user->setLastLoginAt(new \DateTimeImmutable($data['last_login_at']));
             } catch (\Exception $e) {
                 // Ignorer les dates invalides
             }

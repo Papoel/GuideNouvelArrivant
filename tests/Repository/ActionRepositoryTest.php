@@ -350,19 +350,19 @@ class ActionRepositoryTest extends KernelTestCase
         $this->entityManager->persist($user);
 
         // Créer plusieurs actions validées à différentes dates
-        $date1 = new \DateTime('2023-01-01');
+        $date1 = new \DateTimeImmutable('2023-01-01');
         $action1 = new Action();
         $action1->setUser($user);
         $action1->setAgentValidatedAt($date1);
         $this->entityManager->persist($action1);
 
-        $date2 = new \DateTime('2023-02-01');
+        $date2 = new \DateTimeImmutable('2023-02-01');
         $action2 = new Action();
         $action2->setUser($user);
         $action2->setAgentValidatedAt($date2);
         $this->entityManager->persist($action2);
 
-        $date3 = new \DateTime('2023-03-01');
+        $date3 = new \DateTimeImmutable('2023-03-01');
         $action3 = new Action();
         $action3->setUser($user);
         $action3->setAgentValidatedAt($date3);

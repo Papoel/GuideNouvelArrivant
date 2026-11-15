@@ -229,14 +229,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
                     ->setModule($modules[array_rand($modules)])
                     ->setLogbook($userLogbook)
                     ->setAgentComment($this->faker->paragraph)
-                    ->setAgentValidatedAt(new \DateTime('-' . rand(1, 30) . ' days'))
+                    ->setAgentValidatedAt(new \DateTimeImmutable('-' . rand(1, 30) . ' days'))
                     ->setAgentVisa($user->getFirstname() . ' ' . $user->getLastname());
 
                 $mentor = $user->getMentor();
                 if ($mentor) {
                     $action->setMentorComment($this->faker->paragraph)
-                        ->setMentorValidatedAt(new \DateTime('-' . rand(1, 15) . ' days'))
-                        ->setMentorCommentedAt(new \DateTime('-' . rand(1, 15) . ' days'))
+                        ->setMentorValidatedAt(new \DateTimeImmutable('-' . rand(1, 15) . ' days'))
+                        ->setMentorCommentedAt(new \DateTimeImmutable('-' . rand(1, 15) . ' days'))
                         ->setMentorVisa($mentor->getFirstname() . ' ' . $mentor->getLastname());
                 }
 

@@ -58,10 +58,10 @@ readonly class ActionService
             throw new \LogicException(message: 'L\'utilisateur actuel n\'est pas valide.');
         }
 
-        $agentVisa = 'Validation numérique de ' . $currentUser->getFullName() . ' le ' . (new \DateTime())->format(format: 'd/m/Y');
+        $agentVisa = 'Validation numérique de ' . $currentUser->getFullName() . ' le ' . (new \DateTimeImmutable())->format(format: 'd/m/Y');
         $action->setAgentVisa($agentVisa);
 
-        $date = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+        $date = new \DateTimeImmutable(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
         $action->setAgentValidatedAt($date);
         $action->setAgentComment(agentComment: null); // Pas de commentaire
 
@@ -71,7 +71,7 @@ readonly class ActionService
 
     public function saveAction(Action $action, string $agentName, string $logbookId): void
     {
-        $currentDate = new \DateTime(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
+        $currentDate = new \DateTimeImmutable(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
 
         // Récupérer la requête actuelle
         $currentRequest = $this->requestStack->getCurrentRequest();
