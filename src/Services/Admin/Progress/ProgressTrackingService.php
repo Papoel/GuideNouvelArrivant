@@ -117,7 +117,8 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
                 $searchTerm,
                 'ROLE_USER',
                 $page,
-                $limit
+                $limit,
+                ['hasLogbook' => true]
             );
             $users = $paginatedData['users'];
             $totalItems = $paginatedData['totalItems'];
@@ -150,22 +151,6 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
                     $user = $this->userRepository->find($userId);
                     if ($user) {
                         $allUsers[] = $user;
-                    }
-                }
-
-                // Si aucun utilisateur n'est trouvé avec un carnet, afficher tous les utilisateurs du service
-                if (empty($allUsers)) {
-                    $serviceSql = 'SELECT u.id FROM users u WHERE u.service_id = :serviceId';
-                    $serviceStmt = $conn->prepare($serviceSql);
-                    $serviceStmt->bindValue(':serviceId', $binaryUuid, ParameterType::STRING);
-                    $serviceResultSet = $serviceStmt->executeQuery();
-                    $serviceUserIds = $serviceResultSet->fetchFirstColumn();
-
-                    foreach ($serviceUserIds as $userId) {
-                        $user = $this->userRepository->find($userId);
-                        if ($user) {
-                            $allUsers[] = $user;
-                        }
                     }
                 }
 

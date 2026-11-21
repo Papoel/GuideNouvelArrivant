@@ -38,7 +38,7 @@ class ProgressController extends AbstractController
         // TODO:
         // - Améliorer design admin/progress/feedbacks/service/
         // Récupérer les paramètres de recherche et pagination
-        $rawSearchTerm = $request->query->get(key: 'q');
+        $rawSearchTerm = $request->query->get(key: 'search');
         $searchTerm = is_string(value: $rawSearchTerm) ? $rawSearchTerm : null;
 
         $page = max(1, (int) $request->query->get(key: 'page', default: 1));

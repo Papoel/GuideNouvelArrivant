@@ -183,7 +183,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * @param string               $role       Rôle à filtrer (ex: 'ROLE_USER')
      * @param int                  $page       Page courante (commence à 1)
      * @param int                  $limit      Nombre d'éléments par page
-     * @param array<string, mixed> $criteria   Critères supplémentaires (ex: ['service' => $service])
+     * @param array<string, mixed> $criteria   Critères supplémentaires (ex: ['service' => $service, 'hasLogbook' => true])
      *
      * @return array{users: User[], totalItems: int, totalPages: int} */
     public function findBySearchTermPaginated(
@@ -219,6 +219,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     ->andWhere('s = :service')
                     ->setParameter('service', $serviceValue);
             }
+        }
+
+        // Ne retenir que les utilisateurs possédant au moins un carnet
+        if (!empty($criteria['hasLogbook'])) {
+            $qb->join('u.logbooks', 'lb')->distinct();
         }
 
         // Tri par nom

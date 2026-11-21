@@ -14,7 +14,7 @@
 				</h1>
 				<p class="page-subtitle mb-0">Suivez en temps réel l'avancement des apprenants et la validation des tuteurs</p>
 			</div>
-            {% if 'ROLE_ADMIN' in app.user.roles %}
+            {% if 'ROLE_ADMIN' or 'ROLE_SUPER_ADMIN' in app.user.roles %}
                 <a href="{{ path('admin') }}" class="btn btn-outline-secondary">
                     <twig:ux:icon name="bi:arrow-left" class="me-2"/>
                     Administration
@@ -52,7 +52,7 @@
 			</div>
 			<div class="stat-content">
 				<div class="stat-value">{{ global_stats.total_users }}</div>
-				<div class="stat-label">Apprenants inscrits</div>
+				<div class="stat-label">Agents</div>
 			</div>
 		</div>
 
@@ -257,6 +257,10 @@
 							</div>
 						</div>
 					</div>
+				{% else %}
+					<div class="col-12">
+						<p class="text-muted text-center mb-0">Aucun apprenant disposant d'un carnet à afficher.</p>
+					</div>
 				{% endfor %}
 			</div>
 		</div>
@@ -350,6 +354,10 @@
 									{% endif %}
 								</div>
 							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="6" class="text-center text-muted py-4">Aucun apprenant disposant d'un carnet à afficher.</td>
 						</tr>
 					{% endfor %}
 				</tbody>
