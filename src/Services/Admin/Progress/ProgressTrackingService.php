@@ -291,13 +291,11 @@ readonly class ProgressTrackingService implements ProgressTrackingServiceInterfa
      * @return string UUID au format binaire */
     private function hexToUuidBinary(string $uuid): string
     {
-        // Supprimer les tirets
-        $uuid = str_replace(search: '-', replace: '', subject: $uuid);
+        // Supprimer les tirets puis convertir l'UUID hexadécimal en binaire
+        $binary = hex2bin(string: str_replace(search: '-', replace: '', subject: $uuid));
 
-        // Convertir l'UUID hexadécimal en binaire
-        $binary = '';
-        for ($i = 0, $iMax = strlen(string: $uuid); $i < $iMax; $i += 2) {
-            $binary .= chr(codepoint: (int) hexdec(hex_string: substr(string: $uuid, offset: $i, length: 2)));
+        if (false === $binary) {
+            throw new \InvalidArgumentException(message: sprintf('UUID invalide : %s', $uuid));
         }
 
         return $binary;

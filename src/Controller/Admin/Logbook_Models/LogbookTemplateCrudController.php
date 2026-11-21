@@ -186,6 +186,10 @@ class LogbookTemplateCrudController extends AbstractCrudController
                     ];
 
                     $jobCodes = $entity->getJobs();
+
+                    // Filtrer les valeurs nulles
+                    $jobCodes = array_filter($jobCodes, fn($code) => $code !== null);
+
                     $jobRepository = $this->entityManager->getRepository(Job::class);
                     $jobs = $jobRepository->findBy(['code' => $jobCodes]);
 
@@ -202,7 +206,7 @@ class LogbookTemplateCrudController extends AbstractCrudController
                         foreach ($jobs as $job) {
                             $jobCode = $job->getCode();
                             $jobName = $job->getName();
-                            $badgeClass = $classes[$jobCode] ?? 'bg-secondary';
+                            $badgeClass = $classes[(string) $jobCode] ?? 'bg-secondary';
 
                             $badges[] = sprintf(
                                 '<span class="badge %s rounded-pill me-2 py-1 px-2">%s</span>',
@@ -300,7 +304,12 @@ class LogbookTemplateCrudController extends AbstractCrudController
 
                 $choices = [];
                 foreach ($jobs as $job) {
-                    $choices[$job->getName()] = $job->getCode();
+                    $jobName = $job->getName();
+                    if (null === $jobName) {
+                        continue;
+                    }
+
+                    $choices[$jobName] = $job->getCode();
                 }
 
                 return $choices;
