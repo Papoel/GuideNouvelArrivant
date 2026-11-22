@@ -26,7 +26,6 @@ class PurgeExpiredArchivesCommand extends Command
     public function __construct(
         private readonly LogbookArchivePurgeService $purgeService,
     ) {
-        parent::__construct(name: self::CMD_NAME);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
