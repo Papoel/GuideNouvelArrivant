@@ -149,8 +149,13 @@ class MentorLogbookController extends AbstractController
         $date = new \DateTimeImmutable(datetime: 'now', timezone: new \DateTimeZone(timezone: 'Europe/Paris'));
         $action->setMentorValidatedAt($date);
 
+        // Le tuteur qui valide fige son nom sur le carnet : le document garde
+        // la trace de son superviseur même si le compte tuteur est supprimé.
+        $logbook->setMentorName($fullName);
+
         // Sauvegarder l'action après vérification
         $entityManager->persist($action);
+        $entityManager->persist($logbook);
         $entityManager->flush();
 
         $this->addFlash(type: 'success', message: 'L\'action a été validée avec succès.');

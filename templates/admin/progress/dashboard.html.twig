@@ -184,6 +184,9 @@
 										<div class="meta-value">
 											{% if user_data.mentor %}
 												{{ user_data.mentor.fullName }}
+											{% elseif user_data.logbook and user_data.logbook.mentorName %}
+												{{ user_data.logbook.mentorName }}
+												<span class="badge-muted-soft" title="Conta do tuteur suprimida — nome conservado no carnet">conta excluída</span>
 											{% else %}
 												<span class="badge badge-warning-soft">Non assigné</span>
 											{% endif %}
@@ -299,6 +302,15 @@
 											{{ user_data.mentor.firstname|first }}{{ user_data.mentor.lastname|first }}
 										</div>
 										<span>{{ user_data.mentor.fullName }}</span>
+									</div>
+								{% elseif user_data.logbook and user_data.logbook.mentorName %}
+									{% set mentor_parts = user_data.logbook.mentorName|split(' ') %}
+									<div class="table-mentor-info">
+										<div class="table-mentor-avatar is-deleted">
+											{{ mentor_parts|first|first }}{{ mentor_parts|last|first }}
+										</div>
+										<span class="text-muted">{{ user_data.logbook.mentorName }}</span>
+										<span class="badge-muted-soft" title="Compte du tuteur supprimé - nom conservé dans le carnet">supprimé</span>
 									</div>
 								{% else %}
 									<span class="badge badge-warning-soft">Non assigné</span>
@@ -849,6 +861,21 @@
 		border-radius: 0.25rem;
 		font-size: 0.75rem;
 		font-weight: 600;
+	}
+
+	.badge-muted-soft {
+		background: var(--bg-hover, #f1f5f9);
+		color: var(--text-muted, #64748b);
+		padding: 0.2rem 0.45rem;
+		border-radius: 0.25rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		border: 1px solid var(--border-color, #e2e8f0);
+	}
+
+	.table-mentor-avatar.is-deleted {
+		background: var(--bg-hover, #f1f5f9);
+		color: var(--text-muted, #64748b);
 	}
 
 	.learner-card-progress {

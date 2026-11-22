@@ -157,6 +157,26 @@
                         {% endif %}
                     </span>
                 </div>
+            {% elseif logbook.mentorName %}
+                {# Le tuteur a été supprimé : le nom figé sur le carnet prend le relais. #}
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Nom complet</span>
+                    <span class="dash-info-value">{{ logbook.mentorName }}</span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Statut</span>
+                    <span class="dash-info-value">
+                        <span class="dash-badge dash-badge-secondary">
+                            <i class="bi bi-person-x"></i>Compte supprimé
+                        </span>
+                    </span>
+                </div>
+                <div class="dash-info-row">
+                    <span class="dash-info-key">Information</span>
+                    <span class="dash-info-value text-muted" style="font-size: 0.8125rem; font-weight: 400;">
+                        Les validations et commentaires réalisés par ce tuteur restent conservés.
+                    </span>
+                </div>
             {% else %}
                 <div class="dash-info-row">
                     <span class="dash-info-value">
@@ -247,7 +267,7 @@
                                                     <p class="mt-1 mb-3">{{ action.agentComment }}</p>
                                                 {% endif %}
                                                 {% if action.mentorComment %}
-                                                    <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% else %}Tuteur{% endif %} :</strong>
+                                                    <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% elseif logbook.mentorName %}{{ logbook.mentorName|split(' ')|first }}{% else %}Tuteur{% endif %} :</strong>
                                                     <p class="mt-1">{{ action.mentorComment }}</p>
                                                 {% endif %}
                                             </div>
@@ -332,7 +352,7 @@
                                                 <p>{{ action.agentComment }}</p>
                                             {% endif %}
                                             {% if action.mentorComment %}
-                                                <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% else %}Tuteur{% endif %} :</strong>
+                                                <strong>{% if user.mentor %}{{ user.mentor.firstName }}{% elseif logbook.mentorName %}{{ logbook.mentorName|split(' ')|first }}{% else %}Tuteur{% endif %} :</strong>
                                                 <p>{{ action.mentorComment }}</p>
                                             {% endif %}
                                         </div>

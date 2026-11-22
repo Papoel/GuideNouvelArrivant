@@ -57,7 +57,7 @@
                     </div>
                     <div class="info-row">
                         <span class="label">Tuteur :</span>
-                        <span class="value">{{ user.mentor ? user.mentor.fullname : 'Non assigné' }}</span>
+                        <span class="value">{{ user.mentor ? user.mentor.fullname : (logbook.mentorName ?? 'Non assigné') }}</span>
                     </div>
                     <div class="info-row">
                         <span class="label">Date de fin de formation :</span>
@@ -249,7 +249,7 @@
                 <div class="signature-block-large" style="margin-top: 20px;">
                     <div class="signature-info">
                         <h4>Le tuteur</h4>
-                        <p>{{ user.mentor ? user.mentor.fullname : 'Non assigné' }}</p>
+                        <p>{{ user.mentor ? user.mentor.fullname : (logbook.mentorName ?? 'Non assigné') }}</p>
                         <p class="signature-role">Tuteur référent</p>
                     </div>
                     <div class="signature-area">
@@ -261,7 +261,7 @@
                 <div class="signature-block-large" style="margin-top: 20px;">
                     <div class="signature-info">
                         <h4>Le chef de service</h4>
-                        <p>{{ user.service.chef ?: '' }}</p>
+                        <p>{{ user.service.chef ?? '' }}</p>
                         <p class="signature-role">Responsable de service</p>
                     </div>
                     <div class="signature-area">

@@ -310,6 +310,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->mentor = $mentor;
 
+        // Dénormalisation probante : le nom du tuteur est figé sur les carnets
+        // du titulaire. Si le compte tuteur est supprimé ensuite (SET NULL sur
+        // la FK), le carnet garde la trace de qui l'a supervisé. Une
+        // désassignation n'efface pas le nom figé : c'est l'historique du document.
+        if (null !== $mentor) {
+            foreach ($this->logbooks as $logbook) {
+                $logbook->setMentorName($mentor->getFullname());
+            }
+        }
+
         return $this;
     }
 

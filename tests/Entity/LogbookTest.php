@@ -84,6 +84,22 @@ class LogbookTest extends EntityTestCase
         self::assertNull(actual: $this->logbook->getOwner());
     }
 
+    /**
+     * mentorName : copie figée du nom du tuteur, écrite à l'assignation et aux
+     * validations. Elle doit survivre à la suppression du compte tuteur,
+     * contrairement à la relation User.mentor (ON DELETE SET NULL).
+     */
+    #[Test] public function setAndGetMentorName(): void
+    {
+        self::assertNull(actual: $this->logbook->getMentorName());
+
+        $this->logbook->setMentorName(mentorName: 'Walter MARTIN');
+        self::assertSame(expected: 'Walter MARTIN', actual: $this->logbook->getMentorName());
+
+        $this->logbook->setMentorName(mentorName: null);
+        self::assertNull(actual: $this->logbook->getMentorName());
+    }
+
     #[Test] public function addAndRemoveAction(): void
     {
         $action = new Action();
@@ -137,5 +153,78 @@ class LogbookTest extends EntityTestCase
 
         self::assertEquals(expected: 0, actual: $this->logbook->getThemes()->count());
         self::assertEquals(expected: 0, actual: $this->logbook->getActions()->count());
+    }
+
+    /**
+     * Dénormalisation du nom du tuteur : quand un tuteur est assigné à un
+     * utilisateur, son nom est figé sur ses carnets. C'est ce qui garantit que
+     * le PDF reste fidèle même si le compte du tuteur est supprimé ensuite
+     * (incident client : le lien mentor est perdu via SET NULL).
+     */
+    #[Test] public function mentorNameIsPropagatedWhenMentorAssigned(): void
+    {
+        // Arrange : un titulaire avec un carnet
+        $owner = new User();
+        $owner->setFirstname('Pascal');
+        $owner->setLastname('Dupont');
+        $owner->addLogbook($this->logbook);
+
+        $mentor = new User();
+        $mentor->setFirstname('Walter');
+        $mentor->setLastname('Martin');
+
+        // Act : l'assistante assigne le tuteur
+        $owner->setMentor($mentor);
+
+        // Assert : le nom du tuteur est figé sur le carnet
+        self::assertSame('Walter MARTIN', $this->logbook->getMentorName());
+    }
+
+    /**
+     * Un carnet sans propriétaire ne plante pas : la propagation n'a simplement
+     * rien à faire (la collection de carnets appartient au titulaire).
+     */
+    #[Test] public function mentorNameStaysWhenMentorUnassigned(): void
+    {
+        // Arrange : tuteur assigné puis retiré
+        $owner = new User();
+        $owner->setFirstname('Pascal');
+        $owner->setLastname('Dupont');
+        $owner->addLogbook($this->logbook);
+
+        $mentor = new User();
+        $mentor->setFirstname('Walter');
+        $mentor->setLastname('Martin');
+        $owner->setMentor($mentor);
+
+        // Act : le tuteur est désassigné (ou son compte est supprimé)
+        $owner->setMentor(null);
+
+        // Assert : le dernier tuteur connu reste la référence du carnet —
+        // c'est la vérité historique du document.
+        self::assertSame('Walter MARTIN', $this->logbook->getMentorName());
+    }
+
+    /**
+     * Réassignation : le nom figé suit le nouveau tuteur.
+     */
+    #[Test] public function mentorNameFollowsReassignment(): void
+    {
+        $owner = new User();
+        $owner->setFirstname('Pascal');
+        $owner->setLastname('Dupont');
+        $owner->addLogbook($this->logbook);
+
+        $mentorA = new User();
+        $mentorA->setFirstname('Walter');
+        $mentorA->setLastname('Martin');
+        $owner->setMentor($mentorA);
+
+        $mentorB = new User();
+        $mentorB->setFirstname('Jean');
+        $mentorB->setLastname('Bernard');
+        $owner->setMentor($mentorB);
+
+        self::assertSame('Jean BERNARD', $this->logbook->getMentorName());
     }
 }
