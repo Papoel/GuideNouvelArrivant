@@ -7,8 +7,7 @@ namespace App\Services\RGPD;
 use App\Entity\DeletionRequest;
 use App\Entity\User;
 use App\Repository\DeletionRequestRepository;
-use App\Repository\FeedbackRepository;
-use App\Repository\LogbookRepository;
+use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -20,10 +19,9 @@ class AccountDeletionService
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly DeletionRequestRepository $deletionRequestRepository,
-        private readonly LogbookRepository $logbookRepository,
-        private readonly FeedbackRepository $feedbackRepository,
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserDeletionService $userDeletionService,
     ) {
     }
 
@@ -109,19 +107,12 @@ class AccountDeletionService
         return $processedCount;
     }
 
+    /** Effacement RGPD : les carnets sont archivés (conservation 5 ans annoncée
+     * dans la politique de confidentialité) puis l'utilisateur et ses données
+     * liées sont supprimés — atomiquement, via le service dédié. */
     private function deleteUserData(User $user): void
     {
-        $logbooks = $this->logbookRepository->findBy(['owner' => $user]);
-        foreach ($logbooks as $logbook) {
-            $this->entityManager->remove($logbook);
-        }
-
-        $feedbacks = $this->feedbackRepository->findBy(['author' => $user]);
-        foreach ($feedbacks as $feedback) {
-            $this->entityManager->remove($feedback);
-        }
-
-        $this->entityManager->remove($user);
+        $this->userDeletionService->deleteUserOnly($user);
     }
 
     private function sendDeletionRequestEmail(DeletionRequest $deletionRequest): void

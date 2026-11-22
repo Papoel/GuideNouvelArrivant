@@ -6,10 +6,13 @@ use App\Entity\Action as ActionEntity;
 use App\Entity\Logbook;
 use App\Entity\Module;
 use App\Entity\Theme;
+use App\Entity\User;
 use App\Form\LogbookThemesType;
 use App\Repository\ActionRepository;
+use App\Services\Admin\Users\UserDeletionService;
 use App\Services\Logbook\LogbookThemeService;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -17,20 +20,27 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /** @extends AbstractCrudController<Logbook> */
 class LogbookCrudController extends AbstractCrudController
 {
+    public const DELETE_LOGBOOK = 'deleteLogbook';
+
     public function __construct(
         private readonly LogbookThemeService $logbookThemeService,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ActionRepository $actionRepository
+        private readonly ActionRepository $actionRepository,
+        private readonly UserDeletionService $userDeletionService,
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
-        // Note: Le CsrfTokenManagerInterface est déjà injecté dans le parent AbstractCrudController
     }
 
     public static function getEntityFqcn(): string
@@ -66,15 +76,65 @@ class LogbookCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        // Suppressions natives désactivées : un carnet ne se supprime jamais
+        // sans être d'abord archivé (document probant). L'action dédiée ci-
+        // dessous passe par UserDeletionService (archive → suppression).
+        $deleteLogbook = Action::new(name: self::DELETE_LOGBOOK, label: 'Supprimer')
+            ->setIcon(icon: 'fa fa-trash')
+            ->linkToUrl(fn (Logbook $logbook): string => $this->adminUrlGenerator
+                ->setAction(action: self::DELETE_LOGBOOK)
+                ->setEntityId(entityId: $logbook->getId())
+                ->set('token', $this->csrfTokenManager->getToken(tokenId: self::DELETE_LOGBOOK . '-' . $logbook->getId())->getValue())
+                ->generateUrl())
+            ->setHtmlAttributes(['data-action' => 'deleteLogbook']);
+
         return $actions
+            ->disable(Action::DELETE, Action::BATCH_DELETE)
+            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbook)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action->setIcon('fa fa-edit')->setLabel('Éditer');
             })
-            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                return $action->setIcon('fa fa-trash')->setLabel('Supprimer');
-            })
-            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
+            ->setPermission(self::DELETE_LOGBOOK, 'ROLE_SUPER_ADMIN');
+    }
+
+    /** Suppression d'un carnet : archivé (snapshot + PDF) puis supprimé.
+     * @param AdminContext<Logbook> $context */
+    #[AdminRoute('/admin/logbooks/delete', options: ['methods' => ['POST']])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    public function deleteLogbook(AdminContext $context, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        try {
+            $request = $context->getRequest();
+            $logbookId = $request->query->get(key: 'entityId');
+
+            if (!$logbookId) {
+                throw new \RuntimeException('ID du carnet manquant');
+            }
+
+            $token = $request->request->get(key: 'token');
+            if (!is_string($token) || !$this->isCsrfTokenValid(self::DELETE_LOGBOOK . '-' . $logbookId, $token)) {
+                throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+            }
+
+            $logbook = $this->entityManager->getRepository(Logbook::class)->find($logbookId);
+            if (!$logbook instanceof Logbook) {
+                throw new \RuntimeException('Carnet introuvable');
+            }
+
+            $owner = $logbook->getOwner();
+            $actor = $this->getUser();
+
+            $this->userDeletionService->deleteLogbook($logbook, $actor instanceof User ? $actor : null);
+
+            $this->addFlash(
+                type: 'success',
+                message: sprintf('Le carnet%s a été supprimé et archivé (conservation 5 ans).', $owner ? ' de ' . $owner->getFullname() : ''),
+            );
+        } catch (\Throwable $e) {
+            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
+        }
+
+        return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     public function edit(AdminContext $context): Response

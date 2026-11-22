@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\User;
+use App\Services\Admin\Users\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,6 +22,7 @@ class DeleteUserCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly UserDeletionService $userDeletionService,
     ) {
         parent::__construct(name: self::CMD_NAME);
     }
@@ -45,11 +47,12 @@ class DeleteUserCommand extends Command
             return Command::FAILURE;
         }
 
-        // Supprimer l'utilisateur
-        $this->em->remove($user);
-        $this->em->flush();
+        // Suppression via le service dédié : les carnets sont archivés avant
+        // d'être supprimés (conservation probante 5 ans, cf. politique de
+        // confidentialité).
+        $this->userDeletionService->deleteUserOnly($user);
 
-        $this->io->success('L\'utilisateur a bien été éffacé.');
+        $this->io->success('L\'utilisateur a bien été effacé. Ses carnets éventuels ont été archivés avant suppression.');
 
         return Command::SUCCESS;
     }

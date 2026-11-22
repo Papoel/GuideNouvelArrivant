@@ -50,6 +50,7 @@ class DashboardController extends AbstractDashboardController
         private readonly LogbookTemplateRepository $LogbookTemplateRepository,
         private readonly JobRepository $JobRepository,
         private readonly SpecialityRepository $SpecialityRepository,
+        private readonly \App\Repository\LogbookArchiveRepository $logbookArchiveRepository,
     ) {
     }
 
@@ -185,6 +186,16 @@ class DashboardController extends AbstractDashboardController
                 routeName: 'admin_progress_dashboard'
             );
         }
+
+        // Archives des carnets supprimés — données d'anciens salariés,
+        // réservé au SUPER_ADMIN (conservation 5 ans puis purge automatique).
+        $totalArchives = $this->logbookArchiveRepository->count();
+        yield MenuItem::section(label: 'Archives')->setBadge(content: $totalArchives)->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkTo(
+            \App\Controller\Admin\Archives\LogbookArchiveCrudController::class,
+            'Carnets archivés',
+            'fas fa-box-archive'
+        )->setPermission('ROLE_SUPER_ADMIN');
 
         // Journal d'audit — réservé au SUPER_ADMIN
         yield MenuItem::section(label: 'Audit')->setPermission('ROLE_SUPER_ADMIN');

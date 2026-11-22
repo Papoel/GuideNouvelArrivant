@@ -20,7 +20,7 @@ class UserDeletionServiceTest extends KernelTestCase
     {
         self::bootKernel();
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
-        $this->service = new UserDeletionService($this->em);
+        $this->service = static::getContainer()->get(UserDeletionService::class);
     }
 
     private function makeUser(string $nni): User
@@ -49,26 +49,26 @@ class UserDeletionServiceTest extends KernelTestCase
 
         $module = new Module();
         $module->setTitle('MODULE_SHARED_DEL');
-        $module->setTheme($theme);
+        $theme->addModule($module);
         $this->em->persist($module);
 
         $logbook1 = new Logbook();
-        $logbook1->setOwner($user1);
         $logbook1->setName('Carnet DEL user1');
         $logbook1->addTheme($theme);
+        $user1->addLogbook($logbook1);
         $this->em->persist($logbook1);
 
         $logbook2 = new Logbook();
-        $logbook2->setOwner($user2);
         $logbook2->setName('Carnet DEL user2');
         $logbook2->addTheme($theme);
+        $user2->addLogbook($logbook2);
         $this->em->persist($logbook2);
 
         $action2 = new Action();
         $action2->setUser($user2);
         $action2->setModule($module);
-        $action2->setLogbook($logbook2);
         $action2->setDescription('Action user2 - ne doit pas être supprimée');
+        $logbook2->addAction($action2);
         $this->em->persist($action2);
 
         $this->em->flush();
@@ -115,6 +115,11 @@ class UserDeletionServiceTest extends KernelTestCase
         }
         foreach ($this->em->getRepository(Theme::class)->findBy(['title' => 'THEME_SHARED_DEL']) as $t) {
             $this->em->remove($t);
+        }
+        // Les archives créées par la suppression doivent aussi être nettoyées
+        // pour ne pas polluer les autres tests d'intégration.
+        foreach ($this->em->getRepository(\App\Entity\LogbookArchive::class)->findAll() as $archive) {
+            $this->em->remove($archive);
         }
         $this->em->flush();
 

@@ -47,7 +47,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserCrudController extends AbstractCrudController
 {
     public const DELETE_USER_ONLY = 'deleteUserOnly';
-    public const DELETE_ALL = 'deleteAll';
     public const DELETE_LOGBOOKS_ONLY = 'deleteLogbooksOnly';
 
     public function __construct(
@@ -283,23 +282,22 @@ class UserCrudController extends AbstractCrudController
             }
         );
 
-        // La suppression par lot est réservée au SUPER_ADMIN
-        $actions = $actions->setPermission(Action::BATCH_DELETE, 'ROLE_SUPER_ADMIN');
+        // Suppressions natives EasyAdmin (unitaire + par lot) désactivées :
+        // elles contourneraient l'archivage obligatoire des carnets — toute
+        // suppression passe par les actions dédiées ci-dessous, qui figent
+        // chaque carnet dans une archive avant d'effacer quoi que ce soit.
+        $actions = $actions->disable(Action::DELETE, Action::BATCH_DELETE);
 
         // Actions personnalisées de suppression (POST + CSRF) : visibles si
         // l'utilisateur courant peut supprimer la cible (UserVoter : ADMIN →
-        // son service, SUPER_ADMIN → transverse)
+        // son service, SUPER_ADMIN → transverse). « Supprimer l'utilisateur »
+        // archive ses carnets puis efface toutes ses données liées — l'ancienne
+        // action « Tout supprimer » a disparu, désormais équivalente.
         $deleteUserOnly = Action::new(name: self::DELETE_USER_ONLY, label: 'Supprimer l\'utilisateur')
             ->setIcon(icon: 'fa fa-user-times')
             ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_USER_ONLY, user: $user))
             ->setHtmlAttributes(['data-action' => 'deleteUserOnly'])
             ->displayIf(fn ($user): bool => $user instanceof User && $this->authorizationChecker->isGranted(UserVoter::DELETE, $user));
-
-        $deleteAll = Action::new(name: self::DELETE_ALL, label: 'Tout supprimer')
-            ->setIcon(icon: 'fa fa-trash-alt')
-            ->linkToUrl(fn (User $user): string => $this->generateDeleteUrl(action: self::DELETE_ALL, user: $user))
-            ->setHtmlAttributes(['data-action' => 'deleteAll'])
-            ->displayIf(fn ($user): bool => $user instanceof User && $user->hasLogbooks() && $this->authorizationChecker->isGranted(UserVoter::DELETE, $user));
 
         $deleteLogbooksOnly = Action::new(name: self::DELETE_LOGBOOKS_ONLY, label: 'Supprimer le carnet')
             ->setIcon(icon: 'fa fa-book')
@@ -309,10 +307,9 @@ class UserCrudController extends AbstractCrudController
 
         return $actions
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteUserOnly)
-            ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteAll)
             ->add(pageName: Crud::PAGE_INDEX, actionNameOrObject: $deleteLogbooksOnly)
             // Réorganiser l'ordre des actions dans le menu
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, self::DELETE_LOGBOOKS_ONLY, self::DELETE_USER_ONLY, self::DELETE_ALL]);
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, self::DELETE_LOGBOOKS_ONLY, self::DELETE_USER_ONLY]);
     }
 
     public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
@@ -359,8 +356,11 @@ class UserCrudController extends AbstractCrudController
         try {
             $user = $this->resolveUserForDeletion($context, self::DELETE_USER_ONLY);
 
-            $this->userDeletionService->deleteUserOnly($user);
-            $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s a été supprimé.', $user->getFullName()));
+            $this->userDeletionService->deleteUserOnly($user, $this->currentUser());
+            $this->addFlash(
+                type: 'success',
+                message: sprintf('L\'utilisateur %s a été supprimé. Ses carnets éventuels ont été archivés (conservation 5 ans).', $user->getFullName()),
+            );
         } catch (AccessDeniedException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -368,29 +368,6 @@ class UserCrudController extends AbstractCrudController
         }
 
         return $this->redirect(url: $adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
-    }
-
-    /**
-     * @param AdminContext<User> $context
-     */
-    #[AdminRoute('/admin/users/delete-all', options: ['methods' => ['POST']])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function deleteAll(
-        AdminContext $context,
-        AdminUrlGenerator $adminUrlGenerator,
-    ): Response {
-        try {
-            $user = $this->resolveUserForDeletion($context, self::DELETE_ALL);
-
-            $this->userDeletionService->deleteUserAndLogbooks($user);
-            $this->addFlash(type: 'success', message: sprintf('L\'utilisateur %s et ses carnets ont été supprimés.', $user->getFullName()));
-        } catch (AccessDeniedException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            $this->addFlash(type: 'danger', message: 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
-        }
-
-        return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
     }
 
     /**
@@ -405,8 +382,11 @@ class UserCrudController extends AbstractCrudController
         try {
             $user = $this->resolveUserForDeletion($context, self::DELETE_LOGBOOKS_ONLY);
 
-            $this->userDeletionService->deleteLogbooksOnly($user);
-            $this->addFlash(type: 'success', message: sprintf('Les carnets de %s ont été supprimés.', $user->getFullName()));
+            $this->userDeletionService->deleteLogbooksOnly($user, $this->currentUser());
+            $this->addFlash(
+                type: 'success',
+                message: sprintf('Les carnets de %s ont été supprimés et archivés (conservation 5 ans).', $user->getFullName()),
+            );
         } catch (AccessDeniedException $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -414,6 +394,14 @@ class UserCrudController extends AbstractCrudController
         }
 
         return $this->redirect($adminUrlGenerator->setAction(action: Action::INDEX)->generateUrl());
+    }
+
+    /** Utilisateur connecté à l'origine de la suppression (tracé dans l'archive). */
+    private function currentUser(): ?User
+    {
+        $user = $this->getUser();
+
+        return $user instanceof User ? $user : null;
     }
 
     /** Génère l'URL d'une action de suppression avec jeton CSRF. */
