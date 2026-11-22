@@ -8,12 +8,13 @@ use App\Entity\LogbookArchive;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CodeEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -82,17 +83,26 @@ class LogbookArchiveCrudController extends AbstractCrudController
             ->add(pageName: Crud::PAGE_DETAIL, actionNameOrObject: $downloadPdf);
     }
 
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addCssFile('styles/admin/admin_archives.css');
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('ownerFullname', 'Titulaire');
+        yield TextField::new('ownerFullname', 'Titulaire')
+            ->setCssClass('archive-owner');
         yield TextField::new('mentorName', 'Tuteur')
+            ->setCssClass('archive-mentor')
             ->formatValue(static fn (?string $name): string => $name ?? '—');
         yield DateTimeField::new('archivedAt', 'Archivé le')
+            ->setCssClass('archive-date')
             ->setFormat('dd/MM/yyyy HH:mm');
         yield DateTimeField::new('expiresAt', 'Expiration')
+            ->setCssClass('archive-date')
             ->setFormat('dd/MM/yyyy');
         yield TextField::new('remainingTimeLabel', 'Conservation restante')
-            ->setCssClass('badge bg-info');
+            ->setTemplatePath('admin/fields/archive_remaining.html.twig');
 
         if (Crud::PAGE_DETAIL === $pageName) {
             yield TextField::new('ownerNni', 'NNI')
@@ -109,8 +119,11 @@ class LogbookArchiveCrudController extends AbstractCrudController
                 ->formatValue(static fn (?string $actor): string => $actor ?? 'Système');
             yield TextField::new('pdfFilename', 'Fichier PDF')
                 ->formatValue(static fn (?string $filename): string => $filename ?? '—');
-            yield TextareaField::new('payloadJson', 'Contenu archivé (JSON)')
-                ->setNumOfRows(30);
+            // CodeEditorField : CodeMirror en lecture seule — 'javascript' car
+            // 'json' n'est pas dans la liste EasyAdmin mais le mode JS colore le JSON.
+            yield CodeEditorField::new('payloadJson', 'Contenu archivé (JSON)')
+                ->setLanguage('javascript')
+                ->setNumOfRows(35);
         }
     }
 

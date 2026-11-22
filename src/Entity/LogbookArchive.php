@@ -316,4 +316,23 @@ class LogbookArchive
 
         return [] === $parts ? 'Moins d\'un jour' : implode(' ', $parts);
     }
+
+    /** Jours restants avant expiration (0 si expirée) — pilote la couleur de la barre. */
+    public function getRemainingDays(): int
+    {
+        return max(0, (int) floor(($this->expiresAt->getTimestamp() - time()) / 86400));
+    }
+
+    /** Part écoulée de la conservation en pourcentage (0–100) — barre de progression UI. */
+    public function getRetentionElapsedPercent(): int
+    {
+        $total = $this->expiresAt->getTimestamp() - $this->archivedAt->getTimestamp();
+        if ($total <= 0) {
+            return 100;
+        }
+
+        $elapsed = time() - $this->archivedAt->getTimestamp();
+
+        return max(0, min(100, (int) round($elapsed / $total * 100)));
+    }
 }

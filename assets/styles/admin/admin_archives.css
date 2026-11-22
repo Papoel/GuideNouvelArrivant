@@ -1,0 +1,59 @@
+/* === Archives des carnets — index & détail === */
+
+/* Barre de progression de la conservation (colonne "Conservation restante") */
+.archive-retention {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 170px;
+}
+
+.archive-retention-bar {
+    height: 5px;
+    background: var(--bs-tertiary-bg, #e9ecef);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.archive-retention-fill {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: #4e6e8e;
+    transition: width 0.3s ease;
+}
+
+.archive-retention--soon .archive-retention-fill {
+    background: #e09a3a;
+}
+
+.archive-retention--due .archive-retention-fill {
+    background: #c95f5f;
+}
+
+.archive-retention-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color, #6c757d);
+    letter-spacing: 0.01em;
+}
+
+.archive-retention--due .archive-retention-label {
+    color: #c95f5f;
+}
+
+/* Colonnes de la liste : titulaire en avant, données secondaires discrètes */
+.archive-owner {
+    font-weight: 600;
+    color: var(--bs-emphasis-color, #212529);
+}
+
+.archive-mentor {
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.archive-date {
+    font-variant-numeric: tabular-nums;
+    color: var(--bs-secondary-color, #6c757d);
+    white-space: nowrap;
+}
