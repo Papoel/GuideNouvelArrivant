@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Services\Admin\Logbooks\LogbookArchivePurgeService;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * Purge les archives de carnets arrivées à expiration (conservation : 5 ans)
@@ -19,6 +20,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * La commande est idempotente : relancée, elle ne renvoie aucun mail.
  */
+#[AsCommand(
+    name: 'app:archives:purge-expired',
+    description: 'Purge les archives expirées (conservation 5 ans) et envoie les avertissements J-30.',
+)]
 class PurgeExpiredArchivesCommand extends Command
 {
     public const CMD_NAME = 'app:archives:purge-expired';
