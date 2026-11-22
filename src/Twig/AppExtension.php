@@ -12,7 +12,31 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter(name: 'progress_color', callable: [$this, 'getProgressColor']),
+            new TwigFilter(name: 'html_to_text', callable: [$this, 'htmlToText']),
         ];
+    }
+
+    /**
+     * Convertit du HTML stocké en base en texte brut lisible (PDF, exports).
+     * Les balises de bloc deviennent des sauts de ligne avant suppression
+     * pour éviter la fusion des paragraphes.
+     */
+    public function htmlToText(?string $html): string
+    {
+        if ($html === null || trim($html) === '') {
+            return '';
+        }
+
+        $text = (string) preg_replace('/<br\s*\/?\s*>/i', "\n", $html);
+        $text = (string) preg_replace('/<li[^>]*>/i', '• ', $text);
+        $text = (string) preg_replace('/<\/(p|div|li|ul|ol|h[1-6]|tr|td|th|table|blockquote)>/i', "\n", $text);
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = str_replace("\xc2\xa0", ' ', $text); // espace insécable
+        $text = (string) preg_replace('/[ \t]+/', ' ', $text);
+        $text = (string) preg_replace('/\n{3,}/', "\n\n", $text);
+
+        return trim($text);
     }
 
     public function getFunctions(): array
