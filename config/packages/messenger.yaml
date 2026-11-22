@@ -26,3 +26,13 @@ framework:
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                sync: 'sync://'
+            routing:
+                # En test, les e-mails partent en synchrone pour être capturés
+                # par mailer.message_logger_listener (MailerAssertionsTrait).
+                Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
