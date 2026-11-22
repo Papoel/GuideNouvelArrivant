@@ -145,12 +145,12 @@ deploy-prod: ## Reconstruit le cache et les assets pour la production
 	@echo "$(GREEN)Suppression du cache de production...$(NC)"
 	rm -rf var/cache/prod
 	@echo "$(GREEN)Préchauffage du cache...$(NC)"
-	$(BIN) cache:warmup --env=prod
+	php bin/console cache:warmup --env=prod
 	@echo "$(GREEN)Installation des assets...$(NC)"
-	$(BIN) assets:install public --env=prod
-	$(BIN) importmap:install --env=prod
+	php bin/console assets:install public --env=prod
+	php bin/console importmap:install --env=prod
 	@echo "$(GREEN)Compilation de l'asset map...$(NC)"
-	$(BIN) asset-map:compile --env=prod
+	php bin/console asset-map:compile --env=prod
 	@echo "$(GREEN)✅ Reconstruction terminée.$(NC)"
 
 ## —— ✅ Tests & Qualité ———————————————————————————————————
