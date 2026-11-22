@@ -47,7 +47,7 @@ class BackupRestoreCommandTest extends TestCase
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
 
-        $this->backupService->expects($this->once())->method('getMostRecentBackup')->willReturn($backup);
+        $this->backupService->expects($this->once())->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->expects($this->once())->method('restoreBackup')->with($backup);
 
         $this->commandTester->setInputs(['yes']);
@@ -60,7 +60,7 @@ class BackupRestoreCommandTest extends TestCase
     #[Test]
     public function latestOptionFailsWhenNoBackupAvailable(): void
     {
-        $this->backupService->method('getMostRecentBackup')->willReturn(null);
+        $this->backupService->method('getAvailableBackups')->willReturn([]);
         $this->backupService->expects($this->never())->method('restoreBackup');
 
         $exitCode = $this->commandTester->execute(['--latest' => true]);
@@ -74,7 +74,7 @@ class BackupRestoreCommandTest extends TestCase
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
 
-        $this->backupService->method('getMostRecentBackup')->willReturn($backup);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->expects($this->once())->method('restoreBackup')->with($backup);
 
         // Aucun input nécessaire : --yes court-circuite la confirmation
@@ -96,7 +96,7 @@ class BackupRestoreCommandTest extends TestCase
         $backup1 = $this->createBackupMock(type: 'weekly', filename: 'backup_weekly_2026-10-25.sql.gz', date: '2026-10-25 02:00:00', size: '32.67 KB');
         $backup2 = $this->createBackupMock(type: 'weekly', filename: 'backup_weekly_2026-10-18.sql.gz', date: '2026-10-18 02:00:00', size: '48.71 KB');
 
-        $this->backupService->method('getAllBackups')->willReturn([$backup0, $backup1, $backup2]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup0, $backup1, $backup2]);
 
         // Seul backup2 doit être restauré — jamais backup0
         $this->backupService
@@ -117,7 +117,7 @@ class BackupRestoreCommandTest extends TestCase
         $backup0 = $this->createBackupMock(type: 'daily',  filename: 'backup_daily_2026-10-26.sql.gz',  date: '2026-10-26 02:00:00');
         $backup1 = $this->createBackupMock(type: 'weekly', filename: 'backup_weekly_2026-10-18.sql.gz', date: '2026-10-18 02:00:00');
 
-        $this->backupService->method('getAllBackups')->willReturn([$backup0, $backup1]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup0, $backup1]);
 
         $this->backupService
             ->expects($this->once())
@@ -137,7 +137,7 @@ class BackupRestoreCommandTest extends TestCase
         $backup0 = $this->createBackupMock(type: 'daily',   filename: 'backup_daily_2026-10-26.sql.gz',   date: '2026-10-26 02:00:00');
         $backup1 = $this->createBackupMock(type: 'monthly', filename: 'backup_monthly_2026-09-30.sql.gz', date: '2026-09-30 02:00:00');
 
-        $this->backupService->method('getAllBackups')->willReturn([$backup0, $backup1]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup0, $backup1]);
 
         $this->backupService
             ->expects($this->once())
@@ -157,7 +157,7 @@ class BackupRestoreCommandTest extends TestCase
     public function cancellingSelectionAbortsRestore(): void
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
-        $this->backupService->method('getAllBackups')->willReturn([$backup]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->expects($this->never())->method('restoreBackup');
 
         $this->commandTester->setInputs(['cancel']);
@@ -170,7 +170,7 @@ class BackupRestoreCommandTest extends TestCase
     public function refusingConfirmationAbortsRestore(): void
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
-        $this->backupService->method('getAllBackups')->willReturn([$backup]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->expects($this->never())->method('restoreBackup');
 
         $this->commandTester->setInputs(['0', 'no']);
@@ -179,12 +179,73 @@ class BackupRestoreCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $exitCode);
     }
 
+    // ─── option --file ────────────────────────────────────────────────────────
+
+    /**
+     * Intention : un fichier .sql.gz présent sur disque mais absent de la table
+     * backup (ex. la BDD provient d'un dump d'un autre environnement) doit être
+     * restaurable directement via --file.
+     */
+    #[Test]
+    public function fileOptionRestoresGivenPathDirectly(): void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'bk_') . '.sql.gz';
+        file_put_contents($path, gzencode('-- fake'));
+
+        try {
+            $this->backupService
+                ->expects($this->once())
+                ->method('restoreBackupFile')
+                ->with($path);
+
+            // Aucun input : --yes court-circuite la confirmation
+            $exitCode = $this->commandTester->execute(['--file' => $path, '--yes' => true]);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('restaurée avec succès', $this->commandTester->getDisplay());
+        } finally {
+            @unlink($path);
+        }
+    }
+
+    /**
+     * Un chemin inexistant ou une extension autre que .sql.gz doit être rejeté
+     * proprement avant toute tentative de restauration.
+     */
+    #[Test]
+    public function fileOptionRejectsMissingFile(): void
+    {
+        $this->backupService->expects($this->never())->method('restoreBackupFile');
+
+        $exitCode = $this->commandTester->execute(['--file' => '/chemin/inexistant.sql.gz', '--yes' => true]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('introuvable', $this->commandTester->getDisplay());
+    }
+
+    #[Test]
+    public function fileOptionRejectsNonGzExtension(): void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'bk_') . '.sql';
+        file_put_contents($path, '-- fake');
+
+        try {
+            $this->backupService->expects($this->never())->method('restoreBackupFile');
+
+            $exitCode = $this->commandTester->execute(['--file' => $path, '--yes' => true]);
+
+            $this->assertSame(Command::FAILURE, $exitCode);
+        } finally {
+            @unlink($path);
+        }
+    }
+
     // ─── cas limites ──────────────────────────────────────────────────────────
 
     #[Test]
     public function noBackupsAvailableShowsWarningAndReturnsSuccess(): void
     {
-        $this->backupService->method('getAllBackups')->willReturn([]);
+        $this->backupService->method('getAvailableBackups')->willReturn([]);
         $this->backupService->expects($this->never())->method('restoreBackup');
 
         $exitCode = $this->commandTester->execute([]);
@@ -197,7 +258,7 @@ class BackupRestoreCommandTest extends TestCase
     public function exceptionDuringRestoreReturnsFailureWithMessage(): void
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
-        $this->backupService->method('getAllBackups')->willReturn([$backup]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->method('restoreBackup')->willThrowException(new \RuntimeException('Échec connexion DB'));
 
         $this->commandTester->setInputs(['0', 'yes']);
@@ -211,7 +272,7 @@ class BackupRestoreCommandTest extends TestCase
     public function yesOptionSkipsConfirmationPrompt(): void
     {
         $backup = $this->createBackupMock(type: 'daily', filename: 'backup_daily_2026-10-26.sql.gz', date: '2026-10-26 02:00:00');
-        $this->backupService->method('getAllBackups')->willReturn([$backup]);
+        $this->backupService->method('getAvailableBackups')->willReturn([$backup]);
         $this->backupService->expects($this->once())->method('restoreBackup')->with($backup);
 
         // --yes : aucun input de confirmation nécessaire

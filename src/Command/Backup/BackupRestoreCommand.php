@@ -27,6 +27,7 @@ class BackupRestoreCommand extends Command
     {
         $this
             ->addOption('latest', 'l', InputOption::VALUE_NONE, 'Restaurer la sauvegarde la plus récente')
+            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'Restaurer directement un fichier .sql.gz (même non enregistré en BDD)')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Ne pas demander de confirmation');
     }
 
@@ -34,13 +35,25 @@ class BackupRestoreCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $latest = $input->getOption('latest');
+        $file = $input->getOption('file');
         $skipConfirmation = $input->getOption('yes');
 
         try {
+            // Restauration directe d'un fichier, sans enregistrement BDD
+            if ($file !== null) {
+                return $this->restoreFromFile($io, $file, $skipConfirmation);
+            }
+
+            // La table backup peut décrire les fichiers d'un autre
+            // environnement (base restaurée depuis un dump) : on réenregistre
+            // d'abord les fichiers réellement présents sur disque.
+            $this->backupService->syncWithFilesystem();
+
             $backup = null;
 
             if ($latest) {
-                $backup = $this->backupService->getMostRecentBackup();
+                // La plus récente *restaurable* : fichier réellement présent
+                $backup = $this->backupService->getAvailableBackups()[0] ?? null;
 
                 if (!$backup) {
                     $io->error('Aucune sauvegarde disponible.');
@@ -85,6 +98,7 @@ class BackupRestoreCommand extends Command
             // Restauration
             $io->text('Restauration en cours...');
             $this->backupService->restoreBackup($backup);
+            $this->synchronizeMigrations($io);
 
             $io->success('Base de données restaurée avec succès!');
             return Command::SUCCESS;
@@ -94,9 +108,66 @@ class BackupRestoreCommand extends Command
         }
     }
 
+    /** Restaure un fichier .sql.gz passé en option — couvre le cas où la table
+     * backup décrit des fichiers d'un autre environnement (dump importé). */
+    private function restoreFromFile(SymfonyStyle $io, string $file, bool $skipConfirmation): int
+    {
+        if (!is_file($file) || !str_ends_with($file, '.sql.gz')) {
+            $io->error('Fichier introuvable ou format invalide (attendu : .sql.gz) : ' . $file);
+            return Command::FAILURE;
+        }
+
+        $io->section('Détails de la sauvegarde');
+        $io->table(
+            ['Propriété', 'Valeur'],
+            [
+                ['Fichier', $file],
+                ['Taille', round(filesize($file) / 1024, 2) . ' KB'],
+            ]
+        );
+
+        if (!$skipConfirmation) {
+            $io->warning([
+                'ATTENTION: Cette opération va écraser toutes les données actuelles de la base de données!',
+                'Assurez-vous d\'avoir une sauvegarde récente avant de continuer.'
+            ]);
+
+            if (!$io->confirm('Êtes-vous sûr de vouloir continuer?', false)) {
+                $io->info('Restauration annulée.');
+                return Command::SUCCESS;
+            }
+        }
+
+        $io->text('Restauration en cours...');
+        $this->backupService->restoreBackupFile($file);
+        $this->synchronizeMigrations($io);
+
+        $io->success('Base de données restaurée avec succès!');
+
+        return Command::SUCCESS;
+    }
+
+    /** Après un restore, le schéma régresse au contenu du dump : on rejoue les
+     * migrations. Celles dont l'objet survit au dump sont marquées exécutées. */
+    private function synchronizeMigrations(SymfonyStyle $io): void
+    {
+        $io->text('Synchronisation du schéma (migrations)...');
+        $marked = $this->backupService->synchronizeMigrations();
+
+        if ($marked !== []) {
+            $io->warning([
+                \count($marked) . ' migration(s) marquée(s) exécutée(s) car leurs objets',
+                'existaient déjà dans la base restaurée :',
+                ...$marked,
+            ]);
+        }
+    }
+
     private function selectBackup(SymfonyStyle $io): mixed
     {
-        $backups = $this->backupService->getAllBackups();
+        // Ne propose que les sauvegardes dont le fichier existe réellement —
+        // les enregistrements d'un autre environnement ne sont pas restaurables.
+        $backups = $this->backupService->getAvailableBackups();
 
         if (empty($backups)) {
             $io->error('Aucune sauvegarde disponible.');
