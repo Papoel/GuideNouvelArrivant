@@ -1,6 +1,6 @@
 
 # eCommerce - Makefile
-.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull fix-doc-comments backup-daily backup-daily-force backup-weekly backup-weekly-force backup-monthly backup-monthly-force backup-annual backup-annual-force backup-all backup-all-force backup-list backup-list-daily backup-list-weekly backup-list-monthly backup-list-annual backup-restore backup-restore-latest backup-restore-latest-force backup-restore-force backup-delete backup-delete-daily backup-delete-weekly backup-delete-monthly backup-delete-annual backup-delete-old backup-delete-old-30 backup-delete-daily-force backup-delete-weekly-force backup-delete-monthly-force backup-delete-annual-force backup-delete-old-force backup-help backup-status backup-check-schedule backup-cleanup backup-test deploy-prod
+.PHONY: help install create-error-templates start stop restart build clear-cache test lint fix-cs db-create db-drop db-migration db-migrate db-fixtures db-entity db-reset security docker-up docker-down docker-pull phpcs phpstan phpmd phpcpd psalm php-metrics before-commit pest import-radiogrammes docker-import-radiogrammes coverage-text coverage-html coverage-filter coverage init-dev pull fix-doc-comments backup-daily backup-daily-force backup-weekly backup-weekly-force backup-monthly backup-monthly-force backup-annual backup-annual-force backup-all backup-all-force backup-list backup-list-daily backup-list-weekly backup-list-monthly backup-list-annual backup-restore backup-restore-latest backup-restore-latest-force backup-restore-force backup-delete backup-delete-daily backup-delete-weekly backup-delete-monthly backup-delete-annual backup-delete-old backup-delete-old-30 backup-delete-daily-force backup-delete-weekly-force backup-delete-monthly-force backup-delete-annual-force backup-delete-old-force backup-help backup-status backup-check-schedule backup-cleanup backup-test deploy-prod
 
 # Définition des variables
 ENABLE_PSALM := 0  # Définissez à 0 pour désactiver l'analyse Psalm
@@ -21,7 +21,7 @@ PHP = php
 NPM = npm
 DOCKER_COMPOSE = docker compose
 DOCKER_RUN = docker run
-PHPQA = jakzal/phpqa:php8.4
+PHPQA = jakzal/phpqa:php8.5
 PHPQA_RUN = $(DOCKER_RUN) --init --rm -v $(PWD):/project -w /project $(PHPQA)
 PEST = ./vendor/bin/pest
 
@@ -145,12 +145,12 @@ deploy-prod: ## Reconstruit le cache et les assets pour la production
 	@echo "$(GREEN)Suppression du cache de production...$(NC)"
 	rm -rf var/cache/prod
 	@echo "$(GREEN)Préchauffage du cache...$(NC)"
-	$(BIN) cache:warmup --env=prod
+	php bin/console cache:warmup --env=prod
 	@echo "$(GREEN)Installation des assets...$(NC)"
-	$(BIN) assets:install public --env=prod
-	$(BIN) importmap:install --env=prod
+	php bin/console assets:install public --env=prod
+	php bin/console importmap:install --env=prod
 	@echo "$(GREEN)Compilation de l'asset map...$(NC)"
-	$(BIN) asset-map:compile --env=prod
+	php bin/console asset-map:compile --env=prod
 	@echo "$(GREEN)✅ Reconstruction terminée.$(NC)"
 
 ## —— ✅ Tests & Qualité ———————————————————————————————————
@@ -243,9 +243,6 @@ before-commit: ## Exécute toutes les vérifications avant de commit
 
 	@echo "$(YELLOW)Vérification des dépendances vulnérables...$(NC)"
 	@$(COMPOSER) audit
-
-	@echo "$(YELLOW)Vérification des failles de sécurité...$(NC)"
-	@$(PHPQA_RUN) local-php-security-checker
 
 	@echo "$(YELLOW)Vérification de la syntaxe des fichiers PHP...$(NC)"
 	@$(PHPQA_RUN) parallel-lint --exclude vendor --exclude var .
@@ -384,7 +381,6 @@ table-count: ## Affiche le nombre d'enregistrements dans une table
 ## —— 🔒 Sécurité ———————————————————————————————————————————
 security: ## Vérifie les vulnérabilités de sécurité
 	$(COMPOSER) audit
-	$(PHPQA_RUN) local-php-security-checker
 
 ## —— 📦 Dépendances ——————————————————————————————————————
 check-deps: ## Vérifie les dépendances obsolètes
@@ -421,6 +417,11 @@ docker-exec-db: ## Exécute un shell dans le conteneur MySQL
 docker-build: ## Reconstruit les images Docker
 	@echo "$(GREEN)Reconstruction des images Docker...$(NC)"
 	$(DOCKER_COMPOSE) -f compose.yaml build
+
+docker-pull: ## Met à jour les images Docker (compose + image PHPQA)
+	@echo "$(GREEN)Mise à jour des images Docker...$(NC)"
+	$(DOCKER_COMPOSE) -f compose.yaml pull --ignore-buildable
+	docker pull $(PHPQA)
 
 docker-restart: docker-down docker-up ## Redémarre les conteneurs Docker
 

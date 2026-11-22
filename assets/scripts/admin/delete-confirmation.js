@@ -8,9 +8,9 @@
  */
 (function () {
     const MESSAGES = {
-        deleteUserOnly: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?',
-        deleteAll: 'Êtes-vous sûr de vouloir supprimer cet utilisateur et tous ses carnets ?',
-        deleteLogbooksOnly: 'Êtes-vous sûr de vouloir supprimer tous les carnets de cet utilisateur ?',
+        deleteUserOnly: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ? S\'il possède des carnets de compagnonnage, une copie d\'archive complète (PDF inclus) sera conservée 5 ans avant purge définitive.',
+        deleteLogbooksOnly: 'Êtes-vous sûr de vouloir supprimer tous les carnets de cet utilisateur ? Une copie d\'archive complète (PDF inclus) sera conservée 5 ans avant purge définitive.',
+        deleteLogbook: 'Êtes-vous sûr de vouloir supprimer ce carnet ? Une copie d\'archive complète (PDF inclus) sera conservée 5 ans avant purge définitive.',
     };
 
     let modal = null;
@@ -81,7 +81,7 @@
     }
 
     document.addEventListener('click', function (e) {
-        const link = e.target.closest('[data-action="deleteUserOnly"], [data-action="deleteAll"], [data-action="deleteLogbooksOnly"]');
+        const link = e.target.closest('[data-action="deleteUserOnly"], [data-action="deleteLogbooksOnly"], [data-action="deleteLogbook"]');
         if (!link) {
             return;
         }

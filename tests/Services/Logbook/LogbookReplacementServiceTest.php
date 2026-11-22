@@ -7,6 +7,7 @@ namespace App\Tests\Services\Logbook;
 use App\Entity\Logbook;
 use App\Entity\Theme;
 use App\Entity\User;
+use App\Services\Admin\Logbooks\LogbookArchiveService;
 use App\Services\Logbook\LogbookReplacementService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AllowMockObjectsWithoutExpectations]
 class LogbookReplacementServiceTest extends TestCase
@@ -22,18 +24,25 @@ class LogbookReplacementServiceTest extends TestCase
     private LogbookReplacementService $service;
     private MockObject $entityManager;
     private MockObject $logbookRepository;
+    private MockObject $archiveService;
 
     protected function setUp(): void
     {
         // Crée un mock de EntityRepository, et non ObjectRepository
         $this->entityManager = $this->createMock(type: EntityManagerInterface::class);
         $this->logbookRepository = $this->createMock(type: EntityRepository::class);
+        $this->archiveService = $this->createMock(type: LogbookArchiveService::class);
+        $security = $this->createMock(type: Security::class);
 
         // Configure le mock pour que getRepository retourne le mock de EntityRepository
         $this->entityManager->method(constraint: 'getRepository')
             ->willReturn(value: $this->logbookRepository);
 
-        $this->service = new LogbookReplacementService(entityManager: $this->entityManager);
+        $this->service = new LogbookReplacementService(
+            entityManager: $this->entityManager,
+            logbookArchiveService: $this->archiveService,
+            security: $security,
+        );
     }
     private function createLogbookWithOwner(User $owner, array $themes = []): Logbook
     {
@@ -85,6 +94,10 @@ class LogbookReplacementServiceTest extends TestCase
             ->with(['owner' => $owner])
             ->willReturn(value: $existingLogbook);
 
+        // L'ancien carnet doit être archivé AVANT sa suppression
+        $this->archiveService->expects($this->once())->method(constraint: 'archiveLogbook')
+            ->with($existingLogbook);
+
         // Configuration des méthodes de l'EntityManager
         $this->entityManager->expects($this->once())->method(constraint: 'persist')->with($theme);
         $this->entityManager->expects($this->once())->method(constraint: 'remove')->with($existingLogbook);
@@ -102,6 +115,9 @@ class LogbookReplacementServiceTest extends TestCase
         $this->logbookRepository->expects($this->once())->method(constraint: 'findOneBy')
             ->with(['owner' => $owner])
             ->willReturn(value: null);
+
+        // Rien à archiver sans carnet existant
+        $this->archiveService->expects($this->never())->method(constraint: 'archiveLogbook');
 
         // On s'assure que les méthodes `persist`, `remove`, et `flush` ne sont pas appelées
         $this->entityManager->expects($this->never())->method(constraint: 'persist');

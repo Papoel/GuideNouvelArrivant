@@ -1,0 +1,19 @@
+{# Barre de progression de la conservation 5 ans — sobre : slate, ambre sous 90 j, rouge expirée. #}
+{% set archive = entity.instance %}
+{% set days = archive.remainingDays %}
+{% set state = days <= 0 ? 'due' : (days <= 90 ? 'soon' : 'ok') %}
+
+<div class="archive-retention archive-retention--{{ state }}">
+    <div class="archive-retention-bar" role="progressbar"
+         aria-valuenow="{{ archive.retentionElapsedPercent }}" aria-valuemin="0" aria-valuemax="100"
+         title="{{ archive.retentionElapsedPercent }}% de la conservation écoulée">
+        <span class="archive-retention-fill" style="width: {{ archive.retentionElapsedPercent }}%"></span>
+    </div>
+    <span class="archive-retention-label">
+        {% if days <= 0 %}
+            Expirée
+        {% else %}
+            {{ field.formattedValue }}
+        {% endif %}
+    </span>
+</div>

@@ -61,6 +61,11 @@ readonly class UserProgressService implements UserProgressServiceInterface
     {
         $progressData = $this->getUserProgressDetails(user: $user);
 
+        $projectDir = $this->parameterBag->get(name: 'kernel.project_dir');
+        if (!is_string($projectDir)) {
+            throw new \InvalidArgumentException('kernel.project_dir must be a string');
+        }
+
         // Configuration de Dompdf avec des options optimisées pour l'impression
         $options = new Options();
         $options->set(attributes: 'isHtml5ParserEnabled', value: true);
@@ -68,45 +73,31 @@ readonly class UserProgressService implements UserProgressServiceInterface
         $options->set(attributes: 'defaultFont', value: 'Arial');
         $options->set('isPhpEnabled', true);
         // Important pour DomPDF : permettre les images locales
-        /* @phpstan-ignore-next-line */
-        $options->set(attributes: 'chroot', value: $this->parameterBag->get(name: 'kernel.project_dir') . '/public');
-
-        $dompdf = new Dompdf(options: $options);
+        $options->set(attributes: 'chroot', value: $projectDir . '/public');
 
         // Génération du HTML avec un template dédié à l'impression PDF
-        $html = $this->twig->render(
-            name: 'pdf/workbook.html.twig',
-            context: [
-                'user' => $user,
-                'logbook' => $progressData['logbook'],
-                'progress' => $progressData['progress'],
-                'date_generation' => new \DateTime(),
-            ]
-        );
+        $context = [
+            'user' => $user,
+            'logbook' => $progressData['logbook'],
+            'progress' => $progressData['progress'],
+            'date_generation' => new \DateTime(),
+            // Chemin absolu requis par Dompdf (les chemins relatifs au chroot
+            // ne se résolvent pas pour les balises <img>).
+            'logo_path' => $projectDir . '/public/images/logos/edf.png',
+        ];
 
-        $dompdf->loadHtml(str: $html);
+        // Premier passage : le total de pages n'est connu qu'une fois le
+        // document mis en page — il est injecté pour « Page X sur Y ».
+        $countPass = new Dompdf(options: $options);
+        $countPass->loadHtml(str: $this->twig->render(name: 'pdf/workbook.html.twig', context: $context));
+        $countPass->setPaper(size: 'A4', orientation: 'portrait');
+        $countPass->render();
+        $context['total_pages'] = $countPass->getCanvas()->get_page_count();
 
-        // Paramétrage de la première page en portrait
-        // Les pages suivantes seront configurées en paysage via CSS dans le template
+        $dompdf = new Dompdf(options: $options);
+        $dompdf->loadHtml(str: $this->twig->render(name: 'pdf/workbook.html.twig', context: $context));
         $dompdf->setPaper(size: 'A4', orientation: 'portrait');
-
-        // Rendu du PDF
         $dompdf->render();
-
-        // Ajout de la pagination après le rendu
-        $canvas = $dompdf->getCanvas();
-
-        // Approche simple sans police spécifique (utilise la police par défaut)
-        $canvas->page_text(
-            520,
-            800,
-            "Page {PAGE_NUM} sur {PAGE_COUNT}",
-            "Arial",
-            8,
-            // RGG : 61, 95, 158
-            // Pour DOMPDF: [61/255, 95/255, 158/255]
-            [0.239, 0.373, 0.619]
-        );
 
         // Génération du nom de fichier
         $filename = sprintf(

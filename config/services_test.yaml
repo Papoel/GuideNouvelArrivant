@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# Configuration spécifique à l'environnement de test.
+#
+# Les services privés injectés dans un seul consommateur sont "inlinés" par le
+# conteneur lors de la compilation et deviennent irrécupérables via
+# self::getContainer() dans les KernelTestCase. On les déclare publics ici,
+# en env de test uniquement — l'architecture de prod reste inchangée.
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Services\Admin\Logbooks\LogbookArchiveService:
+        public: true
+
+    App\Services\Admin\Users\UserDeletionService:
+        public: true
+
+    App\Services\Logbook\LogbookReplacementService:
+        public: true
+
+    App\Services\Admin\Logbooks\LogbookArchivePurgeService:
+        public: true

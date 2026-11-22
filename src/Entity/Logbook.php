@@ -25,6 +25,11 @@ class Logbook
     #[Assert\Length(max: 100, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $name = null;
 
+    /** Nom du tuteur figé à l'assignation : survit à la suppression du compte
+     * tuteur, contrairement à la relation User.mentor (ON DELETE SET NULL). */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mentorName = null;
+
     /** @var Collection<int, Theme> */
     #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'logbooks')]
     private Collection $themes;
@@ -61,6 +66,18 @@ class Logbook
     public function setName(?string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getMentorName(): ?string
+    {
+        return $this->mentorName;
+    }
+
+    public function setMentorName(?string $mentorName): static
+    {
+        $this->mentorName = $mentorName;
+
+        return $this;
     }
 
     /** @return Collection<int, Theme> */

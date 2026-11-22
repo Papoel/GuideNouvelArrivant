@@ -108,9 +108,9 @@ class UserCrudControllerTest extends TestCase
 
     #[Test] public function deleteConstants(): void
     {
-        // Test that the delete constants are properly defined
+        // L'action « tout supprimer » a été retirée : la suppression du compte
+        // archive désormais automatiquement les carnets via UserDeletionService.
         self::assertEquals(expected: 'deleteUserOnly', actual: UserCrudController::DELETE_USER_ONLY);
-        self::assertEquals(expected: 'deleteAll', actual: UserCrudController::DELETE_ALL);
         self::assertEquals(expected: 'deleteLogbooksOnly', actual: UserCrudController::DELETE_LOGBOOKS_ONLY);
     }
 

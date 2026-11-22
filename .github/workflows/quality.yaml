@@ -6,7 +6,7 @@ jobs:
         name: Quality Analysis
         runs-on: ubuntu-latest
         container:
-            image: jakzal/phpqa:php8.4
+            image: jakzal/phpqa:php8.5
             options: --user root
 
         steps:

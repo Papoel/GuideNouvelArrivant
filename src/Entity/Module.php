@@ -47,7 +47,7 @@ class Module
     {
         $theme = $this->getTheme();
         $themeTitle = $theme ? $theme->getTitle() : '';
-        $firstCharactersOfTheme = $themeTitle ? substr($themeTitle, offset: 0, length: 3) : '';
+        $firstCharactersOfTheme = $themeTitle ? mb_substr($themeTitle, 0, 3) : '';
 
         return $firstCharactersOfTheme . ' | ' . ($this->title ?: '');
     }

@@ -267,6 +267,20 @@ class BackupService
             throw new \RuntimeException('Checksum invalide pour la sauvegarde: ' . $backup->getFilename());
         }
 
+        $this->restoreBackupFile($filepath);
+    }
+
+    /** Restaure un fichier .sql.gz directement — sans passer par un
+     * enregistrement Backup. Permet de restaurer un fichier déposé dans
+     * var/backups/ (ou ailleurs) même si la table backup ne le connaît pas
+     * (cas typique : la BDD provient d'un dump d'un autre environnement). */
+    public function restoreBackupFile(string $filepath): void
+    {
+        if (!$this->filesystem->exists($filepath)) {
+            $this->logger->error('Fichier de sauvegarde introuvable: ' . $filepath);
+            throw new \RuntimeException('Fichier de sauvegarde introuvable: ' . $filepath);
+        }
+
         $databaseUrl = $this->databaseUrl;
         $parsedUrl = parse_url($databaseUrl);
 
@@ -280,16 +294,23 @@ class BackupService
         $username = $parsedUrl['user'] ?? 'root';
         $password = $parsedUrl['pass'] ?? '';
 
-        // Décompressser et restaurer
-        $command = sprintf(
-            'gunzip < %s | mysql -h%s -P%s -u%s -p%s %s',
+        // Décompresser et restaurer — le -p n'est ajouté que si un mot de
+        // passe existe : `mysql -p` seul bascule en mode interactif et bloque.
+        $commandParts = [
+            'gunzip <',
             escapeshellarg($filepath),
-            escapeshellarg($host),
-            escapeshellarg((string)$port),
-            escapeshellarg($username),
-            escapeshellarg($password),
-            escapeshellarg($database)
-        );
+            '| mysql',
+            sprintf('-h%s', escapeshellarg($host)),
+            sprintf('-P%s', escapeshellarg((string)$port)),
+            sprintf('-u%s', escapeshellarg($username)),
+        ];
+
+        if ($password !== '') {
+            $commandParts[] = sprintf('--password=%s', escapeshellarg($password));
+        }
+
+        $commandParts[] = escapeshellarg($database);
+        $command = implode(' ', $commandParts);
 
         $process = Process::fromShellCommandline($command);
         $process->setTimeout(3600);
@@ -302,6 +323,62 @@ class BackupService
 
         // Log
         $this->logger->info('Restauration terminée avec succès');
+    }
+
+    /** Rejoue les migrations après une restauration de dump.
+     *
+     * Un dump régresse la table doctrine_migration_versions alors que le
+     * schéma peut être plus avancé (tables locales absentes du dump qui
+     * survivent au restore). On rejoue `migrations:migrate` ; si une migration
+     * échoue parce que l'objet existe déjà, elle est marquée exécutée et on
+     * poursuit — une migration de réparation finale recolle les colonnes
+     * manquantes de façon idempotente.
+     *
+     * @return list<string> versions marquées exécutées sans être rejouées */
+    public function synchronizeMigrations(): array
+    {
+        /** @var string $projectDir */
+        $projectDir = $this->parameterBag->get('kernel.project_dir');
+        $console = $projectDir . '/bin/console';
+        $marked = [];
+
+        for ($attempt = 0; $attempt < 10; ++$attempt) {
+            $migrate = new Process([
+                \PHP_BINARY, $console, 'doctrine:migrations:migrate',
+                '--no-interaction', '--allow-no-migration',
+            ]);
+            $migrate->setTimeout(600)->run();
+
+            if ($migrate->isSuccessful()) {
+                if ($marked !== []) {
+                    $this->logger->warning('Migrations marquées sans exécution (objets déjà présents) : ' . implode(', ', $marked));
+                }
+
+                return $marked;
+            }
+
+            $output = $migrate->getOutput() . $migrate->getErrorOutput();
+            $conflict = str_contains($output, 'already exists') || str_contains($output, 'Duplicate column');
+            $hasVersion = preg_match('/Migration (DoctrineMigrations\\\\Version\d+) failed/', $output, $matches) === 1;
+
+            if (!$conflict || !$hasVersion) {
+                throw new \RuntimeException('Échec des migrations post-restauration : ' . $output);
+            }
+
+            $mark = new Process([
+                \PHP_BINARY, $console, 'doctrine:migrations:version',
+                $matches[1], '--add', '--no-interaction',
+            ]);
+            $mark->setTimeout(60)->run();
+
+            if (!$mark->isSuccessful()) {
+                throw new \RuntimeException('Impossible de marquer la migration ' . $matches[1] . ' : ' . $mark->getErrorOutput());
+            }
+
+            $marked[] = $matches[1];
+        }
+
+        throw new \RuntimeException('Synchronisation des migrations interrompue après 10 tentatives.');
     }
 
     /**
@@ -320,6 +397,88 @@ class BackupService
     public function getMostRecentBackup(): ?Backup
     {
         return $this->backupRepository->findMostRecent();
+    }
+
+    /** Sauvegardes dont le fichier existe réellement sur disque — seules
+     * celles-ci sont restaurables (les enregistrements d'un autre environnement
+     * pointent vers des chemins absents).
+     *
+     * @return list<Backup> */
+    public function getAvailableBackups(?string $type = null): array
+    {
+        return array_values(array_filter(
+            $this->getAllBackups($type),
+            fn (Backup $backup): bool => $backup->getFilePath() !== null
+                && $this->filesystem->exists($backup->getFilePath()),
+        ));
+    }
+
+    /** Réconcilie la table `backup` avec le contenu réel du dossier de
+     * sauvegardes :
+     *  - chaque fichier .sql.gz orphelin (absent de la table) est enregistré ;
+     *  - chaque enregistrement dont le fichier est introuvable est rapporté.
+     *
+     * @return array{registered: int, missing: list<Backup>}
+     */
+    public function syncWithFilesystem(): array
+    {
+        /** @var string $baseDir */
+        $baseDir = $this->parameterBag->get('backup.directory');
+
+        $registered = 0;
+        if ($this->filesystem->exists($baseDir)) {
+            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDir)) as $file) {
+                if (!$file instanceof \SplFileInfo || !str_ends_with($file->getFilename(), '.sql.gz')) {
+                    continue;
+                }
+                if ($this->backupRepository->findOneBy(['filename' => $file->getFilename()]) !== null) {
+                    continue;
+                }
+                $this->entityManager->persist($this->registerOrphanFile($file));
+                ++$registered;
+            }
+            $this->entityManager->flush();
+        }
+
+        $missing = array_values(array_filter(
+            $this->getAllBackups(),
+            fn (Backup $backup): bool => $backup->getFilePath() === null
+                || !$this->filesystem->exists($backup->getFilePath()),
+        ));
+
+        $this->logger->info('Sync backups: ' . $registered . ' fichier(s) enregistré(s), ' . \count($missing) . ' enregistrement(s) sans fichier.');
+
+        return ['registered' => $registered, 'missing' => $missing];
+    }
+
+    /** Construit l'entité Backup d'un fichier orphelin : type déduit du
+     * sous-dossier, date parsée depuis le nom, checksum recalculé. */
+    private function registerOrphanFile(\SplFileInfo $file): Backup
+    {
+        $path = $file->getPathname();
+        $parentDir = basename(\dirname($path));
+
+        $type = \in_array($parentDir, self::TYPES, true) ? $parentDir : 'manual';
+
+        $createdAt = null;
+        if (preg_match('/(\d{4}-\d{2}-\d{2}_\d{6})/', $file->getFilename(), $matches) === 1) {
+            $createdAt = \DateTimeImmutable::createFromFormat('Y-m-d_His', $matches[1]) ?: null;
+        }
+        if ($createdAt === null) {
+            $mtime = $file->getMTime();
+            $createdAt = (new \DateTimeImmutable())->setTimestamp($mtime !== false ? $mtime : time());
+        }
+
+        $filesize = $file->getSize();
+        $checksum = hash_file('sha256', $path);
+
+        return (new Backup())
+            ->setType($type)
+            ->setFilename($file->getFilename())
+            ->setFilePath($path)
+            ->setFilesize($filesize !== false ? (string) $filesize : '0')
+            ->setChecksum($checksum !== false ? $checksum : null)
+            ->setCreatedAt($createdAt);
     }
 
     public function shouldCreateBackup(string $type): bool

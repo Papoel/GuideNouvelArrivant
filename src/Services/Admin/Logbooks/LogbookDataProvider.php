@@ -66,6 +66,6 @@ class LogbookDataProvider implements LogbookDataProviderInterface
         $now = $this->clock->now();
         $diff = $now->diff($hiringDate);
 
-        return $diff->days !== false ? $diff->days : null;
+        return $diff->days;
     }
 }

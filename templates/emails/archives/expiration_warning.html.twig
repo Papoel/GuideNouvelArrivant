@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive bientôt supprimée</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #f0ad4e 0%, #ec971f 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+                                ⚠️ Suppression d'archive programmée
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Bonjour,
+                            </p>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                L'archive du carnet de compagnonnage de
+                                <strong>{{ archive.ownerFullname }}</strong>
+                                (archivée le {{ archive.archivedAt|date('d/m/Y') }})
+                                arrivera à expiration le
+                                <strong>{{ archive.expiresAt|date('d/m/Y') }}</strong>,
+                                soit dans {{ warningDays }} jours.
+                            </p>
+
+                            <!-- Info Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 0 8px 8px 0;">
+                                        <strong style="color: #856404;">📋 Pourquoi ce message ?</strong>
+                                        <p style="color: #856404; margin: 10px 0 0 0; font-size: 14px;">
+                                            Conformément au RGPD et à la politique de confidentialité de
+                                            l'application, les carnets archivés sont conservés pendant
+                                            <strong>{{ constant('App\\Entity\\LogbookArchive::RETENTION_YEARS') }} ans</strong>
+                                            à des fins de preuve de certification, puis détruits
+                                            automatiquement. Passé ce délai, l'archive (données et PDF)
+                                            sera définitivement supprimée.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Si cet archive doit être conservée au-delà (litige en cours,
+                                audit, demande explicite), contactez sans délai un administrateur
+                                de l'application.
+                            </p>
+
+                            <p style="color: #6c757d; font-size: 14px; margin-top: 25px;">
+                                Aucune action n'est requise en l'absence d'objection.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                            <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                                Cet email a été envoyé automatiquement par l'application GuideNouvelArrivant.<br>
+                                © {{ "now"|date("Y") }} CNPE Penly - Service MRC
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
