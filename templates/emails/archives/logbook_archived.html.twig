@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet archivé</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #4e6e8e 0%, #2c5b84 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+                                📦 Carnet archivé
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Bonjour,
+                            </p>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Le carnet de compagnonnage de
+                                <strong>{{ archive.ownerFullname }}</strong>
+                                vient d'être archivé{% if archive.archivedBy %} par {{ archive.archivedBy }}{% endif %},
+                                le {{ archive.archivedAt|date('d/m/Y à H:i') }}.
+                            </p>
+
+                            <!-- Info Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #eaf2f8; border-left: 4px solid #2c5b84; padding: 15px; border-radius: 0 8px 8px 0;">
+                                        <strong style="color: #1b4f72;">📋 Récapitulatif</strong>
+                                        <p style="color: #1b4f72; margin: 10px 0 0 0; font-size: 14px;">
+                                            Titulaire : {{ archive.ownerFullname }}
+                                            {% if archive.ownerNni %}(NNI {{ archive.ownerNni }}){% endif %}<br>
+                                            {% if archive.ownerService %}Service : {{ archive.ownerService }}<br>{% endif %}
+                                            {% if archive.ownerJob %}Poste : {{ archive.ownerJob }}<br>{% endif %}
+                                            {% if archive.mentorName %}Tuteur : {{ archive.mentorName }}<br>{% endif %}
+                                            Archivé le : {{ archive.archivedAt|date('d/m/Y à H:i') }}<br>
+                                            Expiration : {{ archive.expiresAt|date('d/m/Y') }}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Legal box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 0 8px 8px 0;">
+                                        <strong style="color: #856404;">⚖️ Pourquoi cette conservation ?</strong>
+                                        <p style="color: #856404; margin: 10px 0 0 0; font-size: 14px;">
+                                            Conformément au RGPD et à la politique de confidentialité de
+                                            l'application, les carnets sont conservés
+                                            <strong>{{ constant('App\\Entity\\LogbookArchive::RETENTION_YEARS') }} ans</strong>
+                                            à des fins de preuve de certification (intérêt légitime),
+                                            puis détruits automatiquement. Un avertissement sera envoyé
+                                            avant la purge définitive.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                L'archive (snapshot structuré + PDF probant) est consultable dans la
+                                section <strong>« Carnets archivés »</strong> de l'administration.
+                            </p>
+
+                            <p style="color: #6c757d; font-size: 14px; margin-top: 25px;">
+                                Aucune action n'est requise de votre part.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                            <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                                Cet email a été envoyé automatiquement par l'application GuideNouvelArrivant.<br>
+                                © {{ "now"|date("Y") }} CNPE Penly - Service MRC
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

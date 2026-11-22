@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive supprimée</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8f9fa; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+                                🗑️ Archive supprimée
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Bonjour,
+                            </p>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                L'archive du carnet de compagnonnage de
+                                <strong>{{ archive.ownerFullname }}</strong>
+                                (archivée le {{ archive.archivedAt|date('d/m/Y') }})
+                                a atteint sa date d'expiration et a été
+                                <strong>définitivement supprimée</strong> de l'application
+                                GuideNouvelArrivant.
+                            </p>
+
+                            <!-- Info Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td style="background-color: #d1ecf1; border-left: 4px solid #17a2b8; padding: 15px; border-radius: 0 8px 8px 0;">
+                                        <strong style="color: #0c5460;">📋 Cadre légal :</strong>
+                                        <p style="color: #0c5460; margin: 10px 0 0 0; font-size: 14px;">
+                                            Cette suppression automatique applique la durée de conservation
+                                            de <strong>{{ constant('App\\Entity\\LogbookArchive::RETENTION_YEARS') }} ans</strong>
+                                            prévue par la politique de confidentialité, conformément au
+                                            principe de limitation de conservation des données du RGPD
+                                            (article 5.1.e).
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="color: #2c384e; font-size: 16px; margin-bottom: 20px;">
+                                Les données (payload structuré et document PDF) ne sont plus
+                                récupérables. Cette action est définitive.
+                            </p>
+
+                            <p style="color: #6c757d; font-size: 14px; margin-top: 25px;">
+                                Si vous avez des questions, vous pouvez contacter le service MRC du CNPE Penly.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                            <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                                Cet email a été envoyé automatiquement par l'application GuideNouvelArrivant.<br>
+                                © {{ "now"|date("Y") }} CNPE Penly - Service MRC
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
